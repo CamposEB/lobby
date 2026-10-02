@@ -29,19 +29,12 @@ def _get_s3_client():
     if _s3_client is None:
         if not _configured():
             raise RuntimeError("Credenciais do R2 não configuradas")
-        _s3_client = boto3.client(
-            service_name="s3",
-            endpoint_url=R2_ENDPOINT_URL,
-            aws_access_key_id=R2_ACCESS_KEY_ID,
-            aws_secret_access_key=R2_SECRET_ACCESS_KEY,
-            region_name="auto",
-            config=Config(
-                signature_version="s3v4",
-                s3={"addressing_style": "path"},
-                request_checksum_calculation="when_required",
-                response_checksum_validation="when_required",
-            ),
-        )
+        # DIAGNÓSTICO TEMPORÁRIO
+        print(f"[diag] KEY_ID: len={len(R2_ACCESS_KEY_ID)} repr={R2_ACCESS_KEY_ID[:8]}...{R2_ACCESS_KEY_ID[-4:]!r}")
+        print(f"[diag] SECRET: len={len(R2_SECRET_ACCESS_KEY)} repr={R2_SECRET_ACCESS_KEY[:4]}...{R2_SECRET_ACCESS_KEY[-4:]!r}")
+        print(f"[diag] ENDPOINT: {R2_ENDPOINT_URL!r}")
+        print(f"[diag] BUCKET: {R2_BUCKET_NAME!r}")
+        _s3_client = boto3.client(...)
     return _s3_client
 
 
