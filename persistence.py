@@ -2,6 +2,7 @@ import os
 import threading
 import time
 from pathlib import Path
+from botocore.config import Config
 
 import boto3
 from botocore.exceptions import ClientError
@@ -34,6 +35,7 @@ def _get_s3_client():
             aws_access_key_id=R2_ACCESS_KEY_ID,
             aws_secret_access_key=R2_SECRET_ACCESS_KEY,
             region_name="auto",
+            config=Config(signature_version='s3v4')
         )
     return _s3_client
 
