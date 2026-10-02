@@ -812,7 +812,16 @@ def google_login_account(message):
             raise IdentityError("Esta conta Google já está vinculada a outro nick.")
         user = get_user(nick)
         if not user:
-            raise IdentityError("Os dados antigos desta conta ainda não foram migrados para o servidor.")
+            # SQLite foi limpo (deploy/restart/hibernação) mas o vínculo com o Firestore
+            # continua. Recria o usuário local para destravar o login.
+            db.execute(
+                "INSERT INTO users(nick,display,pin,pin_salt,password_hash,password_salt,joined_at) "
+                "VALUES(?,?,?,?,?,?,?)",
+                (nick, account.get("nick") or nick, "", "", "", "",
+                 datetime.datetime.now().astimezone().isoformat(timespec="seconds")),
+            )
+            db.commit()
+            user = get_user(nick)
         if password:
             set_password(nick, password)
         if nick in ADMIN_NICKS and account.get("role") != "admin":
@@ -854,7 +863,7 @@ def google_login_account(message):
                     "Para proteger sua conta antiga, informe o PIN antigo uma única vez e escolha uma senha."
                 )
             if not valid_password(password):
-                raise IdentityError("Escolha uma senha com pelo menos 10 caracteres para concluir a migração."                )
+                raise IdentityError("Escolha uma senha com pelo menos 10 caracteres para concluir a migração.")
             set_password(nick, password)
         if not account:
             identity_store.ensure_legacy_account(nick, "admin" if nick in ADMIN_NICKS else "user")
