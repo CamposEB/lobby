@@ -87,7 +87,17 @@ SHOP = {
 }
 ROOMS = {"lobby": "Salão Principal", "praca": "Praça", "arena": "Arena"}
 
-db = sqlite3.connect(DB_PATH, check_same_thread=False)
+class _MarkedConnection(sqlite3.Connection):
+    """Chama persistence.notify_write() a cada commit, para o backup disparar rápido."""
+    def commit(self):
+        super().commit()
+        try:
+            persistence.notify_write()
+        except Exception:
+            pass
+
+
+db = sqlite3.connect(DB_PATH, check_same_thread=False, factory=_MarkedConnection)
 db.row_factory = sqlite3.Row
 db.execute("""CREATE TABLE IF NOT EXISTS users(
   nick TEXT PRIMARY KEY, display TEXT, pin TEXT, coins INT DEFAULT 10,
