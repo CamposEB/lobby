@@ -11,3 +11,7 @@ __pycache__/
 *.db
 *.db.*
 backup-r2-*
+
+firebase-service-account.json
+*service-account*.json
+*adminsdk*.json
