@@ -1,0 +1,20 @@
+<main class="play-page">
+  <header class="play-heading">
+    <div>
+      <p class="home-eyebrow">SOCIETY MLBB · LOBBY SOCIAL</p>
+      <h2>Jogue, converse e encontre sua comunidade.</h2>
+      <p>Explore as salas, customize seu avatar e combine a próxima partida.</p>
+    </div>
+    <button type="button" data-shortcut="lfg">🤝 Encontrar duo</button>
+  </header>
+  <div id="wrap">
+    <canvas id="c"></canvas>
+    <button id="centerBtn">Centralizar</button>
+    <div id="log" aria-live="polite"></div>
+    <div id="hud"><button data-p="rooms">🚪 Salas</button><button data-p="shop">🛍️ Loja</button><button data-p="inv">🎒 Inventário</button></div>
+    <div id="panel"><div class="phead"><b id="pTitle"></b><button id="pClose" aria-label="Fechar">✕</button></div>
+      <div id="roomList" class="pp"></div><div id="shopItems" class="pp"></div><div id="invItems" class="pp"></div></div>
+    <div id="pcard"></div>
+  </div>
+  <div id="chatrow"><input id="msg" maxlength="100" placeholder="Digite e aperte Enter"><button id="send">Enviar</button></div>
+</main>

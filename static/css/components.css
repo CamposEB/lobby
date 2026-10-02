@@ -1,0 +1,84 @@
+/* Componentes: formulários, mensagens diretas, perfil */
+label{display:block;margin:10px 0;color:var(--muted);font-size:.9rem}
+label input,label select{width:100%;margin-top:4px}
+.dmhead,.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dmhead{flex-wrap:wrap}
+.dmhead>span{display:flex;flex-wrap:wrap;gap:6px}
+.dm-profile-dialog{width:min(380px,calc(100vw - 28px));padding:18px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md)}
+.dm-profile-dialog::backdrop{background:var(--overlay)}
+.dm-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dm-profile-heading h2{margin:0;font-size:1.2rem}
+#dmProfileContent{display:grid;gap:8px;margin-top:14px;color:var(--muted);overflow-wrap:anywhere}
+#dmProfileContent b{color:var(--text)}
+.row input{flex:1}
+#dmMsgs{height:46vh;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:10px 0}
+.bub{max-width:80%;padding:8px 12px;border-radius:10px;background:var(--surface-2);align-self:flex-start;word-break:break-word}
+.bub.me{align-self:flex-end;background:var(--accent)}
+.thread{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.dm-identity{display:flex;align-items:center;gap:9px;min-width:0}
+.dm-with-avatar,.dm-thread-avatar{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;overflow:hidden;border-radius:50%;background:var(--surface-2);color:var(--text);font-weight:700}
+.dm-with-avatar img,.dm-thread-avatar img{width:100%;height:100%;object-fit:cover}
+.dm-thread{width:100%;justify-content:flex-start;text-align:left;color:var(--text)}
+.dm-thread-copy{display:grid;gap:2px;min-width:0;flex:1}
+.dm-thread-copy>div{overflow:hidden;color:var(--muted);font-size:.84rem;text-overflow:ellipsis;white-space:nowrap}
+.pill{background:var(--danger);color:var(--text-inverse);border-radius:99px;font-style:normal;padding:0 8px}
+
+/* Visual: botões, cartões e bordas */
+button{background:var(--primary);color:var(--text-inverse);border:1px solid transparent;
+  border-radius:var(--radius-md);padding:8px 14px;box-shadow:none}
+button:hover:not(:disabled){background:var(--primary-hover);filter:none;transform:translateY(-1px)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;margin:10px 0;box-shadow:none}
+.card h2{margin:4px 0 8px}
+canvas{border:1px solid var(--border);box-shadow:none}
+#shop{border:1px solid var(--border)}
+#coins{color:var(--gold);font-weight:700}
+#log{border:1px solid var(--border)}
+#login{border:1px solid var(--border);box-shadow:var(--shadow-md)}
+
+/* Lounge: sala, menus e cartões */
+#sidebar{overflow-y:auto}
+.logo.big{width:56px;height:56px;font-size:2rem;margin:0 auto}
+#login h1{text-align:center}
+#c{display:block;width:100%;background:transparent;border:0;box-shadow:none;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+#wrap{position:relative}
+#roomTag{position:absolute;top:10px;left:12px;background:var(--overlay-light);padding:4px 12px;border-radius:99px;font-weight:700}
+#centerBtn{position:absolute;top:8px;right:10px}
+.item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.item .nm{flex:1}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid rgba(var(--white-rgb),.2)}
+.ico{width:26px;text-align:center;font-size:1.3rem}
+.opt{display:block;width:100%;margin:6px 0;text-align:left}
+.chk{display:flex;align-items:center;gap:10px;color:var(--text)}
+.chk input{width:auto;margin:0}
+.filters{grid-template-columns:1fr 1fr}
+.duo{display:flex;gap:12px;align-items:center}
+.duo>div:nth-child(2){flex:1;min-width:0}
+.av{flex:none;width:44px;height:44px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-weight:700;font-size:1.2rem}
+.dot{color:var(--positive);font-size:.85rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+.tag{background:var(--surface-2);border-radius:99px;padding:1px 10px;font-size:.85rem}
+.duo small{display:block;color:var(--muted)}
+.act{display:flex;flex-direction:column;gap:6px}
+
+/* Jogo: HUD, painéis, perfil rápido, chat que some, calculadoras */
+#wrap #log{position:absolute;left:10px;bottom:56px;width:min(440px,75%);max-height:45%;height:auto;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;background:none;border:0;padding:0;margin:0;pointer-events:none}
+#log div{background:var(--overlay);padding:3px 10px;border-radius:10px;margin-top:4px;width:fit-content;max-width:100%;animation:fadeout 1s 24s forwards}
+@keyframes fadeout{to{opacity:0}}
+#hud{position:absolute;left:10px;bottom:10px;display:flex;gap:6px}
+#hud button{background:var(--surface);border:1px solid var(--border)}
+#panel,#pcard{display:none;position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;z-index:6;box-shadow:var(--shadow-md)}
+#panel{left:10px;top:48px;width:min(360px,calc(100% - 20px));max-height:calc(100% - 120px);overflow:auto}
+#pcard{left:50%;top:50px;transform:translateX(-50%);width:min(280px,calc(100% - 20px));text-align:center}
+#panel.open,#pcard.open{display:block}
+.phead,.crow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.crow{justify-content:center;margin:10px 0 0}
+.pp{display:none}
+#pcard .tag{display:inline-block;margin:2px}
+.hint{color:var(--muted);margin:2px 0 6px;font-size:.92rem}
+.big{font-size:1.25rem;font-weight:700;color:var(--gold);margin:10px 0 2px}
+.bar{position:relative;height:10px;background:var(--surface-2);border-radius:6px;margin:12px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--positive);border-radius:6px}
+.bar b{position:absolute;top:-4px;width:3px;height:18px;background:var(--gold);border-radius:2px;left:0}
+.calc input{width:100%}

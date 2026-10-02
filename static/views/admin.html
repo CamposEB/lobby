@@ -1,0 +1,35 @@
+<main class="moderation-page">
+  <header class="moderation-hero">
+    <div><p class="moderation-eyebrow">SOCIETY MLBB · EQUIPE DE CONFIANÇA</p>
+      <h2>Moderação da comunidade</h2>
+      <p>Analise denúncias com privacidade, registre decisões e gerencie silenciamentos.</p>
+    </div>
+    <span aria-hidden="true">🛡️</span>
+  </header>
+  <section class="moderation-section">
+    <header class="moderation-section-header">
+      <div><p class="moderation-eyebrow">FILA DE ANÁLISE</p><h3>Denúncias</h3></div>
+      <button id="moderationRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
+    </header>
+    <p id="moderationMessage" class="moderation-message" role="status"></p>
+    <div id="moderationReports" class="moderation-report-list"></div>
+    <div id="moderationReportsEmpty" class="moderation-empty" hidden>
+      <span>✅</span><b>Não há denúncias pendentes.</b><small>Novas denúncias aparecem aqui em tempo real.</small>
+    </div>
+  </section>
+  <section class="moderation-section">
+    <header class="moderation-section-header">
+      <div><p class="moderation-eyebrow">MEDIDAS ATIVAS</p><h3>Silenciamentos temporários</h3></div>
+    </header>
+    <div id="moderationMutes" class="moderation-mute-list"></div>
+    <p id="moderationMutesEmpty" class="moderation-empty" hidden>Não há silenciamentos ativos.</p>
+  </section>
+  <section id="adminRoleManagement" class="moderation-section" hidden>
+    <header class="moderation-section-header">
+      <div><p class="moderation-eyebrow">ACESSO RESTRITO</p><h3>Contas e papéis</h3></div>
+      <button id="adminRolesRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
+    </header>
+    <p class="moderation-message">Papéis armazenados no Firebase Firestore. Não são exibidos e-mails nem identificadores Google.</p>
+    <div id="adminRoleList" class="moderation-role-list"></div>
+  </section>
+</main>

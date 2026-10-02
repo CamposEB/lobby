@@ -1,0 +1,182 @@
+.lfg-page {
+  --lfg-line: var(--border);
+  --lfg-card: var(--surface);
+  --lfg-soft: var(--text-muted);
+  display: grid;
+  gap: 28px;
+  max-width: 980px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+#tab-lfg { max-width: 1020px; }
+
+.lfg-page h2,
+.lfg-page h3,
+.lfg-page p { margin-top: 0; }
+
+.lfg-header,
+.lfg-section-heading,
+.lfg-dialog-heading,
+.lfg-dialog-actions,
+.lfg-results-heading,
+.lfg-own-top,
+.lfg-own-details,
+.lfg-own-actions,
+.lfg-player-top,
+.lfg-player-actions,
+.lfg-recommended-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.lfg-header { align-items: flex-start; padding: 8px 0 2px; }
+.lfg-header h2 { margin: 0 0 4px; font-size: clamp(1.7rem, 4vw, 2.2rem); }
+.lfg-subtitle { margin: 0; color: var(--lfg-soft); }
+.lfg-eyebrow { color: var(--text-muted); font-size: .7rem; font-weight: 700; letter-spacing: .13em; margin: 0 0 5px; }
+.lfg-activity { display: flex; align-items: center; gap: 7px; margin: 14px 0 0; color: var(--lfg-soft); font-size: .88rem; }
+.lfg-activity span { color: var(--positive); font-size: .8rem; }
+.lfg-primary,
+.lfg-secondary,
+.lfg-icon-button { min-height: 42px; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
+.lfg-primary { background: var(--accent); color: var(--text-inverse); padding: 10px 17px; box-shadow: none; }
+.lfg-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); }
+.lfg-secondary,
+.lfg-icon-button { background: var(--surface-2); color: var(--text); border: 1px solid var(--lfg-line); }
+.lfg-secondary:hover:not(:disabled),
+.lfg-icon-button:hover:not(:disabled) { background: var(--surface); border-color: var(--text-muted); }
+.lfg-section { display: grid; gap: 14px; min-width: 0; }
+.lfg-section-heading { align-items: flex-end; border-bottom: 1px solid var(--lfg-line); padding-bottom: 12px; }
+.lfg-section-heading h3 { margin: 0; font-size: 1.25rem; }
+.lfg-muted { color: var(--lfg-soft); font-size: .83rem; }
+
+.lfg-own-section { border: 1px solid var(--border); border-radius: 10px; padding: 17px; background: var(--lfg-card); }
+.lfg-own-section[hidden] { display: none; }
+.lfg-own-top { justify-content: flex-start; color: var(--positive); font-size: .76rem; font-weight: 700; letter-spacing: .07em; }
+.lfg-own-top span:first-child { width: 8px; height: 8px; border-radius: 50%; background: var(--positive); }
+.lfg-own-details { justify-content: flex-start; flex-wrap: wrap; margin: 14px 0 8px; font-weight: 700; }
+.lfg-own-meta { display: flex; flex-wrap: wrap; gap: 14px; color: var(--lfg-soft); font-size: .84rem; }
+.lfg-own-actions { justify-content: flex-start; margin-top: 14px; }
+.lfg-own-actions button { min-height: 38px; }
+.lfg-danger { background: rgba(var(--danger-rgb),.13); color: var(--danger); border: 1px solid rgba(var(--danger-rgb),.25); }
+.lfg-danger:hover:not(:disabled) { background: rgba(var(--danger-rgb),.25); }
+
+.lfg-recommended { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.lfg-recommended-card,
+.lfg-player-card { min-width: 0; border: 1px solid var(--lfg-line); border-radius: 10px; background: var(--lfg-card); box-shadow: none; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.lfg-recommended-card { padding: 14px; }
+.lfg-recommended-card:hover,
+.lfg-player-card:hover { transform: translateY(-2px); border-color: var(--text-muted); box-shadow: none; }
+.lfg-recommended-top { justify-content: flex-start; }
+.lfg-recommended-card h4 { margin: 0; }
+.lfg-recommended-card p { color: var(--lfg-soft); font-size: .84rem; margin: 10px 0; }
+.lfg-recommended-card button { width: 100%; }
+.lfg-recommend-reason { display: inline-block; color: var(--text-subtle); font-size: .75rem; }
+.lfg-recommended-empty { grid-column: 1/-1; color: var(--lfg-soft); margin: 0; font-size: .9rem; }
+
+.lfg-filters { display: grid; grid-template-columns: minmax(180px, 1.5fr) repeat(3, minmax(130px, 1fr)) auto; gap: 9px; align-items: center; }
+.lfg-filters label { min-width: 0; margin: 0; }
+.lfg-filters input,
+.lfg-filters select,
+.lfg-form-grid input,
+.lfg-form-grid select,
+.lfg-form-grid textarea { width: 100%; min-width: 0; }
+.lfg-filters select { min-height: 42px; }
+.lfg-search { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 10px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; }
+.lfg-search:focus-within { outline: 3px solid var(--text-inverse); outline-offset: 1px; }
+.lfg-search span { color: var(--text-muted); font-size: 1.4rem; }
+.lfg-search input { padding-left: 0; border: 0; outline: 0; background: transparent; }
+.lfg-search input:focus-visible { outline: 0; }
+.lfg-results-heading { color: var(--lfg-soft); font-size: .85rem; }
+.lfg-results-heading b { color: var(--text); }
+.lfg-player-list { display: grid; gap: 11px; }
+.lfg-skeleton-list { display: grid; gap: 11px; }
+.lfg-skeleton-list[hidden] { display: none; }
+.lfg-skeleton { height: 158px; border: 1px solid var(--lfg-line); border-radius: 10px; background: linear-gradient(90deg, var(--surface-tint-1), var(--surface-tint-3), var(--surface-tint-1)); background-size: 200% 100%; animation: lfg-shimmer 1.4s ease-in-out infinite; }
+.lfg-privacy-note { margin: 10px 0 0; color: var(--lfg-soft); font-size: .78rem; line-height: 1.45; }
+.lfg-player-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 17px; animation: lfg-enter .25s ease both; }
+.lfg-player-main { min-width: 0; }
+.lfg-player-top { justify-content: flex-start; min-width: 0; }
+.lfg-avatar { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 10px; background: var(--surface-2); color: var(--text); font-size: 1.15rem; font-weight: 700; }
+.lfg-player-name { min-width: 0; }
+.lfg-player-name h4 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0 0 3px; font-size: 1rem; }
+.lfg-status { display: inline-flex; align-items: center; gap: 5px; font-size: .76rem; white-space: nowrap; }
+.lfg-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.lfg-status-now { color: var(--positive); }
+.lfg-status-soon { color: var(--warning); }
+.lfg-status-offline { color: var(--text-muted); }
+.lfg-player-rank { color: var(--text-subtle); margin: 10px 0 4px; font-size: .9rem; font-weight: 700; }
+.lfg-player-stats,
+.lfg-player-tags { display: flex; flex-wrap: wrap; gap: 7px 13px; color: var(--lfg-soft); font-size: .8rem; }
+.lfg-player-tags { margin-top: 8px; }
+.lfg-player-message { color: var(--text-subtle); margin: 10px 0 0; font-size: .88rem; overflow-wrap: anywhere; }
+.lfg-player-actions { flex-direction: column; align-items: stretch; min-width: 155px; }
+.lfg-player-actions button { min-height: 40px; }
+.lfg-invite { background: var(--accent); color: var(--text-inverse); }
+.lfg-invite:hover:not(:disabled) { background: var(--primary-hover); }
+.lfg-empty { padding: 30px 18px; border: 1px dashed var(--border); border-radius: 10px; text-align: center; background: var(--surface); }
+.lfg-empty[hidden] { display: none; }
+.lfg-empty>span { font-size: 1.8rem; }
+.lfg-empty h3 { margin: 8px 0 4px; }
+.lfg-empty p { color: var(--lfg-soft); margin: 0 0 14px; }
+.lfg-empty>div { display: flex; justify-content: center; gap: 8px; }
+
+.lfg-dialog { width: min(680px, calc(100vw - 28px)); max-height: min(90vh, 850px); overflow: auto; padding: 22px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-md); }
+.lfg-dialog::backdrop { background: var(--overlay); }
+.lfg-dialog-heading { align-items: flex-start; margin-bottom: 17px; }
+.lfg-dialog-heading h2 { margin: 0; }
+.lfg-icon-button { min-width: 40px; padding: 7px; }
+.lfg-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 13px; }
+.lfg-form-grid label { min-width: 0; }
+.lfg-form-grid label[hidden] { display: none; }
+.lfg-form-grid textarea { resize: vertical; }
+.lfg-message-field { grid-column: 1/-1; }
+.lfg-char-count { display: block; text-align: right; color: var(--lfg-soft); font-size: .75rem; }
+.lfg-preview { margin-top: 4px; padding: 12px; border: 1px solid var(--lfg-line); border-radius: 10px; background: var(--surface); }
+.lfg-preview-card { margin: 7px 0 0; color: var(--text-subtle); font-size: .86rem; overflow-wrap: anywhere; }
+.lfg-form-error { min-height: 1.1em; color: var(--error-text); margin: 8px 0 0; }
+.lfg-dialog-actions { align-items: flex-end; }
+.lfg-dialog-actions>div { display: flex; gap: 8px; }
+.lfg-dialog-actions button { min-height: 42px; }
+.lfg-profile-content { display: grid; gap: 8px; color: var(--lfg-soft); }
+.lfg-profile-content b { color: var(--text); }
+.lfg-toast { position: fixed; z-index: 50; right: 22px; bottom: 22px; max-width: min(390px, calc(100vw - 32px)); padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); box-shadow: var(--shadow-md); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+.lfg-toast.visible { opacity: 1; transform: translateY(0); }
+.lfg-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@keyframes lfg-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes lfg-shimmer { to { background-position: -200% 0; } }
+
+@media (max-width: 900px) {
+  .lfg-page { gap: 23px; }
+  .lfg-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lfg-search { grid-column: 1/-1; }
+  .lfg-recommended { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .lfg-page { gap: 20px; }
+  .lfg-header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .lfg-header .lfg-primary { align-self: flex-start; }
+  .lfg-section-heading { align-items: flex-start; }
+  .lfg-recommended { grid-template-columns: 1fr; }
+  .lfg-filters { grid-template-columns: 1fr; }
+  .lfg-search { grid-column: auto; }
+  .lfg-results-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .lfg-player-card { grid-template-columns: 1fr; gap: 12px; padding: 14px; }
+  .lfg-player-actions { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+  .lfg-own-actions { flex-wrap: wrap; }
+  .lfg-dialog { padding: 17px; }
+  .lfg-form-grid { grid-template-columns: 1fr; }
+  .lfg-message-field { grid-column: auto; }
+  .lfg-dialog-actions { align-items: stretch; flex-direction: column; }
+  .lfg-dialog-actions>div { display: grid; grid-template-columns: 1fr 1fr; }
+  .lfg-toast { right: 12px; bottom: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lfg-page *,
+  .lfg-page *::before,
+  .lfg-page *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

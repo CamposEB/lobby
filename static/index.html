@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Society MLBB</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="stylesheet" href="/static/css/tokens.css">
+<link rel="stylesheet" href="/static/css/base.css">
+<link rel="stylesheet" href="/static/css/layout.css">
+<link rel="stylesheet" href="/static/css/components.css">
+<link rel="stylesheet" href="/static/css/lfg.css">
+<link rel="stylesheet" href="/static/css/tools.css">
+<link rel="stylesheet" href="/static/css/profile.css">
+<link rel="stylesheet" href="/static/css/tournaments.css">
+<link rel="stylesheet" href="/static/css/home.css">
+<link rel="stylesheet" href="/static/css/moderation.css">
+<link rel="stylesheet" href="/static/css/meta-builds.css">
+</head>
+<body>
+<form id="login" onsubmit="return false">
+  <div class="logo big">S</div>
+  <h1>Society MLBB</h1>
+  <small style="color:var(--muted)">O ponto de encontro da comunidade de MLBB</small>
+  <div class="auth-tabs" role="tablist" aria-label="Acesso à comunidade">
+    <button id="authLoginTab" class="auth-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="authLoginPanel">Entrar</button>
+    <button id="authRegisterTab" class="auth-tab" type="button" role="tab" aria-selected="false" aria-controls="authRegisterPanel">Criar conta</button>
+  </div>
+  <p id="googleAuthMessage" class="google-auth-message" role="status" aria-live="polite"></p>
+  <section id="authLoginPanel" class="auth-panel" role="tabpanel" aria-labelledby="authLoginTab">
+    <p class="google-link-note">Entre com sua conta Google ou use seu nick e senha.</p>
+    <button id="googleLogin" class="google-login-button" type="button" hidden>Entrar com Google</button>
+    <div class="auth-divider" aria-hidden="true"><span>ou entre com nick e senha</span></div>
+    <label for="nick">Nick
+      <input id="nick" placeholder="Seu nick" maxlength="14" autocomplete="username">
+    </label>
+    <label for="password">Senha
+      <input id="password" placeholder="Sua senha" maxlength="128" type="password" autocomplete="current-password">
+    </label>
+    <button id="enter" type="button">Entrar com senha</button>
+  </section>
+  <section id="authRegisterPanel" class="auth-panel" role="tabpanel" aria-labelledby="authRegisterTab" hidden>
+    <p class="google-link-note">Crie uma conta com nick e senha ou use o Google.</p>
+    <label for="registerNick">Escolha seu nick
+      <input id="registerNick" placeholder="3 a 14 letras, números ou _" maxlength="14" autocomplete="username">
+    </label>
+    <label for="registerPassword">Crie uma senha
+      <input id="registerPassword" placeholder="Pelo menos 10 caracteres" maxlength="128" type="password" autocomplete="new-password">
+    </label>
+    <label for="registerPasswordConfirm">Confirme a senha
+      <input id="registerPasswordConfirm" placeholder="Digite a senha novamente" maxlength="128" type="password" autocomplete="new-password">
+    </label>
+    <button id="createPasswordAccount" type="button">Criar conta com senha</button>
+    <div class="auth-divider" aria-hidden="true"><span>ou crie com Google</span></div>
+    <button id="googleRegister" class="google-login-button" type="button" hidden>Criar conta com Google</button>
+    <small class="auth-register-note">Senhas são armazenadas somente como hash seguro.</small>
+  </section>
+  <p id="err"></p>
+  <small id="loginHelp" style="color:var(--muted)">Contas antigas continuam disponíveis enquanto o login Google é configurado.</small>
+</form>
+
+<dialog id="googleProfileDialog" class="google-profile-dialog" aria-labelledby="googleProfileTitle">
+  <form id="googleProfileForm">
+    <h2 id="googleProfileTitle">Nome do perfil</h2>
+    <p>Escolha como você vai aparecer na comunidade.</p>
+    <label for="googleProfileName">Nome
+      <input id="googleProfileName" maxlength="32" autocomplete="name" required>
+    </label>
+    <div class="google-profile-actions">
+      <button id="googleProfileCancel" type="button" class="google-profile-cancel">Cancelar</button>
+      <button type="submit">Criar conta</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="game">
+<header id="topbar">
+  <button id="menuBtn" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <button id="topbarBrand" type="button" data-shortcut="home" aria-label="Society MLBB, início">
+    <span class="logo">S</span><b>SOCIETY MLBB</b>
+  </button>
+  <form id="topbarSearch" role="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg>
+    <input id="topbarSearchInput" type="search" placeholder="Buscar builds..." aria-label="Buscar builds por herói, rota ou patch" autocomplete="off">
+  </form>
+  <div id="topbarAccount">
+    <div id="sideCoins" role="group" aria-label="Saldo de moedas">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M15.2 9.2c-.5-.8-1.4-1.2-2.7-1.2-1.4 0-2.4.7-2.4 1.7 0 2.7 5.6.8 5.6 3.6 0 1.1-1.1 2-2.8 2-1.3 0-2.4-.5-3-1.4M12.1 6.7v10.6"/></svg>
+      <span id="coinsAmount">0</span><small>moedas</small>
+    </div>
+    <button id="sideProfile" type="button" aria-label="Abrir meu perfil">
+      <span id="sidebarAvatar" class="sidebar-avatar" aria-hidden="true">S</span>
+      <span class="sidebar-user-copy"><b id="sidebarDisplayName">Jogador</b><small id="sidebarUsername">@jogador</small></span>
+    </button>
+  </div>
+</header>
+<h1 id="pageTitle"></h1>
+
+<section id="tab-home" class="tab on">
+  <div class="tab-loading">Carregando início...</div>
+</section>
+
+<section id="tab-meta" class="tab">
+  <div class="tab-loading">Carregando meta...</div>
+</section>
+
+<section id="tab-builds" class="tab">
+  <div class="tab-loading">Carregando builds...</div>
+</section>
+
+<section id="tab-lobby" class="tab">
+  <div class="tab-loading">Carregando sala...</div>
+</section>
+
+<section id="tab-guide" class="tab">
+  <div class="tab-loading">Carregando guia...</div>
+</section>
+
+<section id="tab-lfg" class="tab">
+  <div class="tab-loading">Carregando anúncios...</div>
+</section>
+
+<section id="tab-dm" class="tab">
+  <div class="tab-loading">Carregando mensagens...</div>
+</section>
+
+
+<section id="tab-quiz" class="tab">
+  <div class="tab-loading">Carregando quiz...</div>
+</section>
+
+<section id="tab-tools" class="tab">
+  <div id="toolsContent" class="tools-loading" role="status">Carregando ferramentas...</div>
+</section>
+
+<section id="tab-tournaments" class="tab">
+  <div class="tab-loading">Carregando torneios...</div>
+</section>
+
+<section id="tab-admin" class="tab">
+  <div class="tab-loading">Carregando ferramentas da comunidade...</div>
+</section>
+
+<section id="tab-profile" class="tab">
+  <div class="tab-loading">Carregando perfil...</div>
+</section>
+
+<section id="tab-settings" class="tab">
+  <div class="tab-loading">Carregando configurações...</div>
+</section>
+
+<div id="scrim"></div>
+<aside id="sidebar">
+  <div class="sidebar-heading">
+    <div id="brand"><span class="logo">S</span><b>SOCIETY MLBB</b></div>
+    <button id="menuClose" type="button" aria-label="Fechar menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <nav id="nav">
+    <div class="nav-group">
+      <span class="nav-group-label">COMUNIDADE</span>
+      <button type="button" data-t="home" class="on"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg><span>Início</span></button>
+      <button type="button" data-t="lfg"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></svg><span>Procurar duo</span></button>
+      <button type="button" data-t="dm"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H11l-5.5 3v-3H4z"/><path d="M8 10h8M8 13.5h5"/></svg><span>Mensagens</span><em id="dmBadge"></em></button>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">JOGO</span>
+      <button type="button" data-t="meta"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19h16M6 16V9M12 16V5M18 16v-4"/></svg><span>Meta por rota</span></button>
+      <button type="button" data-t="builds"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 6.5 3-3 3 3-3 3"/><path d="m17.5 3.5-7.8 7.8M9 9l6 6M5 13l6 6-3 2-5-5z"/></svg><span>Builds</span></button>
+      <button type="button" data-t="guide"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h8"/></svg><span>Guia</span></button>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">MAIS</span>
+      <button type="button" data-t="quiz"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 1 1 4.5 1.8c-1.2 1.1-2 1.4-2 3M12 17.5h.01"/></svg><span>Quiz</span></button>
+      <button type="button" data-t="tools"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 6.5a4 4 0 0 0-5.5 5.5L4 16.5 7.5 20l4.5-4.5a4 4 0 0 0 5.5-5.5l-2.3 2.3-3-3z"/><path d="m15 4 5 5"/></svg><span>Ferramentas</span></button>
+      <button type="button" data-t="tournaments"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6"/></svg><span>Torneios</span></button>
+      <button type="button" data-t="admin" hidden><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v5c0 4.5-3.2 7.8-8 10-4.8-2.2-8-5.5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Moderação</span></button>
+    </div>
+    <div class="nav-group nav-account-group">
+      <span class="nav-group-label">CONTA</span>
+      <button type="button" data-t="profile"><span id="profileNavAvatar" class="nav-profile-avatar" aria-hidden="true">S</span><span>Meu perfil</span></button>
+      <button type="button" data-t="settings"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.3a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9h-.3a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2v-.3a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.3a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9z"/></svg><span>Configurações</span></button>
+      <button type="button" id="logoutBtn"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/></svg><span>Sair</span></button>
+    </div>
+  </nav>
+</aside>
+<nav id="mobileNav" aria-label="Navegação principal para celular">
+  <button type="button" data-t="home" class="on"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg><small>Início</small></button>
+  <button type="button" data-t="meta"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19h16M6 16V9M12 16V5M18 16v-4"/></svg><small>Meta</small></button>
+  <button type="button" data-t="builds"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 6.5 3-3 3 3-3 3"/><path d="m17.5 3.5-7.8 7.8M9 9l6 6M5 13l6 6-3 2-5-5z"/></svg><small>Builds</small></button>
+  <button type="button" data-t="lfg"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></svg><small>Duo</small></button>
+  <button type="button" data-t="dm"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H11l-5.5 3v-3H4z"/><path d="M8 10h8M8 13.5h5"/></svg><small>Mensagens</small></button>
+  <button id="mobileMore" type="button" aria-label="Abrir mais opções" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg><small>Mais</small></button>
+</nav>
+</div>
+<dialog id="communityReportDialog" class="community-report-dialog">
+  <form id="communityReportForm" novalidate>
+    <div class="community-report-heading">
+      <div><p class="community-report-eyebrow">SEGURANÇA DA COMUNIDADE</p><h2>Denunciar jogador</h2></div>
+      <button id="communityReportClose" type="button" aria-label="Fechar denúncia">✕</button>
+    </div>
+    <p class="community-report-target">Jogador: <b id="communityReportTarget">—</b></p>
+    <label>O que aconteceu?
+      <select id="communityReportCategory" required>
+        <option value="">Selecione uma categoria</option>
+        <option value="harassment">Assédio ou intimidação</option>
+        <option value="hate">Discurso de ódio</option>
+        <option value="spam">Spam ou golpe</option>
+        <option value="cheating">Trapaça ou comportamento antidesportivo</option>
+        <option value="inappropriate">Conteúdo impróprio</option>
+        <option value="other">Outro problema</option>
+      </select>
+    </label>
+    <label>Conte o que aconteceu
+      <textarea id="communityReportDetails" rows="4" maxlength="600" minlength="8" required
+        placeholder="Descreva a situação sem compartilhar senhas ou dados pessoais. (mín. 8 caracteres)"></textarea>
+    </label>
+    <p id="communityReportMessage" class="community-report-message" role="status"></p>
+    <div class="community-report-actions">
+      <button id="communityReportCancel" type="button" class="community-report-secondary">Cancelar</button>
+      <button type="submit">Enviar denúncia</button>
+    </div>
+    <small>A denúncia é privada e será analisada pela moderação. Use o bloqueio para interromper mensagens de alguém.</small>
+  </form>
+</dialog>
+<div id="lfgToast" class="lfg-toast" role="status" aria-live="polite"></div>
+
+<script src="/static/js/profile.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/tools.js"></script>
+<script type="module" src="/static/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<main class="lfg-page">
+  <header class="lfg-header">
+    <div>
+      <p class="lfg-eyebrow">SOCIETY MLBB · MATCHMAKING</p>
+      <h2>Encontrar duo</h2>
+      <p class="lfg-subtitle">Encontre jogadores para jogar agora ou combine um horário para jogar.</p>
+      <p class="lfg-activity"><span aria-hidden="true">●</span> <b id="lfgActivityCount">0 jogadores</b> procurando duo</p>
+    </div>
+    <button id="lfgOpenForm" class="lfg-primary" type="button">＋ Procurar duo</button>
+  </header>
+
+  <section id="lfgOwnSection" class="lfg-own-section" hidden aria-live="polite"></section>
+
+  <section class="lfg-section" aria-labelledby="lfgRecommendedTitle">
+    <div class="lfg-section-heading">
+      <div>
+        <p class="lfg-eyebrow">UMA BOA PARTIDA COMEÇA AQUI</p>
+        <h3 id="lfgRecommendedTitle">Duo recomendado</h3>
+      </div>
+      <span id="lfgRecommendedHint" class="lfg-muted"></span>
+    </div>
+    <div id="lfgRecommended" class="lfg-recommended"></div>
+  </section>
+
+  <section class="lfg-section" aria-labelledby="lfgSearchTitle">
+    <div class="lfg-section-heading">
+      <div>
+        <p class="lfg-eyebrow">ENCONTRE SEU PRÓXIMO PARCEIRO</p>
+        <h3 id="lfgSearchTitle">Jogadores procurando duo</h3>
+      </div>
+    </div>
+    <div class="lfg-filters">
+      <label class="lfg-search">
+        <span aria-hidden="true">⌕</span>
+        <input id="lfgSearch" type="search" placeholder="Procurar jogador" autocomplete="off">
+      </label>
+      <label><span class="lfg-sr-only">Rank</span>
+        <select id="fRank">
+          <option value="">Todos os ranks</option><option>Épico</option><option>Lenda</option>
+          <option>Mítico</option><option>Mítico Honrado</option><option>Mítico Glorioso</option>
+        </select>
+      </label>
+      <label><span class="lfg-sr-only">Modo</span>
+        <select id="fMode">
+          <option value="">Todos os modos</option><option>Ranked</option><option>Clássico</option>
+          <option>Brawl</option><option>Personalizada</option><option>Casual</option><option>Scrim</option>
+        </select>
+      </label>
+      <label><span class="lfg-sr-only">Disponibilidade</span>
+        <select id="fAvailability">
+          <option value="">Qualquer disponibilidade</option><option value="Agora">Disponível agora</option>
+          <option value="Hoje">Hoje</option><option value="Mais tarde">Mais tarde</option>
+          <option value="Horário específico">Horário específico</option><option value="offline">Offline</option>
+        </select>
+      </label>
+      <button id="lfgClearFilters" class="lfg-secondary" type="button">Limpar filtros</button>
+    </div>
+    <div class="lfg-results-heading">
+      <b id="lfgResultCount" aria-live="polite">0 jogadores encontrados</b>
+      <span>Os anúncios expiram em até 3 horas.</span>
+    </div>
+    <div id="lfgLoading" class="lfg-skeleton-list" role="status" aria-label="Carregando anúncios" hidden>
+      <div class="lfg-skeleton"></div><div class="lfg-skeleton"></div><div class="lfg-skeleton"></div>
+    </div>
+    <div id="lfgList" class="lfg-player-list"></div>
+    <div id="lfgEmpty" class="lfg-empty" hidden>
+      <span aria-hidden="true">🔎</span>
+      <h3>Não encontramos jogadores com esses filtros.</h3>
+      <p>Experimente alterar os filtros ou criar seu próprio anúncio.</p>
+      <div><button id="lfgEmptyClear" class="lfg-secondary" type="button">Limpar filtros</button>
+        <button id="lfgEmptyCreate" class="lfg-primary" type="button">Criar anúncio</button></div>
+    </div>
+  </section>
+
+  <dialog id="lfgFormDialog" class="lfg-dialog">
+    <form id="lfgForm" novalidate>
+      <div class="lfg-dialog-heading">
+        <div><p class="lfg-eyebrow">VAMOS MONTAR SEU TIME</p><h2 id="lfgFormTitle">Criar anúncio</h2></div>
+        <button id="lfgCloseForm" class="lfg-icon-button" type="button" aria-label="Fechar">✕</button>
+      </div>
+      <div class="lfg-form-grid">
+        <label>Seu rank
+          <input id="lfgRank" maxlength="20" placeholder="Ex: Mítico 78" required>
+        </label>
+        <label>Rank desejado
+          <select id="lfgDesiredRank">
+            <option>Qualquer</option><option>Épico</option><option>Lenda</option><option>Mítico</option>
+            <option>Mítico Honrado</option><option>Mítico Glorioso</option>
+          </select>
+        </label>
+        <label>Modo de jogo
+          <select id="lfgMode"><option>Ranked</option><option>Clássico</option><option>Brawl</option><option>Personalizada</option></select>
+        </label>
+        <label>Disponibilidade
+          <select id="lfgAvailability">
+            <option>Agora</option><option>Hoje</option><option>Mais tarde</option><option>Horário específico</option>
+          </select>
+        </label>
+        <label>Win Rate <span class="lfg-muted">(opcional)</span>
+          <input id="lfgWinRate" type="number" min="0" max="100" step="0.1" placeholder="Ex: 65,4%">
+        </label>
+        <label>Partidas jogadas <span class="lfg-muted">(opcional)</span>
+          <input id="lfgMatches" type="number" min="1" step="1" placeholder="Ex: 1240">
+        </label>
+        <label id="lfgHourField" hidden>Horário
+          <input id="lfgHour" maxlength="20" placeholder="Ex: hoje às 20h">
+        </label>
+        <label>ID no jogo <span class="lfg-muted">(opcional)</span>
+          <input id="lfgGid" maxlength="20" placeholder="Seu ID no MLBB">
+        </label>
+        <label class="lfg-message-field">Mensagem <span class="lfg-muted">(opcional)</span>
+          <textarea id="lfgMessage" maxlength="160" rows="3" placeholder="Ex: procurando duo para subir WR, mic disponível."></textarea>
+          <span id="lfgCharCount" class="lfg-char-count">0/160</span>
+        </label>
+      </div>
+      <p class="lfg-privacy-note">Win Rate, partidas e mensagem aparecem no seu anúncio público para ajudar a encontrar um duo compatível. Informe apenas dados que você queira compartilhar.</p>
+      <div class="lfg-preview">
+        <span class="lfg-eyebrow">PRÉVIA DO ANÚNCIO</span>
+        <div id="lfgPreview"></div>
+      </div>
+      <p id="lfgFormError" class="lfg-form-error" role="alert"></p>
+      <div class="lfg-dialog-actions">
+        <span class="lfg-muted">Seu anúncio ficará ativo por até 3 horas.</span>
+        <div><button id="lfgCancelForm" class="lfg-secondary" type="button">Cancelar</button>
+          <button class="lfg-primary" type="submit">Publicar anúncio</button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="lfgProfileDialog" class="lfg-dialog lfg-profile-dialog">
+    <div class="lfg-dialog-heading">
+      <div><p class="lfg-eyebrow">PERFIL DO JOGADOR</p><h2 id="lfgProfileName">Jogador</h2></div>
+      <button id="lfgCloseProfile" class="lfg-icon-button" type="button" aria-label="Fechar">✕</button>
+    </div>
+    <div id="lfgProfileContent" class="lfg-profile-content"></div>
+  </dialog>
+</main>

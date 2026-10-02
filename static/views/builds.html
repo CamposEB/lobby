@@ -1,0 +1,69 @@
+<main class="community-game-page builds-page">
+  <header class="community-game-hero builds-page-hero">
+    <div><p class="community-game-eyebrow">IDEIAS DE QUEM JOGA</p><h2>Builds da comunidade</h2>
+      <p>Compare configurações compartilhadas por jogadores e adapte-as ao contexto da partida.</p></div>
+  </header>
+  <aside class="community-game-disclaimer" role="note">
+    <b>Conteúdo criado por jogadores.</b> As builds não são oficiais e podem não servir para toda partida. Adapte a compra aos adversários, à composição e ao patch atual. Society MLBB é uma criação da comunidade, não oficial e sem afiliação com a Moonton. Imagens e nomes pertencem aos seus titulares.
+  </aside>
+  <section class="community-game-panel builds-browser" aria-label="Biblioteca de builds">
+    <header class="community-game-section-heading">
+      <div><p class="community-game-eyebrow">BIBLIOTECA DA COMUNIDADE</p><h3>Encontre uma build</h3></div>
+      <button id="buildFormToggle" class="builds-form-toggle" type="button" aria-expanded="false" aria-controls="buildFormPanel">Publicar build</button>
+    </header>
+    <form id="buildFilters" class="build-filters">
+      <label>Herói<input id="buildHeroFilter" type="search" maxlength="40" placeholder="Todos os heróis" autocomplete="off"></label>
+      <label>Rota<select id="buildLaneFilter"><option value="">Todas as rotas</option><option value="EXP">EXP</option><option value="Jungle">Selva · Jungle</option><option value="Mid">Meio · Mid</option><option value="Gold">Ouro · Gold</option><option value="Roam">Roam · Suporte</option></select></label>
+      <label>Período<select id="buildPeriodFilter"><option value="7d">7 dias</option><option value="30d" selected>30 dias</option><option value="all">Sempre</option></select></label>
+      <label>Destaque<select id="buildSortFilter"><option value="popular">Mais curtidas</option><option value="recent">Mais recentes</option></select></label>
+    </form>
+    <p id="buildMessage" class="community-game-message" role="status" aria-live="polite"></p>
+    <div id="buildLists" class="build-lists">
+      <section id="buildPopularSection" class="build-list-section" aria-labelledby="buildPopularTitle">
+        <header class="build-list-heading"><div><h4 id="buildPopularTitle">Mais curtidas, últimos 30 dias</h4><small>Ordenadas pelas avaliações positivas no período.</small></div></header>
+        <div id="buildPopularList" class="community-build-list" aria-live="polite" aria-busy="true"></div>
+        <div id="buildPopularEmpty" class="community-game-empty" hidden><b>Nenhuma build neste período.</b><small>Altere os filtros ou publique uma contribuição.</small></div>
+      </section>
+      <section id="buildRecentSection" class="build-list-section" aria-labelledby="buildRecentTitle">
+        <header class="build-list-heading"><div><h4 id="buildRecentTitle">Builds recentes</h4><small>Publicações mais novas primeiro.</small></div></header>
+        <div id="buildRecentList" class="community-build-list" aria-live="polite" aria-busy="true"></div>
+        <div id="buildRecentEmpty" class="community-game-empty" hidden><b>Nenhuma build encontrada.</b><small>Tente outros filtros ou publique uma contribuição.</small></div>
+      </section>
+    </div>
+    <div id="buildLoadError" class="build-load-error" role="alert" hidden>
+      <p>Não foi possível carregar as builds agora.</p><button id="buildRetry" type="button">Tentar novamente</button>
+    </div>
+  </section>
+  <section id="buildFormPanel" class="community-game-panel" hidden>
+    <header class="community-game-section-heading"><div><p class="community-game-eyebrow">COMPARTILHE SUA EXPERIÊNCIA</p><h3>Enviar uma build</h3></div></header>
+    <form id="buildForm" class="community-game-form">
+      <label>Herói<input id="buildHero" maxlength="40" required placeholder="Nome do herói"></label>
+      <label>Rota<select id="buildLane" required><option value="">Selecione</option><option value="EXP">EXP</option><option value="Jungle">Selva · Jungle</option><option value="Mid">Meio · Mid</option><option value="Gold">Ouro · Gold</option><option value="Roam">Roam · Suporte</option></select></label>
+      <label>Patch / temporada<input id="buildPatch" maxlength="24" required placeholder="Ex.: patch 2.1.XX"></label>
+      <label>Feitiço de batalha<input id="buildSpell" maxlength="40" required placeholder="Ex.: Flicker"></label>
+      <label>Emblema e talentos<input id="buildEmblem" maxlength="100" required placeholder="Ex.: Assassino · Ruptura"></label>
+      <div class="build-item-picker community-form-wide">
+        <div class="build-item-picker-heading">
+          <div><b>Itens da build</b><small>Escolha de 3 a 6 itens. A ordem dos cliques será a ordem de compra.</small></div>
+          <span id="buildItemCount" aria-live="polite">0/6</span>
+        </div>
+        <label class="build-item-search" for="buildItemSearch">Buscar item
+          <input id="buildItemSearch" type="search" autocomplete="off" placeholder="Ex.: botas, dano, defesa">
+        </label>
+        <div id="buildItemGrid" class="build-item-grid" role="group" aria-label="Selecione os itens da build" tabindex="-1"></div>
+        <div class="build-item-order">
+          <b>Ordem de compra</b>
+          <div id="buildItemOrder" class="build-item-order-list" aria-live="polite"></div>
+        </div>
+        <input id="buildItems" type="hidden">
+        <p id="buildItemsMessage" class="build-items-message" role="status"></p>
+      </div>
+      <label class="community-form-wide">Quando usar / observações <span>Opcional</span><textarea id="buildNotes" maxlength="350" rows="3" placeholder="Composição, matchup ou momento para adaptar os itens"></textarea></label>
+      <div class="community-form-footer"><p>Compartilhe sua própria configuração, sem dados pessoais nem conteúdo copiado. Seu nome público aparece como autor; perfis privados são identificados como “Jogador da comunidade”.</p><button type="submit">Publicar build</button></div>
+    </form>
+  </section>
+</main>
+
+<dialog id="buildDetailDialog" class="build-detail-dialog" aria-labelledby="buildDetailTitle">
+  <article id="buildDetailContent"></article>
+</dialog>

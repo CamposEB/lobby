@@ -1,0 +1,205 @@
+<div class="tools-page">
+  <div class="tools-intro">
+    <span class="tools-icon">🧮</span>
+    <div>
+      <h2>Ferramentas</h2>
+      <p>Calculadoras rápidas para ajudar nas suas partidas de MLBB.</p>
+    </div>
+  </div>
+
+  <h3 class="tools-picker-heading">Todas as ferramentas</h3>
+  <div class="tools-grid" id="toolsMenu">
+    <button class="tool-card" type="button" data-tool="wr">
+      <span class="tool-card-icon">📈</span>
+      <span class="tool-card-content">
+        <strong>Calcular Win Rate</strong>
+        <small>Descubra quantas partidas você precisa ganhar para atingir o WR desejado.</small>
+      </span>
+      <span class="tool-arrow">›</span>
+    </button>
+
+    <button class="tool-card" type="button" data-tool="stars">
+      <span class="tool-card-icon">⭐</span>
+      <span class="tool-card-content">
+        <strong>Próximo rank</strong>
+        <small>Estime quantas partidas faltam para alcançar seu próximo rank.</small>
+      </span>
+      <span class="tool-arrow">›</span>
+    </button>
+
+    <button class="tool-card" type="button" data-tool="skin">
+      <span class="tool-card-icon">💎</span>
+      <span class="tool-card-content">
+        <strong>Custo de skin</strong>
+        <small>Estime quanto uma skin custa em reais usando o preço do seu pacote.</small>
+      </span>
+      <span class="tool-arrow">›</span>
+    </button>
+
+    <button class="tool-card" type="button" data-tool="event-skin">
+      <span class="tool-card-icon">🎟️</span>
+      <span class="tool-card-content">
+        <strong>Skin por evento</strong>
+        <small>Estime quantos giros e diamantes faltam para resgatar sua skin.</small>
+      </span>
+      <span class="tool-arrow">›</span>
+    </button>
+  </div>
+
+  <div class="tool-panel" id="tool-wr" hidden>
+    <button class="tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+    <div class="card calc">
+      <div class="tool-heading">
+        <span class="tool-panel-icon">📈</span>
+        <div>
+          <h2>Calcular Win Rate</h2>
+          <p class="hint">Quantas partidas jogar para atingir tal Win Rate?</p>
+        </div>
+      </div>
+      <p class="hint">Pega os números do seu perfil no jogo e calcule aqui.</p>
+
+      <div class="grid">
+        <label>Partidas jogadas
+          <input id="wrN" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 200">
+        </label>
+        <label>Winrate atual %
+          <input id="wrW" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 65">
+        </label>
+        <label>Winrate que você quer %
+          <input id="wrT" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 70">
+        </label>
+      </div>
+
+      <div class="wr-meter" aria-hidden="true">
+        <div class="wr-meter-fill" id="barNow"></div>
+        <div class="wr-meter-goal" id="barGoal"></div>
+      </div>
+      <div class="wr-meter-labels">
+        <span>Atual: <b id="wrNowLabel">—</b></span>
+        <span>Meta: <b id="wrGoalLabel">—</b></span>
+      </div>
+
+      <div class="tool-result" id="wrOut" role="status">Preencha os três campos.</div>
+      <p class="tool-note">O cálculo é uma estimativa baseada no Win Rate exibido no seu perfil.</p>
+    </div>
+  </div>
+
+  <div class="tool-panel" id="tool-stars" hidden>
+    <button class="tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+    <div class="card calc">
+      <div class="tool-heading">
+        <span class="tool-panel-icon">⭐</span>
+        <div>
+          <h2>Quanto falta pro próximo rank?</h2>
+          <p class="hint">Estimativa simples para saber quantas partidas você pode precisar.</p>
+        </div>
+      </div>
+      <p class="hint">Não conta proteção de estrela nem bônus de sequência.</p>
+
+      <div class="grid">
+        <label>Estrelas que faltam
+          <input id="stN" type="number" min="1" step="1" placeholder="Ex.: 20">
+        </label>
+        <label>Seu winrate %
+          <input id="stW" type="number" min="0.01" max="100" step="0.01" placeholder="Ex.: 55">
+        </label>
+        <label>Partidas por dia
+          <input id="stD" type="number" min="0" step="1" placeholder="Ex.: 10">
+        </label>
+        <label>Estrelas por vitória
+          <input id="stUp" type="number" min="0" step="0.1" value="1" placeholder="1">
+        </label>
+        <label>Estrelas por derrota
+          <input id="stDown" type="number" min="0" step="0.1" value="1" placeholder="1">
+        </label>
+      </div>
+
+      <div class="tool-result" id="stOut" role="status">Preencha as estrelas e o winrate.</div>
+    </div>
+  </div>
+
+  <div class="tool-panel" id="tool-skin" hidden>
+    <button class="tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+    <div class="card calc">
+      <div class="tool-heading">
+        <span class="tool-panel-icon">💎</span>
+        <div>
+          <h2>Essa skin sai quanto em reais?</h2>
+          <p class="hint">Calcule uma estimativa usando o pacote de diamantes que você costuma comprar.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <label>Diamantes da skin
+          <input id="skD" type="number" min="1" step="1" placeholder="Ex.: 899">
+        </label>
+        <label>Diamantes do pacote
+          <input id="skPD" type="number" min="1" step="1" placeholder="Ex.: 500">
+        </label>
+        <label>Preço do pacote (R$)
+          <input id="skPR" type="number" min="0.01" step="0.01" placeholder="Ex.: 25,00">
+        </label>
+      </div>
+
+      <div class="tool-result" id="skOut" role="status">Preencha os três campos.</div>
+    </div>
+  </div>
+
+  <div class="tool-panel" id="tool-event-skin" hidden>
+    <button class="tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
+    <div class="card calc event-skin-card">
+      <div class="tool-heading">
+        <span class="tool-panel-icon">🎟️</span>
+        <div>
+          <h2>Calculadora de skin por evento</h2>
+          <p class="hint">Veja quantos giros e diamantes você precisa para chegar à skin.</p>
+        </div>
+      </div>
+      <p class="event-skin-notice">Os eventos e valores iniciais são exemplos editáveis em <code>tools.js</code>; confira as regras do evento no jogo antes de gastar.</p>
+
+      <div class="grid event-skin-fields">
+        <label>Selecionar evento
+          <select id="eventSkinEvent"></select>
+        </label>
+        <label>Skin desejada
+          <input id="eventSkinName" maxlength="50" placeholder="Ex.: Skin épica">
+        </label>
+        <label>Tokens necessários
+          <input id="eventSkinCost" type="number" min="0" step="1" inputmode="numeric">
+        </label>
+        <label>Tokens que você já possui
+          <input id="eventSkinOwned" type="number" min="0" step="1" inputmode="numeric" value="0">
+        </label>
+        <label>Diamantes disponíveis
+          <input id="eventSkinDiamonds" type="number" min="0" step="1" inputmode="numeric" value="0">
+        </label>
+        <label>Data e hora de término
+          <input id="eventSkinEndDate" type="datetime-local">
+          <small>Preencha para calcular os dias automaticamente. Se não souber a data, informe os dias restantes abaixo.</small>
+        </label>
+        <label>Quantos dias faltam para o evento acabar?
+          <input id="eventSkinDays" type="number" min="0" max="365" step="1" inputmode="numeric" placeholder="Obrigatório se não informar a data">
+        </label>
+        <label>Descontos ainda disponíveis hoje
+          <input id="eventSkinDiscountsToday" type="number" min="0" step="1" inputmode="numeric" value="1">
+          <small>Limitado ao desconto diário definido para este evento.</small>
+        </label>
+      </div>
+
+      <div class="event-skin-rules">
+        <span id="eventSkinTokenRule"></span>
+        <span id="eventSkinSpinRule"></span>
+        <span id="eventSkinDiscountRule"></span>
+      </div>
+      <p id="eventSkinDaysStatus" class="event-skin-days-status" role="status"></p>
+      <button id="eventSkinCalculate" class="event-skin-calculate" type="button">CALCULAR</button>
+
+      <section id="eventSkinResult" class="event-skin-result" aria-live="polite" hidden>
+        <h3 id="eventSkinResultTitle">Resultado</h3>
+        <div id="eventSkinSummary" class="event-skin-summary"></div>
+        <div id="eventSkinPlan" class="event-skin-plan"></div>
+        <div id="eventSkinTimeline" class="event-skin-timeline"></div>
+      </section>
+    </div>
+  </div>
+</div>

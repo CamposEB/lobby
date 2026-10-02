@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+*-firebase-admin*.json
+firebase-admin*.json
+lobby.db
+lobby.db-*
+__pycache__/
+.venv/

@@ -1,0 +1,123 @@
+<section class="profile-page">
+  <header class="profile-page-heading">
+    <div>
+      <p class="profile-eyebrow">SOCIETY · PLAYER CARD</p>
+      <h2>Meu perfil</h2>
+      <p>Seu espaço na comunidade. Mostre como você joga e personalize sua identidade.</p>
+    </div>
+    <button id="profileEditButton" class="profile-primary" type="button">Editar perfil</button>
+  </header>
+
+  <article id="profileCard" class="profile-card">
+    <div id="profileBanner" class="profile-banner" role="img" aria-label="Banner do perfil">
+      <span id="profileBannerHint">SUA JORNADA, SEU ESTILO</span>
+    </div>
+    <div class="profile-identity">
+      <div id="profileAvatar" class="profile-avatar" aria-label="Foto de perfil"></div>
+      <div class="profile-name-block">
+        <div class="profile-name-row">
+          <h1 id="profileDisplayName">Jogador</h1>
+          <span id="profileStatus" class="profile-status"><i></i> Online</span>
+        </div>
+        <div id="profileCommunityRoles" class="profile-community-roles" aria-label="Cargos da comunidade"></div>
+        <p id="profileUsername" class="profile-username">@jogador</p>
+        <p id="profileTitle" class="profile-title" hidden></p>
+      </div>
+    </div>
+    <p id="profileBio" class="profile-bio"></p>
+
+    <div id="profileGameDetails" class="profile-game-details"></div>
+    <p id="profileJoined" class="profile-joined"></p>
+
+    <section id="profileStatsSection" class="profile-section" aria-labelledby="profileStatsTitle">
+      <div class="profile-section-heading">
+        <div><p class="profile-eyebrow">SEU PROGRESSO</p><h2 id="profileStatsTitle">Estatísticas</h2></div>
+      </div>
+      <div id="profileStats" class="profile-stats-grid"></div>
+    </section>
+
+    <section id="profileAchievementsSection" class="profile-section" aria-labelledby="profileAchievementsTitle">
+      <div class="profile-section-heading">
+        <div><p class="profile-eyebrow">MARCOS DA COMUNIDADE</p><h2 id="profileAchievementsTitle">Conquistas</h2></div>
+      </div>
+      <div id="profileAchievements" class="profile-achievements"></div>
+    </section>
+
+    <section id="profileActivitySection" class="profile-section" aria-labelledby="profileActivityTitle">
+      <div class="profile-section-heading">
+        <div><p class="profile-eyebrow">RECENTE</p><h2 id="profileActivityTitle">Atividade</h2></div>
+      </div>
+      <div id="profileActivity" class="profile-activity"></div>
+    </section>
+  </article>
+
+  <dialog id="profileEditor" class="profile-dialog" aria-labelledby="profileEditorTitle">
+    <form id="profileForm" method="dialog">
+      <header class="profile-dialog-heading">
+        <div><p class="profile-eyebrow">PERSONALIZAÇÃO</p><h2 id="profileEditorTitle">Editar perfil</h2></div>
+        <button id="profileEditorClose" class="profile-icon-button" type="button" aria-label="Fechar">✕</button>
+      </header>
+      <div class="profile-editor-preview">
+        <div id="profilePreviewBanner" class="profile-banner profile-preview-banner"><span>Prévia do banner</span></div>
+        <div id="profilePreviewAvatar" class="profile-avatar profile-preview-avatar"></div>
+      </div>
+      <div class="profile-form-grid">
+        <label>Foto de perfil
+          <input id="profileAvatarFile" type="file" accept="image/*">
+          <small>Imagem até 8 MB. Será otimizada antes de salvar.</small>
+        </label>
+        <button id="profileRemoveAvatar" class="profile-subtle-button" type="button">Remover foto</button>
+        <label>Banner
+          <input id="profileBannerFile" type="file" accept="image/*">
+          <small>Imagem até 8 MB. Será ajustada para o cabeçalho do perfil.</small>
+        </label>
+        <button id="profileRemoveBanner" class="profile-subtle-button" type="button">Remover banner</button>
+        <label>Nome de exibição
+          <input id="profileDisplayNameInput" maxlength="28" required>
+        </label>
+        <label>Username
+          <input id="profileUsernameInput" readonly aria-describedby="profileUsernameHint">
+          <small id="profileUsernameHint">O username é permanente nesta versão.</small>
+        </label>
+        <label>Bio
+          <textarea id="pBio" maxlength="60" rows="3" placeholder="Conte um pouco sobre você"></textarea>
+        </label>
+        <label>Rank
+          <input id="pRank" maxlength="20">
+        </label>
+        <label>Role principal
+          <select id="pRole"><option>Qualquer</option><option>Jungle</option><option>Mid</option><option>Gold lane</option><option>EXP lane</option><option>Roam</option></select>
+        </label>
+        <label>Herói principal
+          <input id="pHero" maxlength="20">
+        </label>
+        <label>ID no jogo
+          <input id="pGid" maxlength="20">
+        </label>
+        <label>Título
+          <input id="profileTitleInput" maxlength="30" placeholder="Ex.: Jogador competitivo">
+        </label>
+        <label>Cor de destaque
+          <input id="profileAccentInput" type="color">
+        </label>
+        <label>Moldura
+          <select id="profileFrameInput"><option value="default">Clássica</option><option value="elite">Elite</option></select>
+        </label>
+        <label>Tema do perfil
+          <select id="profileThemeInput"><option value="classic">Clássico</option><option value="arena">Arena</option><option value="ocean">Oceano</option></select>
+        </label>
+      </div>
+      <fieldset class="profile-privacy-fieldset">
+        <legend>Privacidade do perfil</legend>
+        <label class="profile-check"><input id="profilePrivateInput" type="checkbox"> Perfil privado</label>
+        <label class="profile-check"><input id="profileShowStatsInput" type="checkbox" checked> Mostrar estatísticas e conquistas</label>
+        <label class="profile-check"><input id="profileShowActivityInput" type="checkbox" checked> Mostrar atividade recente</label>
+      </fieldset>
+      <p id="profileFormMessage" class="profile-form-message" role="status"></p>
+      <footer class="profile-dialog-actions">
+        <button id="profileCancelButton" class="profile-subtle-button" type="button">Cancelar</button>
+        <button id="pSave" class="profile-primary" type="submit">Salvar alterações</button>
+      </footer>
+    </form>
+  </dialog>
+</section>

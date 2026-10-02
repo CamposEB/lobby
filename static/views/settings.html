@@ -1,0 +1,62 @@
+<section class="settings-page">
+  <header class="settings-heading">
+    <p class="profile-eyebrow">PREFERÊNCIAS DA CONTA</p>
+    <h2>Configurações</h2>
+    <p>Gerencie seu perfil, privacidade e experiência no Society.</p>
+  </header>
+
+  <section class="settings-card" aria-labelledby="accountSettingsTitle">
+    <div class="settings-card-heading"><span>👤</span><div><h3 id="accountSettingsTitle">Conta</h3><p>Informações vinculadas à sua identidade.</p></div></div>
+    <dl class="settings-account-list">
+      <div><dt>Nome de exibição</dt><dd id="settingsDisplayName">—</dd></div>
+      <div><dt>Username</dt><dd id="settingsUsername">—</dd></div>
+      <div><dt>E-mail</dt><dd>Não utilizado nesta versão</dd></div>
+    </dl>
+    <p class="settings-note">O site não coleta e-mail. Seu username atual não pode ser alterado por esta tela.</p>
+    <button id="settingsEditProfile" class="settings-secondary" type="button">Editar dados do perfil</button>
+  </section>
+
+  <section class="settings-card" aria-labelledby="securitySettingsTitle">
+    <div class="settings-card-heading"><span>🔐</span><div><h3 id="securitySettingsTitle">Segurança</h3><p id="passwordSecurityDescription">Use uma senha forte, exclusiva e com pelo menos 10 caracteres.</p></div></div>
+    <form id="passwordChangeForm" class="settings-form">
+      <label id="passwordCurrentField">Senha atual
+        <span class="settings-password-field"><input id="passwordCurrent" type="password" autocomplete="current-password" maxlength="128"><button type="button" data-toggle-password="passwordCurrent" aria-label="Mostrar senha atual">Mostrar</button></span>
+      </label>
+      <label>Nova senha
+        <span class="settings-password-field"><input id="passwordNew" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><button type="button" data-toggle-password="passwordNew" aria-label="Mostrar nova senha">Mostrar</button></span>
+      </label>
+      <label>Confirmar nova senha
+        <span class="settings-password-field"><input id="passwordConfirm" type="password" autocomplete="new-password" minlength="10" maxlength="128" required><button type="button" data-toggle-password="passwordConfirm" aria-label="Mostrar confirmação da senha">Mostrar</button></span>
+      </label>
+      <p class="settings-note">A senha nunca é armazenada em texto puro. Para contas com Google, a sessão Google confirma sua identidade.</p>
+      <p id="passwordChangeMessage" class="settings-feedback" role="status"></p>
+      <button class="settings-primary" type="submit">Alterar senha</button>
+    </form>
+    <div class="settings-session"><div><b>Sessão atual</b><small>As outras sessões não são gerenciadas por esta versão.</small></div><button id="logout2" class="settings-secondary" type="button">Sair da conta</button></div>
+  </section>
+
+  <section class="settings-card" aria-labelledby="privacySettingsTitle">
+    <div class="settings-card-heading"><span>🛡️</span><div><h3 id="privacySettingsTitle">Privacidade do perfil</h3><p>Escolha o que outras pessoas podem ver.</p></div></div>
+    <label class="settings-check"><input id="cfgProfilePrivate" type="checkbox"> Tornar meu perfil privado</label>
+    <label class="settings-check"><input id="cfgShowStats" type="checkbox" checked> Mostrar estatísticas e conquistas</label>
+    <label class="settings-check"><input id="cfgShowActivity" type="checkbox" checked> Mostrar atividade recente</label>
+    <p id="privacySettingsMessage" class="settings-feedback" role="status"></p>
+    <button id="savePrivacySettings" class="settings-primary" type="button">Salvar privacidade</button>
+  </section>
+
+  <section class="settings-card" aria-labelledby="notificationSettingsTitle">
+    <div class="settings-card-heading"><span>🔔</span><div><h3 id="notificationSettingsTitle">Notificações</h3><p>Preferências para avisos futuros do produto.</p></div></div>
+    <label class="settings-check"><input id="notifyMessages" type="checkbox" checked> Mensagens</label>
+    <label class="settings-check"><input id="notifyInvites" type="checkbox" checked> Convites para partidas</label>
+    <label class="settings-check"><input id="notifyEvents" type="checkbox" checked> Eventos</label>
+    <label class="settings-check"><input id="notifyActivity" type="checkbox" checked> Atividades</label>
+    <p id="notificationSettingsMessage" class="settings-feedback" role="status"></p>
+    <button id="saveNotificationSettings" class="settings-primary" type="button">Salvar notificações</button>
+  </section>
+
+  <section class="settings-card" aria-labelledby="gameSettingsTitle">
+    <div class="settings-card-heading"><span>🎮</span><div><h3 id="gameSettingsTitle">Experiência de jogo</h3><p>Preferências salvas neste dispositivo.</p></div></div>
+    <label class="settings-check"><input type="checkbox" id="cfgNames"> Mostrar nomes sobre os avatares</label>
+    <label class="settings-check"><input type="checkbox" id="cfgBubbles"> Mostrar balões de chat</label>
+  </section>
+</section>

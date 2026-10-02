@@ -1,0 +1,82 @@
+<main class="tournaments-page">
+  <header class="tournaments-hero">
+    <div>
+      <p class="tournaments-eyebrow">SOCIETY MLBB · COMPETITIVO</p>
+      <h2>Entre na próxima disputa.</h2>
+      <p>Descubra campeonatos da comunidade, monte sua equipe e acompanhe os resultados ao vivo.</p>
+    </div>
+    <div class="tournaments-hero-mark" aria-hidden="true">🏆</div>
+  </header>
+
+  <section class="tournaments-section">
+    <div class="tournaments-section-heading">
+      <div><p class="tournaments-eyebrow">AGENDA DA COMUNIDADE</p><h3>Torneios</h3></div>
+      <span id="tournamentCount" class="tournament-count" aria-live="polite"></span>
+    </div>
+    <div class="tournament-filters" role="group" aria-label="Filtrar torneios">
+      <button type="button" data-tournament-filter="all" aria-pressed="true">Todos</button>
+      <button type="button" data-tournament-filter="live" aria-pressed="false">Ao vivo</button>
+      <button type="button" data-tournament-filter="upcoming" aria-pressed="false">Próximos</button>
+      <button type="button" data-tournament-filter="finished" aria-pressed="false">Encerrados</button>
+    </div>
+    <div id="tournamentList" class="tournament-list" aria-live="polite"></div>
+    <div id="tournamentEmpty" class="tournament-empty" hidden>
+      <span aria-hidden="true">🗓️</span>
+      <h3>Nenhum torneio por aqui ainda</h3>
+      <p>Volte em breve para encontrar a próxima disputa da comunidade.</p>
+    </div>
+  </section>
+
+  <section id="tournamentAdmin" class="tournament-admin" hidden>
+    <div class="tournaments-section-heading">
+      <div><p class="tournaments-eyebrow">ACESSO RESTRITO</p><h3>Painel do administrador</h3></div>
+      <span class="admin-badge">🛡️ Administrador</span>
+    </div>
+    <p class="tournament-admin-copy">Cadastre campeonatos, atualize o andamento e publique o time vencedor. As mudanças aparecem em tempo real para todos.</p>
+    <form id="tournamentAdminForm" class="tournament-admin-form" novalidate>
+      <input id="tournamentEditId" type="hidden">
+      <div class="tournament-form-grid">
+        <label>Nome do torneio
+          <input id="tournamentTitle" maxlength="80" required placeholder="Ex.: Copa Society de Outubro">
+        </label>
+        <label>Jogo
+          <input id="tournamentGame" maxlength="60" value="Mobile Legends: Bang Bang" required>
+        </label>
+        <label>Formato
+          <input id="tournamentFormat" maxlength="40" required placeholder="Ex.: 5v5 · eliminação simples">
+        </label>
+        <label>Premiação
+          <input id="tournamentPrize" maxlength="120" placeholder="Ex.: 1.000 diamantes">
+        </label>
+        <label>Início
+          <input id="tournamentStart" type="datetime-local" required>
+        </label>
+        <label>Término previsto
+          <input id="tournamentEnd" type="datetime-local" required>
+        </label>
+        <label>Limite de equipes
+          <input id="tournamentMaxTeams" type="number" min="1" max="256" step="1" value="16" required>
+        </label>
+        <label>Status
+          <select id="tournamentStatus">
+            <option value="scheduled">Agendado</option>
+            <option value="live">Ao vivo</option>
+            <option value="completed">Encerrado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </label>
+        <label class="tournament-form-wide">Descrição
+          <textarea id="tournamentDescription" maxlength="500" rows="3" placeholder="Regras, horários e informações para as equipes"></textarea>
+        </label>
+        <label class="tournament-form-wide">Equipe vencedora
+          <input id="tournamentWinner" maxlength="80" placeholder="Preencha ao atualizar o resultado">
+        </label>
+      </div>
+      <p id="tournamentAdminMessage" class="tournament-message" role="status"></p>
+      <div class="tournament-form-actions">
+        <button id="tournamentCancelEdit" class="tournament-button-secondary" type="button" hidden>Cancelar edição</button>
+        <button id="tournamentSubmit" class="tournament-button-primary" type="submit">＋ Cadastrar torneio</button>
+      </div>
+    </form>
+  </section>
+</main>

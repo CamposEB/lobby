@@ -1,0 +1,97 @@
+.community-report-dialog {
+  width: min(490px,calc(100vw - 24px));
+  max-height: min(90vh,760px);
+  overflow: auto;
+  padding: 20px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+}
+.community-report-dialog::backdrop { background: var(--overlay); }
+.community-report-dialog form { display: grid; gap: 7px; }
+.community-report-heading,.community-report-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.community-report-heading h2 { margin: 0; font-size: 1.28rem; }
+.community-report-heading>button { width: 39px; min-height: 39px; padding: 5px; border: 1px solid var(--border); background: var(--surface-tint-2); }
+.community-report-eyebrow,.moderation-eyebrow { margin: 0 0 3px; color: var(--text-muted); font-size: .66rem; font-weight: 800; letter-spacing: .13em; }
+.community-report-target { margin: 3px 0; color: var(--muted); }
+.community-report-target b { color: var(--text); }
+.community-report-dialog label { display: grid; gap: 4px; margin: 5px 0; color: var(--text-subtle); font-size: .86rem; }
+.community-report-dialog label select,.community-report-dialog label textarea { width: 100%; }
+.community-report-dialog small { color: var(--muted); font-size: .72rem; line-height: 1.45; }
+.community-report-message { min-height: 1.2em; margin: 1px 0; color: var(--error-text); font-size: .81rem; }
+.community-report-message:not(.is-error) { color: var(--success-text); }
+.community-report-actions { justify-content: flex-end; margin-top: 3px; }
+.community-report-actions button { min-height: 40px; }
+.community-report-secondary,.moderation-secondary {
+  border: 1px solid var(--border);
+  background: var(--surface-tint-2);
+  color: var(--text);
+}
+.community-report-secondary:hover:not(:disabled),.moderation-secondary:hover:not(:disabled) { background: var(--surface-tint-4); }
+.community-report-trigger { border: 1px solid rgba(var(--danger-rgb),.24); background: rgba(var(--danger-rgb),.07); color: var(--danger); }
+.community-report-trigger:hover:not(:disabled) { background: rgba(var(--danger-rgb),.15); }
+
+.moderation-page { display: grid; gap: 16px; max-width: 1000px; margin: 0 auto; }
+.moderation-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: clamp(18px,4vw,28px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: none;
+}
+.moderation-hero h2 { margin: 0; font-size: clamp(1.5rem,4vw,2rem); }
+.moderation-hero p:not(.moderation-eyebrow) { margin: 5px 0 0; color: var(--muted); }
+.moderation-hero>span { font-size: 2.8rem; }
+.moderation-section { padding: clamp(14px,3vw,20px); border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: none; }
+.moderation-section-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.moderation-section-header h3 { margin: 0; font-size: 1.18rem; }
+.moderation-section-header button { min-height: 38px; }
+.moderation-message { min-height: 1.2em; margin: 0 0 7px; color: var(--success-text); font-size: .82rem; }
+.moderation-message.is-error { color: var(--error-text); }
+.moderation-report-list,.moderation-mute-list { display: grid; gap: 10px; }
+.moderation-report-card { padding: 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.moderation-report-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.moderation-report-identity { display: grid; gap: 2px; min-width: 0; }
+.moderation-report-identity b { overflow-wrap: anywhere; }
+.moderation-report-identity small { color: var(--muted); font-size: .72rem; }
+.moderation-report-id { color: var(--text-muted); font-size: .68rem; font-weight: 800; }
+.moderation-status { flex: 0 0 auto; padding: 4px 8px; border: 1px solid rgba(var(--danger-rgb),.27); border-radius: 99px; background: rgba(var(--danger-rgb),.08); color: var(--danger); font-size: .63rem; font-weight: 800; }
+.moderation-status-reviewed { border-color: rgba(var(--warning-rgb),.27); background: rgba(var(--warning-rgb),.08); color: var(--warning); }
+.moderation-category { display: block; margin-top: 10px; font-size: .82rem; }
+.moderation-details { margin: 4px 0 10px; color: var(--text-subtle); font-size: .84rem; line-height: 1.5; overflow-wrap: anywhere; }
+.moderation-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.moderation-actions button { min-height: 36px; padding: 6px 10px; font-size: .75rem; }
+.moderation-warn { border: 1px solid rgba(var(--danger-rgb),.26); background: rgba(var(--danger-rgb),.1); color: var(--danger); }
+.moderation-warn:hover:not(:disabled) { background: rgba(var(--danger-rgb),.18); }
+.moderation-empty { display: grid; justify-items: center; gap: 5px; padding: 18px 8px; color: var(--muted); font-size: .83rem; text-align: center; }
+.moderation-empty span { font-size: 1.6rem; }
+.moderation-empty small { color: var(--muted); }
+.moderation-empty[hidden] { display: none; }
+.moderation-mute-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.moderation-mute-item>div { display: grid; gap: 2px; min-width: 0; }
+.moderation-mute-item small { color: var(--muted); font-size: .74rem; overflow-wrap: anywhere; }
+.moderation-mute-item button { flex: 0 0 auto; min-height: 36px; }
+.moderation-role-list { display: grid; gap: 8px; }
+.moderation-role-item { display: grid; grid-template-columns:minmax(0,1fr) minmax(140px,200px) auto; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+.moderation-role-item>div { display:grid; gap:2px; min-width:0; }
+.moderation-role-item small { color:var(--muted); font-size:.73rem; }
+.moderation-role-item select { width:100%; }
+.moderation-role-item button { min-height:36px; }
+.dmhead>span:last-child { flex-wrap: wrap; }
+#tab-admin { max-width: 1040px; }
+
+@media(max-width:600px) {
+  .community-report-dialog { padding: 15px; }
+  .moderation-report-heading { flex-direction: column; }
+  .moderation-actions button { flex: 1 1 calc(50% - 6px); }
+  .moderation-mute-item { align-items: flex-start; flex-direction: column; }
+  .moderation-mute-item button { width: 100%; }
+  .moderation-role-item { grid-template-columns:1fr; }
+  .moderation-role-item button { width:100%; }
+}

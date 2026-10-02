@@ -1,0 +1,18 @@
+<div id="dmList"></div>
+<div id="dmChat" class="card" style="display:none">
+  <div class="dmhead"><span class="dm-identity"><span id="dmWithAvatar" class="dm-with-avatar"></span><b id="dmWith"></b></span><span>
+    <button id="dmViewProfile" type="button">Ver perfil</button>
+    <button id="dmReportPlayer" type="button" class="community-report-trigger">Denunciar</button>
+    <button id="dmBlock">Bloquear</button>
+    <button id="dmBack">Voltar</button>
+  </span></div>
+  <div id="dmMsgs"></div>
+  <div class="row"><input id="dmInput" maxlength="200" placeholder="Escreva uma mensagem"><button id="dmSend">Enviar</button></div>
+  <dialog id="dmProfileDialog" class="dm-profile-dialog">
+    <div class="dm-profile-heading">
+      <h2 id="dmProfileName">Perfil do jogador</h2>
+      <button id="dmProfileClose" type="button" aria-label="Fechar perfil">✕</button>
+    </div>
+    <div id="dmProfileContent" aria-live="polite">Carregando perfil...</div>
+  </dialog>
+</div>

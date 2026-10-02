@@ -1,0 +1,377 @@
+# PROJETO: Society MLBB (PWA)
+
+Itens marcados com [CONFIRMAR] foram reescritos a partir do histórico de desenvolvimento e
+precisam ser conferidos no código antes de serem tratados como verdade.
+
+Última atualização: 02/10/2026 (inclui o plano de redesign visual e o prompt para o agente).
+
+## Ideia
+Espaço web independente para a comunidade de MLBB (~150 pessoas), sem baixar nada, pensado para
+celular. Página inicial com guias + lobby social estilo Habbo + moedas ganhas online e pelo bot
+de WhatsApp + loja de visuais + ferramentas úteis (procurar duo, quiz, calculadoras, meta e
+builds colaborativos, torneios). Objetivo: engajar a comunidade primeiro, monetizar depois
+(cosméticos, apoiadores, taxa em campeonatos).
+
+## Stack
+Backend: Python, FastAPI, WebSocket, Firebase Authentication/Firestore. Frontend: HTML/JS puro +
+Canvas, CSS em pasta. PWA instalável (manifest.json + sw.js network-first). Sem framework.
+Em transição: login Google e armazenamento de vínculos/papéis usam Firebase; dados operacionais e
+sociais ainda são mantidos no SQLite até concluir o cutover.
+
+Rodar (Windows/PowerShell, dentro de D:\lobby):
+  Copy-Item .env.example .env  # somente na primeira configuração, se .env ainda não existir
+  notepad .env
+  .\.venv\Scripts\python.exe -m uvicorn server:app --port 8000
+O servidor e o migrador carregam D:\lobby\.env automaticamente. Configure BOT_KEY, os nicks em
+LOBBY_ADMIN_NICKS e, para habilitar Google/Firestore, FIREBASE_WEB_CONFIG (JSON público do app
+Web), FIREBASE_ADMIN_CREDENTIALS_FILE (arquivo privado fora do projeto) e FIREBASE_PROJECT_ID
+(opcional quando informado na credencial). Nunca reutilize uma chave privada exposta: revogue-a e
+configure somente uma chave recém-rotacionada. Não versione .env nem credenciais privadas.
+ALLOW_LEGACY_LOGIN fica habilitado por padrão durante a transição; só desative após confirmar que
+todas as contas antigas foram vinculadas.
+Migração SQLite→Firestore: `python .\migrate_sqlite_to_firestore.py --sqlite-path .\lobby.db`
+faz apenas um dry-run. Após backup e conferência, acrescente `--apply` para gravar nas coleções do
+Firestore. A cópia ainda não muda o backend operacional, que continua usando SQLite.
+Os nicks administrativos devem corresponder a contas já criadas; crie a conta antes de configurar
+LOBBY_ADMIN_NICKS. O servidor não permite criar uma conta nova usando um nick já autorizado.
+O allowlist é compatibilidade/bootstrap; com Firebase configurado, os papéis são persistidos na
+coleção Firestore `accounts`.
+
+## Estrutura
+lobby/
+  server.py                  (API, WebSocket e lógica de domínio ainda concentrada)
+  identity_store.py          (verificação Firebase e vínculos/papéis no Firestore)
+  migrate_sqlite_to_firestore.py (migração idempotente; dry-run padrão)
+  .env                       (configuração local; ignorada pelo Git)
+  .env.example               (modelo sem segredos)
+  .gitignore                 (exclui configuração local e dados privados)
+  requirements.txt           (dependências Python)
+  tests/                     (testes do migrador e do fluxo Google)
+  lobby.db                   (criado sozinho; não versionar)
+  static/
+    index.html
+    js/ app.js | auth.js
+    views/ abas da comunidade, incluindo admin.html
+    css/ estilos separados por área
+    manifest.json, sw.js, ícones do PWA
+
+## O que já existe
+Conta e economia
+- Login Google por Firebase, com verificação do ID token no servidor; também é possível acessar
+  com nick e senha própria. Senhas ficam armazenadas como hash PBKDF2 com salt.
+- Contas antigas precisam usar o PIN antigo uma única vez ao escolher a nova senha; a migração
+  apaga esse PIN e ele deixa de ser aceito para login. Contas novas definem uma senha no cadastro.
+- Login com nick e senha pode ser combinado com Google para a mesma conta.
+- Papéis `user/mod/admin` persistidos no Firestore e painel administrativo para mudar papéis; não
+  permite remover o último administrador.
+- Moedas: +1 por minuto online (teto 120/dia); POST /api/coins com header X-Bot-Key
+  (body {"nick","amount"}) para o bot dar/tirar moedas; GET /api/ranking (top 10).
+- Quiz diário: 1 pergunta/dia igual para todos, 1 tentativa, +10 moedas.
+
+Jogo social
+- Sala isométrica estilo Habbo: câmera arrastável (arrastar move a vista), clique para andar,
+  avatar em pixel com variação de pele/cabelo por nick, animação de caminhada, balões de chat.
+- Salas separadas (Salão Principal, Praça, Arena), cada uma com seus jogadores e chat próprio;
+  o chat reseta ao trocar de sala; mensagens do chat somem sozinhas após ~25 s.
+- Clicar em um jogador abre o perfil rápido (rank, role, herói, frase) e atalho para DM.
+- Salas, Loja e Inventário abrem como painéis dentro do jogo (HUD embaixo à esquerda).
+- Loja: 5 cores e 7 acessórios (dicionário SHOP no server.py): comprar, equipar, tirar. [CONFIRMAR]
+- Inventário: itens que o jogador já tem, com Usar/Tirar.
+- Configurações: mostrar/ocultar nomes e balões; sair da conta.
+
+Comunidade
+- Início: página de comunidade separada do jogo, com guias (split push, wave, proxy, rotação,
+  controle de rota). Navegação com Início em destaque; Jogar e extras ficam em Mais.
+- Procurar duo (LFG): rank, role, modo, horário, ID do jogo, win rate, partidas e mensagem;
+  campos opcionais validados e salvos no servidor; expira em 3h; um anúncio por pessoa; ao vivo;
+  filtros por modo e role; indicador de online; botão Chamar abre DM.
+- Mensagens diretas: lista de conversas, não lidas, tempo real, bloquear (silencioso).
+- Perfil: rank, role, herói principal, ID no jogo, frase (60 caracteres); pré-preenche o LFG.
+- Ferramentas (3 calculadoras): vitórias seguidas / derrotas toleráveis para o winrate alvo,
+  partidas até o próximo rank (estimativa simples, sem proteção de estrela), custo de skin em reais.
+- Meta por rota: indicações da comunidade por rota, herói, patch e nível percebido; avaliações
+  úteis / não concordo em tempo real. NÃO são estatísticas oficiais.
+- Builds colaborativas: itens em ordem, emblema, feitiço, patch e notas; busca e avaliações em
+  tempo real; não é possível votar na própria publicação; builds com menos de 3 itens são rejeitadas.
+- Torneios: agenda ao vivo, inscrição de equipes e gestão (criação, edição, status, equipe
+  vencedora) restrita ao allowlist LOBBY_ADMIN_NICKS, transmitida pelo WebSocket.
+
+Segurança e moderação
+- Denúncias privadas, fila de moderação para administradores, silenciamento temporário de
+  chat/DM, limite de tentativas inválidas de login por endereço.
+- Firebase Admin verifica sessões Google no servidor; PIN legado só pode ser usado uma vez para
+  migrar uma conta antiga para uma senha. Após isso, a credencial PIN é apagada.
+- Aviso de marca: Society MLBB é independente, não oficial e feito pela comunidade; não é
+  afiliado à Moonton. Nomes e imagens de heróis, itens, emblemas e feitiços pertencem aos seus
+  titulares e são usados apenas para identificação. Não usa textos da Moonton.
+
+Visual e instalação (estado atual)
+- Menu lateral (gaveta no celular), fundo em degradê roxo com textura, hero grande com ilustração
+  e brilho (glow), cards com borda roxa translúcida, ícones coloridos/emoji na sidebar,
+  instalável como app (PWA).
+- Problema identificado: o visual está roxo demais e parece "template"; a lista de builds é
+  pobre em densidade de informação comparada à referência (mlbb.io).
+
+## Redesign visual (NOVO, em planejamento)
+Referência de inspiração: mlbb.io (organização, densidade e estilo; NÃO copiar código, logo
+nem textos; os ícones de jogo seguem a decisão registrada em "Restrições específicas").
+
+Objetivos
+1. Reduzir o roxo: fundo neutro quase preto, roxo só como cor de destaque pontual.
+2. Tornar as builds densas e escaneáveis, em listas compactas (estilo mlbb.io).
+3. Layout mais limpo e focado em conteúdo, mantendo a identidade da marca.
+
+Design tokens propostos (variáveis CSS em um único arquivo, ex.: static/css/tokens.css)
+  --bg:        #0a0a0b   fundo da página (sem gradiente roxo)
+  --surface:   #111113   cards e sidebar
+  --surface-2: #17171a   hover e linhas alternadas
+  --border:    #232327   bordas de 1px
+  --text:      #e8e8ea
+  --text-muted:#8b8b93
+  --accent:    #7c6cf0   roxo dessaturado; só botão primário, item ativo, foco
+  --link:      #22b8cf   ciano discreto para links secundários
+  --positive:  #22c55e   votos positivos
+  --danger:    #ef4444
+Regras: sem glow, sem box-shadow colorido, sem borda roxa translúcida; cards com raio 6–10px;
+fonte sans-serif limpa (Inter ou equivalente); contraste AA; foco visível; escala de espaçamento
+4/8px; largura máxima do conteúdo ~1100–1200px.
+
+Layout
+- Sidebar compacta com grupos em caixa alta e cor muted (COMUNIDADE, HERÓIS, ITENS, MAIS),
+  ícones de linha monocromáticos (SVG inline, sem biblioteca) e estado ativo sutil.
+- Topbar: logo, busca ("Buscar heróis..."), perfil/moedas discretos. No celular a sidebar
+  continua como gaveta.
+- Início: hero reduzido, sem ilustração com glow; builds em alta, builds recentes e meta por
+  rota logo na primeira dobra.
+
+Builds (prioridade máxima): componente de linha de build reutilizável, em duas listas
+("Mais curtidas, últimos 30 dias" e "Builds recentes"):
+  avatar do herói | nome + rota (muted) | 6 ícones de itens em ordem (tooltip) |
+  emblema + feitiço (ícones pequenos) | ▲ votos | autor + tempo relativo | linha clicável
+Filtros: herói, rota (Exp, Jungle, Mid, Gold, Roam), período (7d/30d/sempre), ordenação; estado
+refletido na URL. Estados de loading (skeleton), vazio e erro.
+Regras já existentes que devem ser preservadas: não votar na própria build; mínimo de 3 itens.
+
+Restrições específicas do projeto (importantes)
+- Sem framework, sem Tailwind e sem build step: tudo em HTML/JS puro e CSS em static/css.
+  Não adicionar dependências sem justificativa forte.
+- Ícones de herói, item, emblema e feitiço: DECISÃO DO DONO (02/10/2026): obter os ícones no site
+  oficial da Moonton (a fonte original, e não o mlbb.io), deixando claro que o Society MLBB é uma
+  criação da comunidade e não oficial. Continuam sendo arte da Moonton; usar a fonte oficial é
+  melhor do que copiar de terceiros, mas o aviso de marca não substitui licença.
+  Mitigações adotadas:
+  1. Hospedar os arquivos em static/img/icons/{herois,itens,emblemas,feiticos}/ (nome em slug).
+     NÃO fazer hotlink para o site da Moonton nem para o mlbb.io (pode quebrar, ser bloqueado e
+     gasta a banda deles).
+  2. Toda resolução de ícone passa por UMA função (getIcon(tipo, nome)), com fallback para
+     placeholder neutro quando o arquivo não existir. Assim dá para trocar ou remover tudo rápido.
+  3. Manter o aviso "independente e não oficial" visível (rodapé e página Sobre).
+  4. Se a Moonton ou outro titular pedir remoção, remover na hora (basta esvaziar a pasta).
+  5. Fonte oficial: https://www.mobilelegends.com/ . [PENDENTE] Ler os Termos de Uso/aviso legal
+     do site (não foi possível ler automaticamente: a página carrega por JavaScript) antes de baixar: eles podem restringir o reuso de
+     imagens. Se restringirem, pedir autorização à Moonton por escrito.
+  6. Antes de qualquer monetização (cosméticos, VIP, taxa em campeonatos), verificar a política
+     de conteúdo de fãs da Moonton ou pedir autorização por escrito.
+  Quem baixa e organiza os arquivos nas pastas é o dono; o agente só os consome.
+- Dados vêm do SQLite via WebSocket (community_build_list / community_builds,
+  community_build_vote). Qualquer campo novo (autor, data, votos por período) exige alteração
+  retrocompatível em server.py. A migração para Firestore está em andamento; evitar mudanças
+  de schema que compliquem o migrador e atualizar o migrador/testes se algo mudar.
+- Tempo relativo em pt-BR com Intl.RelativeTimeFormat (nativo).
+- Service worker é network-first: ao entregar o redesign, incrementar a versão do cache no sw.js
+  e testar com Ctrl+Shift+R. Lembrar que server.py e index.html devem estar na mesma versão.
+- Todas as telas existentes (lobby, duo, mensagens, quiz, torneios, moderação, perfil,
+  configurações, admin) devem apenas herdar o novo tema sem perder funcionalidade.
+
+Plano em fases (recomendado, para dar para conferir cada passo)
+  Fase A: análise do código e criação dos tokens + troca das cores hardcoded.
+  Fase B: sidebar, topbar e página Início.
+  Fase C: lista de builds densa + filtros + detalhe da build.
+  Fase D: limpeza de CSS morto, testes (pytest) e checagem em viewport mobile.
+
+## Protocolo WebSocket (/ws; primeira mensagem autentica)
+Cliente -> servidor: login (nick/senha), password_register, google_login (Firebase ID token,
+  nick/senha e código legado de uso único quando vincula uma conta antiga),
+  move, chat, room, room_list, buy, equip, profile_set, profile_view,
+  lfg_list, lfg_post, lfg_del, quiz_answer, dm_threads, dm_open, dm_seen, dm_send, block,
+  report_submit, moderation_list, moderation_action, moderation_unmute,
+  admin_roles_list, admin_role_set,
+  community_meta_list, community_meta_submit, community_meta_vote,
+  community_build_list, community_build_submit, community_build_vote,
+  mensagens de torneios (agenda, inscrição, gestão): confirmar nomes
+Servidor -> cliente: init, join, leave, move, chat, look, me, room, rooms, lfg, quiz_result,
+  profile, pview, dm_threads, dm_history, dm, community_meta, community_builds, community_saved,
+  community_error, admin_roles, admin_roles_saved, role_updated, error,
+  mensagens de torneios: confirmar nomes
+
+## Estado real
+Testado localmente: login de múltiplas contas, chat, DM, LFG público, perfil, quiz, salas com chat
+separado, envio e voto em meta/builds, atualização ao vivo, validação de itens e autopromoção,
+navegação sem overflow em viewport mobile.
+Autenticação Google/Firestore e papéis foram implementados, mas ainda dependem de configuração de
+Firebase e validação em ambiente real. O migrador possui dry-run por padrão e testes com cliente
+Firestore falso; executar a migração real requer credencial própria. O migrador copia tabelas, mas
+o servidor ainda usa SQLite para funcionalidades sociais, moedas, perfis, torneios e demais
+operações; o cutover completo para Firestore ainda não foi concluído.
+NÃO testado: login Google/Firestore com projeto Firebase real, dispositivo físico, instalação do
+PWA, vários usuários reais em produção ou hospedagem online. As Fases A, B e C do redesign visual
+estão implementadas; a Fase C foi verificada com testes automatizados de consulta, filtros e ordenação,
+além de checagem visual responsiva em viewports de 360–1440px, sem overflow horizontal. O schema atual
+guarda apenas o voto vigente por pessoa/build; as contagens de 7/30 dias incluem votos vigentes lançados
+dentro de cada janela, não o histórico de alterações. Os diretórios locais de ícones de jogo ainda não
+foram preenchidos.
+Permanece pendente a Fase D (limpeza de CSS e revisão final).
+Lições: o servidor precisa ser reiniciado e o navegador atualizado (Ctrl+Shift+R) a cada troca;
+server.py e index.html precisam estar na mesma versão (o cliente avisa no chat quando o servidor
+está desatualizado).
+
+## O que melhorar agora (por prioridade)
+1. Hospedar online com HTTPS (Render/Railway/VPS) e testar no celular com 5 a 10 pessoas.
+2. Concluir o cutover operacional SQLite→Firestore, preservando os dados existentes; validar
+   login Google/vínculo, fazer backup, executar o migrador e desativar o login legado apenas após
+   confirmação da comunidade.
+3. Moderação antes de divulgar: preencher a lista BAD (filtro de palavrões, hoje placeholder),
+   banimento auditável (audit_log), painel admin, evolução das denúncias.
+4. Segurança: aposentar login por PIN após migração/vínculo; BOT_KEY só no servidor; IP real atrás
+   de proxy (X-Forwarded-For apenas de proxy confiável).
+5. Estabilidade: reconexão automática do WebSocket (hoje cai e pede reload), persistir posição,
+   limpar mensagens antigas, backup do banco.
+6. Quiz: trocar as perguntas de exemplo por perguntas reais de MLBB; sequência diária e ranking.
+7. Página de heróis, itens e emblemas como catálogo, counter pick, confronto, draft master,
+   discussões (todos baseados em dados enviados e votados pela comunidade).
+8. Integração com o bot de WhatsApp: avisar no grupo anúncio de duo, build da semana; moedas por
+   atividade no grupo; comando !perfil.
+9. Conteúdo: mais calculadoras, minijogos, ranking semanal, notícias/patch notes.
+10. Depois, monetização: cosméticos pagos por Pix, apoiador/VIP, taxa em campeonatos.
+
+Observação de ordem: o redesign (seção acima) é de baixo risco técnico e melhora a primeira
+impressão; pode ser feito em paralelo ao item 1, mas antes de divulgar para a comunidade. Os itens
+2 a 4 continuam sendo pré-requisito para abrir ao público.
+
+## Riscos
+- Chat privado + adolescentes: moderação é obrigatória antes de divulgar. Contato só por ID do
+  jogo e DM interna; nunca mostrar telefone ou e-mail.
+- Artes da Moonton (ícones de heróis, itens, emblemas, feitiços): uso decidido pelo dono, com
+  aviso de comunidade/não oficial. Risco residual: o aviso não é licença, e os termos do site
+  oficial podem proibir o reuso das imagens sem autorização. Pode haver pedido de remoção, e o
+  risco cresce com divulgação e monetização. Ver mitigações na seção de Redesign visual.
+  Artes de outros sites que não sejam dessa origem, fora disso, continuam proibidas.
+- Não inventar estatísticas de jogo (meta e builds vêm dos jogadores e informam o patch); evitar
+  venda de diamantes/contas.
+- Ao se inspirar no mlbb.io, copiar apenas a ideia de organização; nada de código, textos
+  ou logo do site.
+- Login Google, dados pessoais e menores: Termos, Política de Privacidade, exclusão de conta e
+  atenção à LGPD. Precisa de revisão jurídica.
+- Bots de WhatsApp com bibliotecas não oficiais podem ser banidos; se for vender, usar a API oficial.
+
+## Credenciais de implantação
+Configure Firebase Web e Firebase Admin via variáveis de ambiente ou secret manager. Nunca salve chaves privadas, tokens ou arquivos de service account neste documento ou no repositório. A credencial administrativa que estava anexada a este arquivo foi exposta: revogue-a e emita uma nova no console Google Cloud antes de usar Firebase Admin.
+
+---
+
+# APÊNDICE: PROMPT PARA O AGENTE (redesign visual, adaptado à stack real)
+
+Cole o bloco abaixo no agente. Para projetos assim, é mais seguro enviar por fases: primeiro a
+Fase A, conferir, e então as demais.
+
+````
+# CONTEXTO
+
+Projeto: "Society MLBB", PWA em português (pt-BR) para uma comunidade de Mobile Legends (~150
+pessoas). Backend Python/FastAPI com WebSocket (server.py), dados operacionais em SQLite
+(migração para Firestore em andamento), frontend em HTML/JS puro + Canvas, sem framework e sem
+build step. Arquivos principais: static/index.html, static/js/app.js, static/js/auth.js,
+static/views/*.html (abas da comunidade), static/css/* (estilos por área), static/sw.js
+(network-first), static/manifest.json. Leia também o arquivo de documentação do projeto.
+
+Quero um redesign visual e uma evolução da lista de builds, usando o mlbb.io como inspiração de
+organização, densidade e estilo (não cópia). Não altere o backend de autenticação, moedas,
+moderação nem a migração para Firestore.
+
+# PROBLEMAS
+
+1. O site está roxo demais (fundo em degradê, glows, bordas e cards roxos). Parece template.
+2. A lista de builds é pouco densa. Quero algo no estilo do mlbb.io: linhas compactas com herói,
+   rota, itens em ordem, emblema, feitiço, votos, autor e tempo.
+3. O visual precisa ficar mais limpo, neutro e focado em conteúdo, sem perder a identidade.
+
+# FASE A: ANÁLISE E TEMA
+
+- Mapeie onde as cores estão definidas e onde há roxo hardcoded em static/css/*, index.html e JS
+  (estilos inline, cores no Canvas, theme_color no manifest).
+- Crie static/css/tokens.css com variáveis CSS e faça todos os outros CSS usarem os tokens:
+  --bg #0a0a0b | --surface #111113 | --surface-2 #17171a | --border #232327 | --text #e8e8ea |
+  --text-muted #8b8b93 | --accent #7c6cf0 (uso moderado) | --link #22b8cf | --positive #22c55e |
+  --danger #ef4444
+- Remova gradientes roxos de fundo, glows, sombras coloridas e bordas roxas translúcidas.
+- Cards: fundo --surface, borda 1px --border, raio 6–10px, sem sombra pesada.
+- Fonte sans-serif limpa e leve (Inter via fonte local/sistema com fallback; se usar Google Fonts,
+  justifique). Contraste AA e foco visível.
+- Apresente um resumo curto do que encontrou e siga adiante.
+
+# FASE B: LAYOUT
+
+- Sidebar compacta: grupos com rótulos pequenos em caixa alta e cor muted, itens com ícones de
+  linha monocromáticos em SVG inline (substituir emojis/ícones coloridos), estado ativo sutil
+  (fundo --surface-2 + texto/barra em --accent). Manter a gaveta no celular.
+- Topbar com logo, busca e perfil/moedas de forma discreta.
+- Início: hero mais baixo, sem ilustração com glow, sem cards decorativos em excesso. Mostrar
+  útil na primeira dobra: builds em alta, builds recentes, meta por rota. Manter os guias.
+- Espaçamento compacto (escala 4/8px), largura máxima ~1100–1200px, sem overflow no mobile.
+- As telas do jogo (lobby/Canvas), duo, mensagens, quiz, torneios, moderação, perfil,
+  configurações e admin só herdam o tema; nenhuma funcionalidade pode quebrar.
+
+# FASE C: BUILDS (prioridade máxima)
+
+Componente JS reutilizável de linha de build (função que gera o elemento) usado em duas listas:
+"Mais curtidas, últimos 30 dias" e "Builds recentes". Cada linha, em layout horizontal:
+1. Avatar do herói (~40px, cantos arredondados)
+2. Nome do herói (peso 600) e rota em texto muted
+3. 6 ícones de itens em ordem (~30px) com tooltip acessível (nome do item)
+4. Emblema e feitiço em ícones pequenos (~22px) com tooltip
+5. Votos com seta verde (▲ 7); 0 neutro. Manter as regras atuais: não votar na própria build;
+   atualização em tempo real via community_build_vote
+6. Autor e tempo relativo em pt-BR (Intl.RelativeTimeFormat), alinhados à direita
+7. Linha inteira clicável para o detalhe da build
+Estilo: contêiner com borda 1px, divisores finos, hover --surface-2, altura ~56–60px.
+Filtros: herói, rota (Exp, Jungle, Mid, Gold, Roam), período (7d/30d/sempre), ordenação (mais
+curtidas/mais recentes), refletidos na URL. Skeleton de loading, estado vazio e erro.
+Detalhe da build: herói, rota, autor, data, votos, itens em ordem, emblema, feitiço, patch e
+notas do autor.
+
+Dados: reaproveite o que o servidor já envia em community_builds. Se faltar algo (data, autor,
+votos por período), faça alteração retrocompatível em server.py e, se tocar no schema SQLite,
+avise e ajuste o migrate_sqlite_to_firestore.py e os testes em tests/.
+
+Imagens: os ícones de heróis, itens, emblemas e feitiços ficam em
+static/img/icons/{herois,itens,emblemas,feiticos}/ (nomes em slug, ex.: chou.webp), colocados por
+mim. NÃO faça scraping nem hotlink para o mlbb.io ou qualquer outro site; apenas consuma o que
+estiver nessas pastas. Centralize a resolução em UMA função (getIcon(tipo, nome)) com fallback
+para placeholder neutro (iniciais em quadrado) quando o arquivo não existir, com width/height
+fixos e lazy loading. Liste no resumo final quais ícones ficaram em placeholder.
+Inclua no rodapé e na página Sobre o aviso: "Society MLBB é uma criação da comunidade, não
+oficial e sem afiliação com a Moonton. Imagens e nomes pertencem aos seus titulares."
+
+# FASE D: LIMPEZA E QUALIDADE
+
+- Substitua todas as cores roxas hardcoded pelos tokens; remova CSS/JS sem uso.
+- Incremente a versão do cache em sw.js e ajuste theme_color/background_color do manifest.
+- Texto da interface continua em pt-BR. Acessibilidade: foco visível, teclado, alt/aria-label.
+- Imagens com dimensões fixas e lazy loading para evitar layout shift.
+- Rode os testes existentes (pytest em tests/) e confira o layout em viewport mobile.
+
+# RESTRIÇÕES
+
+- Sem framework, sem Tailwind, sem build step; não adicione dependências sem justificar.
+- Não copie código, logo ou textos do mlbb.io.
+- Commits pequenos por fase, se houver Git. Em dúvida não crítica, escolha o mais simples e documente.
+- Não toque em segredos, .env nem credenciais.
+
+# ENTREGA FINAL
+
+1. Resumo do que mudou, por fase
+2. Lista de arquivos criados/modificados
+3. Mudanças em server.py/schema e impacto no migrador (se houver)
+4. Pendências (ícones/assets que faltaram, decisões abertas)
+5. Como rodar e testar (lembrar: reiniciar o servidor e Ctrl+Shift+R)
+````

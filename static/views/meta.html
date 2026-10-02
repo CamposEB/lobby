@@ -1,0 +1,39 @@
+<main class="community-game-page">
+  <header class="community-game-hero">
+    <div><p class="community-game-eyebrow">INTELIGÊNCIA DA COMUNIDADE</p><h2>Meta por rota</h2>
+      <p>Descubra quais heróis estão funcionando para outros jogadores e compartilhe o que você está vendo nas suas partidas.</p></div>
+    <span aria-hidden="true">📊</span>
+  </header>
+  <aside class="community-game-disclaimer" role="note">
+    <b>Meta comunitário, não oficial.</b> As indicações são enviadas por jogadores e podem mudar a cada atualização. Não são estatísticas oficiais da Moonton; confira a versão do patch e valide no seu elo. Consulte também os <a href="https://www.mobilelegends.com/" target="_blank" rel="noopener noreferrer">comunicados oficiais</a>.
+  </aside>
+  <section class="community-game-panel">
+    <header class="community-game-section-heading"><div><p class="community-game-eyebrow">ESCOLHA SUA LANE</p><h3>O que está forte por rota?</h3></div>
+      <label class="community-patch-filter">Patch
+        <select id="metaPatchFilter" aria-label="Filtrar por patch"><option value="">Todos</option></select>
+      </label>
+    </header>
+    <div id="metaLaneFilters" class="community-lane-filters" role="group" aria-label="Filtrar por rota">
+      <button type="button" data-meta-lane="all" aria-pressed="true">Todas</button>
+      <button type="button" data-meta-lane="EXP" aria-pressed="false">EXP</button>
+      <button type="button" data-meta-lane="Jungle" aria-pressed="false">Selva · Jungle</button>
+      <button type="button" data-meta-lane="Mid" aria-pressed="false">Meio · Mid</button>
+      <button type="button" data-meta-lane="Gold" aria-pressed="false">Ouro · Gold</button>
+      <button type="button" data-meta-lane="Roam" aria-pressed="false">Roam · Suporte</button>
+    </div>
+    <p id="metaMessage" class="community-game-message" role="status" aria-live="polite"></p>
+    <div id="metaList" class="community-meta-list" aria-live="polite"></div>
+    <div id="metaEmpty" class="community-game-empty" hidden><span>🧭</span><b>A comunidade ainda não publicou indicações para este filtro.</b><small>Compartilhe sua experiência para ajudar outros jogadores.</small></div>
+  </section>
+  <section class="community-game-panel">
+    <header class="community-game-section-heading"><div><p class="community-game-eyebrow">CONHECIMENTO COMPARTILHADO</p><h3>Indique um herói para o meta</h3></div></header>
+    <form id="metaForm" class="community-game-form">
+      <label>Herói<input id="metaHero" maxlength="40" required placeholder="Nome do herói"></label>
+      <label>Rota<select id="metaLane" required><option value="">Selecione</option><option value="EXP">EXP</option><option value="Jungle">Selva · Jungle</option><option value="Mid">Meio · Mid</option><option value="Gold">Ouro · Gold</option><option value="Roam">Roam · Suporte</option></select></label>
+      <label>Nível percebido<select id="metaTier" required><option value="">Selecione</option><option value="S">S · destaque</option><option value="A">A · forte</option><option value="B">B · situacional</option></select></label>
+      <label>Patch / temporada<input id="metaPatch" maxlength="24" required placeholder="Ex.: patch 2.1.XX"></label>
+      <label class="community-form-wide">Por que está funcionando? <span>Opcional</span><textarea id="metaNotes" maxlength="350" rows="3" placeholder="Elo, composição, matchup ou experiência recente"></textarea></label>
+      <div class="community-form-footer"><p>Use observações suas, sem dados pessoais ou textos copiados. Seu nome público aparece como autor; perfis privados são identificados como “Jogador da comunidade”.</p><button type="submit">＋ Publicar indicação</button></div>
+    </form>
+  </section>
+</main>
