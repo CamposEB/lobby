@@ -48,26 +48,78 @@ let COMMUNITY_META = [], COMMUNITY_BUILDS = [], COMMUNITY_BUILDS_TRENDING = [], 
 let COMMUNITY_META_LANE = "all", BUILD_REQUEST_ID = 0, BUILD_LOAD_TIMER = null, BUILD_FILTER_TIMER = null;
 let BUILD_LIST_STATE = "idle", BUILD_DETAIL_ID = null;
 const BUILD_ITEM_CATALOG = [
-  {name:"Botas de Guerreiro", image:"Warrior Boots"}, {name:"Botas Resistentes", image:"Tough Boots"},
-  {name:"Botas Rápidas", image:"Swift Boots"}, {name:"Botas Arcanas", image:"Arcane Boots"},
-  {name:"Botas Mágicas", image:"Magic Shoes"}, {name:"Botas Demoníacas", image:"Demon Shoes"},
-  {name:"Botas Ligeiras", image:"Rapid Boots"}, {name:"Lâmina da Desespero", image:"Blade of Despair"},
-  {name:"Fúria do Berserker", image:"Berserkers Fury"}, {name:"Ceifador da Vida", image:"Haas Claws"},
-  {name:"Vento da Natureza", image:"Wind of Nature"}, {name:"DHS", image:"Demon Hunter Sword"},
-  {name:"Bastão Dourado", image:"Golden Staff"}, {name:"Lança da Corrosão", image:"Corrosion Scythe"},
-  {name:"Garras da Tempestade", image:"Windtalker"}, {name:"Rugido do Maléfico", image:"Malefic Roar"},
-  {name:"Lâmina das Heptaseas", image:"Blade of the Heptaseas"}, {name:"Batalha Infinita", image:"Endless Battle"},
-  {name:"Machado de Guerra", image:"War Axe"}, {name:"Foice da Natureza", image:"Sea Halberd"},
-  {name:"Talismã Encantado", image:"Enchanted Talisman"}, {name:"Cristal Sagrado", image:"Holy Crystal"},
-  {name:"Glaive Divina", image:"Divine Glaive"}, {name:"Varinha do Gênio", image:"Genius Wand"},
-  {name:"Varinha da Rainha do Gelo", image:"Ice Queen Wand"}, {name:"Varinha Brilhante", image:"Glowing Wand"},
-  {name:"Asas de Sangue", image:"Blood Wings"}, {name:"Coroa do Inverno", image:"Winter Crown"},
-  {name:"Cinto do Trovão", image:"Thunder Belt"}, {name:"Armadura de Lâminas", image:"Blade Armor"},
-  {name:"Imortalidade", image:"Immortality"}, {name:"Armadura Antiga", image:"Antique Cuirass"},
-  {name:"Armadura Radiante", image:"Radiant Armor"}, {name:"Escudo de Atena", image:"Athenas Shield"},
-  {name:"Dominância do Gelo", image:"Dominance Ice"}, {name:"Oráculo", image:"Oracle"},
-  {name:"Capacete Guardião", image:"Guardian Helmet"}, {name:"Peitoral da Força Bruta", image:"Brute Force Breastplate"},
-  {name:"Capacete Amaldiçoado", image:"Cursed Helmet"}, {name:"Asas da Rainha", image:"Queens Wings"}
+  // --- Botas (Movimento) ---
+  {name:"Botas de Guerreiro", image:"Warrior Boots"},
+  {name:"Botas Resistentes", image:"Tough Boots"},
+  {name:"Botas Rápidas", image:"Swift Boots"},
+  {name:"Botas Arcanas", image:"Arcane Boots"},
+  {name:"Botas Mágicas", image:"Magic Shoes"},
+  {name:"Botas Demoníacas", image:"Demon Shoes"},
+  {name:"Botas Ligeiras", image:"Rapid Boots"},
+
+  // --- Ataque Físico ---
+  {name:"Lâmina da Desespero", image:"Blade of Despair"},
+  {name:"Fúria do Berserker", image:"Berserkers Fury"},
+  {name:"Ceifador da Vida", image:"Haas Claws"},
+  {name:"Vento da Natureza", image:"Wind of Nature"},
+  {name:"Espada do Caçador de Demônios", image:"Demon Hunter Sword"},
+  {name:"Bastão Dourado", image:"Golden Staff"},
+  {name:"Lança da Corrosão", image:"Corrosion Scythe"},
+  {name:"Garras da Tempestade", image:"Windtalker"},
+  {name:"Rugido do Maléfico", image:"Malefic Roar"},
+  {name:"Lâmina das Heptaseas", image:"Blade of the Heptaseas"},
+  {name:"Batalha Infinita", image:"Endless Battle"},
+  {name:"Machado de Guerra", image:"War Axe"},
+  {name:"Foice da Natureza", image:"Sea Halberd"},
+  {name:"Flecha do Grande Dragão", image:"Great Dragon Spear"},
+  {name:"Lâmina de Sangue", image:"Bloodlust Axe"},
+  {name:"Martelo da Fúria", image:"Fury Hammer"},
+
+  // --- Magia ---
+  {name:"Talismã Encantado", image:"Enchanted Talisman"},
+  {name:"Cristal Sagrado", image:"Holy Crystal"},
+  {name:"Glaive Divina", image:"Divine Glaive"},
+  {name:"Varinha do Gênio", image:"Genius Wand"},
+  {name:"Varinha da Rainha do Gelo", image:"Ice Queen Wand"},
+  {name:"Varinha Brilhante", image:"Glowing Wand"},
+  {name:"Asas de Sangue", image:"Blood Wings"},
+  {name:"Coroa do Inverno", image:"Winter Crown"},
+  {name:"Relógio do Destino", image:"Clock of Destiny"},
+  {name:"Energia Concentrada", image:"Concentrated Energy"},
+  {name:"Feather of Heaven", image:"Feather of Heaven"},
+  {name:"Frask of the Oasis", image:"Flask of the Oasis"},
+  {name:"Lanterna dos Desejos", image:"Wishing Lantern"},
+  {name:"Gema Elegante", image:"Elegant Gem"},
+  {name:"Espada Azure", image:"Azure Blade"},
+
+  // --- Defesa ---
+  {name:"Cinto do Trovão", image:"Thunder Belt"},
+  {name:"Armadura de Lâminas", image:"Blade Armor"},
+  {name:"Imortalidade", image:"Immortality"},
+  {name:"Armadura Antiga", image:"Antique Cuirass"},
+  {name:"Armadura Radiante", image:"Radiant Armor"},
+  {name:"Escudo de Atena", image:"Athenas Shield"},
+  {name:"Dominância do Gelo", image:"Dominance Ice"},
+  {name:"Oráculo", image:"Oracle"},
+  {name:"Capacete Guardião", image:"Guardian Helmet"},
+  {name:"Peitoral da Força Bruta", image:"Brute Force Breastplate"},
+  {name:"Capacete Amaldiçoado", image:"Cursed Helmet"},
+  {name:"Asas da Rainha", image:"Queens Wings"},
+  {name:"Cinto de Ares", image:"Ares Belt"},
+  {name:"Escudo de Gelo Negro", image:"Black Ice Shield"},
+  {name:"Armadura Couraçada", image:"Dreadnaught Armor"},
+  {name:"Armadura do Crepúsculo", image:"Twilight Armor"},
+
+  // --- Itens de Selva (Jungling) ---
+  {name:"Lâmina Gélida", image:"Ice Retribution"},
+  {name:"Lâmina Flamejante", image:"Flame Retribution"},
+  {name:"Lâmina Sangrenta", image:"Bloody Retribution"},
+
+  // --- Itens de Roaming (Suporte) ---
+  {name:"Máscara de Roaming", image:"Roaming Mask"},
+  {name:"Bênção do Encantador", image:"Encantar Blessing"},
+  {name:"Bênção da Fera", image:"Beast Blessing"},
+  {name:"Bênção do Apoio", image:"Support Blessing"}
 ];
 let HOME_COMMUNITY_REQUESTED = false;
 let CFG = {names:true, bubbles:true};
