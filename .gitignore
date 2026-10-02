@@ -7,3 +7,7 @@ lobby.db
 lobby.db-*
 __pycache__/
 .venv/
+
+*.db
+*.db.*
+backup-r2-*
