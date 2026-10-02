@@ -99,6 +99,15 @@ def _snapshot(dest):
         src.close()
 
 
+def _log_credentials_fingerprint():
+    """Loga uma impressão digital (não reversível) para comparar com o valor local."""
+    import hashlib
+    fp = hashlib.sha256(R2_SECRET_ACCESS_KEY.encode()).hexdigest()[:8]
+    print(f"[persistence] R2 key_id={R2_ACCESS_KEY_ID[:4]}...{R2_ACCESS_KEY_ID[-4:]} "
+          f"(len {len(R2_ACCESS_KEY_ID)}) secret_sha256={fp} (len {len(R2_SECRET_ACCESS_KEY)}) "
+          f"endpoint={R2_ENDPOINT_URL!r} bucket={R2_BUCKET_NAME!r}")
+
+
 def download_db():
     """Baixa o lobby.db do R2 para um arquivo temporário e só então substitui o local.
     Chame ANTES de abrir o banco no app. Se o estado do R2 não puder ser confirmado,
@@ -107,6 +116,7 @@ def download_db():
     if not _configured():
         print("[persistence] R2 não configurado, pulando download")
         return
+    _log_credentials_fingerprint()
     tmp = DB_PATH + ".download"
     try:
         s3 = _get_s3_client()
