@@ -1013,13 +1013,12 @@ async def ws_endpoint(ws: WebSocket):
             except IdentityError:
                 record_login_failure(attempt_key)
                 raise
-                if key in online:
-            old_ws = online[key].get("ws")
-            if old_ws is not None and old_ws is not ws:
-                try:
-                    await old_ws.close(code=4001)
-                except Exception:
-                    pass
+
+        if key in online:
+            try:
+                await online[key]["ws"].close(code=4001)
+            except Exception:
+                pass
             online.pop(key, None)
 
         if attempt_key:
@@ -1656,7 +1655,7 @@ async def ws_endpoint(ws: WebSocket):
     except (WebSocketDisconnect, json.JSONDecodeError, KeyError, ValueError):
         pass
     finally:
-        if nick and nick in online:
+        if nick and nick in online and online[nick].get("ws") is ws:
             await bc_room(nick, {"t": "leave", "nick": nick}, skip=nick)
             del online[nick]
 
