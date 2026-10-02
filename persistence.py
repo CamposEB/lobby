@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import threading
 import time
 from pathlib import Path
@@ -7,17 +8,30 @@ import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
 
-R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "").strip()
-R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "").strip()
-R2_ENDPOINT_URL = os.getenv("R2_ENDPOINT_URL", "").strip()
-R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "").strip()
-DB_PATH = os.getenv("LOBBY_DB_PATH", "lobby.db")
-BACKUP_INTERVAL = 300  # backup de segurança a cada 5 min mesmo sem escrita
-DEBOUNCE_SECONDS = 8   # espera 8s após a última escrita antes de subir
+
+def _env(name, default=""):
+    # remove espaços, quebras de linha e aspas coladas por engano
+    return os.getenv(name, default).strip().strip("\"'").strip()
+
+
+R2_ACCESS_KEY_ID = _env("R2_ACCESS_KEY_ID")
+R2_SECRET_ACCESS_KEY = _env("R2_SECRET_ACCESS_KEY")
+R2_ENDPOINT_URL = _env("R2_ENDPOINT_URL")
+R2_BUCKET_NAME = _env("R2_BUCKET_NAME")
+DB_PATH = _env("LOBBY_DB_PATH", "lobby.db")
+
+KEY_LATEST = "lobby.db"
+HISTORY_PREFIX = "history/"
+BACKUP_INTERVAL = 300      # backup de segurança a cada 5 min mesmo sem escrita
+DEBOUNCE_SECONDS = 8       # espera 8s após a última escrita antes de subir
+HISTORY_INTERVAL = 3600    # guarda uma cópia datada por hora
+KEEP_HISTORY = 24          # quantas cópias datadas manter
+RETRY_DELAY = 30           # espera após falha de upload
 
 _s3_client = None
-_lock = threading.Lock()
+_upload_lock = threading.Lock()   # só serializa uploads; não bloqueia notify_write
 _last_write = 0.0
+_sync_ready = False               # só vira True depois de confirmar o estado do R2
 
 
 def _configured():
@@ -37,12 +51,12 @@ def _get_s3_client():
             region_name="auto",
             config=Config(
                 signature_version="s3v4",
-                s3={
-                    "addressing_style": "path",
-                    "payload_signing_enabled": False,  # Desabilita a assinatura do corpo
-                },
-                request_checksum_calculation="when_required",  # Não envia checksums
-                response_checksum_validation="when_required",  # Não espera checksums
+                s3={"addressing_style": "path"},
+                request_checksum_calculation="when_required",
+                response_checksum_validation="when_required",
+                retries={"max_attempts": 3, "mode": "standard"},
+                connect_timeout=10,
+                read_timeout=60,
             ),
         )
     return _s3_client
@@ -61,84 +75,135 @@ def _cleanup(path):
         pass
 
 
-def download_db():
-
-    import hashlib
-
-def log_diagnostics():
-    s3 = _get_s3_client()
-    fp = hashlib.sha256(R2_SECRET_ACCESS_KEY.encode()).hexdigest()[:8]
-    print(f"[diag] endpoint={s3.meta.endpoint_url!r} region={s3.meta.region_name!r}")
-    print(f"[diag] key_id={R2_ACCESS_KEY_ID[:4]}...{R2_ACCESS_KEY_ID[-4:]} "
-          f"secret_len={len(R2_SECRET_ACCESS_KEY)} secret_sha256={fp}")
+def _is_valid_sqlite(path):
     try:
-        r = s3.list_objects_v2(Bucket=R2_BUCKET_NAME, MaxKeys=1)
-        print(f"[diag] list OK, KeyCount={r.get('KeyCount')}")
-    except ClientError as e:
-        print(f"[diag] list falhou: {e.response['Error']}")
-    """Sempre baixa o lobby.db do R2, sobrescrevendo o local.
-    Baixa para arquivo temporário primeiro, para não corromper o local se falhar."""
+        con = sqlite3.connect(path)
+        try:
+            return con.execute("PRAGMA quick_check").fetchone()[0] == "ok"
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return False
+
+
+def _snapshot(dest):
+    """Cópia consistente do banco, mesmo com o app escrevendo."""
+    src = sqlite3.connect(DB_PATH)
+    try:
+        dst = sqlite3.connect(dest)
+        try:
+            src.backup(dst)
+        finally:
+            dst.close()
+    finally:
+        src.close()
+
+
+def download_db():
+    """Baixa o lobby.db do R2 para um arquivo temporário e só então substitui o local.
+    Chame ANTES de abrir o banco no app. Se o estado do R2 não puder ser confirmado,
+    uploads ficam bloqueados para não sobrescrever o backup com um banco vazio."""
+    global _sync_ready
     if not _configured():
         print("[persistence] R2 não configurado, pulando download")
         return
     tmp = DB_PATH + ".download"
     try:
         s3 = _get_s3_client()
-        s3.download_file(R2_BUCKET_NAME, "lobby.db", tmp)
+        s3.download_file(R2_BUCKET_NAME, KEY_LATEST, tmp)
+        if not _is_valid_sqlite(tmp):
+            print("[persistence] Backup baixado é inválido; uploads BLOQUEADOS até reiniciar")
+            _cleanup(tmp)
+            return
         os.replace(tmp, DB_PATH)
+        _sync_ready = True
         print(f"[persistence] Banco baixado do R2 para {DB_PATH}")
     except ClientError as e:
         code = e.response.get("Error", {}).get("Code", "")
+        _cleanup(tmp)
         if code in ("404", "NoSuchKey"):
+            _sync_ready = True  # confirmado: ainda não existe backup
             print("[persistence] Nenhum backup no R2 ainda, iniciando banco local")
         else:
-            print(f"[persistence] Erro ao baixar do R2, mantendo banco local: {e}")
-        _cleanup(tmp)
+            print(f"[persistence] Erro ao baixar do R2 ({code}); mantendo banco local. "
+                  f"Uploads BLOQUEADOS até reiniciar: {e}")
     except Exception as e:
-        print(f"[persistence] Erro inesperado ao baixar: {e}")
         _cleanup(tmp)
+        print(f"[persistence] Erro inesperado ao baixar; uploads BLOQUEADOS: {e}")
 
 
-def upload_db():
-    if not _configured():
-        return
-    if not Path(DB_PATH).exists():
-        return
+def _rotate_history(s3):
+    resp = s3.list_objects_v2(Bucket=R2_BUCKET_NAME, Prefix=HISTORY_PREFIX)
+    keys = sorted(o["Key"] for o in resp.get("Contents", []))
+    for key in keys[:-KEEP_HISTORY]:
+        s3.delete_object(Bucket=R2_BUCKET_NAME, Key=key)
+
+
+def upload_db(history=False):
+    """Retorna True se o upload deu certo."""
+    if not _configured() or not Path(DB_PATH).exists():
+        return False
+    if not _sync_ready:
+        print("[persistence] Upload bloqueado: estado do R2 não confirmado no startup")
+        return False
+    snap = DB_PATH + ".snapshot"
     try:
+        _snapshot(snap)
         s3 = _get_s3_client()
-        s3.upload_file(DB_PATH, R2_BUCKET_NAME, "lobby.db")
+        s3.upload_file(snap, R2_BUCKET_NAME, KEY_LATEST)
+        if history:
+            s3.upload_file(snap, R2_BUCKET_NAME,
+                           f"{HISTORY_PREFIX}lobby-{time.strftime('%Y%m%d-%H%M%S')}.db")
+            _rotate_history(s3)
         print(f"[persistence] Banco enviado para o R2 em {time.strftime('%H:%M:%S')}")
+        return True
     except Exception as e:
         print(f"[persistence] Erro ao enviar banco: {e}")
+        return False
+    finally:
+        _cleanup(snap)
 
 
 def start_backup_loop():
-    """Loop que roda a cada 2s. Sobe o banco se:
-       - Houve alguma escrita nos últimos DEBOUNCE_SECONDS (upload rápido)
-       - Ou passou BACKUP_INTERVAL desde o último upload (segurança)"""
+    """Loop a cada 2s. Sobe o banco se:
+       - houve escrita há pelo menos DEBOUNCE_SECONDS (upload rápido)
+       - ou passou BACKUP_INTERVAL desde o último upload (segurança)"""
     if not _configured():
         print("[persistence] R2 não configurado, backup automático desativado")
         return
 
     def loop():
         global _last_write
-        last_full = 0.0
+        start = time.time()
+        last_full = start          # não sobe imediatamente no startup
+        last_history = start
+        retry_after = 0.0
         while True:
             time.sleep(2)
             now = time.time()
-            with _lock:
-                if _last_write and (now - _last_write) >= DEBOUNCE_SECONDS:
-                    upload_db()
+            if now < retry_after:
+                continue
+            stamp = _last_write
+            due_write = bool(stamp) and (now - stamp) >= DEBOUNCE_SECONDS
+            due_full = (now - last_full) >= BACKUP_INTERVAL
+            if not (due_write or due_full):
+                continue
+            want_history = (now - last_history) >= HISTORY_INTERVAL
+            with _upload_lock:
+                ok = upload_db(history=want_history)
+            if ok:
+                last_full = now
+                if want_history:
+                    last_history = now
+                if _last_write == stamp:   # não apaga escrita feita durante o upload
                     _last_write = 0.0
-                    last_full = now
-                elif (now - last_full) >= BACKUP_INTERVAL:
-                    upload_db()
-                    last_full = now
+            else:
+                retry_after = now + RETRY_DELAY
 
     threading.Thread(target=loop, daemon=True).start()
     print(f"[persistence] Backup ativo (debounce {DEBOUNCE_SECONDS}s, full {BACKUP_INTERVAL}s)")
 
 
 def upload_on_shutdown():
-    with _lock:
-        upload_db()
+    with _upload_lock:
+        upload_db(history=True)
