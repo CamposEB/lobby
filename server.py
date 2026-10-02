@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from identity_store import IdentityError, identity_store
+import persistence
 
 BOT_KEY = os.getenv("BOT_KEY", "").strip()
 DB_PATH = os.getenv("LOBBY_DB_PATH", "lobby.db")
@@ -682,9 +683,12 @@ async def online_rewards():
 
 @asynccontextmanager
 async def lifespan(app):
+    persistence.download_db()
+    persistence.start_backup_loop()
     task = asyncio.create_task(online_rewards())
     yield
     task.cancel()
+    persistence.upload_on_shutdown()
 
 app = FastAPI(lifespan=lifespan)
 
