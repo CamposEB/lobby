@@ -39,10 +39,10 @@ def _get_s3_client():
                 signature_version="s3v4",
                 s3={
                     "addressing_style": "path",
-                    "payload_signing_enabled": False,  # ← ESSENCIAL
+                    "payload_signing_enabled": False,  # Desabilita a assinatura de payload
                 },
-                request_checksum_calculation="when_required",
-                response_checksum_validation="when_required",
+                request_checksum_calculation="when_required",  # Não envia checksums CRC32
+                response_checksum_validation="when_required",  # Não espera checksums na resposta
             ),
         )
     return _s3_client
