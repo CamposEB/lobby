@@ -2,9 +2,9 @@ import os
 import threading
 import time
 from pathlib import Path
-from botocore.config import Config
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "").strip()
@@ -35,7 +35,12 @@ def _get_s3_client():
             aws_access_key_id=R2_ACCESS_KEY_ID,
             aws_secret_access_key=R2_SECRET_ACCESS_KEY,
             region_name="auto",
-            config=Config(signature_version='s3v4')
+            config=Config(
+                signature_version="s3v4",
+                s3={"addressing_style": "path"},
+                request_checksum_calculation="when_required",
+                response_checksum_validation="when_required",
+            ),
         )
     return _s3_client
 
