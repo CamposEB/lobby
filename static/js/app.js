@@ -163,9 +163,12 @@ function saveGameSettings(){
 
 function connect(authentication){
   ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
-  ws.onopen = () => send(authentication || {
-    t:"login", nick:$("nick").value, password:$("password").value
-  });
+  ws.onopen = () => {
+    if (authentication) { send(authentication); return; }
+    const savedToken = (() => { try { return localStorage.getItem("society.session"); } catch (e) { return null; } })();
+    if (savedToken) { send({t:"session_login", token:savedToken}); }
+    else { send({t:"login", nick:$("nick").value, password:$("password").value}); }
+  };
   ws.onmessage = e => { try { handle(JSON.parse(e.data)); } catch (err) { console.error(err); } };
   ws.onclose = () => {
     if (SELF) addLog("Conexão perdida. Recarregue a página.");
@@ -175,6 +178,7 @@ function connect(authentication){
 async function logout(){
   const w = ws;
   SELF = null;
+  try { localStorage.removeItem("society.session"); } catch (e) {}
   if (w) w.close();
   if (window.societyFirebaseSignOut) await window.societyFirebaseSignOut();
   location.reload();
@@ -192,6 +196,7 @@ function handle(m){
     }));
   }
   else if (t === "init"){
+    if (m.token) { try { localStorage.setItem("society.session", m.token); } catch (e) {} }
     SHOP = m.shop; ME = m.me; SELF = m.self; QZ = m.quiz; PROFILE = m.profile || {};
     $("nick").value = SELF;
     $("password").value = "";
@@ -218,7 +223,10 @@ function handle(m){
       setupTournaments();
       setupModeration();
       setupCommunity();
-    } catch (err) { console.error(err); }
+        } catch (err) { console.error(err); }
+  }
+  else if (t === "session_invalid"){
+    try { localStorage.removeItem("society.session"); } catch (e) {}
   }
   else if (t === "room") setRoom(m.id, m.players);
   else if (t === "rooms") renderRooms(m.list);

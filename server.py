@@ -1,4 +1,4 @@
-import asyncio, datetime, hashlib, json, os, re, secrets, sqlite3, time, unicodedata
+import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, sqlite3, time, unicodedata
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -28,6 +28,48 @@ BAD = ["palavrao1", "palavrao2"]  # preencha sua lista de palavras proibidas
 LOGIN_FAILURES = {}
 LOGIN_WINDOW_SECONDS = 900
 LOGIN_MAX_FAILURES = 5
+
+SESSION_SECRET = os.getenv("SESSION_SECRET", "").strip()
+SESSION_TTL = 30 * 86400  # 30 dias
+
+
+def _sign_session(payload):
+    return hmac.new(SESSION_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()
+
+
+def create_session_token(nick):
+    if not SESSION_SECRET:
+        return ""
+    expires = int(time.time()) + SESSION_TTL
+    payload = f"{nick}:{expires}"
+    signature = _sign_session(payload)
+    raw = f"{payload}:{signature}"
+    return base64.urlsafe_b64encode(raw.encode()).decode().rstrip("=")
+
+
+def validate_session_token(token):
+    if not SESSION_SECRET or not token or len(token) > 500:
+        return None
+    try:
+        padded = token + "=" * (-len(token) % 4)
+        raw = base64.urlsafe_b64decode(padded).decode()
+    except Exception:
+        return None
+    parts = raw.rsplit(":", 2)
+    if len(parts) != 3:
+        return None
+    nick, expires_str, signature = parts
+    try:
+        expires = int(expires_str)
+    except ValueError:
+        return None
+    payload = f"{nick}:{expires}"
+    if not secrets.compare_digest(_sign_session(payload), signature):
+        return None
+    if expires < time.time():
+        return None
+    return nick
+
 
 SHOP = {
     "c_azul":   {"name": "Azul",      "slot": "color", "value": "#4c8dff", "price": 0},
@@ -904,7 +946,26 @@ async def ws_endpoint(ws: WebSocket):
     nick = None
     try:
         msg = json.loads(await ws.receive_text())
-        if msg.get("t") == "google_login":
+        if msg.get("t") == "session_login":
+            token_nick = validate_session_token(str(msg.get("token", "")))
+            if not token_nick:
+                await ws.send_text(json.dumps({"t": "session_invalid"}))
+                return await ws.close()
+            user = get_user(token_nick)
+            if not user:
+                db.execute(
+                    "INSERT INTO users(nick,display,pin,pin_salt,password_hash,password_salt,joined_at) "
+                    "VALUES(?,?,?,?,?,?,?)",
+                    (token_nick, token_nick, "", "", "", "",
+                     datetime.datetime.now().astimezone().isoformat(timespec="seconds")),
+                )
+                db.commit()
+            auth_provider = "session"
+            key = token_nick
+            role = role_for(key)
+            created = False
+            attempt_key = None
+        elif msg.get("t") == "google_login":
             auth_provider = "google"
             try:
                 key, role, created = google_login_account(msg)
@@ -967,6 +1028,7 @@ async def ws_endpoint(ws: WebSocket):
         await ws.send_text(json.dumps({"t": "init", "quiz": quiz_state(nick), "profile": profile(nick, nick), "unread": unread(nick), "shop": SHOP, "me": me(nick), "self": nick,
                                        "is_admin": role == "admin", "is_moderator": role in ("mod", "admin"),
                                        "role": role, "auth_provider": auth_provider,
+                                       "token": create_session_token(nick),
                                        "players": [public(n) for n in online if online[n]["room"] == "lobby"]}))
         await send(nick, {"t": "tournaments", "list": tournament_list(nick)})
         current_mute = mute_status(nick)
@@ -1217,7 +1279,7 @@ async def ws_endpoint(ws: WebSocket):
                     await send(nick, {"t": "password_error",
                                       "m": "A nova senha deve ter entre 10 e 128 caracteres."})
                     continue
-                if p.get("auth_provider") != "google":
+                if p.get("auth_provider") not in ("google", "session"):
                     if not isinstance(current_password, str) or not verify_password(user, current_password):
                         await send(nick, {"t": "password_error", "m": "A senha atual está incorreta."})
                         continue
