@@ -430,6 +430,10 @@ window.societyGoogleProfileSubmit = profileName =>
 window.societyGoogleProfileCancel = () => send({t:"google_profile_cancel"});
 window.dispatchEvent(new Event("society-app-ready"));
 
+// Tenta retomar a sessão salva ao carregar a página
+const savedSession = (() => { try { return localStorage.getItem("society.session"); } catch (e) { return null; } })();
+if (savedSession) connect();
+
 function showCommunityMessage(scope, message, isError){
   const target = scope === "meta" ? $("metaMessage") : $("buildMessage");
   if (!target) return;
