@@ -39,10 +39,10 @@ def _get_s3_client():
                 signature_version="s3v4",
                 s3={
                     "addressing_style": "path",
-                    "payload_signing_enabled": False,  # Desabilita a assinatura de payload
+                    "payload_signing_enabled": False,  # Desabilita a assinatura do corpo
                 },
-                request_checksum_calculation="when_required",  # Não envia checksums CRC32
-                response_checksum_validation="when_required",  # Não espera checksums na resposta
+                request_checksum_calculation="when_required",  # Não envia checksums
+                response_checksum_validation="when_required",  # Não espera checksums
             ),
         )
     return _s3_client
@@ -62,6 +62,20 @@ def _cleanup(path):
 
 
 def download_db():
+
+    import hashlib
+
+def log_diagnostics():
+    s3 = _get_s3_client()
+    fp = hashlib.sha256(R2_SECRET_ACCESS_KEY.encode()).hexdigest()[:8]
+    print(f"[diag] endpoint={s3.meta.endpoint_url!r} region={s3.meta.region_name!r}")
+    print(f"[diag] key_id={R2_ACCESS_KEY_ID[:4]}...{R2_ACCESS_KEY_ID[-4:]} "
+          f"secret_len={len(R2_SECRET_ACCESS_KEY)} secret_sha256={fp}")
+    try:
+        r = s3.list_objects_v2(Bucket=R2_BUCKET_NAME, MaxKeys=1)
+        print(f"[diag] list OK, KeyCount={r.get('KeyCount')}")
+    except ClientError as e:
+        print(f"[diag] list falhou: {e.response['Error']}")
     """Sempre baixa o lobby.db do R2, sobrescrevendo o local.
     Baixa para arquivo temporário primeiro, para não corromper o local se falhar."""
     if not _configured():
