@@ -1013,9 +1013,14 @@ async def ws_endpoint(ws: WebSocket):
             except IdentityError:
                 record_login_failure(attempt_key)
                 raise
-        if key in online:
-            await ws.send_text(json.dumps({"t": "error", "m": "Este usuario já está online."}))
-            return await ws.close()
+                if key in online:
+            old_ws = online[key].get("ws")
+            if old_ws is not None and old_ws is not ws:
+                try:
+                    await old_ws.close(code=4001)
+                except Exception:
+                    pass
+            online.pop(key, None)
 
         if attempt_key:
             LOGIN_FAILURES.pop(attempt_key, None)
