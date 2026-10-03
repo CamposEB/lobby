@@ -15,3 +15,5 @@ backup-r2-*
 firebase-service-account.json
 *service-account*.json
 *adminsdk*.json
+.env*
+!.env.example
