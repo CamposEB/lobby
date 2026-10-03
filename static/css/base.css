@@ -16,7 +16,21 @@ textarea{resize:vertical}
 #login{margin:8vh auto 24px;background:var(--panel);padding:28px;border:1px solid var(--border);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:12px;width:min(390px,92vw);box-shadow:var(--shadow-md)}
 #login h1{margin:0;font-size:1.6rem}
 #login [hidden]{display:none!important}
-#login .logo{align-self:center}
+#login .logo {
+  align-self: center;
+  width: 160px;
+  height: 160px;
+  background: none;
+  border-radius: 0;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: inherit;
+}
 .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px;border:1px solid var(--border);border-radius:11px;background:var(--bg)}
 .auth-tab{min-height:40px;background:transparent;color:var(--muted)}
 .auth-tab:hover:not(:disabled){background:var(--surface-tint-2);color:var(--text)}

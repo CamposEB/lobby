@@ -37,7 +37,7 @@ canvas{border:1px solid var(--border);box-shadow:none}
 
 /* Lounge: sala, menus e cartões */
 #sidebar{overflow-y:auto}
-.logo.big{width:56px;height:56px;font-size:2rem;margin:0 auto}
+.logo.big{width:160px;height:160px;margin:0 auto;background:none;border-radius:0}
 #login h1{text-align:center}
 #c{display:block;width:100%;background:transparent;border:0;box-shadow:none;touch-action:none;cursor:grab}
 #c:active{cursor:grabbing}
