@@ -1,4 +1,13 @@
-import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, sqlite3, time, unicodedata
+# server.py — versão migrada para PostgreSQL (Supabase) via db.py
+#
+# Mudanças em relação ao original:
+#   1. removido "sqlite3" dos imports
+#   2. removido "import persistence"
+#   3. adicionado "from db import connect as _connect_db"
+#   4. removido o bloco de setup do SQLite (CREATE TABLE / ALTER TABLE / class _MarkedConnection)
+#   5. adicionado "db = _connect_db()" no lugar
+#   6. lifespan não baixa/sobe mais backup — apenas gerencia a task de recompensas e fecha o pool
+import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -11,10 +20,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from identity_store import IdentityError, identity_store
-import persistence
+from db import connect as _connect_db
 
 BOT_KEY = os.getenv("BOT_KEY", "").strip()
-DB_PATH = os.getenv("LOBBY_DB_PATH", "lobby.db")
 ALLOW_LEGACY_LOGIN = os.getenv("ALLOW_LEGACY_LOGIN", "true").strip().lower() in ("1", "true", "yes")
 ADMIN_NICKS = {
     nick.strip().lower()
@@ -22,15 +30,15 @@ ADMIN_NICKS = {
     if nick.strip()
 }
 W, H = 800, 500
-COIN_EVERY = 60        # segundos online para ganhar 1 moeda
-DAILY_ONLINE_CAP = 120  # máximo de moedas por dia só por ficar online
-BAD = ["palavrao1", "palavrao2"]  # preencha sua lista de palavras proibidas
+COIN_EVERY = 60
+DAILY_ONLINE_CAP = 120
+BAD = ["palavrao1", "palavrao2"]
 LOGIN_FAILURES = {}
 LOGIN_WINDOW_SECONDS = 900
 LOGIN_MAX_FAILURES = 5
 
 SESSION_SECRET = os.getenv("SESSION_SECRET", "").strip()
-SESSION_TTL = 30 * 86400  # 30 dias
+SESSION_TTL = 30 * 86400
 
 
 def _sign_session(payload):
@@ -87,134 +95,10 @@ SHOP = {
 }
 ROOMS = {"lobby": "Salão Principal", "praca": "Praça", "arena": "Arena"}
 
-class _MarkedConnection(sqlite3.Connection):
-    """Chama persistence.notify_write() a cada commit, para o backup disparar rápido."""
-    def commit(self):
-        super().commit()
-        try:
-            persistence.notify_write()
-        except Exception:
-            pass
+# Conexão única com o Postgres do Supabase (wrapper em db.py)
+db = _connect_db()
 
-
-db = sqlite3.connect(DB_PATH, check_same_thread=False, factory=_MarkedConnection)
-db.row_factory = sqlite3.Row
-db.execute("""CREATE TABLE IF NOT EXISTS users(
-  nick TEXT PRIMARY KEY, display TEXT, pin TEXT, coins INT DEFAULT 10,
-  owned TEXT DEFAULT '["c_azul","c_verde"]', equip TEXT DEFAULT '{"color":"c_azul"}',
-  day TEXT DEFAULT '', earned INT DEFAULT 0)""")
-db.commit()
-
-db.execute("CREATE TABLE IF NOT EXISTS quiz_done(nick TEXT, day TEXT, PRIMARY KEY(nick, day))")
-db.execute("""CREATE TABLE IF NOT EXISTS lfg(id INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT,
-  display TEXT, rank TEXT, role TEXT, mode TEXT, hour TEXT, gid TEXT, ts REAL)""")
-for col, definition in (
-    ("win_rate", "REAL"),
-    ("matches", "INTEGER"),
-    ("message", "TEXT NOT NULL DEFAULT ''"),
-):
-    try:
-        db.execute(f"ALTER TABLE lfg ADD COLUMN {col} {definition}")
-    except sqlite3.OperationalError as error:
-        if "duplicate column name" not in str(error).lower():
-            raise
-db.commit()
 QUIZ = json.load(open("questions.json", encoding="utf-8"))
-for col in ("bio", "rank", "role", "hero", "gid"):
-    try: db.execute(f"ALTER TABLE users ADD COLUMN {col} TEXT DEFAULT ''")
-    except sqlite3.OperationalError: pass
-for col, definition in (
-    ("profile_data", "TEXT DEFAULT '{}'"),
-    ("joined_at", "TEXT DEFAULT ''"),
-    ("pin_salt", "TEXT DEFAULT ''"),
-    ("password_hash", "TEXT DEFAULT ''"),
-    ("password_salt", "TEXT DEFAULT ''"),
-):
-    try: db.execute(f"ALTER TABLE users ADD COLUMN {col} {definition}")
-    except sqlite3.OperationalError: pass
-db.execute("UPDATE users SET joined_at=? WHERE joined_at=''",
-           (datetime.datetime.now().astimezone().isoformat(timespec="seconds"),))
-db.execute("CREATE TABLE IF NOT EXISTS dm(id INTEGER PRIMARY KEY AUTOINCREMENT, a TEXT, b TEXT, m TEXT, ts REAL, seen INT DEFAULT 0)")
-db.execute("CREATE TABLE IF NOT EXISTS blocks(a TEXT, b TEXT, PRIMARY KEY(a, b))")
-db.execute("""CREATE TABLE IF NOT EXISTS activity(
-    id INTEGER PRIMARY KEY AUTOINCREMENT, nick TEXT NOT NULL, kind TEXT NOT NULL,
-    detail TEXT NOT NULL, ts REAL NOT NULL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS tournaments(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    game TEXT NOT NULL DEFAULT 'Mobile Legends: Bang Bang',
-    format TEXT NOT NULL DEFAULT '',
-    start_at TEXT NOT NULL,
-    end_at TEXT NOT NULL,
-    prize TEXT NOT NULL DEFAULT '',
-    max_teams INTEGER NOT NULL DEFAULT 16,
-    status TEXT NOT NULL DEFAULT 'scheduled',
-    winner TEXT NOT NULL DEFAULT '',
-    created_by TEXT NOT NULL,
-    updated_at REAL NOT NULL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS tournament_entries(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tournament_id INTEGER NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
-    nick TEXT NOT NULL REFERENCES users(nick),
-    team TEXT NOT NULL,
-    players TEXT NOT NULL DEFAULT '',
-    created_at REAL NOT NULL,
-    UNIQUE(tournament_id, nick))""")
-db.execute("""CREATE TABLE IF NOT EXISTS community_reports(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    reporter TEXT NOT NULL REFERENCES users(nick),
-    target TEXT NOT NULL REFERENCES users(nick),
-    category TEXT NOT NULL,
-    details TEXT NOT NULL DEFAULT '',
-    status TEXT NOT NULL DEFAULT 'open',
-    action TEXT NOT NULL DEFAULT '',
-    created_at REAL NOT NULL,
-    reviewed_by TEXT NOT NULL DEFAULT '',
-    reviewed_at REAL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS user_mutes(
-    nick TEXT PRIMARY KEY REFERENCES users(nick),
-    muted_until REAL NOT NULL,
-    reason TEXT NOT NULL DEFAULT '',
-    by_nick TEXT NOT NULL,
-    created_at REAL NOT NULL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS community_meta(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author TEXT NOT NULL REFERENCES users(nick),
-    lane TEXT NOT NULL,
-    hero TEXT NOT NULL,
-    tier TEXT NOT NULL,
-    patch TEXT NOT NULL,
-    notes TEXT NOT NULL DEFAULT '',
-    created_at REAL NOT NULL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS community_meta_votes(
-    meta_id INTEGER NOT NULL REFERENCES community_meta(id) ON DELETE CASCADE,
-    voter TEXT NOT NULL REFERENCES users(nick),
-    value INTEGER NOT NULL CHECK(value IN (-1, 1)),
-    created_at REAL NOT NULL,
-    PRIMARY KEY(meta_id, voter))""")
-db.execute("""CREATE TABLE IF NOT EXISTS community_builds(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author TEXT NOT NULL REFERENCES users(nick),
-    hero TEXT NOT NULL,
-    lane TEXT NOT NULL,
-    patch TEXT NOT NULL,
-    spell TEXT NOT NULL,
-    emblem TEXT NOT NULL,
-    items TEXT NOT NULL,
-    notes TEXT NOT NULL DEFAULT '',
-    created_at REAL NOT NULL)""")
-db.execute("""CREATE TABLE IF NOT EXISTS community_build_votes(
-    build_id INTEGER NOT NULL REFERENCES community_builds(id) ON DELETE CASCADE,
-    voter TEXT NOT NULL REFERENCES users(nick),
-    value INTEGER NOT NULL CHECK(value IN (-1, 1)),
-    created_at REAL NOT NULL,
-    PRIMARY KEY(build_id, voter))""")
-db.execute("CREATE INDEX IF NOT EXISTS idx_community_reports_status_created ON community_reports(status, created_at DESC)")
-db.execute("CREATE INDEX IF NOT EXISTS idx_community_reports_reporter_created ON community_reports(reporter, created_at DESC)")
-db.execute("CREATE INDEX IF NOT EXISTS idx_community_meta_created ON community_meta(created_at DESC)")
-db.execute("CREATE INDEX IF NOT EXISTS idx_community_builds_created ON community_builds(created_at DESC)")
-db.commit()
 
 
 def add_activity(nick, kind, detail):
@@ -495,7 +379,7 @@ def quiz_state(nick):
     return {"q": q["q"], "o": q["o"], "done": row is not None}
 
 
-def lfg_list():  # anúncios expiram em 3h
+def lfg_list():
     rows = db.execute("SELECT lfg.*, users.bio, users.hero, users.profile_data FROM lfg "
                       "JOIN users ON users.nick=lfg.nick WHERE lfg.ts>? ORDER BY lfg.ts DESC LIMIT 30",
                       (time.time() - 10800,)).fetchall()
@@ -509,7 +393,7 @@ def lfg_list():  # anúncios expiram em 3h
     return result
 
 
-online = {}  # nick -> {"ws", "x", "y", "last_chat"}
+online = {}
 
 
 def hash_secret(secret, salt):
@@ -735,12 +619,15 @@ async def online_rewards():
 
 @asynccontextmanager
 async def lifespan(app):
-    persistence.download_db()
-    persistence.start_backup_loop()
     task = asyncio.create_task(online_rewards())
-    yield
-    task.cancel()
-    persistence.upload_on_shutdown()
+    try:
+        yield
+    finally:
+        task.cancel()
+        try:
+            db.close()
+        except Exception:
+            pass
 
 app = FastAPI(lifespan=lifespan)
 
@@ -868,8 +755,6 @@ def google_login_account(message):
             raise IdentityError("Esta conta Google já está vinculada a outro nick.")
         user = get_user(nick)
         if not user:
-            # SQLite foi limpo (deploy/restart/hibernação) mas o vínculo com o Firestore
-            # continua. Recria o usuário local para destravar o login.
             db.execute(
                 "INSERT INTO users(nick,display,pin,pin_salt,password_hash,password_salt,joined_at) "
                 "VALUES(?,?,?,?,?,?,?)",
@@ -1330,7 +1215,7 @@ async def ws_endpoint(ws: WebSocket):
                                       "m": "Você já publicou várias indicações. Aguarde alguns minutos."})
                     continue
                 duplicate = db.execute(
-                    "SELECT 1 FROM community_meta WHERE author=? AND lane=? AND patch=? AND hero=? COLLATE NOCASE",
+                    "SELECT 1 FROM community_meta WHERE author=? AND lane=? AND patch=? AND lower(hero)=lower(?)",
                     (nick, lane, patch, hero)
                 ).fetchone()
                 if duplicate:
@@ -1600,7 +1485,7 @@ async def ws_endpoint(ws: WebSocket):
             elif t == "block":
                 target = str(m.get("nick", "")).strip().lower()
                 if target and target != nick and get_user(target):
-                    db.execute("INSERT OR IGNORE INTO blocks VALUES(?,?)", (nick, target))
+                    db.execute("INSERT INTO blocks(a,b) VALUES(?,?) ON CONFLICT DO NOTHING", (nick, target))
                     db.commit()
                     await send(nick, {"t": "block_result", "m": "Jogador bloqueado. Você não receberá mais mensagens dele."})
             elif t == "lfg_list":
@@ -1634,7 +1519,7 @@ async def ws_endpoint(ws: WebSocket):
                 if not quiz_state(nick)["done"]:
                     q = QUIZ[quiz_idx()]
                     ok = m.get("i") == q["a"]
-                    db.execute("INSERT INTO quiz_done VALUES(?,?)", (nick, str(datetime.date.today())))
+                    db.execute("INSERT INTO quiz_done(nick,day) VALUES(?,?) ON CONFLICT DO NOTHING", (nick, str(datetime.date.today())))
                     db.commit()
                     add_activity(nick, "quiz", "Respondeu ao quiz do dia" + (" corretamente" if ok else ""))
                     if ok: add_coins(nick, 10)
