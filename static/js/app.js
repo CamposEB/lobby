@@ -47,80 +47,163 @@ let IS_ADMIN = false, IS_MODERATOR = false, TOURNAMENTS = [], TOURNAMENT_EDIT_ID
 let COMMUNITY_META = [], COMMUNITY_BUILDS = [], COMMUNITY_BUILDS_TRENDING = [], COMMUNITY_BUILDS_RECENT = [];
 let COMMUNITY_META_LANE = "all", BUILD_REQUEST_ID = 0, BUILD_LOAD_TIMER = null, BUILD_FILTER_TIMER = null;
 let BUILD_LIST_STATE = "idle", BUILD_DETAIL_ID = null;
-const BUILD_ITEM_CATALOG = [
-  // --- Botas (Movimento) ---
-  {name:"Botas de Guerreiro", image:"Warrior Boots"},
-  {name:"Botas Resistentes", image:"Tough Boots"},
-  {name:"Botas Rápidas", image:"Swift Boots"},
-  {name:"Botas Arcanas", image:"Arcane Boots"},
-  {name:"Botas Mágicas", image:"Magic Shoes"},
-  {name:"Botas Demoníacas", image:"Demon Shoes"},
-  {name:"Botas Ligeiras", image:"Rapid Boots"},
 
-  // --- Ataque Físico ---
-  {name:"Lâmina da Desespero", image:"Blade of Despair"},
-  {name:"Fúria do Berserker", image:"Berserkers Fury"},
-  {name:"Ceifador da Vida", image:"Haas Claws"},
-  {name:"Vento da Natureza", image:"Wind of Nature"},
-  {name:"Espada do Caçador de Demônios", image:"Demon Hunter Sword"},
-  {name:"Bastão Dourado", image:"Golden Staff"},
-  {name:"Lança da Corrosão", image:"Corrosion Scythe"},
-  {name:"Garras da Tempestade", image:"Windtalker"},
-  {name:"Rugido do Maléfico", image:"Malefic Roar"},
-  {name:"Lâmina das Heptaseas", image:"Blade of the Heptaseas"},
-  {name:"Batalha Infinita", image:"Endless Battle"},
-  {name:"Machado de Guerra", image:"War Axe"},
-  {name:"Foice da Natureza", image:"Sea Halberd"},
-  {name:"Flecha do Grande Dragão", image:"Great Dragon Spear"},
-  {name:"Lâmina de Sangue", image:"Bloodlust Axe"},
-  {name:"Martelo da Fúria", image:"Fury Hammer"},
+const HERO_JSON_URL = "https://raw.githubusercontent.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/master/hero.json";
+const HERO_IMAGE_DIR = "/static/img/icons/herois/";
+const ITEM_IMAGE_DIR = "/static/img/icons/itens/";
 
-  // --- Magia ---
-  {name:"Talismã Encantado", image:"Enchanted Talisman"},
-  {name:"Cristal Sagrado", image:"Holy Crystal"},
-  {name:"Glaive Divina", image:"Divine Glaive"},
-  {name:"Varinha do Gênio", image:"Genius Wand"},
-  {name:"Varinha da Rainha do Gelo", image:"Ice Queen Wand"},
-  {name:"Varinha Brilhante", image:"Glowing Wand"},
-  {name:"Asas de Sangue", image:"Blood Wings"},
-  {name:"Coroa do Inverno", image:"Winter Crown"},
-  {name:"Relógio do Destino", image:"Clock of Destiny"},
-  {name:"Energia Concentrada", image:"Concentrated Energy"},
-  {name:"Feather of Heaven", image:"Feather of Heaven"},
-  {name:"Frask of the Oasis", image:"Flask of the Oasis"},
-  {name:"Lanterna dos Desejos", image:"Wishing Lantern"},
-  {name:"Gema Elegante", image:"Elegant Gem"},
-  {name:"Espada Azure", image:"Azure Blade"},
-
-  // --- Defesa ---
-  {name:"Cinto do Trovão", image:"Thunder Belt"},
-  {name:"Armadura de Lâminas", image:"Blade Armor"},
-  {name:"Imortalidade", image:"Immortality"},
-  {name:"Armadura Antiga", image:"Antique Cuirass"},
-  {name:"Armadura Radiante", image:"Radiant Armor"},
-  {name:"Escudo de Atena", image:"Athenas Shield"},
-  {name:"Dominância do Gelo", image:"Dominance Ice"},
-  {name:"Oráculo", image:"Oracle"},
-  {name:"Capacete Guardião", image:"Guardian Helmet"},
-  {name:"Peitoral da Força Bruta", image:"Brute Force Breastplate"},
-  {name:"Capacete Amaldiçoado", image:"Cursed Helmet"},
-  {name:"Asas da Rainha", image:"Queens Wings"},
-  {name:"Cinto de Ares", image:"Ares Belt"},
-  {name:"Escudo de Gelo Negro", image:"Black Ice Shield"},
-  {name:"Armadura Couraçada", image:"Dreadnaught Armor"},
-  {name:"Armadura do Crepúsculo", image:"Twilight Armor"},
-
-  // --- Itens de Selva (Jungling) ---
-  {name:"Lâmina Gélida", image:"Ice Retribution"},
-  {name:"Lâmina Flamejante", image:"Flame Retribution"},
-  {name:"Lâmina Sangrenta", image:"Bloody Retribution"},
-
-  // --- Itens de Roaming (Suporte) ---
-  {name:"Máscara de Roaming", image:"Roaming Mask"},
-  {name:"Bênção do Encantador", image:"Encantar Blessing"},
-  {name:"Bênção da Fera", image:"Beast Blessing"},
-  {name:"Bênção do Apoio", image:"Support Blessing"}
+const ITEM_CATEGORIES = [
+  {id:"botas",   label:"Botas"},
+  {id:"fisico",  label:"Dano Físico"},
+  {id:"magico",  label:"Dano Mágico"},
+  {id:"defesa",  label:"Defesa"},
+  {id:"selva",   label:"Selva"},
+  {id:"roaming", label:"Roaming"}
 ];
+
+// file = nome do arquivo em static/img/icons/itens/ (sem .png)
+const BUILD_ITEM_CATALOG = [
+  // ===== BOTAS =====
+  {name:"Botas de Guerreiro",  category:"botas", file:"warrior_boots"},
+  {name:"Botas Resistentes",   category:"botas", file:"tough_boots"},
+  {name:"Botas Rápidas",       category:"botas", file:"swift_boots"},
+  {name:"Botas Arcanas",       category:"botas", file:"arcane_boots"},
+  {name:"Botas Mágicas",       category:"botas", file:"magic_boots"},
+  {name:"Botas Demoníacas",    category:"botas", file:"demon_boots"},
+  {name:"Botas Ligeiras",      category:"botas", file:"rapid_boots"},
+
+  // ===== FÍSICO (Tier 3) =====
+  {name:"Lâmina do Desespero",           category:"fisico", file:"blade_of_despair",       aliases:["Lâmina da Desespero"]},
+  {name:"Fúria do Berserker",            category:"fisico", file:"berserkers_fury"},
+  {name:"Garras de Haas",                category:"fisico", file:"haass_claws"},
+  {name:"Vento da Natureza",             category:"fisico", file:"wind_of_nature"},
+  {name:"Espada do Caçador de Demônios", category:"fisico", file:"demon_hunter_sword"},
+  {name:"Bastão Dourado",                category:"fisico", file:"golden_staff"},
+  {name:"Foice da Corrosão",             category:"fisico", file:"corrosion_scythe"},
+  {name:"Falador do Vento",              category:"fisico", file:"windtalker",             aliases:["Garras da Tempestade"]},
+  {name:"Rugido Maléfico",               category:"fisico", file:"malefic_roar",           aliases:["Rugido do Maléfico"]},
+  {name:"Lâmina dos Sete Mares",         category:"fisico", file:"blade_of_the_heptaseas", aliases:["Lâmina das Heptaseas"]},
+  {name:"Batalha Infinita",              category:"fisico", file:"endless_battle"},
+  {name:"Machado de Guerra",             category:"fisico", file:"war_axe"},
+  {name:"Alabarda Marinha",              category:"fisico", file:"sea_halberd",            aliases:["Foice da Natureza"]},
+  {name:"Lança do Dragão",               category:"fisico", file:"great_dragon_spear",     aliases:["Flecha do Grande Dragão"]},
+  {name:"Martelo da Fúria",              category:"fisico", file:"fury_hammer"},
+  {name:"Meteoro de Ouro Rosa",          category:"fisico", file:"rose_gold_meteor"},
+  {name:"Golpe do Caçador",              category:"fisico", file:"hunter_strike",          aliases:["Ataque do Caçador"]},
+  {name:"Perfurador Celeste",            category:"fisico", file:"sky_piercer"},
+  {name:"Arma Maléfica",                 category:"fisico", file:"malefic_gun"},
+
+  // ===== FÍSICO (Tier 1/2) =====
+  {name:"Meteoro Renegado",              category:"fisico", file:"rogue_meteor"},
+  {name:"Marreta Vampírica",             category:"fisico", file:"vampire_mallet"},
+  {name:"Machadinha do Ogro",            category:"fisico", file:"ogre_tomahawk"},
+  {name:"Espada da Legião",              category:"fisico", file:"legion_sword"},
+  {name:"Lança Comum",                   category:"fisico", file:"regular_spear"},
+  {name:"Arco de Caça de Ferro",         category:"fisico", file:"iron_hunting_bow"},
+  {name:"Dardo",                         category:"fisico", file:"javelin"},
+  {name:"Faca",                          category:"fisico", file:"knife"},
+  {name:"Adaga",                         category:"fisico", file:"dagger"},
+  {name:"Besta Rápida",                  category:"fisico", file:"swift_crossbow"},
+
+  // ===== MÁGICO (Tier 3) =====
+  {name:"Talismã Encantado",          category:"magico", file:"enchanted_talisman"},
+  {name:"Cristal Sagrado",            category:"magico", file:"holy_crystal"},
+  {name:"Glaive Divina",              category:"magico", file:"divine_glaive"},
+  {name:"Varinha do Gênio",           category:"magico", file:"genius_wand"},
+  {name:"Varinha da Rainha do Gelo",  category:"magico", file:"ice_queen_wand"},
+  {name:"Varinha Brilhante",          category:"magico", file:"glowing_wand"},
+  {name:"Asas de Sangue",             category:"magico", file:"blood_wings"},
+  {name:"Coroa do Inverno",           category:"magico", file:"winter_crown"},
+  {name:"Relógio do Destino",         category:"magico", file:"clock_of_destiny"},
+  {name:"Energia Concentrada",        category:"magico", file:"concentrated_energy"},
+  {name:"Pena do Paraíso",            category:"magico", file:"feather_of_heaven"},
+  {name:"Frasco do Oásis",            category:"magico", file:"flask_of_the_oasis"},
+  {name:"Lanterna dos Desejos",       category:"magico", file:"wishing_lantern"},
+  {name:"Gema Elegante",              category:"magico", file:"elegant_gem"},
+  {name:"Lâmina Azure",               category:"magico", file:"azure_blade",            aliases:["Espada Azure"]},
+  {name:"Cajado do Trovão",           category:"magico", file:"lightning_truncheon"},
+  {name:"Foice Estelar",              category:"magico", file:"starlium_scythe"},
+  {name:"Tempo Fugaz",                category:"magico", file:"fleeting_time"},
+  {name:"Flor da Esperança",          category:"magico", file:"flower_of_hope"},
+  {name:"Lanterna da Esperança",      category:"magico", file:"lantern_of_hope"},
+  {name:"Lâmina Mágica",              category:"magico", file:"magic_blade"},
+
+  // ===== MÁGICO (Tier 1/2) =====
+  {name:"Livro dos Sábios",           category:"magico", file:"book_of_sages"},
+  {name:"Códice Misterioso",          category:"magico", file:"mystery_codex"},
+  {name:"Tomo do Mal",                category:"magico", file:"tome_of_evil"},
+  {name:"Varinha Mágica",             category:"magico", file:"magic_wand"},
+  {name:"Colar Mágico",               category:"magico", file:"magic_necklace"},
+  {name:"Cristal de Poder",           category:"magico", file:"power_crystal"},
+  {name:"Cristal de Vitalidade",      category:"magico", file:"vitality_crystal"},
+  {name:"Poção Mágica",               category:"magico", file:"magic_potion"},
+  {name:"Poção de Poder",             category:"magico", file:"power_potion"},
+  {name:"Poção de Pedra",             category:"magico", file:"rock_potion"},
+
+  // ===== DEFESA =====
+  {name:"Cinto do Trovão",          category:"defesa", file:"thunder_belt"},
+  {name:"Armadura de Lâminas",      category:"defesa", file:"blade_armor"},
+  {name:"Imortalidade",             category:"defesa", file:"immortality"},
+  {name:"Peitoral Antigo",          category:"defesa", file:"antique_cuirass",        aliases:["Armadura Antiga"]},
+  {name:"Armadura Radiante",        category:"defesa", file:"radiant_armor"},
+  {name:"Escudo de Atena",          category:"defesa", file:"athenas_shield"},
+  {name:"Dominância do Gelo",       category:"defesa", file:"dominance_ice"},
+  {name:"Oráculo",                  category:"defesa", file:"oracle"},
+  {name:"Capacete Guardião",        category:"defesa", file:"guardian_helmet"},
+  {name:"Peitoral da Força Bruta",  category:"defesa", file:"brute_force_breastplate"},
+  {name:"Capacete Amaldiçoado",     category:"defesa", file:"cursed_helmet"},
+  {name:"Asas da Rainha",           category:"defesa", file:"queens_wings"},
+  {name:"Cinto de Ares",            category:"defesa", file:"ares_belt"},
+  {name:"Escudo de Gelo Negro",     category:"defesa", file:"black_ice_shield"},
+  {name:"Armadura Couraçada",       category:"defesa", file:"dreadnaught_armor"},
+  {name:"Véu Exótico",              category:"defesa", file:"exotic_veil"},
+  {name:"Túnica do Silêncio",       category:"defesa", file:"silence_robe"},
+  {name:"Perneiras de Aço",         category:"defesa", file:"steel_legplates"},
+  {name:"Peitoral de Couro",        category:"defesa", file:"leather_jerkin"},
+  {name:"Essência Derretida",       category:"defesa", file:"molten_essence"},
+  {name:"Contêiner Místico",        category:"defesa", file:"mystic_container"},
+  {name:"Ombreira de Punição",      category:"defesa", file:"chastise_pauldron"},
+  {name:"Luvas de Especialista",    category:"defesa", file:"expert_gloves"},
+  {name:"Colar de Cura",            category:"defesa", file:"healing_necklace"},
+  {name:"Manto de Resistência Mágica", category:"defesa", file:"magic_resist_cloak"},
+
+  // ===== SELVA =====
+  {name:"Retribuição de Gelo",      category:"selva", file:"ice_retribution"},
+  {name:"Retribuição de Fogo",      category:"selva", file:"flame_retribution"},
+  {name:"Retribuição Sangrenta",    category:"selva", file:"bloody_retribution"},
+
+  // ===== ROAMING =====
+  {name:"Bênção do Encorajamento",  category:"roaming", file:"encourage"},
+  {name:"Bênção da Ocultação",      category:"roaming", file:"conceal"},
+  {name:"Bênção do Golpe Certeiro", category:"roaming", file:"dire_hit"},
+  {name:"Bênção do Favor",          category:"roaming", file:"favor"}
+];
+
+let HERO_CATALOG = [];
+
+async function loadHeroCatalog() {
+  try {
+    const response = await fetch(HERO_JSON_URL);
+    const data = await response.json();
+    HERO_CATALOG = data
+      .map(hero => ({
+        name: hero.name_hero || hero["name-hero"] || "",
+        file: hero["images-hero"] || hero.images_hero || ""
+      }))
+      .filter(hero => hero.name && hero.file);
+    console.log("Catálogo de heróis carregado:", HERO_CATALOG.length);
+  } catch (error) {
+    console.error("Falha ao carregar o catálogo de heróis:", error);
+    HERO_CATALOG = [];
+  }
+}
+
+loadHeroCatalog().then(() => {
+  if (typeof renderCommunityBuilds === "function" && BUILD_LIST_STATE === "ready") {
+    try { renderCommunityBuilds(); } catch (e) { /* ignora */ }
+  }
+});
+
 let HOME_COMMUNITY_REQUESTED = false;
 let CFG = {names:true, bubbles:true};
 const players = {};
@@ -162,6 +245,7 @@ function saveGameSettings(){
 }
 
 function connect(authentication){
+  if (ws && ws.readyState === WebSocket.OPEN) { try { ws.close(); } catch (e) {} }
   ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
   ws.onopen = () => {
     if (authentication) { send(authentication); return; }
@@ -223,7 +307,7 @@ function handle(m){
       setupTournaments();
       setupModeration();
       setupCommunity();
-        } catch (err) { console.error(err); }
+    } catch (err) { console.error(err); }
   }
   else if (t === "session_invalid"){
     try { localStorage.removeItem("society.session"); } catch (e) {}
@@ -345,7 +429,7 @@ function setRoom(id, list){
 function updateCoins(){ $("coinsAmount").textContent = Number(ME.coins || 0).toLocaleString("pt-BR"); }
 function addLog(text, who){
   const d = el("div"); if (who) d.append(el("b", who + ": "), text); else d.textContent = text;
-  $("log").append(d); setTimeout(() => d.remove(), 25000);  // mensagens somem sozinhas
+  $("log").append(d); setTimeout(() => d.remove(), 25000);
 }
 
 /* ---------- navegação ---------- */
@@ -430,7 +514,6 @@ window.societyGoogleProfileSubmit = profileName =>
 window.societyGoogleProfileCancel = () => send({t:"google_profile_cancel"});
 window.dispatchEvent(new Event("society-app-ready"));
 
-// Tenta retomar a sessão salva ao carregar a página
 const savedSession = (() => { try { return localStorage.getItem("society.session"); } catch (e) { return null; } })();
 if (savedSession) connect();
 
@@ -671,12 +754,90 @@ function setupCommunity(){
 }
 
 let selectedBuildItems = [];
+let selectedItemCategory = "all";
 
 function setupBuildItemPicker(){
   const grid = $("buildItemGrid");
   const search = $("buildItemSearch");
+
+  let categoriesBar = $("buildItemCategories");
+  if (!categoriesBar) {
+    categoriesBar = el("div", null, "build-item-categories");
+    categoriesBar.id = "buildItemCategories";
+    categoriesBar.setAttribute("role", "tablist");
+    categoriesBar.setAttribute("aria-label", "Categorias de itens");
+
+    const allBtn = el("button", "Todos", "build-item-category is-active");
+    allBtn.type = "button";
+    allBtn.dataset.category = "all";
+    allBtn.setAttribute("aria-pressed", "true");
+    categoriesBar.append(allBtn);
+
+    ITEM_CATEGORIES.forEach(cat => {
+      const btn = el("button", cat.label, "build-item-category");
+      btn.type = "button";
+      btn.dataset.category = cat.id;
+      btn.setAttribute("aria-pressed", "false");
+      categoriesBar.append(btn);
+    });
+
+    grid.parentNode.insertBefore(categoriesBar, grid);
+
+    categoriesBar.addEventListener("click", event => {
+      const button = event.target.closest(".build-item-category");
+      if (!button) return;
+      selectedItemCategory = button.dataset.category;
+      categoriesBar.querySelectorAll(".build-item-category").forEach(b => {
+        const active = b === button;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+      renderBuildItemGrid();
+    });
+  }
+
+  search.addEventListener("input", renderBuildItemGrid);
+
+  $("buildForm").addEventListener("reset", () => {
+    selectedBuildItems = [];
+    selectedItemCategory = "all";
+    search.value = "";
+    $("buildItemsMessage").textContent = "";
+    $("buildItemsMessage").classList.remove("is-error");
+    if (categoriesBar) {
+      categoriesBar.querySelectorAll(".build-item-category").forEach(b => {
+        const active = b.dataset.category === "all";
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+    }
+    renderBuildItemGrid();
+    renderBuildItemSelection();
+  });
+
+  renderBuildItemGrid();
+  renderBuildItemSelection();
+}
+
+function renderBuildItemGrid(){
+  const grid = $("buildItemGrid");
+  const search = $("buildItemSearch");
+  if (!grid || !search) return;
   grid.replaceChildren();
-  BUILD_ITEM_CATALOG.forEach(item => {
+
+  const query = search.value.trim().toLocaleLowerCase("pt-BR");
+  const filtered = BUILD_ITEM_CATALOG.filter(item => {
+    const matchesCategory = selectedItemCategory === "all" || item.category === selectedItemCategory;
+    const matchesQuery = query === "" || item.name.toLocaleLowerCase("pt-BR").includes(query);
+    return matchesCategory && matchesQuery;
+  });
+
+  if (!filtered.length) {
+    grid.append(el("p", "Nenhum item encontrado nesta categoria.", "build-item-empty"));
+    return;
+  }
+
+  filtered.forEach(item => {
     const button = el("button", null, "build-item-option");
     button.type = "button";
     button.dataset.itemName = item.name;
@@ -685,21 +846,13 @@ function setupBuildItemPicker(){
     button.addEventListener("click", () => toggleBuildItem(item.name));
     grid.append(button);
   });
-  search.addEventListener("input", () => {
-    const query = search.value.trim().toLocaleLowerCase("pt-BR");
-    grid.querySelectorAll(".build-item-option").forEach(button => {
-      button.hidden = query !== "" &&
-        !button.dataset.itemName.toLocaleLowerCase("pt-BR").includes(query);
-    });
+
+  const selected = new Set(selectedBuildItems);
+  grid.querySelectorAll(".build-item-option").forEach(btn => {
+    const active = selected.has(btn.dataset.itemName);
+    btn.setAttribute("aria-pressed", String(active));
+    btn.classList.toggle("is-selected", active);
   });
-  $("buildForm").addEventListener("reset", () => {
-    selectedBuildItems = [];
-    search.value = "";
-    $("buildItemsMessage").textContent = "";
-    $("buildItemsMessage").classList.remove("is-error");
-    renderBuildItemSelection();
-  });
-  renderBuildItemSelection();
 }
 
 function toggleBuildItem(name){
@@ -720,11 +873,14 @@ function toggleBuildItem(name){
 
 function renderBuildItemSelection(){
   const selected = new Set(selectedBuildItems);
-  $("buildItemGrid").querySelectorAll(".build-item-option").forEach(button => {
-    const active = selected.has(button.dataset.itemName);
-    button.setAttribute("aria-pressed", String(active));
-    button.classList.toggle("is-selected", active);
-  });
+  const grid = $("buildItemGrid");
+  if (grid) {
+    grid.querySelectorAll(".build-item-option").forEach(button => {
+      const active = selected.has(button.dataset.itemName);
+      button.setAttribute("aria-pressed", String(active));
+      button.classList.toggle("is-selected", active);
+    });
+  }
   $("buildItemCount").textContent = selectedBuildItems.length + "/6";
   $("buildItems").value = selectedBuildItems.join(", ");
   const order = $("buildItemOrder");
@@ -770,7 +926,9 @@ function renderCommunityMeta(){
     const top = el("div", null, "community-meta-top");
     const identity = el("div");
     const title = el("div", null, "community-meta-title");
-    title.append(el("h4", entry.hero), el("span", communityLaneName(entry.lane), "community-game-tag"));
+    const heroWrap = el("span", null, "community-meta-hero-icon");
+    heroWrap.append(getIcon("herois", entry.hero));
+    title.append(heroWrap, el("h4", entry.hero), el("span", communityLaneName(entry.lane), "community-game-tag"));
     title.append(el("span", entry.tier, "community-game-tag community-meta-tier community-tier-" + entry.tier));
     identity.append(title);
     identity.append(el("p", entry.patch + " · por " + entry.author + " · " + communityDate(entry.created_at),
@@ -824,29 +982,42 @@ function getIcon(tipo, nome){
   wrapper.setAttribute("role", "img");
   wrapper.setAttribute("aria-label", name || "Ícone não informado");
   wrapper.title = name || "Ícone não informado";
-  const slug = iconSlug(name);
-  if (!slug) {
-    wrapper.classList.add("is-placeholder");
-    wrapper.append(el("span", "—", "build-icon-placeholder"));
-    return wrapper;
-  }
+
   const size = tipo === "herois" ? 40 : tipo === "itens" ? 30 : 22;
   const image = el("img");
-  const knownItem = tipo === "itens" ? BUILD_ITEM_CATALOG.find(item =>
-    item.name.toLocaleLowerCase("pt-BR") === name.toLocaleLowerCase("pt-BR")) : null;
-  image.src = knownItem
-    ? "https://mlbb.io/images/items/" + encodeURIComponent(knownItem.image) + ".png"
-    : "/static/img/icons/" + folder + "/" + slug + ".webp";
+  const nameLower = name.toLocaleLowerCase("pt-BR");
+  const nameSlug = iconSlug(name);
+  let imageUrl = null;
+
+  if (tipo === "herois") {
+    const knownHero = HERO_CATALOG.find(hero => hero.name.toLocaleLowerCase("pt-BR") === nameLower);
+    if (knownHero && knownHero.file) imageUrl = HERO_IMAGE_DIR + knownHero.file;
+  } else if (tipo === "itens") {
+    const knownItem = BUILD_ITEM_CATALOG.find(item => {
+      if (item.name.toLocaleLowerCase("pt-BR") === nameLower) return true;
+      if (Array.isArray(item.aliases) &&
+          item.aliases.some(a => a.toLocaleLowerCase("pt-BR") === nameLower)) return true;
+      if (iconSlug(item.name) === nameSlug) return true;
+      if (Array.isArray(item.aliases) && item.aliases.some(a => iconSlug(a) === nameSlug)) return true;
+      return false;
+    });
+    if (knownItem && knownItem.file) imageUrl = ITEM_IMAGE_DIR + knownItem.file + ".png";
+  }
+
+  if (!imageUrl) {
+    wrapper.classList.add("is-placeholder");
+    wrapper.append(el("span", name ? name.slice(0, 2).toLocaleUpperCase("pt-BR") : "—",
+      "build-icon-placeholder"));
+    return wrapper;
+  }
+
+  image.src = imageUrl;
   image.alt = "";
   image.width = size;
   image.height = size;
   image.loading = "lazy";
   image.decoding = "async";
   image.addEventListener("error", () => {
-    if (knownItem && image.src.includes("mlbb.io")) {
-      image.src = "/static/img/icons/" + folder + "/" + slug + ".webp";
-      return;
-    }
     wrapper.classList.add("is-placeholder");
     wrapper.replaceChildren(el("span", name.slice(0, 2).toLocaleUpperCase("pt-BR"),
       "build-icon-placeholder"));
@@ -1738,7 +1909,7 @@ setInterval(() => {
 /* ---------- mensagens diretas ---------- */
 function setUnread(n){ UNREAD = n; $("dmBadge").textContent = n > 0 ? n : ""; }
 function openDm(nick, name){
-  tab("dm");  // abre a aba e já mostra o painel; o histórico chega logo depois
+  tab("dm");
   DM.with = nick; DM.name = name; $("dmList").style.display = "none"; $("dmChat").style.display = "block";
   $("dmWith").textContent = name; $("dmMsgs").textContent = "";
   const match = LFG.find(player => player.nick === nick);
@@ -1924,7 +2095,7 @@ function wall(ax, ay, bx, by, color){
 function drawRoom(){
   const R = ROOMS[ROOM];
   wall(0, 0, WW, 0, R.wall); wall(0, 0, 0, WH, R.wall);
-  ctx.fillStyle = "rgba(0,0,0,.18)"; const a = P(0, 0), b = P(WW, 0); // sombra na parede direita
+  ctx.fillStyle = "rgba(0,0,0,.18)"; const a = P(0, 0), b = P(WW, 0);
   poly([a, b, {x:b.x, y:b.y - 130}, {x:a.x, y:a.y - 130}], "rgba(0,0,0,.18)");
   for (let i = 0; i < WW / TILE; i++) for (let j = 0; j < WH / TILE; j++){
     const x = i * TILE, y = j * TILE;
@@ -1986,7 +2157,7 @@ function frame(){
   ctx.clearRect(0, 0, cv.width, cv.height);
   ctx.save(); ctx.translate(cam.x, cam.y); drawRoom();
   const me = players[SELF];
-  if (me && Math.hypot(me.tx - me.x, me.ty - me.y) > 2){  // tile de destino
+  if (me && Math.hypot(me.tx - me.x, me.ty - me.y) > 2){
     const i = Math.floor(me.tx / TILE), j = Math.floor(me.ty / TILE);
     poly([P(i * TILE, j * TILE), P((i + 1) * TILE, j * TILE), P((i + 1) * TILE, (j + 1) * TILE), P(i * TILE, (j + 1) * TILE)], "rgba(242,184,75,.35)", "#f2b84b");
   }
@@ -2003,4 +2174,5 @@ function frame(){
 function loop(){ try { frame(); } catch (err) { console.error(err); } requestAnimationFrame(loop); }
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+
 }

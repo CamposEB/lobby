@@ -82,3 +82,30 @@ canvas{border:1px solid var(--border);box-shadow:none}
 .bar i{display:block;height:100%;width:0;background:var(--positive);border-radius:6px}
 .bar b{position:absolute;top:-4px;width:3px;height:18px;background:var(--gold);border-radius:2px;left:0}
 .calc input{width:100%}
+.build-item-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.build-item-category {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--surface-tint-2);
+  color: var(--muted);
+  border: 1px solid transparent;
+  font-size: .8rem;
+  cursor: pointer;
+}
+.build-item-category:hover { color: var(--text); }
+.build-item-category.is-active {
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-color: var(--primary);
+}
+.build-item-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  padding: 20px;
+}
