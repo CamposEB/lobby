@@ -1,6 +1,69 @@
 [
- {"q":"Qual empresa desenvolve o Mobile Legends: Bang Bang?","o":["Moonton","Riot Games","Supercell","Garena"],"a":0},
- {"q":"Quantos jogadores tem cada time em uma partida clássica?","o":["3","4","5","6"],"a":2},
- {"q":"Quantas lanes principais existem no mapa clássico?","o":["1","2","3","5"],"a":2},
- {"q":"Qual o nome do mapa principal das partidas clássicas?","o":["Land of Dawn","Summoner's Rift","Erangel","Bind"],"a":0}
+  {"q":"Qual empresa desenvolve o Mobile Legends: Bang Bang?","o":["Moonton","Riot Games","Supercell","Garena"],"a":0},
+  {"q":"Quantos jogadores tem cada time em uma partida clássica?","o":["3","4","5","6"],"a":2},
+  {"q":"Quantas lanes principais existem no mapa clássico?","o":["1","2","3","5"],"a":2},
+  {"q":"Qual o nome do mapa principal das partidas clássicas?","o":["Land of Dawn","Summoner's Rift","Erangel","Bind"],"a":0},
+
+  {"q":"Qual é o objetivo principal de uma partida de MLBB?","o":["Destruir a base inimiga","Fazer mais abates","Conseguir mais ouro","Derrotar o Lord"],"a":0},
+  {"q":"Qual estrutura precisa ser destruída para vencer a partida?","o":["Torre externa","Inibidor","Base inimiga","Lord"],"a":2},
+  {"q":"Qual função normalmente ocupa a Gold Lane?","o":["Atirador","Tanque","Suporte","Assassino"],"a":0},
+  {"q":"Qual função normalmente fica responsável pela Jungle?","o":["Roamer","Jungler","Gold Laner","EXP Laner"],"a":1},
+  {"q":"Qual função costuma acompanhar o time e ajudar a iniciar as lutas?","o":["Roamer","Marksman","Jungler","Mage"],"a":0},
+  {"q":"Qual lane normalmente é associada ao EXP Laner?","o":["Gold Lane","Mid Lane","EXP Lane","Jungle"],"a":2},
+
+  {"q":"Qual é o nome do grande objetivo que aparece na parte superior do mapa?","o":["Turtle","Lord","Lithowanderer","Crab"],"a":1},
+  {"q":"Qual objetivo concede benefícios importantes para o time no início da partida?","o":["Turtle","Lord","Blue Buff","Lithowanderer"],"a":0},
+  {"q":"Qual monstro normalmente fornece o Blue Buff?","o":["Serpent","Sentry","Turtle","Lord"],"a":1},
+  {"q":"Qual monstro normalmente fornece o Red Buff?","o":["Fiend","Sentry","Lord","Turtle"],"a":0},
+  {"q":"Em qual região do mapa normalmente encontramos os buffs da Jungle?","o":["Base","Jungle","Gold Lane","Mid Lane"],"a":1},
+
+  {"q":"Qual destes heróis é um assassino conhecido por sua mobilidade?","o":["Fanny","Tigreal","Layla","Rafaela"],"a":0},
+  {"q":"Qual destes heróis é um tanque?","o":["Tigreal","Miya","Eudora","Gusion"],"a":0},
+  {"q":"Qual destes heróis é um Marksman?","o":["Layla","Johnson","Gatotkaca","Franco"],"a":0},
+  {"q":"Qual destes heróis é um Mage?","o":["Eudora","Balmond","Alucard","Clint"],"a":0},
+  {"q":"Qual destes heróis é conhecido por usar um gancho?","o":["Franco","Zilong","Alucard","Moskov"],"a":0},
+  {"q":"Qual herói é conhecido por pilotar um carro durante sua ultimate?","o":["Johnson","Atlas","Akai","Grock"],"a":0},
+  {"q":"Qual herói é conhecido por usar uma espada e ter grande mobilidade?","o":["Lancelot","Diggie","Rafaela","Baxia"],"a":0},
+  {"q":"Qual destes heróis é conhecido por usar uma foice?","o":["Dyrroth","Nana","Miya","Estes"],"a":0},
+
+  {"q":"Qual é o nome da moeda usada para comprar itens durante a partida?","o":["Diamantes","Ouro","BP","Tickets"],"a":1},
+  {"q":"Qual recurso é usado para comprar heróis permanentemente?","o":["Battle Points ou Diamantes","Mana","Energia","Fragmentos de Torre"],"a":0},
+  {"q":"Qual moeda premium é muito conhecida no MLBB?","o":["Diamantes","Ouro","EXP","Emblemas"],"a":0},
+  {"q":"O que acontece quando um jogador elimina um inimigo?","o":["Pode receber ouro e experiência","Perde ouro","Perde EXP","A torre é destruída automaticamente"],"a":0},
+
+  {"q":"Qual é o nome do sistema que permite melhorar atributos e talentos dos heróis?","o":["Emblemas","Runas","Talentos de Summoner","Cartas"],"a":0},
+  {"q":"Qual recurso permite comprar itens durante a partida?","o":["Ouro","Diamantes","Battle Points","Tickets"],"a":0},
+  {"q":"Qual botão normalmente é usado para retornar rapidamente à base?","o":["Recall","Flicker","Retribution","Execute"],"a":0},
+  {"q":"Qual Battle Spell é muito usado por Junglers?","o":["Retribution","Flicker","Sprint","Purify"],"a":0},
+  {"q":"Qual Battle Spell permite realizar uma pequena movimentação instantânea?","o":["Flicker","Retribution","Execute","Revitalize"],"a":0},
+
+  {"q":"O que significa 'GG' após uma partida?","o":["Good Game","Great Gold","Game Goal","Good Group"],"a":0},
+  {"q":"No MLBB, o que geralmente significa 'AFK'?","o":["Jogador ausente ou desconectado","Ataque final conhecido","Abate final","Armadura forte"],"a":0},
+  {"q":"O que significa 'MVP' no contexto de uma partida?","o":["Most Valuable Player","Maximum Victory Point","Main Victory Player","Most Victorious Position"],"a":0},
+  {"q":"O que significa 'gank' no MLBB?","o":["Emboscar ou surpreender um inimigo","Comprar um item","Destruir a base","Fazer recall"],"a":0},
+  {"q":"O que significa 'push' em uma partida?","o":["Pressionar uma lane e avançar contra as estruturas","Voltar para a base","Matar o Lord","Comprar equipamentos"],"a":0},
+  {"q":"O que significa 'farmar' no MLBB?","o":["Conseguir ouro e experiência","Fazer recall","Atacar a base","Trocar de herói"],"a":0},
+
+  {"q":"Qual é o elo mais alto entre estas opções?","o":["Epic","Legend","Mythic","Grandmaster"],"a":2},
+  {"q":"Qual destes elos vem antes de Mythic?","o":["Legend","Glorious Mythic","Mythical Immortal","Mythical Glory"],"a":0},
+  {"q":"Qual destes é um elo do Mobile Legends?","o":["Warrior","Diamond","Platinum","Radiant"],"a":0},
+  {"q":"Qual elo é conhecido por ser um dos primeiros níveis competitivos do jogo?","o":["Warrior","Mythic","Legend","Immortal"],"a":0},
+  {"q":"Qual destes termos está relacionado ao sistema de ranking do MLBB?","o":["Estrelas","Troféus de Ouro","Medalhas de Liga","Pontos de Arena"],"a":0},
+
+  {"q":"Qual herói é conhecido como 'The King of Fighters' em uma colaboração famosa?","o":["Guinevere","Chou","Gusion","Alucard"],"a":1},
+  {"q":"Qual destes heróis é conhecido por lutar usando artes marciais?","o":["Chou","Layla","Miya","Vexana"],"a":0},
+  {"q":"Qual herói possui uma habilidade famosa de puxar inimigos?","o":["Franco","Nana","Harith","Lesley"],"a":0},
+  {"q":"Qual herói é conhecido por sua habilidade de invocar um dragão?","o":["Zilong","Diggie","Belerick","Cyclops"],"a":0},
+  {"q":"Qual destes heróis é associado a um panda?","o":["Akai","Baxia","Hylos","Grock"],"a":0},
+
+  {"q":"Qual é o nome da criatura que pode ser invocada pelo time após derrotá-la no final da partida?","o":["Lord","Turtle","Crab","Lithowanderer"],"a":0},
+  {"q":"Qual objetivo normalmente fica no lado inferior do mapa?","o":["Turtle","Lord","Base","Lithowanderer"],"a":0},
+  {"q":"Por que controlar a visão do mapa é importante?","o":["Para saber onde estão os inimigos e evitar emboscadas","Para ganhar Diamantes","Para aumentar o dano automaticamente","Para recuperar a conexão"],"a":0},
+  {"q":"O que acontece quando uma torre inimiga é destruída?","o":["O time ganha acesso a uma área mais avançada do mapa","A partida termina imediatamente","Todos os heróis morrem","O Lord desaparece"],"a":0},
+
+  {"q":"Qual é o nome popular usado pelos jogadores brasileiros para Mobile Legends: Bang Bang?","o":["MLBB","LOL Mobile","ML","Mobile LOL"],"a":0},
+  {"q":"O que geralmente significa 'solo queue' entre jogadores brasileiros?","o":["Jogar sem formar uma equipe fechada com amigos","Jogar somente contra bots","Jogar sem itens","Jogar sem habilidades"],"a":0},
+  {"q":"Quando um jogador diz 'mid diff', o que ele geralmente está comparando?","o":["Desempenho dos jogadores da Mid Lane","Diferença de ouro entre equipes","Diferença de nível do Lord","Diferença de skins"],"a":0},
+  {"q":"O que normalmente significa 'feedar' no contexto de MLBB?","o":["Morrer repetidamente e dar vantagem ao adversário","Farmar muito rápido","Roubar o Lord","Destruir torres rapidamente"],"a":0},
+  {"q":"O que significa 'carry' em uma partida?","o":["Jogador que tem grande impacto e ajuda a carregar a equipe","Jogador que fica AFK","Jogador que compra skins","Jogador que escolhe o mapa"],"a":0}
 ]

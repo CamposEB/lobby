@@ -10,7 +10,9 @@ const views = {
   profile: "/static/views/profile.html",
   settings: "/static/views/settings.html",
   tournaments: "/static/views/tournaments.html",
-  admin: "/static/views/admin.html"
+  admin: "/static/views/admin.html",
+  heroes: "/static/views/heroes.html",
+  hero: "/static/views/hero.html"
 };
 
 Promise.all(Object.entries(views).map(async ([name, url]) => {
@@ -37,18 +39,64 @@ const send = o => {
   ws.send(JSON.stringify(o));
   return true;
 };
-const ROOMS = {lobby:{name:"Salão Principal", floor:"#2b6f8f", wall:"#1d4a63"}, praca:{name:"Praça", floor:"#3d8b5a", wall:"#285c3b"}, arena:{name:"Arena", floor:"#8a3d5c", wall:"#5c2640"}};
-const TITLES = {home:"", meta:"", builds:"", lobby:"", guide:"Guia do jogo", rooms:"Salas", lfg:"", dm:"Mensagens", shop:"Loja", inv:"Inventário", quiz:"Quiz do dia", tools:"", tournaments:"", profile:"", settings:"", admin:""};
-const WW = 800, WH = 500, TILE = 50;
-let ws, SHOP = {}, ME = {coins:0, owned:[], equip:{}}, SELF = null, ROOM = "lobby", LFG = [];
-let PROFILE = {}, DM = {with:null}, DM_PROFILE_TARGET = null, UNREAD = 0, QZ = null, cam = {x:0, y:0}, drag = null;
+
+const TITLES = {home:"", meta:"", builds:"", lobby:"", guide:"Guia do jogo", rooms:"Salas", lfg:"", dm:"Mensagens", shop:"Loja", inv:"Inventário", quiz:"Quiz do dia", tools:"", tournaments:"", profile:"", settings:"", admin:"", heroes:"", hero:""};
+
+let ws, SHOP = {}, ME = {coins:0, owned:[], equip:{}}, SELF = null, LFG = [];
+let PROFILE = {}, DM = {with:null}, DM_PROFILE_TARGET = null, UNREAD = 0, QZ = null;
 let LFG_DETAILS = {}, LFG_PROFILE_TARGET = null, LFG_TOAST_TIMER = null, LFG_LOADED = false;
 let IS_ADMIN = false, IS_MODERATOR = false, TOURNAMENTS = [], TOURNAMENT_EDIT_ID = null;
 let COMMUNITY_META = [], COMMUNITY_BUILDS = [], COMMUNITY_BUILDS_TRENDING = [], COMMUNITY_BUILDS_RECENT = [];
 let COMMUNITY_META_LANE = "all", BUILD_REQUEST_ID = 0, BUILD_LOAD_TIMER = null, BUILD_FILTER_TIMER = null;
-let BUILD_LIST_STATE = "idle", BUILD_DETAIL_ID = null;
+let BUILD_LIST_STATE = "idle", BUILD_DETAIL_ID = null, BUILD_LAST_KEY = "", BUILD_PENDING_KEY = "";
 
-const HERO_JSON_URL = "https://raw.githubusercontent.com/Ceplin03/database-mlbb.Mobile-Legends-Bang-Bang/master/hero.json";
+let selectedBuildItems = [], selectedItemCategory = "all", COMMUNITY_SETUP_DONE = false;
+
+let HERO_REQUEST_SEQ = 0;
+
+let DM_THREADS = [];
+let DM_FILTER = "all";
+let DM_SEARCH = "";
+let DM_LAST_DAY_KEY = null;   // 🆕 separador de dia (estilo WhatsApp)
+
+let LOBBY_STARTED = false;
+
+// guarda o último nick pedido via abrirPerfil pra renderOtherProfile
+let PROFILE_VIEW_TARGET = null;
+// 🆕 FIX 3: memoriza a aba de origem pra o botão "Voltar" do perfil
+let PROFILE_PREVIOUS_TAB = "home";
+
+const INIT_CACHE_KEY = "society.init_cache";
+
+function saveInitCache(m) {
+  try {
+    const cache = {
+      shop: m.shop, me: m.me, self: m.self, profile: m.profile || {},
+      quiz: m.quiz || null,
+      is_admin: Boolean(m.is_admin), is_moderator: Boolean(m.is_moderator),
+      role: m.role || "user", auth_provider: m.auth_provider || "password",
+      unread: m.unread || 0,
+      saved_at: Date.now()
+    };
+    localStorage.setItem(INIT_CACHE_KEY, JSON.stringify(cache));
+  } catch (e) { /* quota cheia: ignora */ }
+}
+
+function loadInitCache() {
+  try {
+    const raw = localStorage.getItem(INIT_CACHE_KEY);
+    if (!raw) return null;
+    const cache = JSON.parse(raw);
+    if (!cache || typeof cache !== "object" || !cache.self) return null;
+    if (cache.saved_at && Date.now() - cache.saved_at > 30 * 86400 * 1000) return null;
+    return cache;
+  } catch (e) { return null; }
+}
+
+function clearInitCache() {
+  try { localStorage.removeItem(INIT_CACHE_KEY); } catch (e) {}
+}
+
 const HERO_IMAGE_DIR = "/static/img/icons/herois/";
 const ITEM_IMAGE_DIR = "/static/img/icons/itens/";
 
@@ -61,9 +109,7 @@ const ITEM_CATEGORIES = [
   {id:"roaming", label:"Roaming"}
 ];
 
-// file = nome do arquivo em static/img/icons/itens/ (sem .png)
 const BUILD_ITEM_CATALOG = [
-  // ===== BOTAS =====
   {name:"Botas de Guerreiro",  category:"botas", file:"warrior_boots"},
   {name:"Botas Resistentes",   category:"botas", file:"tough_boots"},
   {name:"Botas Rápidas",       category:"botas", file:"swift_boots"},
@@ -71,8 +117,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Botas Mágicas",       category:"botas", file:"magic_boots"},
   {name:"Botas Demoníacas",    category:"botas", file:"demon_boots"},
   {name:"Botas Ligeiras",      category:"botas", file:"rapid_boots"},
-
-  // ===== FÍSICO (Tier 3) =====
   {name:"Lâmina do Desespero",           category:"fisico", file:"blade_of_despair",       aliases:["Lâmina da Desespero"]},
   {name:"Fúria do Berserker",            category:"fisico", file:"berserkers_fury"},
   {name:"Garras de Haas",                category:"fisico", file:"haass_claws"},
@@ -92,8 +136,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Golpe do Caçador",              category:"fisico", file:"hunter_strike",          aliases:["Ataque do Caçador"]},
   {name:"Perfurador Celeste",            category:"fisico", file:"sky_piercer"},
   {name:"Arma Maléfica",                 category:"fisico", file:"malefic_gun"},
-
-  // ===== FÍSICO (Tier 1/2) =====
   {name:"Meteoro Renegado",              category:"fisico", file:"rogue_meteor"},
   {name:"Marreta Vampírica",             category:"fisico", file:"vampire_mallet"},
   {name:"Machadinha do Ogro",            category:"fisico", file:"ogre_tomahawk"},
@@ -104,8 +146,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Faca",                          category:"fisico", file:"knife"},
   {name:"Adaga",                         category:"fisico", file:"dagger"},
   {name:"Besta Rápida",                  category:"fisico", file:"swift_crossbow"},
-
-  // ===== MÁGICO (Tier 3) =====
   {name:"Talismã Encantado",          category:"magico", file:"enchanted_talisman"},
   {name:"Cristal Sagrado",            category:"magico", file:"holy_crystal"},
   {name:"Glaive Divina",              category:"magico", file:"divine_glaive"},
@@ -127,8 +167,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Flor da Esperança",          category:"magico", file:"flower_of_hope"},
   {name:"Lanterna da Esperança",      category:"magico", file:"lantern_of_hope"},
   {name:"Lâmina Mágica",              category:"magico", file:"magic_blade"},
-
-  // ===== MÁGICO (Tier 1/2) =====
   {name:"Livro dos Sábios",           category:"magico", file:"book_of_sages"},
   {name:"Códice Misterioso",          category:"magico", file:"mystery_codex"},
   {name:"Tomo do Mal",                category:"magico", file:"tome_of_evil"},
@@ -139,8 +177,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Poção Mágica",               category:"magico", file:"magic_potion"},
   {name:"Poção de Poder",             category:"magico", file:"power_potion"},
   {name:"Poção de Pedra",             category:"magico", file:"rock_potion"},
-
-  // ===== DEFESA =====
   {name:"Cinto do Trovão",          category:"defesa", file:"thunder_belt"},
   {name:"Armadura de Lâminas",      category:"defesa", file:"blade_armor"},
   {name:"Imortalidade",             category:"defesa", file:"immortality"},
@@ -166,47 +202,25 @@ const BUILD_ITEM_CATALOG = [
   {name:"Luvas de Especialista",    category:"defesa", file:"expert_gloves"},
   {name:"Colar de Cura",            category:"defesa", file:"healing_necklace"},
   {name:"Manto de Resistência Mágica", category:"defesa", file:"magic_resist_cloak"},
-
-  // ===== SELVA =====
   {name:"Retribuição de Gelo",      category:"selva", file:"ice_retribution"},
   {name:"Retribuição de Fogo",      category:"selva", file:"flame_retribution"},
   {name:"Retribuição Sangrenta",    category:"selva", file:"bloody_retribution"},
-
-  // ===== ROAMING =====
   {name:"Bênção do Encorajamento",  category:"roaming", file:"encourage"},
   {name:"Bênção da Ocultação",      category:"roaming", file:"conceal"},
   {name:"Bênção do Golpe Certeiro", category:"roaming", file:"dire_hit"},
   {name:"Bênção do Favor",          category:"roaming", file:"favor"}
 ];
 
-let HERO_CATALOG = [];
-
-async function loadHeroCatalog() {
+// HERO_CATALOG agora é global e vem de /static/js/hero-catalog.js
+window.addEventListener("hero-catalog-ready", () => {
   try {
-    const response = await fetch(HERO_JSON_URL);
-    const data = await response.json();
-    HERO_CATALOG = data
-      .map(hero => ({
-        name: hero.name_hero || hero["name-hero"] || "",
-        file: hero["images-hero"] || hero.images_hero || ""
-      }))
-      .filter(hero => hero.name && hero.file);
-    console.log("Catálogo de heróis carregado:", HERO_CATALOG.length);
-  } catch (error) {
-    console.error("Falha ao carregar o catálogo de heróis:", error);
-    HERO_CATALOG = [];
-  }
-}
-
-loadHeroCatalog().then(() => {
-  if (typeof renderCommunityBuilds === "function" && BUILD_LIST_STATE === "ready") {
-    try { renderCommunityBuilds(); } catch (e) { /* ignora */ }
-  }
+    if (BUILD_LIST_STATE === "ready") renderCommunityBuilds();
+    renderHomeCommunityPreviews();
+  } catch (e) { /* ignora */ }
 });
 
 let HOME_COMMUNITY_REQUESTED = false;
 let CFG = {names:true, bubbles:true};
-const players = {};
 
 function gameSettingsKey(){ return "society.settings." + SELF; }
 function loadGameSettings(){
@@ -259,10 +273,12 @@ function connect(authentication){
     if (BUILD_LIST_STATE === "loading") showBuildLoadError();
   };
 }
+
 async function logout(){
   const w = ws;
   SELF = null;
   try { localStorage.removeItem("society.session"); } catch (e) {}
+  clearInitCache();
   if (w) w.close();
   if (window.societyFirebaseSignOut) await window.societyFirebaseSignOut();
   location.reload();
@@ -270,6 +286,10 @@ async function logout(){
 
 function handle(m){
   const t = m.t;
+  if (typeof t === "string" && t.indexOf("hero_") === 0) {
+    window.dispatchEvent(new CustomEvent("society:ws", {detail:m}));
+    return;
+  }
   if (t === "error") {
     $("err").textContent = m.m;
     window.dispatchEvent(new CustomEvent("society-auth-error", {detail:m.m}));
@@ -280,70 +300,76 @@ function handle(m){
     }));
   }
   else if (t === "init"){
-    if (m.token) { try { localStorage.setItem("society.session", m.token); } catch (e) {} }
-    SHOP = m.shop; ME = m.me; SELF = m.self; QZ = m.quiz; PROFILE = m.profile || {};
-    $("nick").value = SELF;
-    $("password").value = "";
-    $("registerPassword").value = "";
-    $("registerPasswordConfirm").value = "";
-    IS_ADMIN = Boolean(m.is_admin);
-    IS_MODERATOR = Boolean(m.is_moderator);
-    $("passwordCurrentField").hidden = m.auth_provider === "google";
-    $("passwordCurrent").required = m.auth_provider !== "google";
-    $("passwordSecurityDescription").textContent = m.auth_provider === "google"
-      ? "Você entrou com Google; escolha uma senha para também acessar usando nick e senha."
-      : "Use uma senha forte, exclusiva e com pelo menos 10 caracteres.";
-    loadGameSettings();
-    loadLfgDetails();
-    loadBuildFiltersFromUrl();
-    $("login").style.display = "none"; $("game").style.display = "block";
-    setRoom("lobby", m.players); tab("home"); requestAnimationFrame(loop);
-    try {
-      if (QZ) renderQuiz();
-      fillProfile();
-      setUnread(m.unread || 0);
-      renderItems();
-      updateCoins();
-      setupTournaments();
-      setupModeration();
-      setupCommunity();
-    } catch (err) { console.error(err); }
+    applyInit(m, false);
   }
   else if (t === "session_invalid"){
     try { localStorage.removeItem("society.session"); } catch (e) {}
+    clearInitCache();
+    SELF = null;
+    $("login").style.display = "block";
+    $("game").style.display = "none";
+    $("err").textContent = "Sua sessão expirou. Entre novamente.";
   }
-  else if (t === "room") setRoom(m.id, m.players);
+  else if (t === "room") {
+    closePanel();
+    closeCard();
+    $("log").textContent = "";
+    try { Lobby.setRoom(m.id, m.players); } catch (e) { console.error("[lobby]", e); }
+  }
   else if (t === "rooms") renderRooms(m.list);
   else if (t === "pview"){
     fillCard(m);
     if (LFG_PROFILE_TARGET === m.nick) fillLfgProfile(m);
     if (DM_PROFILE_TARGET === m.nick) fillDmProfile(m);
+
+    if (m.nick && m.nick !== SELF && PROFILE_VIEW_TARGET === m.nick) {
+      try {
+        if (window.ProfileUI && typeof window.ProfileUI.renderOtherProfile === "function") {
+          window.ProfileUI.renderOtherProfile(m.p, m.nick, m.nick);
+        }
+      } catch (e) {
+        console.error("[app] renderOtherProfile:", e);
+      }
+    }
   }
-  else if (t === "join") addPlayer(m.p);
-  else if (t === "leave") delete players[m.nick];
-  else if (t === "move" && players[m.nick]){
-    players[m.nick].tx = m.x; players[m.nick].ty = m.y;
-    updatePlayerFacing(players[m.nick], m.x - players[m.nick].x, m.y - players[m.nick].y);
-  }
-  else if (t === "look" && players[m.nick]) players[m.nick].equip = m.equip;
+  else if (t === "join"){ try { Lobby.addPlayer(m.p); } catch (e) { console.error("[lobby]", e); } }
+  else if (t === "leave"){ try { Lobby.removePlayer(m.nick); } catch (e) { console.error("[lobby]", e); } }
+  else if (t === "move"){ try { Lobby.movePlayer(m.nick, m.x, m.y); } catch (e) { console.error("[lobby]", e); } }
+  else if (t === "look"){ try { Lobby.setLook(m.nick, m.equip); } catch (e) { console.error("[lobby]", e); } }
+  else if (t === "figure"){ try { Lobby.setFigure(m.nick, m.figure); } catch (e) { console.error("[lobby]", e); } }
+  else if (t === "action") {
+  try { Lobby.setAction(m.nick, m.action, { furnitureId: m.furniture_id, ts: m.ts }); }
+  catch (e) { console.error("[lobby]", e); }
+}
   else if (t === "chat"){
     addLog(m.m, m.name);
-    if (players[m.nick]){ players[m.nick].bubble = m.m; players[m.nick].until = Date.now() + 5000; }
+    try { Lobby.setChat(m.nick, m.m); } catch (e) { console.error("[lobby]", e); }
   }
   else if (t === "lfg"){ LFG = m.list; LFG_LOADED = true; renderLfg(); }
   else if (t === "lfg_error") showLfgToast(m.m);
   else if (t === "tournaments"){ TOURNAMENTS = m.list || []; renderTournaments(); }
-  else if (t === "community_meta"){ COMMUNITY_META = m.list || []; renderCommunityMeta(); renderHomeCommunityPreviews(); }
+  else if (t === "community_meta"){
+    COMMUNITY_META = m.list || [];
+    renderCommunityMeta();
+    renderHomeCommunityPreviews();
+    window.dispatchEvent(new CustomEvent("society:meta"));
+  }
   else if (t === "community_builds"){
+    if (typeof m.request_id === "number" && m.request_id >= 1000000) {
+      window.dispatchEvent(new CustomEvent("society:hero-builds", {detail:m}));
+      return;
+    }
     if (m.request_id != null && m.request_id !== BUILD_REQUEST_ID) return;
     COMMUNITY_BUILDS = m.list || [];
     COMMUNITY_BUILDS_TRENDING = m.trending || COMMUNITY_BUILDS;
     COMMUNITY_BUILDS_RECENT = m.recent || COMMUNITY_BUILDS;
     BUILD_LIST_STATE = "ready";
+    BUILD_LAST_KEY = BUILD_PENDING_KEY;
     clearTimeout(BUILD_LOAD_TIMER);
     $("buildLoadError").hidden = true;
     renderCommunityBuilds();
     renderHomeCommunityPreviews();
+    window.dispatchEvent(new CustomEvent("society:builds"));
     if ($("buildDetailDialog").open) {
       const updated = [...COMMUNITY_BUILDS_TRENDING, ...COMMUNITY_BUILDS_RECENT]
         .find(entry => entry.id === BUILD_DETAIL_ID);
@@ -392,6 +418,13 @@ function handle(m){
   else if (t === "dm_threads") renderThreads(m.list, m.unread);
   else if (t === "dm_history") openChat(m);
   else if (t === "dm") onDm(m);
+  else if (t === "dm_deleted"){
+    const bubble = $("dmMsgs").querySelector(`.bub[data-msg-id="${m.id}"]`);
+    if (bubble) {
+      bubble.classList.add("is-removing");
+      setTimeout(() => bubble.remove(), 180);
+    }
+  }
   else if (t === "profile"){ PROFILE = m.p; fillProfile(true); }
   else if (t === "profile_error") ProfileUI.showError("profileFormMessage", m.m);
   else if (t === "settings"){ PROFILE = m.profile; ProfileUI.settingsSaved(PROFILE, SELF); }
@@ -406,49 +439,114 @@ function handle(m){
     $("passwordChangeMessage").classList.remove("is-error");
     showLfgToast(m.m);
   }
-  else if (t === "player_profile" && players[m.nick]){
-    players[m.nick].name = m.p.display_name || players[m.nick].name;
+  else if (t === "player_profile"){
+    try { Lobby.setPlayerName(m.nick, m.p.display_name); } catch (e) { console.error("[lobby]", e); }
   }
   else if (t === "quiz_result"){ QZ.done = true; renderQuiz(); $("qMsg").textContent = m.ok ? "Acertou! +10 moedas." : "Errou. A resposta era: " + QZ.o[m.correct]; }
   else if (t === "me"){ ME = {coins:m.coins, owned:m.owned, equip:m.equip}; renderItems(); updateCoins(); }
 }
 
-function addPlayer(p){ players[p.nick] = {x:p.x, y:p.y, tx:p.x, ty:p.y, name:p.name, equip:p.equip, bubble:"", until:0, facing:"front-right"}; }
-function updatePlayerFacing(player, dx, dy){
-  const screenX = (dx - dy) * .5, screenY = (dx + dy) * .25;
-  if (Math.hypot(screenX, screenY) < .01) return;
-  const side = screenX < 0 ? "left" : "right";
-  if (screenY < -Math.abs(screenX) * .45) player.facing = "back-" + side;
-  else if (screenY > Math.abs(screenX) * .45) player.facing = "front-" + side;
-  else player.facing = "side-" + side;
+function applyInit(m, fromCache) {
+  if (!fromCache && m.token) {
+    try { localStorage.setItem("society.session", m.token); } catch (e) {}
+  }
+
+  SHOP = m.shop || SHOP;
+  ME = m.me || ME;
+  SELF = m.self || SELF;
+  QZ = m.quiz || QZ;
+  PROFILE = m.profile || PROFILE;
+  IS_ADMIN = Boolean(m.is_admin);
+  IS_MODERATOR = Boolean(m.is_moderator);
+
+  if (!fromCache) {
+    saveInitCache(m);
+    $("nick").value = SELF || "";
+    $("password").value = "";
+    $("registerPassword").value = "";
+    $("registerPasswordConfirm").value = "";
+    const authProvider = m.auth_provider || "password";
+    $("passwordCurrentField").hidden = authProvider === "google";
+    $("passwordCurrent").required = authProvider !== "google";
+    $("passwordSecurityDescription").textContent = authProvider === "google"
+      ? "Você entrou com Google; escolha uma senha para também acessar usando nick e senha."
+      : "Use uma senha forte, exclusiva e com pelo menos 10 caracteres.";
+  }
+
+  $("login").style.display = "none";
+  $("game").style.display = "block";
+
+  try { loadGameSettings(); } catch (e) {}
+  try { loadLfgDetails(); } catch (e) {}
+  try { loadBuildFiltersFromUrl(); } catch (e) {}
+
+  try {
+    if (!LOBBY_STARTED && window.Lobby) {
+      Lobby.start({
+        $: $,
+        send: send,
+        self: SELF,
+        shop: SHOP,
+        onLog: (text, who) => addLog(text, who),
+        onPlayerClick: (nick) => showCard(nick),
+      });
+      LOBBY_STARTED = true;
+    }
+    if (window.Lobby) {
+      Lobby.setSelf(SELF);
+      Lobby.setShop(SHOP);
+      Lobby.setConfig({names: CFG.names, bubbles: CFG.bubbles});
+      $("log").textContent = "";
+      Lobby.setRoom("lobby", m.players || []);
+    }
+  } catch (e) { console.error("[lobby]", e); }
+
+  if (!fromCache) HOME_COMMUNITY_REQUESTED = false;
+  try { tab("home"); } catch (e) {}
+  try { if (QZ) renderQuiz(); } catch (e) {}
+  try { fillProfile(); } catch (e) {}
+  try { setUnread(m.unread || 0); } catch (e) {}
+  try { renderItems(); } catch (e) {}
+  try { updateCoins(); } catch (e) {}
+  try { setupTournaments(); } catch (e) {}
+  try { setupModeration(); } catch (e) {}
+  try { setupCommunity(); } catch (e) {}
 }
-function setRoom(id, list){
-  ROOM = id; Object.keys(players).forEach(k => delete players[k]); list.forEach(addPlayer);
-  $("log").textContent = ""; closePanel(); closeCard(); addLog("Você entrou em " + ROOMS[id].name); center();
-}
+
 function updateCoins(){ $("coinsAmount").textContent = Number(ME.coins || 0).toLocaleString("pt-BR"); }
+
 function addLog(text, who){
-  const d = el("div"); if (who) d.append(el("b", who + ": "), text); else d.textContent = text;
-  $("log").append(d); setTimeout(() => d.remove(), 25000);
+  const log = $("log");
+  if (!log) return;
+  const d = el("div");
+  if (who) d.append(el("b", who + ": "), text);
+  else d.textContent = text;
+  log.append(d);
+  while (log.children.length > 8) log.firstChild.remove();
+  setTimeout(() => d.remove(), 30000);
 }
 
 /* ---------- navegação ---------- */
+function requestHomeCommunity(){
+  if (HOME_COMMUNITY_REQUESTED) return;
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  HOME_COMMUNITY_REQUESTED = true;
+  send({t:"community_meta_list"});
+  requestCommunityBuilds(false);
+}
+
 function tab(n){
   document.querySelectorAll(".tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + n));
   document.querySelectorAll("#nav button[data-t], #mobileNav button[data-t]").forEach(b => {
-    const active = b.dataset.t === n;
+    const active = b.dataset.t === (n === "hero" ? "heroes" : n);
     b.classList.toggle("on", active);
     if (active) b.setAttribute("aria-current", "page");
     else b.removeAttribute("aria-current");
   });
   setMobileMenu(false, true);
   $("pageTitle").textContent = TITLES[n]; $("pageTitle").style.display = TITLES[n] ? "block" : "none";
-  if (n === "home" && !HOME_COMMUNITY_REQUESTED) {
-    HOME_COMMUNITY_REQUESTED = true;
-    send({t:"community_meta_list"});
-    requestCommunityBuilds();
-  }
-  if (n === "lobby"){ fit(); center(); }
+  if (n === "home") requestHomeCommunity();
+  if (n === "lobby"){ try { Lobby.focus(); } catch (e) { console.error("[lobby]", e); } }
   if (n === "lfg"){
     LFG_LOADED = false;
     $("lfgLoading").hidden = false;
@@ -456,10 +554,11 @@ function tab(n){
     send({t:"lfg_list"});
   }
   if (n === "tournaments") send({t:"tournament_list"});
-  if (n === "meta") send({t:"community_meta_list"});
+  if (n === "meta") { renderCommunityMeta(); send({t:"community_meta_list"}); }
   if (n === "builds") requestCommunityBuilds(true);
   if (n === "admin") send({t:"moderation_list"});
   if (n === "dm"){ DM.with = null; $("dmChat").style.display = "none"; $("dmList").style.display = "block"; send({t:"dm_threads"}); }
+  window.dispatchEvent(new CustomEvent("society:tab", {detail:n}));
 }
 let mobileMenuTrigger = null;
 function setMobileMenu(open, restoreFocus, trigger){
@@ -477,7 +576,15 @@ function setMobileMenu(open, restoreFocus, trigger){
 }
 document.querySelectorAll("#nav button[data-t]").forEach(b => b.onclick = () => tab(b.dataset.t));
 document.querySelectorAll("#mobileNav button[data-t]").forEach(b => b.onclick = () => tab(b.dataset.t));
-document.querySelectorAll("[data-shortcut]").forEach(b => b.onclick = () => tab(b.dataset.shortcut));
+document.querySelectorAll("[data-shortcut]").forEach(b => b.onclick = () => {
+  const shortcut = b.dataset.shortcut;
+  if (shortcut === "winrate") {
+    tab("tools");
+    if (window.SocietyTools) window.SocietyTools.openWinRate();
+    return;
+  }
+  tab(shortcut);
+});
 $("logoutBtn").onclick = $("logout2").onclick = logout;
 $("menuBtn").onclick = event => setMobileMenu(!document.body.classList.contains("menu"), true, event.currentTarget);
 $("menuClose").onclick = () => setMobileMenu(false, true);
@@ -493,6 +600,7 @@ document.addEventListener("keydown", event => {
 $("topbarSearch").addEventListener("submit", event => {
   event.preventDefault();
   const query = $("topbarSearchInput").value.trim();
+  if (window.SocietyPalette) { window.SocietyPalette.open(query); return; }
   $("buildHeroFilter").value = query;
   tab("builds");
   $("buildHeroFilter").focus({preventScroll:true});
@@ -512,10 +620,105 @@ window.societyGoogleLogin = detail => {
 window.societyGoogleProfileSubmit = profileName =>
   send({t:"google_profile_name", profile_name:profileName});
 window.societyGoogleProfileCancel = () => send({t:"google_profile_cancel"});
+
+/* ---------- 🆕 ABRIR PERFIL DE OUTRO USUÁRIO ---------- */
+window.abrirPerfil = function(userId) {
+  if (!userId) return;
+  console.log("[app] abrirPerfil:", userId);
+
+  if (userId === SELF) {
+    PROFILE_VIEW_TARGET = null;
+    tab("profile");
+    try { ProfileUI.returnToSelf(); } catch (e) {}
+    return;
+  }
+
+  const activeTab = document.querySelector(".tab.on");
+  if (activeTab && activeTab.id && activeTab.id !== "tab-profile") {
+    PROFILE_PREVIOUS_TAB = activeTab.id.replace(/^tab-/, "");
+  }
+
+  PROFILE_VIEW_TARGET = String(userId);
+  send({ t: "profile_view", nick: userId });
+  tab("profile");
+};
+
+/* ---------- ponte para módulos externos (hero-hub.js, command-palette.js) ---------- */
+window.Society = {
+  tab: n => tab(n),
+  send: o => send(o),
+  toast: msg => showLfgToast(msg),
+  itemFile: name => {
+    const n = String(name || "").toLocaleLowerCase("pt-BR");
+    const slug = iconSlug(name);
+    const it = BUILD_ITEM_CATALOG.find(i =>
+      i.name.toLocaleLowerCase("pt-BR") === n || iconSlug(i.name) === slug ||
+      (Array.isArray(i.aliases) && i.aliases.some(a => a.toLocaleLowerCase("pt-BR") === n || iconSlug(a) === slug)));
+    return it ? it.file : null;
+  },
+  itemName: file => (BUILD_ITEM_CATALOG.find(i => i.file === file) || {}).name || null,
+  getIcon: (type, name) => getIcon(type, name),
+  laneName: lane => communityLaneName(lane),
+  relDate: ts => communityRelativeDate(ts),
+  date: ts => communityDate(ts),
+  voteActions: (scope, entry) => createCommunityVoteActions(scope, entry),
+
+  getCurrentDmNick: () => DM.with || null,
+  getCurrentDmName: () => DM.name || null,
+  openCurrentDmProfile: () => { if (DM.with) openDmProfile(); },
+
+  state: () => ({
+    meta: COMMUNITY_META,
+    builds: COMMUNITY_BUILDS,
+    trending: COMMUNITY_BUILDS_TRENDING,
+    recent: COMMUNITY_BUILDS_RECENT
+  }),
+  requestHeroBuilds: hero => {
+    const id = 1000000 + (++HERO_REQUEST_SEQ);
+    return send({t:"community_build_list", hero, lane:"", period:"all", sort:"popular", request_id:id}) ? id : 0;
+  },
+  searchBuilds: query => {
+    $("buildHeroFilter").value = query;
+    tab("builds");
+    $("buildHeroFilter").focus({preventScroll:true});
+  },
+  startBuild: hero => {
+    tab("builds");
+    try {
+      const panel = $("buildFormPanel");
+      if (panel && panel.hidden) $("buildFormToggle").click();
+      const field = $("buildHero");
+      if (field) {
+        field.value = hero;
+        field.dispatchEvent(new Event("input", {bubbles:true}));
+        field.dispatchEvent(new Event("change", {bubbles:true}));
+      }
+      (panel || field)?.scrollIntoView({behavior:"smooth", block:"start"});
+    } catch (e) { console.error("[society] startBuild", e); }
+  },
+  startMeta: hero => {
+    tab("meta");
+    try {
+      if (window.MetaHeroPicker) window.MetaHeroPicker.select(hero);
+      $("metaForm").scrollIntoView({behavior:"smooth", block:"center"});
+    } catch (e) { console.error("[society] startMeta", e); }
+  }
+};
+
 window.dispatchEvent(new Event("society-app-ready"));
 
 const savedSession = (() => { try { return localStorage.getItem("society.session"); } catch (e) { return null; } })();
-if (savedSession) connect();
+if (savedSession) {
+  const cached = loadInitCache();
+  if (cached) {
+    applyInit(cached, true);
+  } else {
+    $("login").style.display = "block";
+  }
+  connect();
+} else {
+  $("login").style.display = "block";
+}
 
 function showCommunityMessage(scope, message, isError){
   const target = scope === "meta" ? $("metaMessage") : $("buildMessage");
@@ -553,9 +756,10 @@ function communityLaneName(lane){
 
 function communityRating(entry){ return Number(entry.helpful || 0); }
 
-function homeCommunityRow(title, details, metric, destination){
-  const button = el("button", null, "home-preview-row");
+function homeCommunityRow(title, details, metric, destination, hero){
+  const button = el("button", null, "home-preview-row" + (hero ? " has-hero-icon" : ""));
   button.type = "button";
+  if (hero) button.append(getIcon("herois", hero));
   const copy = el("span", null, "home-preview-copy");
   copy.append(el("b", title), el("small", details));
   const summary = el("span", null, "home-preview-summary");
@@ -563,11 +767,66 @@ function homeCommunityRow(title, details, metric, destination){
   button.append(copy, summary);
   button.setAttribute("aria-label", title + ". " + details + ". Abrir " +
     (destination === "builds" ? "builds" : "meta por rota"));
-  button.addEventListener("click", () => tab(destination));
+  button.addEventListener("click", () => {
+    if (hero && window.SocietyHero) window.SocietyHero.open(hero);
+    else tab(destination);
+  });
   return button;
 }
 
+const HOME_TIER_ORDER = ["S+", "S", "A+", "A", "B+", "B", "C", "D"];
+
+function homeTierRank(tier){
+  const index = HOME_TIER_ORDER.indexOf(String(tier).toUpperCase());
+  return index === -1 ? HOME_TIER_ORDER.length : index;
+}
+
+function renderHomeLiveMeta(){
+  const track = $("homeTickerTrack"), grid = $("homeTierPreview");
+  if (!track && !grid) return;
+  const byRating = (a, b) => communityRating(b) - communityRating(a) ||
+    Number(b.created_at) - Number(a.created_at);
+
+  if (track) {
+    track.replaceChildren();
+    const hot = [...COMMUNITY_META].sort(byRating).slice(0, 12);
+    if (!hot.length) {
+      track.classList.add("is-static");
+      track.append(el("span", "Ainda não há contribuições de meta.", "home-ticker-item"));
+    } else {
+      track.classList.remove("is-static");
+      [false, true].forEach(isCopy => hot.forEach(entry => {
+        const item = el("span", null, "home-ticker-item");
+        if (isCopy) item.setAttribute("aria-hidden", "true");
+        item.append(
+          getIcon("herois", entry.hero),
+          el("b", entry.hero),
+          el("span", "Tier " + entry.tier),
+          el("span", "▲ " + communityRating(entry), "home-ticker-up")
+        );
+        track.append(item);
+      }));
+    }
+  }
+
+  if (grid) {
+    grid.replaceChildren();
+    const top = [...COMMUNITY_META]
+      .sort((a, b) => homeTierRank(a.tier) - homeTierRank(b.tier) || byRating(a, b))
+      .slice(0, 8);
+    if (!top.length) grid.append(el("p", "Ainda não há contribuições de meta.", "home-preview-empty"));
+    top.forEach(entry => grid.append(homeCommunityRow(
+      entry.hero,
+      communityLaneName(entry.lane) + " · " + entry.patch,
+      "Tier " + entry.tier + " · " + communityRating(entry) + " 👍",
+      "meta",
+      entry.hero
+    )));
+  }
+}
+
 function renderHomeCommunityPreviews(){
+  renderHomeLiveMeta();
   const trending = $("homeBuildTrending"), recent = $("homeBuildRecent"), meta = $("homeMetaLanes");
   if (!trending || !recent || !meta) return;
   const buildRatingOrder = (a, b) => communityRating(b) - communityRating(a) ||
@@ -582,14 +841,16 @@ function renderHomeCommunityPreviews(){
     entry.hero,
     communityLaneName(entry.lane) + " · " + entry.patch + " · por " + entry.author,
     entry.helpful_30d + " úteis nos últimos 30 dias",
-    "builds"
+    "builds",
+    entry.hero
   )));
   if (!recentBuilds.length) recent.append(el("p", "Ainda não há builds publicadas.", "home-preview-empty"));
   recentBuilds.forEach(entry => recent.append(homeCommunityRow(
     entry.hero,
     communityLaneName(entry.lane) + " · " + entry.patch + " · por " + entry.author,
     communityDate(entry.created_at),
-    "builds"
+    "builds",
+    entry.hero
   )));
 
   const laneOrder = ["EXP", "Jungle", "Mid", "Gold", "Roam"];
@@ -602,7 +863,8 @@ function renderHomeCommunityPreviews(){
     communityLaneName(entry.lane),
     entry.hero + " · Tier " + entry.tier + " · " + entry.patch,
     entry.helpful + " avaliações positivas",
-    "meta"
+    "meta",
+    entry.hero
   )));
 }
 
@@ -661,17 +923,23 @@ function showBuildLoadError(){
 function requestCommunityBuilds(updateUrl){
   const filters = getBuildFilters();
   if (updateUrl) updateBuildUrl(filters);
-  BUILD_LIST_STATE = "loading";
-  $("buildLoadError").hidden = true;
-  showBuildSkeletons($("buildPopularList"));
-  showBuildSkeletons($("buildRecentList"));
-  $("buildPopularEmpty").hidden = true;
-  $("buildRecentEmpty").hidden = true;
+  const key = JSON.stringify(filters);
+  const silent = BUILD_LIST_STATE === "ready" && key === BUILD_LAST_KEY;
+  BUILD_PENDING_KEY = key;
+  if (!silent) {
+    BUILD_LIST_STATE = "loading";
+    $("buildLoadError").hidden = true;
+    showBuildSkeletons($("buildPopularList"));
+    showBuildSkeletons($("buildRecentList"));
+    $("buildPopularEmpty").hidden = true;
+    $("buildRecentEmpty").hidden = true;
+  }
   const requestId = ++BUILD_REQUEST_ID;
   if (!send({t:"community_build_list", ...filters, request_id:requestId})) {
-    showBuildLoadError();
+    if (!silent) showBuildLoadError();
     return;
   }
+  if (silent) return;
   clearTimeout(BUILD_LOAD_TIMER);
   BUILD_LOAD_TIMER = setTimeout(() => {
     if (BUILD_REQUEST_ID === requestId && BUILD_LIST_STATE === "loading") showBuildLoadError();
@@ -684,6 +952,8 @@ function scheduleBuildFilterRequest(){
 }
 
 function setupCommunity(){
+  if (COMMUNITY_SETUP_DONE) return;
+  COMMUNITY_SETUP_DONE = true;
   document.querySelectorAll("[data-meta-lane]").forEach(button => {
     button.addEventListener("click", () => {
       COMMUNITY_META_LANE = button.dataset.metaLane;
@@ -722,6 +992,10 @@ function setupCommunity(){
   $("metaForm").addEventListener("submit", event => {
     event.preventDefault();
     if (!event.currentTarget.reportValidity()) return;
+    if (!$("metaHero").value) {
+      showCommunityMessage("meta", "Escolha um herói da lista.", true);
+      return;
+    }
     send({
       t:"community_meta_submit",
       hero:$("metaHero").value,
@@ -752,9 +1026,6 @@ function setupCommunity(){
     });
   });
 }
-
-let selectedBuildItems = [];
-let selectedItemCategory = "all";
 
 function setupBuildItemPicker(){
   const grid = $("buildItemGrid");
@@ -1065,7 +1336,10 @@ function createBuildRow(entry, period){
   const author = el("span", null, "build-row-author");
   author.append(el("b", entry.author), el("small", communityRelativeDate(entry.created_at)));
   open.append(hero, itemIcons, auxiliaryIcons, author);
-  open.addEventListener("click", () => openBuildDetail(entry));
+  open.addEventListener("click", () => {
+    if (window.SocietyHero) window.SocietyHero.open(entry.hero, entry.id);
+    else openBuildDetail(entry);
+  });
   const voteArea = el("span", null, "build-row-voting");
   voteArea.append(createBuildVoteSummary(entry, period), createCommunityVoteActions("builds", entry));
   row.append(open, voteArea);
@@ -1518,7 +1792,14 @@ ProfileUI.mount({
   getUsername: () => SELF,
   send,
   toast: showLfgToast,
-  openProfile: () => tab("profile")
+  openProfile: () => tab("profile"),
+  openDM: (nick, name) => openDm(nick, name || nick),
+  reportUser: (nick, name) => openCommunityReport(nick, name),
+  goBack: () => {
+    PROFILE_VIEW_TARGET = null;
+    try { ProfileUI.returnToSelf(); } catch (e) {}
+    tab(PROFILE_PREVIOUS_TAB || "home");
+  }
 });
 
 /* ---------- chat do lobby ---------- */
@@ -1529,9 +1810,11 @@ $("msg").onkeydown = e => { if (e.key === "Enter") sendChat(); };
 /* ---------- salas ---------- */
 function renderRooms(list){
   const box = $("roomList"); box.textContent = "";
+  let current = "lobby";
+  try { current = Lobby.getRoom(); } catch (e) {}
   list.forEach(r => {
     const c = el("div", null, "card thread"); c.append(el("div", r.name + " · " + r.count + " online"));
-    const b = el("button", r.id === ROOM ? "Você está aqui" : "Entrar"); b.disabled = r.id === ROOM;
+    const b = el("button", r.id === current ? "Você está aqui" : "Entrar"); b.disabled = r.id === current;
     b.onclick = () => { send({t:"room", id:r.id}); };
     c.append(b); box.append(c);
   });
@@ -1906,18 +2189,156 @@ setInterval(() => {
   }
 }, 60000);
 
-/* ---------- mensagens diretas ---------- */
+/* ══════════════════════════════════════════════════════════════
+   MENSAGENS DIRETAS (DM)
+   ══════════════════════════════════════════════════════════════ */
+
 function setUnread(n){ UNREAD = n; $("dmBadge").textContent = n > 0 ? n : ""; }
+
+function dmFormatRelativeShort(ts){
+  if (!ts) return "";
+  const now = Date.now() / 1000;
+  const diff = Math.max(0, now - ts);
+  if (diff < 60) return "agora";
+  if (diff < 3600) return Math.floor(diff / 60) + " min";
+  if (diff < 86400) return Math.floor(diff / 3600) + " h";
+  if (diff < 7 * 86400) return Math.floor(diff / 86400) + " d";
+  if (diff < 30 * 86400) return Math.floor(diff / (7 * 86400)) + " sem";
+  if (diff < 365 * 86400) return Math.floor(diff / (30 * 86400)) + " mês";
+  return Math.floor(diff / (365 * 86400)) + " a";
+}
+
+function setDmAvatar(container, profile){
+  if (!container) return;
+  container.replaceChildren();
+  const name = profile.display_name || profile.username || "?";
+  const initial = name.slice(0, 1).toUpperCase();
+  const url = profile.avatar || "";
+  if (url) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+    img.loading = "lazy";
+    img.onerror = () => { container.textContent = initial; };
+    container.append(img);
+  } else {
+    container.textContent = initial;
+  }
+}
+
+function dmRenderThreadList(){
+  const box = $("dmListBody") || $("dmList");
+  if (!box) return;
+  box.textContent = "";
+
+  const query = DM_SEARCH.trim().toLocaleLowerCase("pt-BR");
+  const filtered = DM_THREADS.filter(t => {
+    if (DM_FILTER === "unread" && !(t.unread > 0)) return false;
+    if (query) {
+      const haystack = ((t.name || "") + " " + (t.nick || "") + " " + (t.last || ""))
+        .toLocaleLowerCase("pt-BR");
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  if (!filtered.length) {
+    const empty = el("div", null, "dm-empty");
+    if (query) {
+      empty.append(el("b", "Nada encontrado"));
+      empty.append(el("small", "Tente outro nome ou limpe a busca."));
+    } else if (DM_FILTER === "unread") {
+      empty.append(el("b", "Nenhuma mensagem não lida"));
+      empty.append(el("small", "Você está em dia com suas conversas."));
+    } else {
+      empty.append(el("b", "Nenhuma conversa ainda"));
+      empty.append(el("small", "Toque em Chamar em um anúncio da aba Procurar duo para começar."));
+    }
+    box.append(empty);
+    return;
+  }
+
+  filtered.forEach(t => {
+    const unread = t.unread > 0;
+    const btn = el("button", null, "dm-thread" + (unread ? " is-unread" : ""));
+    btn.type = "button";
+    btn.dataset.userId = t.nick;
+    btn.setAttribute("aria-label",
+      (unread ? t.unread + " mensagens não lidas de " : "") + t.name);
+
+    const av = el("span", null, "dm-thread-avatar");
+    setDmAvatar(av, { display_name: t.name, username: t.nick, avatar: t.avatar });
+    btn.append(av);
+
+    const copy = el("span", null, "dm-thread-copy" + (unread ? " is-unread" : ""));
+    copy.append(el("b", t.name));
+    copy.append(el("span", (t.last || "Sem mensagens ainda").slice(0, 80), "dm-thread-preview"));
+    btn.append(copy);
+
+    const meta = el("span", null, "dm-thread-meta");
+    if (t.ts) meta.append(el("span", dmFormatRelativeShort(t.ts), "dm-thread-time"));
+    if (unread) meta.append(el("span", String(t.unread > 99 ? "99+" : t.unread), "dm-thread-unread"));
+    btn.append(meta);
+
+    btn.onclick = () => openDm(t.nick, t.name);
+    box.append(btn);
+  });
+}
+
+function renderThreads(list, unread){
+  setUnread(unread);
+  DM_THREADS = Array.isArray(list) ? list : [];
+  dmRenderThreadList();
+}
+
+(function setupDmListControls(){
+  const search = $("dmSearchInput");
+  if (search) {
+    search.addEventListener("input", () => {
+      DM_SEARCH = search.value;
+      dmRenderThreadList();
+    });
+  }
+  document.querySelectorAll("[data-dm-filter]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      DM_FILTER = chip.dataset.dmFilter || "all";
+      document.querySelectorAll("[data-dm-filter]").forEach(c => {
+        c.setAttribute("aria-pressed", String(c === chip));
+      });
+      dmRenderThreadList();
+    });
+  });
+  const novo = $("dmNewConversation");
+  if (novo) {
+    novo.addEventListener("click", () => tab(novo.dataset.shortcut || "lfg"));
+  }
+})();
+
 function openDm(nick, name){
   tab("dm");
-  DM.with = nick; DM.name = name; $("dmList").style.display = "none"; $("dmChat").style.display = "block";
-  $("dmWith").textContent = name; $("dmMsgs").textContent = "";
+  DM.with = nick;
+  DM.name = name;
+  $("dmList").style.display = "none";
+  $("dmChat").style.display = "block";
+  $("dmWith").textContent = name;
+  $("dmMsgs").textContent = "";
+
+  const chat = $("dmChat");
+  if (chat) chat.dataset.userId = String(nick);
+
   const match = LFG.find(player => player.nick === nick);
-  $("dmWithAvatar").replaceChildren(ProfileUI.createAvatar({
-    display_name:name, username:nick, avatar:match ? match.avatar : ""
-  }, "dm-with-avatar").childNodes[0] || document.createTextNode((name || nick).slice(0,1).toUpperCase()));
+  setDmAvatar($("dmWithAvatar"), {
+    display_name: name,
+    username: nick,
+    avatar: match ? match.avatar : ""
+  });
+
+  const status = $("dmWithStatus");
+  if (status) status.textContent = "visto por último recentemente";
+
   send({t:"dm_open", with:nick});
 }
+
 function openDmProfile(){
   if (!DM.with) return;
   DM_PROFILE_TARGET = DM.with;
@@ -1926,6 +2347,7 @@ function openDmProfile(){
   $("dmProfileDialog").showModal();
   send({t:"profile_view", nick:DM.with});
 }
+
 function fillDmProfile(message){
   const profile = message.p || {};
   const content = $("dmProfileContent");
@@ -1947,43 +2369,222 @@ function fillDmProfile(message){
   );
   appendReportButton(content, message.nick, profile.display_name || profile.username);
 }
-function renderThreads(list, unread){
-  setUnread(unread); const box = $("dmList"); box.textContent = "";
-  if (!list.length){ box.textContent = "Nenhuma conversa ainda. Toque em Chamar em um anúncio da aba Procurar duo."; return; }
-  list.forEach(t => {
-    const d = el("button", null, "card thread dm-thread"), a = el("div", null, "dm-thread-copy");
-    d.type = "button";
-    d.append(ProfileUI.createAvatar({display_name:t.name, username:t.nick, avatar:t.avatar}, "dm-thread-avatar"));
-    a.append(el("b", t.name), el("div", t.last.slice(0, 40))); d.append(a);
-    if (t.unread) d.append(el("em", t.unread, "pill"));
-    d.onclick = () => openDm(t.nick, t.name); box.append(d);
-  });
+
+/* ══════════════════════════════════════════════════════════════
+   🆕 SEPARADOR DE DIA — estilo WhatsApp
+   Mostra "Hoje", "Ontem", dia da semana ou data completa
+   sempre que o dia muda entre duas mensagens consecutivas.
+   ══════════════════════════════════════════════════════════════ */
+function dmDayKey(ts) {
+  const date = new Date(Number(ts) * 1000);
+  if (Number.isNaN(date.getTime())) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + d;
 }
-function addBubble(from, text){ $("dmMsgs").append(el("div", text, "bub" + (from === SELF ? " me" : ""))); $("dmMsgs").scrollTop = 1e9; }
+
+function dmFormatDay(ts) {
+  const date = new Date(Number(ts) * 1000);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const thatDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((today - thatDay) / 86400000);
+
+  if (diffDays === 0) return "Hoje";
+  if (diffDays === 1) return "Ontem";
+
+  if (diffDays > 1 && diffDays < 7) {
+    const weekday = new Intl.DateTimeFormat("pt-BR", { weekday: "long" }).format(date);
+    return weekday.charAt(0).toLocaleUpperCase("pt-BR") + weekday.slice(1);
+  }
+
+  if (date.getFullYear() === now.getFullYear()) {
+    const formatted = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(date);
+    return formatted.charAt(0).toLocaleUpperCase("pt-BR") + formatted.slice(1);
+  }
+
+  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }).format(date);
+}
+
+function dmMaybeInsertDaySeparator(ts) {
+  const effectiveTs = (ts != null && !Number.isNaN(Number(ts)))
+    ? Number(ts)
+    : Math.floor(Date.now() / 1000);
+
+  const key = dmDayKey(effectiveTs);
+  if (!key || key === DM_LAST_DAY_KEY) return false;
+  DM_LAST_DAY_KEY = key;
+
+  const box = $("dmMsgs");
+  if (!box) return false;
+
+  const label = dmFormatDay(effectiveTs);
+  const separator = el("div", null, "dm-day-separator");
+  separator.setAttribute("role", "separator");
+  separator.setAttribute("aria-label", label);
+  separator.append(el("span", label));
+  box.append(separator);
+  return true;
+}
+
+function dmResetDayTracking() {
+  DM_LAST_DAY_KEY = null;
+}
+/* ══════════════════════════════════════════════════════════════ */
+
+function addBubble(from, text, ts, msgId){
+  dmMaybeInsertDaySeparator(ts);   // 🆕 insere "Hoje"/"Ontem"/data antes do bubble
+
+  const isMine = from === SELF;
+  const bubble = el("div", null, "bub" + (isMine ? " me" : ""));
+  if (msgId != null) bubble.dataset.msgId = String(msgId);
+
+  bubble.append(el("div", text, "bub-text"));
+
+  const meta = el("span", null, "bub-meta");
+  const when = ts ? new Date(ts * 1000) : new Date();
+  const hh = String(when.getHours()).padStart(2, "0");
+  const mm = String(when.getMinutes()).padStart(2, "0");
+  meta.append(el("span", hh + ":" + mm));
+  if (isMine) meta.append(el("span", "✓✓", "bub-checks"));
+  bubble.append(meta);
+
+  const actions = document.createElement("button");
+  actions.type = "button";
+  actions.className = "bub-actions";
+  actions.setAttribute("aria-label", "Ações da mensagem");
+  actions.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
+  actions.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const r = actions.getBoundingClientRect();
+    openDmMsgMenu(r.left + r.width / 2, r.bottom + 4, bubble);
+  });
+  bubble.append(actions);
+
+  bubble.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    openDmMsgMenu(e.clientX, e.clientY, bubble);
+  });
+
+  $("dmMsgs").append(bubble);
+  $("dmMsgs").scrollTop = 1e9;
+}
+
+let DM_MSG_MENU = null;
+let DM_MSG_MENU_TARGET = null;
+
+function openDmMsgMenu(x, y, bubble){
+  closeDmMsgMenu();
+  DM_MSG_MENU_TARGET = bubble;
+
+  const id = bubble.dataset.msgId;
+  const isMine = bubble.classList.contains("me");
+  const text = bubble.querySelector(".bub-text")?.textContent || "";
+
+  const menu = el("div", null, "dm-msg-menu");
+  menu.setAttribute("role", "menu");
+
+  const copyBtn = el("button", null, "dm-msg-menu-item");
+  copyBtn.type = "button";
+  copyBtn.append(el("span", "📋", "dm-msg-menu-icon"), el("span", "Copiar"));
+  copyBtn.onclick = () => {
+    navigator.clipboard?.writeText(text).catch(() => {});
+    closeDmMsgMenu();
+  };
+  menu.append(copyBtn);
+
+  if (isMine && id) {
+    const delBtn = el("button", null, "dm-msg-menu-item dm-msg-menu-danger");
+    delBtn.type = "button";
+    delBtn.append(el("span", "🗑️", "dm-msg-menu-icon"), el("span", "Apagar"));
+    delBtn.onclick = () => {
+      closeDmMsgMenu();
+      deleteDmMessage(id, bubble);
+    };
+    menu.append(delBtn);
+  }
+
+  document.body.append(menu);
+
+  const rect = menu.getBoundingClientRect();
+  const maxX = window.innerWidth - rect.width - 8;
+  const maxY = window.innerHeight - rect.height - 8;
+  menu.style.left = Math.max(8, Math.min(x, maxX)) + "px";
+  menu.style.top  = Math.max(8, Math.min(y, maxY)) + "px";
+
+  DM_MSG_MENU = menu;
+}
+
+function closeDmMsgMenu(){
+  if (DM_MSG_MENU) {
+    DM_MSG_MENU.remove();
+    DM_MSG_MENU = null;
+  }
+  DM_MSG_MENU_TARGET = null;
+}
+
+function deleteDmMessage(id, bubble){
+  if (!confirm("Apagar esta mensagem para todos?")) return;
+  send({ t: "dm_delete", id });
+  bubble.classList.add("is-removing");
+  setTimeout(() => bubble.remove(), 180);
+}
+
+document.addEventListener("click", (e) => {
+  if (DM_MSG_MENU && !DM_MSG_MENU.contains(e.target)) closeDmMsgMenu();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeDmMsgMenu();
+});
+window.addEventListener("resize", closeDmMsgMenu);
+$("dmMsgs")?.addEventListener("scroll", closeDmMsgMenu);
+
 function openChat(m){
   if (DM.with !== m.nick) return;
   DM.name = m.name || DM.name;
   $("dmWith").textContent = DM.name;
-  const avatar = ProfileUI.createAvatar(m.profile || {display_name:DM.name, username:m.nick}, "dm-with-avatar");
-  $("dmWithAvatar").replaceChildren(...avatar.childNodes);
-  $("dmMsgs").textContent = ""; m.msgs.forEach(x => addBubble(x.from, x.m));
+
+  const chat = $("dmChat");
+  if (chat) chat.dataset.userId = String(m.nick);
+
+  setDmAvatar($("dmWithAvatar"), m.profile || { display_name: DM.name, username: m.nick });
+
+  const status = $("dmWithStatus");
+  if (status) {
+    status.textContent = m.profile && m.profile.rank
+      ? "Rank " + m.profile.rank
+      : "visto por último recentemente";
+  }
+
+  dmResetDayTracking();   // 🆕 limpa o rastreamento da conversa anterior
+  $("dmMsgs").textContent = "";
+  m.msgs.forEach(x => addBubble(x.from, x.m, x.ts, x.id));
   if (!m.msgs.length) $("dmMsgs").append(el("small", "Nenhuma mensagem ainda. Diga oi!"));
 }
+
 function onDm(m){
   const other = m.from === SELF ? m.to : m.from;
   if (DM.with === other && $("dmChat").style.display !== "none"){
-    addBubble(m.from, m.m); if (m.from !== SELF) send({t:"dm_seen", nick:other});
-  } else if (m.from !== SELF) setUnread(UNREAD + 1);
+    addBubble(m.from, m.m, m.ts, m.id);
+    if (m.from !== SELF) send({t:"dm_seen", nick:other});
+  } else if (m.from !== SELF) {
+    setUnread(UNREAD + 1);
+  }
 }
+
 function sendDm(){ const v = $("dmInput").value.trim(); if (v && DM.with){ send({t:"dm_send", to:DM.with, m:v}); $("dmInput").value = ""; } }
-$("dmSend").onclick = sendDm; $("dmInput").onkeydown = e => { if (e.key === "Enter") sendDm(); };
+$("dmSend").onclick = sendDm;
+$("dmInput").onkeydown = e => { if (e.key === "Enter") sendDm(); };
 $("dmViewProfile").onclick = openDmProfile;
 $("dmReportPlayer").onclick = () => openCommunityReport(DM.with, DM.name);
 $("dmProfileClose").onclick = () => $("dmProfileDialog").close();
 $("dmBack").onclick = () => tab("dm");
 $("dmBlock").onclick = () => { if (DM.with && confirm("Bloquear este jogador? Ele não conseguirá mais te enviar mensagens.")){ send({t:"block", nick:DM.with}); tab("dm"); } };
 
-/* ---------- perfil, quiz, ferramentas, configurações ---------- */
+/* ---------- perfil, quiz, configurações ---------- */
 function profileUpdated(){
   ProfileUI.setProfile(PROFILE, SELF);
   if (LFG_LOADED) send({t:"lfg_list"});
@@ -1997,25 +2598,44 @@ function renderQuiz(){
   QZ.o.forEach((x, i) => { const b = el("button", x, "opt"); b.disabled = QZ.done; b.onclick = () => send({t:"quiz_answer", i}); o.append(b); });
   $("qMsg").textContent = QZ.done ? "Você já respondeu hoje. Volte amanhã!" : "Acertou = +10 moedas. Uma tentativa por dia.";
 }
-const num = id => parseFloat(($(id).value || "").replace(",", "."));
 $("cfgNames").onchange = $("cfgBubbles").onchange = () => {
- CFG = {names:$("cfgNames").checked, bubbles:$("cfgBubbles").checked};
- saveGameSettings();
+  CFG = {names:$("cfgNames").checked, bubbles:$("cfgBubbles").checked};
+  saveGameSettings();
+  try { Lobby.setConfig({names: CFG.names, bubbles: CFG.bubbles}); } catch (e) {}
 };
 
 /* ---------- painéis dentro do jogo (salas, loja, inventário) ---------- */
 const PTITLES = {rooms:"Salas", shop:"Loja", inv:"Inventário"}, PIDS = {rooms:"roomList", shop:"shopItems", inv:"invItems"};
 function openPanel(n){
-  if ($("panel").classList.contains("open") && $("pTitle").dataset.n === n) return closePanel();
-  closeCard(); document.querySelectorAll(".pp").forEach(d => d.style.display = d.id === PIDS[n] ? "block" : "none");
-  $("pTitle").textContent = PTITLES[n]; $("pTitle").dataset.n = n; $("panel").classList.add("open");
+  if (n === "look") {
+    try { Lobby.openAppearance(); } catch (e) { console.error("[lobby]", e); }
+    return;
+  }
+  if (n === "act") {
+    try { Lobby.openActionMenu(); } catch (e) { console.error("[lobby]", e); }
+    return;
+  }
+  const panel = $("panel");
+  const title = $("pTitle");
+  if (panel.classList.contains("open") && title.dataset.n === n) return closePanel();
+  closeCard();
+  document.querySelectorAll(".pp").forEach(d => {
+    d.style.display = d.id === PIDS[n] ? "block" : "none";
+  });
+  title.textContent = PTITLES[n];
+  title.dataset.n = n;
+  panel.classList.add("open");
   if (n === "rooms") send({t:"room_list"});
 }
 function closePanel(){ $("panel").classList.remove("open"); }
 function closeCard(){ $("pcard").classList.remove("open"); }
+
 document.querySelectorAll("#hud button").forEach(b => b.onclick = () => openPanel(b.dataset.p));
 $("pClose").onclick = closePanel;
+
 function showCard(nick){
+  let players;
+  try { players = Lobby.getPlayers(); } catch (e) { return; }
   const p = players[nick]; if (!p) return; closePanel();
   const c = $("pcard"); c.textContent = ""; c.append(el("b", p.name), el("div", "Carregando perfil…", "cinfo"));
   const row = el("div", null, "crow");
@@ -2039,139 +2659,6 @@ function fillCard(m){
   if (profile.bio) i.append(el("div", profile.bio));
   if (!profile.rank && !profile.role && !profile.hero && !profile.bio) i.append(el("div", "Este jogador ainda não preencheu o perfil."));
 }
-function hitPlayer(u, v){
-  let best = null;
-  Object.entries(players).forEach(([n, p]) => {
-    const f = P(p.x, p.y);
-    if (Math.abs(u - f.x) < 16 && v > f.y - 52 && v < f.y + 8 && (!best || p.x + p.y > players[best].x + players[best].y)) best = n;
-  });
-  return best;
-}
-
-/* ---------- sala isométrica com câmera ---------- */
-const cv = $("c"), ctx = cv.getContext("2d");
-const P = (x, y) => ({x:(x - y) * 0.5, y:(x + y) * 0.25});
-function fit(){
-  const w = $("wrap").clientWidth; if (!w) return;
-  cv.width = w; cv.height = Math.max(320, Math.min(620, innerHeight * 0.6)); cv.style.height = cv.height + "px";
-}
-function center(){
-  const me = players[SELF], f = me ? P(me.x, me.y) : P(WW / 2, WH / 2);
-  cam.x = cv.width / 2 - f.x; cam.y = cv.height / 2 - f.y + 40;
-}
-addEventListener("resize", () => { fit(); center(); });
-$("centerBtn").onclick = center;
-
-cv.onpointerdown = e => { cv.setPointerCapture(e.pointerId); drag = {x:e.clientX, y:e.clientY, cx:cam.x, cy:cam.y, moved:false}; };
-cv.onpointermove = e => {
-  if (!drag) return;
-  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-  if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
-  if (drag.moved){ cam.x = drag.cx + dx; cam.y = drag.cy + dy; }
-};
-cv.onpointerup = e => {
-  if (drag && !drag.moved){
-    const r = cv.getBoundingClientRect(), k = cv.width / r.width;
-    const u = (e.clientX - r.left) * k - cam.x, v = (e.clientY - r.top) * k - cam.y;
-    const hit = hitPlayer(u, v);
-    if (hit) showCard(hit);
-    else {
-      closeCard();
-      const wx = u + 2 * v, wy = 2 * v - u;
-      if (wx >= 0 && wx <= WW && wy >= 0 && wy <= WH) send({t:"move", x:Math.round(wx), y:Math.round(wy)});
-    }
-  }
-  drag = null;
-};
-
-function poly(pts, fill, stroke){
-  ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.closePath();
-  if (fill){ ctx.fillStyle = fill; ctx.fill(); } if (stroke){ ctx.strokeStyle = stroke; ctx.stroke(); }
-}
-function wall(ax, ay, bx, by, color){
-  const a = P(ax, ay), b = P(bx, by), h = 130;
-  poly([a, b, {x:b.x, y:b.y - h}, {x:a.x, y:a.y - h}], color, "rgba(0,0,0,.25)");
-}
-function drawRoom(){
-  const R = ROOMS[ROOM];
-  wall(0, 0, WW, 0, R.wall); wall(0, 0, 0, WH, R.wall);
-  ctx.fillStyle = "rgba(0,0,0,.18)"; const a = P(0, 0), b = P(WW, 0);
-  poly([a, b, {x:b.x, y:b.y - 130}, {x:a.x, y:a.y - 130}], "rgba(0,0,0,.18)");
-  for (let i = 0; i < WW / TILE; i++) for (let j = 0; j < WH / TILE; j++){
-    const x = i * TILE, y = j * TILE;
-    poly([P(x, y), P(x + TILE, y), P(x + TILE, y + TILE), P(x, y + TILE)], null, null);
-    ctx.fillStyle = R.floor; ctx.fill();
-    ctx.fillStyle = (i + j) % 2 ? "rgba(255,255,255,.07)" : "rgba(0,0,0,.07)"; ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.stroke();
-  }
-  poly([P(0, 0), P(WW, 0), P(WW, WH), P(0, WH)], null, "rgba(0,0,0,.45)");
-}
-const SKINS = ["#f1c9a5", "#e0ac84", "#c68a5c", "#8d5a3a"], HAIRS = ["#2b1b12", "#6b3f1d", "#d9a441", "#c0392b", "#222a44"];
-const hash = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
-function drawPlayer(p, nick){
-  const f = P(p.x, p.y), x = Math.round(f.x), y = Math.round(f.y), hs = hash(nick);
-  const skin = SKINS[hs % 4], hair = HAIRS[(hs >> 3) % 5];
-  const shirt = SHOP[p.equip.color]?.value || "#4c8dff", hat = SHOP[p.equip.hat]?.value;
-  const moving = Math.hypot(p.tx - p.x, p.ty - p.y) > 2, ph = Math.floor(Date.now() / 160) % 2;
-  const l1 = moving && ph ? 3 : 0, l2 = moving && !ph ? 3 : 0;
-  const facing = p.facing || "front-right";
-  const back = facing.startsWith("back");
-  const side = facing.startsWith("side");
-  ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.ellipse(x, y, 14, 6, 0, 0, 7); ctx.fill();
-  if (nick === SELF){ ctx.strokeStyle = "#f2b84b"; ctx.lineWidth = 2; ctx.stroke(); ctx.lineWidth = 1; }
-  ctx.save();
-  ctx.translate(x, y);
-  if (facing.endsWith("left")) ctx.scale(-1, 1);
-  const R = (a, b, w, h2, color) => { ctx.fillStyle = color; ctx.fillRect(a, b, w, h2); };
-  R(-6, -12, 5, 12 - l1, "#2f3a5c"); R(1, -12, 5, 12 - l2, "#2f3a5c");
-  R(-6, -3 - l1, 5, 3, "#111"); R(1, -3 - l2, 5, 3, "#111");
-  R(-8, -29, 16, 18, shirt); R(-8, -29, 3, 18, "rgba(0,0,0,.14)"); R(-8, -13, 16, 2, "rgba(0,0,0,.25)");
-  R(-12, -28, 4, 14, shirt); R(8, -28, 4, 14, shirt); R(-12, -14, 4, 3, skin); R(8, -14, 4, 3, skin);
-  R(-7, -43, 14, 14, back ? hair : skin);
-  if (back) {
-    R(-8, -46, 16, 15, hair);
-    R(-4, -35, 8, 4, "rgba(0,0,0,.14)");
-  } else {
-    R(-8, -46, 16, 7, hair); R(-8, -46, 3, 13, hair);
-    if (side) {
-      R(2, -38, 2, 3, "#222");
-      R(5, -36, 2, 2, skin);
-    } else {
-      R(-4, -38, 2, 3, "#222"); R(2, -38, 2, 3, "#222");
-    }
-  }
-  ctx.strokeStyle = "rgba(0,0,0,.45)";
-  ctx.strokeRect(-8, -29, 16, 18); ctx.strokeRect(-7, -43, 14, 14);
-  ctx.restore();
-  ctx.textAlign = "center";
-  if (hat){ ctx.font = "22px serif"; ctx.fillText(hat, x, y - 45); }
-  if (CFG.names){ ctx.font = "600 12px system-ui, sans-serif"; ctx.fillStyle = "#fff"; ctx.fillText(p.name, x, y + 17); }
-  if (CFG.bubbles && p.bubble && Date.now() < p.until){
-    ctx.font = "13px system-ui, sans-serif";
-    const txt = p.bubble.length > 30 ? p.bubble.slice(0, 29) + "…" : p.bubble, w = ctx.measureText(txt).width + 16;
-    ctx.fillStyle = "#fff"; ctx.fillRect(x - w / 2, y - 84, w, 24);
-    ctx.fillStyle = "#222"; ctx.fillText(txt, x, y - 67);
-  }
-}
-function frame(){
-  ctx.clearRect(0, 0, cv.width, cv.height);
-  ctx.save(); ctx.translate(cam.x, cam.y); drawRoom();
-  const me = players[SELF];
-  if (me && Math.hypot(me.tx - me.x, me.ty - me.y) > 2){
-    const i = Math.floor(me.tx / TILE), j = Math.floor(me.ty / TILE);
-    poly([P(i * TILE, j * TILE), P((i + 1) * TILE, j * TILE), P((i + 1) * TILE, (j + 1) * TILE), P(i * TILE, (j + 1) * TILE)], "rgba(242,184,75,.35)", "#f2b84b");
-  }
-  Object.entries(players).forEach(([n, p]) => {
-    const dx = p.tx - p.x, dy = p.ty - p.y, d = Math.hypot(dx, dy);
-    if (d > 2){
-      updatePlayerFacing(p, dx, dy);
-      p.x += dx / d * Math.min(4, d); p.y += dy / d * Math.min(4, d);
-    }
-  });
-  Object.entries(players).sort((a, b) => (a[1].x + a[1].y) - (b[1].x + b[1].y)).forEach(([n, p]) => drawPlayer(p, n));
-  ctx.restore();
-}
-function loop(){ try { frame(); } catch (err) { console.error(err); } requestAnimationFrame(loop); }
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
 

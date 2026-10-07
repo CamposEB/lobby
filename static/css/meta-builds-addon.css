@@ -1,0 +1,11 @@
+/* meta-builds-addon.css  (carregue depois de meta-builds.css) */
+.community-game-hero { align-items: center; }
+.community-game-hero h2 { font-family: Rajdhani, "Arial Narrow", sans-serif; font-size: clamp(1.8rem, 4.4vw, 2.6rem); font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+.community-game-eyebrow { color: var(--gold, #e6c35c); }
+.community-game-section-heading h3 { font-family: Rajdhani, "Arial Narrow", sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+.community-hero-icon, .community-empty-icon { display: inline-grid; place-items: center; flex: none; width: 52px; height: 52px; border: 1px solid rgba(230,195,92,.4); border-radius: 10px; color: var(--gold, #e6c35c); background: rgba(230,195,92,.07); }
+.community-hero-icon .ico { width: 26px; height: 26px; }
+.community-empty-icon { width: 44px; height: 44px; margin-bottom: 6px; }
+.community-empty-icon .ico { width: 22px; height: 22px; }
+.community-lane-filters button[aria-pressed="true"] { border-color: var(--gold, #e6c35c); color: var(--gold, #e6c35c); background: rgba(230,195,92,.1); }
+.builds-form-toggle, .community-form-footer button { display: inline-flex; align-items: center; gap: 7px; }

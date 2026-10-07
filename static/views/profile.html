@@ -1,123 +1,419 @@
-<section class="profile-page">
+<section class="profile-page" data-profile-mode="self" id="profileRoot">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HEADER DA PÁGINA
+       ═══════════════════════════════════════════════════════════ -->
   <header class="profile-page-heading">
-    <div>
-      <p class="profile-eyebrow">SOCIETY · PLAYER CARD</p>
-      <h2>Meu perfil</h2>
-      <p>Seu espaço na comunidade. Mostre como você joga e personalize sua identidade.</p>
+
+    <div class="profile-page-heading-copy">
+      <p class="profile-eyebrow" id="profileEyebrow">SOCIETY · PLAYER CARD</p>
+
+      <h2 id="profilePageTitle">Meu perfil</h2>
+
+      <p id="profilePageSubtitle">
+        Seu espaço na comunidade. Mostre como você joga e personalize sua identidade.
+      </p>
     </div>
-    <button id="profileEditButton" class="profile-primary" type="button">Editar perfil</button>
+
+    <div class="profile-page-heading-actions">
+
+      <!-- Voltar (só aparece em modo "other") -->
+      <button
+        id="profileBack"
+        class="profile-back-button"
+        type="button"
+        aria-label="Voltar"
+        title="Voltar"
+        hidden
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" focusable="false">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span>Voltar</span>
+      </button>
+
+      <!-- Editar (self) -->
+      <button
+        id="profileEditButton"
+        class="profile-primary"
+        type="button"
+      >Editar perfil</button>
+
+      <!-- Ações de terceiro (other) -->
+      <div
+        id="profileActions"
+        class="profile-other-actions"
+        role="group"
+        aria-label="Ações do perfil"
+        hidden
+      >
+        <button
+          id="profileMessageBtn"
+          type="button"
+          class="profile-primary profile-action-btn"
+          aria-label="Enviar mensagem"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Mensagem</span>
+        </button>
+
+        <button
+          id="profileReportBtn"
+          type="button"
+          class="profile-subtle-button profile-action-btn"
+          aria-label="Denunciar jogador"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <path d="M4 22V4a2 2 0 0 1 2-2h10l-2 4 2 4H6"/>
+          </svg>
+          <span>Denunciar</span>
+        </button>
+      </div>
+
+    </div>
   </header>
 
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CARD DO PERFIL
+       ═══════════════════════════════════════════════════════════ -->
   <article id="profileCard" class="profile-card">
-    <div id="profileBanner" class="profile-banner" role="img" aria-label="Banner do perfil">
+
+    <!-- Banner -->
+    <div
+      id="profileBanner"
+      class="profile-banner"
+      role="img"
+      aria-label="Banner do perfil"
+    >
       <span id="profileBannerHint">SUA JORNADA, SEU ESTILO</span>
     </div>
+
+    <!-- Identidade + Badge de Elo -->
     <div class="profile-identity">
-      <div id="profileAvatar" class="profile-avatar" aria-label="Foto de perfil"></div>
+
+      <div
+        id="profileAvatar"
+        class="profile-avatar"
+        aria-label="Foto de perfil"
+      ></div>
+
       <div class="profile-name-block">
+
         <div class="profile-name-row">
           <h1 id="profileDisplayName">Jogador</h1>
-          <span id="profileStatus" class="profile-status"><i></i> Online</span>
+
+          <span id="profileStatus" class="profile-status">
+            <i></i> Online
+          </span>
         </div>
-        <div id="profileCommunityRoles" class="profile-community-roles" aria-label="Cargos da comunidade"></div>
+
+        <div
+          id="profileCommunityRoles"
+          class="profile-community-roles"
+          aria-label="Cargos da comunidade"
+        ></div>
+
         <p id="profileUsername" class="profile-username">@jogador</p>
+
         <p id="profileTitle" class="profile-title" hidden></p>
       </div>
+
+      <!-- 🏅 Badge de Elo (imagem + texto) -->
+      <aside
+        id="profileRankBadge"
+        class="profile-rank-badge"
+        aria-live="polite"
+        hidden
+      >
+        <img
+          id="profileRankImage"
+          class="profile-rank-image"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        >
+        <div class="profile-rank-copy">
+          <small>ELO ATUAL</small>
+          <b id="profileRankLabel">—</b>
+        </div>
+      </aside>
     </div>
+
+    <!-- Bio -->
     <p id="profileBio" class="profile-bio"></p>
 
+    <!-- Detalhes de jogo (rank, role, hero, id) -->
     <div id="profileGameDetails" class="profile-game-details"></div>
+
+    <!-- Membro desde -->
     <p id="profileJoined" class="profile-joined"></p>
 
-    <section id="profileStatsSection" class="profile-section" aria-labelledby="profileStatsTitle">
+
+    <!-- ─── Estatísticas ─── -->
+    <section
+      id="profileStatsSection"
+      class="profile-section"
+      aria-labelledby="profileStatsTitle"
+    >
       <div class="profile-section-heading">
-        <div><p class="profile-eyebrow">SEU PROGRESSO</p><h2 id="profileStatsTitle">Estatísticas</h2></div>
+        <div>
+          <p class="profile-eyebrow">SEU PROGRESSO</p>
+          <h2 id="profileStatsTitle">Estatísticas</h2>
+        </div>
       </div>
       <div id="profileStats" class="profile-stats-grid"></div>
     </section>
 
-    <section id="profileAchievementsSection" class="profile-section" aria-labelledby="profileAchievementsTitle">
+
+    <!-- ─── Conquistas ─── -->
+    <section
+      id="profileAchievementsSection"
+      class="profile-section"
+      aria-labelledby="profileAchievementsTitle"
+    >
       <div class="profile-section-heading">
-        <div><p class="profile-eyebrow">MARCOS DA COMUNIDADE</p><h2 id="profileAchievementsTitle">Conquistas</h2></div>
+        <div>
+          <p class="profile-eyebrow">MARCOS DA COMUNIDADE</p>
+          <h2 id="profileAchievementsTitle">Conquistas</h2>
+        </div>
       </div>
       <div id="profileAchievements" class="profile-achievements"></div>
     </section>
 
-    <section id="profileActivitySection" class="profile-section" aria-labelledby="profileActivityTitle">
+
+    <!-- ─── Atividade ─── -->
+    <section
+      id="profileActivitySection"
+      class="profile-section"
+      aria-labelledby="profileActivityTitle"
+    >
       <div class="profile-section-heading">
-        <div><p class="profile-eyebrow">RECENTE</p><h2 id="profileActivityTitle">Atividade</h2></div>
+        <div>
+          <p class="profile-eyebrow">RECENTE</p>
+          <h2 id="profileActivityTitle">Atividade</h2>
+        </div>
       </div>
       <div id="profileActivity" class="profile-activity"></div>
     </section>
+
   </article>
 
-  <dialog id="profileEditor" class="profile-dialog" aria-labelledby="profileEditorTitle">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DIALOG DE EDIÇÃO (só no modo self)
+       ═══════════════════════════════════════════════════════════ -->
+  <dialog
+    id="profileEditor"
+    class="profile-dialog"
+    aria-labelledby="profileEditorTitle"
+  >
     <form id="profileForm" method="dialog">
+
       <header class="profile-dialog-heading">
-        <div><p class="profile-eyebrow">PERSONALIZAÇÃO</p><h2 id="profileEditorTitle">Editar perfil</h2></div>
-        <button id="profileEditorClose" class="profile-icon-button" type="button" aria-label="Fechar">✕</button>
+        <div>
+          <p class="profile-eyebrow">PERSONALIZAÇÃO</p>
+          <h2 id="profileEditorTitle">Editar perfil</h2>
+        </div>
+
+        <button
+          id="profileEditorClose"
+          class="profile-icon-button"
+          type="button"
+          aria-label="Fechar"
+        >✕</button>
       </header>
+
       <div class="profile-editor-preview">
-        <div id="profilePreviewBanner" class="profile-banner profile-preview-banner"><span>Prévia do banner</span></div>
-        <div id="profilePreviewAvatar" class="profile-avatar profile-preview-avatar"></div>
+        <div
+          id="profilePreviewBanner"
+          class="profile-banner profile-preview-banner"
+        ><span>Prévia do banner</span></div>
+
+        <div
+          id="profilePreviewAvatar"
+          class="profile-avatar profile-preview-avatar"
+        ></div>
       </div>
+
       <div class="profile-form-grid">
+
         <label>Foto de perfil
           <input id="profileAvatarFile" type="file" accept="image/*">
           <small>Imagem até 8 MB. Será otimizada antes de salvar.</small>
         </label>
-        <button id="profileRemoveAvatar" class="profile-subtle-button" type="button">Remover foto</button>
+        <button
+          id="profileRemoveAvatar"
+          class="profile-subtle-button"
+          type="button"
+        >Remover foto</button>
+
         <label>Banner
           <input id="profileBannerFile" type="file" accept="image/*">
           <small>Imagem até 8 MB. Será ajustada para o cabeçalho do perfil.</small>
         </label>
-        <button id="profileRemoveBanner" class="profile-subtle-button" type="button">Remover banner</button>
+        <button
+          id="profileRemoveBanner"
+          class="profile-subtle-button"
+          type="button"
+        >Remover banner</button>
+
         <label>Nome de exibição
           <input id="profileDisplayNameInput" maxlength="28" required>
         </label>
+
         <label>Username
-          <input id="profileUsernameInput" readonly aria-describedby="profileUsernameHint">
-          <small id="profileUsernameHint">O username é permanente nesta versão.</small>
+          <input
+            id="profileUsernameInput"
+            readonly
+            aria-describedby="profileUsernameHint"
+          >
+          <small id="profileUsernameHint">
+            O username é permanente nesta versão.
+          </small>
         </label>
+
         <label>Bio
-          <textarea id="pBio" maxlength="60" rows="3" placeholder="Conte um pouco sobre você"></textarea>
+          <textarea
+            id="pBio"
+            maxlength="60"
+            rows="3"
+            placeholder="Conte um pouco sobre você"
+          ></textarea>
         </label>
+
+        <!-- 🏅 RANK com seletor + preview -->
         <label>Rank
-          <input id="pRank" maxlength="20">
+          <div class="profile-picker">
+            <select id="pRank" aria-describedby="pRankHint">
+              <option value="">Sem rank informado</option>
+              <!-- opções preenchidas por profile.js -->
+            </select>
+            <span
+              class="profile-picker-preview"
+              id="pRankPreview"
+              aria-hidden="true"
+            >
+              <img id="pRankPreviewImage" alt="" loading="lazy" decoding="async">
+            </span>
+          </div>
+          <small id="pRankHint">
+            Selecione seu elo. A imagem aparece no topo do seu card.
+          </small>
         </label>
+
         <label>Role principal
-          <select id="pRole"><option>Qualquer</option><option>Jungle</option><option>Mid</option><option>Gold lane</option><option>EXP lane</option><option>Roam</option></select>
+          <select id="pRole">
+            <option>Qualquer</option>
+            <option>Jungle</option>
+            <option>Mid</option>
+            <option>Gold lane</option>
+            <option>EXP lane</option>
+            <option>Roam</option>
+          </select>
         </label>
+
+        <!-- 🦸 HERÓI PRINCIPAL com seletor + preview -->
         <label>Herói principal
-          <input id="pHero" maxlength="20">
+          <div class="profile-picker">
+            <select id="pHero" aria-describedby="pHeroHint">
+              <option value="">Nenhum herói selecionado</option>
+              <!-- opções preenchidas por profile.js a partir de HERO_CATALOG -->
+            </select>
+            <span
+              class="profile-picker-preview"
+              id="pHeroPreview"
+              aria-hidden="true"
+            >
+              <img id="pHeroPreviewImage" alt="" loading="lazy" decoding="async">
+            </span>
+          </div>
+          <small id="pHeroHint">
+            Escolha seu herói principal no catálogo oficial.
+          </small>
         </label>
+
         <label>ID no jogo
           <input id="pGid" maxlength="20">
         </label>
+
         <label>Título
-          <input id="profileTitleInput" maxlength="30" placeholder="Ex.: Jogador competitivo">
+          <input
+            id="profileTitleInput"
+            maxlength="30"
+            placeholder="Ex.: Jogador competitivo"
+          >
         </label>
+
         <label>Cor de destaque
           <input id="profileAccentInput" type="color">
         </label>
+
         <label>Moldura
-          <select id="profileFrameInput"><option value="default">Clássica</option><option value="elite">Elite</option></select>
+          <select id="profileFrameInput">
+            <option value="default">Clássica</option>
+            <option value="elite">Elite</option>
+          </select>
         </label>
+
         <label>Tema do perfil
-          <select id="profileThemeInput"><option value="classic">Clássico</option><option value="arena">Arena</option><option value="ocean">Oceano</option></select>
+          <select id="profileThemeInput">
+            <option value="classic">Clássico</option>
+            <option value="arena">Arena</option>
+            <option value="ocean">Oceano</option>
+          </select>
         </label>
+
       </div>
+
       <fieldset class="profile-privacy-fieldset">
         <legend>Privacidade do perfil</legend>
-        <label class="profile-check"><input id="profilePrivateInput" type="checkbox"> Perfil privado</label>
-        <label class="profile-check"><input id="profileShowStatsInput" type="checkbox" checked> Mostrar estatísticas e conquistas</label>
-        <label class="profile-check"><input id="profileShowActivityInput" type="checkbox" checked> Mostrar atividade recente</label>
+
+        <label class="profile-check">
+          <input id="profilePrivateInput" type="checkbox">
+          Perfil privado
+        </label>
+
+        <label class="profile-check">
+          <input id="profileShowStatsInput" type="checkbox" checked>
+          Mostrar estatísticas e conquistas
+        </label>
+
+        <label class="profile-check">
+          <input id="profileShowActivityInput" type="checkbox" checked>
+          Mostrar atividade recente
+        </label>
       </fieldset>
-      <p id="profileFormMessage" class="profile-form-message" role="status"></p>
+
+      <p
+        id="profileFormMessage"
+        class="profile-form-message"
+        role="status"
+      ></p>
+
       <footer class="profile-dialog-actions">
-        <button id="profileCancelButton" class="profile-subtle-button" type="button">Cancelar</button>
-        <button id="pSave" class="profile-primary" type="submit">Salvar alterações</button>
+        <button
+          id="profileCancelButton"
+          class="profile-subtle-button"
+          type="button"
+        >Cancelar</button>
+
+        <button
+          id="pSave"
+          class="profile-primary"
+          type="submit"
+        >Salvar alterações</button>
       </footer>
+
     </form>
   </dialog>
+
 </section>

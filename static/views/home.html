@@ -1,89 +1,173 @@
 <main class="home-page">
 
-  <section class="home-hero">
+  <!-- ============ TICKER DE WIN RATE (preenchido via JS em #homeTickerTrack) ============ -->
+  <div class="home-ticker" aria-label="Heróis em alta no meta">
+    <span class="home-ticker-badge"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-flame"/></svg> Bombando</span>
+
+    <div class="home-ticker-viewport">
+      <div id="homeTickerTrack" class="home-ticker-track is-static" aria-live="off">
+        <span class="home-ticker-item">Carregando meta da comunidade...</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============ HERO COM IMAGEM DE FUNDO ============ -->
+  <section class="home-hero home-hero-banner">
 
     <div class="home-hero-copy">
 
-      <p class="home-eyebrow">
-        SOCIETY MLBB · SUA COMUNIDADE, SEU PRÓXIMO NÍVEL
-      </p>
-
       <h2>
-        Você já joga.<br>
-        <span>Agora jogue com estratégia.</span>
+        MLBB SOCIETY<br>
+        <span>WIN RATE &amp; META</span>
       </h2>
 
-      <p>
-        Encontre parceiros, aprenda a ler o mapa e chegue preparado para a próxima partida.
-        Tudo começa com uma boa decisão.
+      <p class="home-hero-tagline">
+        Jogue com estratégia, não no escuro.
+      </p>
+
+      <p class="home-hero-text">
+        Calculadora de win rate, meta por rota, builds testadas e parceiros
+        de jogo. Tudo feito pela comunidade para você chegar preparado
+        à próxima partida.
       </p>
 
       <div class="home-hero-actions">
 
-        <button type="button" data-shortcut="lobby">
-          🎮 Entrar no lobby
+        <button type="button" data-shortcut="winrate">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg> Calcular win rate
         </button>
 
-        <button type="button" data-shortcut="lfg" class="home-button-secondary">
-          🤝 Encontrar duo
+        <button type="button" data-shortcut="meta" class="home-button-secondary">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg> Meta ao vivo
         </button>
 
       </div>
 
-      <div class="home-community-proof">
-        <span>⚔️ Jogue junto</span>
-        <span>🧠 Aprenda sem complicação</span>
-        <span>🏆 Dispute campeonatos</span>
+</div>
+
+  </section>
+
+
+  <!-- ============ FERRAMENTAS DO SITE ============ -->
+  <section
+    class="home-section home-tools"
+    aria-labelledby="homeToolsTitle"
+  >
+
+    <header class="home-section-heading">
+
+      <div>
+        <h3 id="homeToolsTitle">
+          Ferramentas para jogar melhor
+        </h3>
       </div>
 
-    </div>
+      <p>
+        Escolha o que você precisa agora e vá direto ao ponto.
+      </p>
 
-    <div class="home-hero-art" aria-hidden="true">
-      <div class="home-orbit home-orbit-one"></div>
-      <div class="home-orbit home-orbit-two"></div>
+    </header>
 
-      <div class="home-hero-emblem">S</div>
+    <div class="home-tools-grid">
 
-      <span class="home-float home-float-one">⚔️</span>
-      <span class="home-float home-float-two">🏆</span>
-      <span class="home-float home-float-three">✨</span>
+      <button type="button" data-shortcut="winrate">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg></span>
+        <span>
+          <b>Calculadora de win rate</b>
+          <small>Descubra quantas vitórias faltam para chegar à sua meta.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="meta">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg></span>
+        <span>
+          <b>Meta por rota</b>
+          <small>Heróis e opiniões da comunidade por lane.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="builds">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-build"/></svg></span>
+        <span>
+          <b>Builds testadas</b>
+          <small>Itens, emblemas e feitiços de batalha compartilhados.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="lfg">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-duo"/></svg></span>
+        <span>
+          <b>Encontrar duo</b>
+          <small>Ache parceiros no seu rank e horário.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="lobby">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-gamepad"/></svg></span>
+        <span>
+          <b>Lobby</b>
+          <small>Converse e organize partidas com a comunidade.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="quiz">
+        <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-help"/></svg></span>
+        <span>
+          <b>Quiz</b>
+          <small>Teste o que você sabe sobre o jogo.</small>
+        </span>
+      </button>
+
     </div>
 
   </section>
 
 
-  <section class="home-community-tools" aria-label="Recursos da comunidade">
+  <!-- ============ TIER LIST / META AO VIVO ============ -->
+  <section
+    class="home-section home-tier-preview"
+    aria-labelledby="homeTierTitle"
+  >
 
-    <button type="button" data-shortcut="meta">
-      <span aria-hidden="true">📊</span>
+    <header class="home-section-heading">
 
-      <span>
-        <b>Meta por rota</b>
-        <small>
-          Veja heróis e opiniões da comunidade por lane.
-        </small>
-      </span>
+      <div>
+        <h3 id="homeTierTitle">
+          Tier list e <span class="home-accent-live">meta ao vivo</span>
+        </h3>
 
-      <span aria-hidden="true">→</span>
-    </button>
+        <p>
+          Heróis mais bem avaliados pela comunidade, ordenados por tier
+          e atualizados em tempo real.
+        </p>
+      </div>
 
+      <button
+        type="button"
+        data-shortcut="meta"
+        class="home-text-button"
+      >
+        Tier list completa
+        <span aria-hidden="true">→</span>
+      </button>
 
-    <button type="button" data-shortcut="builds">
-      <span aria-hidden="true">🛠️</span>
+    </header>
 
-      <span>
-        <b>Builds testadas</b>
-        <small>
-          Compartilhe itens, emblemas e feitiços de batalha.
-        </small>
-      </span>
-
-      <span aria-hidden="true">→</span>
-    </button>
+    <div
+      id="homeTierPreview"
+      class="home-tier-grid"
+      aria-live="polite"
+    >
+      <p class="home-preview-empty">
+        Carregando tier list...
+      </p>
+    </div>
 
   </section>
 
 
+  <!-- ============ CONTRIBUIÇÕES DA COMUNIDADE ============ -->
   <section
     class="home-section home-community-data"
     aria-label="Contribuições da comunidade"
@@ -175,6 +259,7 @@
   </section>
 
 
+  <!-- ============ META POR ROTA ============ -->
   <section
     class="home-section home-meta-preview"
     aria-labelledby="homeMetaTitle"
@@ -219,6 +304,7 @@
   </section>
 
 
+  <!-- ============ TORNEIOS ============ -->
   <section class="home-section home-event-section">
 
     <div>
@@ -265,6 +351,7 @@
   </section>
 
 
+  <!-- ============ GUIA RÁPIDO ============ -->
   <section
     class="home-section home-learning"
     aria-labelledby="homeLearnTitle"
@@ -293,21 +380,13 @@
 
     <div class="home-tip-grid">
 
-
       <article class="home-tip-card home-tip-featured">
 
-        <span class="home-tip-icon">
-          🛣️
-        </span>
+        <span class="home-tip-icon">🛣️</span>
 
         <div>
-          <span class="home-tip-label">
-            CONTROLE DE ROTA
-          </span>
-
-          <h4>
-            O que é “wave”?
-          </h4>
+          <span class="home-tip-label">CONTROLE DE ROTA</span>
+          <h4>O que é “wave”?</h4>
         </div>
 
         <p>
@@ -326,18 +405,11 @@
 
       <article class="home-tip-card">
 
-        <span class="home-tip-icon">
-          🧭
-        </span>
+        <span class="home-tip-icon">🧭</span>
 
         <div>
-          <span class="home-tip-label">
-            PRESSÃO NO MAPA
-          </span>
-
-          <h4>
-            Split push
-          </h4>
+          <span class="home-tip-label">PRESSÃO NO MAPA</span>
+          <h4>Split push</h4>
         </div>
 
         <p>
@@ -356,18 +428,11 @@
 
       <article class="home-tip-card">
 
-        <span class="home-tip-icon">
-          🏰
-        </span>
+        <span class="home-tip-icon">🏰</span>
 
         <div>
-          <span class="home-tip-label">
-            AVANÇO DE ROTA
-          </span>
-
-          <h4>
-            Dar o push na wave
-          </h4>
+          <span class="home-tip-label">AVANÇO DE ROTA</span>
+          <h4>Dar o push na wave</h4>
         </div>
 
         <p>
@@ -385,18 +450,11 @@
 
       <article class="home-tip-card">
 
-        <span class="home-tip-icon">
-          ⏱️
-        </span>
+        <span class="home-tip-icon">⏱️</span>
 
         <div>
-          <span class="home-tip-label">
-            JOGADA AVANÇADA
-          </span>
-
-          <h4>
-            Proxy
-          </h4>
+          <span class="home-tip-label">JOGADA AVANÇADA</span>
+          <h4>Proxy</h4>
         </div>
 
         <p>
@@ -415,18 +473,11 @@
 
       <article class="home-tip-card">
 
-        <span class="home-tip-icon">
-          👁️
-        </span>
+        <span class="home-tip-icon">👁️</span>
 
         <div>
-          <span class="home-tip-label">
-            INFORMAÇÃO
-          </span>
-
-          <h4>
-            Rotacionar
-          </h4>
+          <span class="home-tip-label">INFORMAÇÃO</span>
+          <h4>Rotacionar</h4>
         </div>
 
         <p>
@@ -444,18 +495,11 @@
 
       <article class="home-tip-card">
 
-        <span class="home-tip-icon">
-          🧊
-        </span>
+        <span class="home-tip-icon">🧊</span>
 
         <div>
-          <span class="home-tip-label">
-            RITMO DA ROTA
-          </span>
-
-          <h4>
-            Congelar a wave
-          </h4>
+          <span class="home-tip-label">RITMO DA ROTA</span>
+          <h4>Congelar a wave</h4>
         </div>
 
         <p>
@@ -470,12 +514,12 @@
 
       </article>
 
-
     </div>
 
   </section>
 
 
+  <!-- ============ HÁBITOS ============ -->
   <section class="home-section home-playbook">
 
     <header class="home-section-heading">
@@ -498,62 +542,36 @@
     <div class="home-playbook-grid">
 
       <article>
-
         <span>01</span>
-
         <div>
-
-          <h4>
-            Olhe o minimapa
-          </h4>
-
+          <h4>Olhe o minimapa</h4>
           <p>
             Confira as posições dos adversários. Se eles sumiram,
             jogue mais recuado e avise seu time.
           </p>
-
         </div>
-
       </article>
 
-
       <article>
-
         <span>02</span>
-
         <div>
-
-          <h4>
-            Jogue pelo objetivo
-          </h4>
-
+          <h4>Jogue pelo objetivo</h4>
           <p>
             Uma luta vencida vale mais quando vira torre, Turtle ou Lord.
             Antes de perseguir, pense no que o time pode conquistar.
           </p>
-
         </div>
-
       </article>
 
-
       <article>
-
         <span>03</span>
-
         <div>
-
-          <h4>
-            Converse e combine
-          </h4>
-
+          <h4>Converse e combine</h4>
           <p>
             Uma chamada simples — “vou rotacionar”, “defende” ou
             “vamos Lord” — ajuda o time a agir junto.
           </p>
-
         </div>
-
       </article>
 
     </div>
@@ -561,6 +579,7 @@
   </section>
 
 
+  <!-- ============ PRÓXIMO PASSO ============ -->
   <footer class="home-next-step">
 
     <div>
@@ -578,10 +597,7 @@
 
     <div>
 
-      <button
-        type="button"
-        data-shortcut="lfg"
-      >
+      <button type="button" data-shortcut="lfg">
         Encontrar duo
       </button>
 

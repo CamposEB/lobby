@@ -4,8 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Society MLBB</title>
+<meta name="description" content="Society MLBB: comunidade de Mobile Legends com meta por rota, builds, calculadora de win rate, duo e torneios.">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a0a0b">
+<link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/tokens.css">
 <link rel="stylesheet" href="/static/css/base.css">
 <link rel="stylesheet" href="/static/css/layout.css">
@@ -15,12 +21,41 @@
 <link rel="stylesheet" href="/static/css/profile.css">
 <link rel="stylesheet" href="/static/css/tournaments.css">
 <link rel="stylesheet" href="/static/css/home.css">
+<link rel="stylesheet" href="/static/css/home-hero-icons.css">
+<link rel="stylesheet" href="/static/css/hero-hub.css">
+<link rel="stylesheet" href="/static/css/hero-tabs.css">
+<link rel="stylesheet" href="/static/css/command-palette.css">
 <link rel="stylesheet" href="/static/css/moderation.css">
 <link rel="stylesheet" href="/static/css/meta-builds.css">
+<link rel="stylesheet" href="/static/css/sidebar-hover.css">
+<link rel="stylesheet" href="/static/css/lobby.css">
+<link rel="stylesheet" href="/static/css/guide.css">
 </head>
-<link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
-<link rel="apple-touch-icon" href="/static/icon-192.png">
 <body>
+
+<!-- Ícones do site (traço simples, cor definida pelo CSS). Uso: <svg class="ico"><use href="#i-nome"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></symbol>
+  <symbol id="i-duo" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v11H11l-5.5 3v-3H4z"/><path d="M8 10h8M8 13.5h5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19h16M6 16V9M12 16V5M18 16v-4"/></symbol>
+  <symbol id="i-build" viewBox="0 0 24 24"><path d="m14.5 6.5 3-3 3 3-3 3"/><path d="m17.5 3.5-7.8 7.8M9 9l6 6M5 13l6 6-3 2-5-5z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h8"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 1 1 4.5 1.8c-1.2 1.1-2 1.4-2 3M12 17.5h.01"/></symbol>
+  <symbol id="i-tools" viewBox="0 0 24 24"><path d="M14 6.5a4 4 0 0 0-5.5 5.5L4 16.5 7.5 20l4.5-4.5a4 4 0 0 0 5.5-5.5l-2.3 2.3-3-3z"/><path d="m15 4 5 5"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v5c0 4.5-3.2 7.8-8 10-4.8-2.2-8-5.5-8-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.3a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9h-.3a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2v-.3a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.3a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.2"/><circle cx="17" cy="17" r="2.2"/></symbol>
+  <symbol id="i-gamepad" viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4.5l-.6 3.2a2 2 0 0 1-3.4 1L15 15H9l-2 1.7a2 2 0 0 1-3.4-1L3 12.5A4 4 0 0 1 7 8z"/><path d="M8 10.5v3M6.5 12h3M16 11.5h.01M18 13h.01"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4 .2 1.2.8 2 1.6 2.3C10.2 8.5 10.8 5.5 12 3z"/></symbol>
+  <symbol id="i-swords" viewBox="0 0 24 24"><path d="m4 4 9 9M20 4l-9 9M11 15l-3 3M13 15l3 3M6 21l2-3M18 21l-2-3"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+</svg>
+
 <form id="login" onsubmit="return false">
   <div class="logo big"><img src="/static/img/logo.png" alt="Society MLBB"></div>
   <small style="color:var(--muted)">O ponto de encontro da comunidade de MLBB</small>
@@ -85,7 +120,7 @@
   </button>
   <form id="topbarSearch" role="search">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg>
-    <input id="topbarSearchInput" type="search" placeholder="Buscar builds..." aria-label="Buscar builds por herói, rota ou patch" autocomplete="off">
+    <input id="topbarSearchInput" type="search" placeholder="Buscar heróis, páginas, builds..." aria-label="Abrir busca rápida" autocomplete="off">
   </form>
   <div id="topbarAccount">
     <div id="sideCoins" role="group" aria-label="Saldo de moedas">
@@ -112,6 +147,14 @@
   <div class="tab-loading">Carregando builds...</div>
 </section>
 
+<section id="tab-heroes" class="tab">
+  <div class="tab-loading">Carregando heróis...</div>
+</section>
+
+<section id="tab-hero" class="tab">
+  <div class="tab-loading">Carregando herói...</div>
+</section>
+
 <section id="tab-lobby" class="tab">
   <div class="tab-loading">Carregando sala...</div>
 </section>
@@ -127,7 +170,6 @@
 <section id="tab-dm" class="tab">
   <div class="tab-loading">Carregando mensagens...</div>
 </section>
-
 
 <section id="tab-quiz" class="tab">
   <div class="tab-loading">Carregando quiz...</div>
@@ -154,38 +196,40 @@
 </section>
 
 <div id="scrim"></div>
+<div id="sidebarHotzone" aria-hidden="true"></div>
 <aside id="sidebar">
   <div class="sidebar-heading">
-    <div id="brand"><span class="logo"><img src="/static/img/logo.png" alt="Society MLBB"></span>
+    <div id="brand"><span class="logo"><img src="/static/img/logo.png" alt="Society MLBB"></span></div>
     <button id="menuClose" type="button" aria-label="Fechar menu">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg>
     </button>
   </div>
-  <nav id="nav">
+  <nav id="nav" aria-label="Navegação principal">
     <div class="nav-group">
       <span class="nav-group-label">COMUNIDADE</span>
-      <button type="button" data-t="home" class="on"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9v11h13V9M9.5 20v-6h5v6"/></svg><span>Início</span></button>
-      <button type="button" data-t="lfg"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></svg><span>Procurar duo</span></button>
-      <button type="button" data-t="dm"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5h16v11H11l-5.5 3v-3H4z"/><path d="M8 10h8M8 13.5h5"/></svg><span>Mensagens</span><em id="dmBadge"></em></button>
+      <button type="button" data-t="home" class="on"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-home"/></svg><span class="nav-text"><b>Início</b><small>Sua página inicial</small></span></button>
+      <button type="button" data-t="lfg"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-duo"/></svg><span class="nav-text"><b>Procurar duo</b><small>Ache parceiros de jogo</small></span></button>
+      <button type="button" data-t="dm"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-chat"/></svg><span class="nav-text"><b>Mensagens</b><small>Conversas privadas</small></span><em id="dmBadge"></em></button>
     </div>
     <div class="nav-group">
       <span class="nav-group-label">JOGO</span>
-      <button type="button" data-t="meta"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19h16M6 16V9M12 16V5M18 16v-4"/></svg><span>Meta por rota</span></button>
-      <button type="button" data-t="builds"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m14.5 6.5 3-3 3 3-3 3"/><path d="m17.5 3.5-7.8 7.8M9 9l6 6M5 13l6 6-3 2-5-5z"/></svg><span>Builds</span></button>
-      <button type="button" data-t="guide"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/><path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20M8 7h8M8 10h8"/></svg><span>Guia</span></button>
+      <button type="button" data-t="meta"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg><span class="nav-text"><b>Meta por rota</b><small>Heróis em alta por lane</small></span></button>
+      <button type="button" data-t="heroes"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-swords"/></svg><span class="nav-text"><b>Heróis</b><small>Catálogo com builds e meta</small></span></button>
+      <button type="button" data-t="builds"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-build"/></svg><span class="nav-text"><b>Builds</b><small>Itens e emblemas testados</small></span></button>
+      <button type="button" data-t="guide"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-book"/></svg><span class="nav-text"><b>Guia</b><small>Termos e jogadas explicados</small></span></button>
     </div>
     <div class="nav-group">
       <span class="nav-group-label">MAIS</span>
-      <button type="button" data-t="quiz"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 1 1 4.5 1.8c-1.2 1.1-2 1.4-2 3M12 17.5h.01"/></svg><span>Quiz</span></button>
-      <button type="button" data-t="tools"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 6.5a4 4 0 0 0-5.5 5.5L4 16.5 7.5 20l4.5-4.5a4 4 0 0 0 5.5-5.5l-2.3 2.3-3-3z"/><path d="m15 4 5 5"/></svg><span>Ferramentas</span></button>
-      <button type="button" data-t="tournaments"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6"/></svg><span>Torneios</span></button>
-      <button type="button" data-t="admin" hidden><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3 8 3v5c0 4.5-3.2 7.8-8 10-4.8-2.2-8-5.5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Moderação</span></button>
+      <button type="button" data-t="quiz"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-help"/></svg><span class="nav-text"><b>Quiz</b><small>Teste seus conhecimentos</small></span></button>
+      <button type="button" data-t="tools"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg><span class="nav-text"><b>Ferramentas</b><small>Win rate, estrelas e skins</small></span></button>
+      <button type="button" data-t="tournaments"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg><span class="nav-text"><b>Torneios</b><small>Campeonatos da comunidade</small></span></button>
+      <button type="button" data-t="admin" hidden><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg><span class="nav-text"><b>Moderação</b><small>Painel da comunidade</small></span></button>
     </div>
     <div class="nav-group nav-account-group">
       <span class="nav-group-label">CONTA</span>
-      <button type="button" data-t="profile"><span id="profileNavAvatar" class="nav-profile-avatar" aria-hidden="true">S</span><span>Meu perfil</span></button>
-      <button type="button" data-t="settings"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.3a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9h-.3a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2v-.3a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.3a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9z"/></svg><span>Configurações</span></button>
-      <button type="button" id="logoutBtn"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/></svg><span>Sair</span></button>
+      <button type="button" data-t="profile"><span id="profileNavAvatar" class="nav-profile-avatar" aria-hidden="true">S</span><span class="nav-text"><b>Meu perfil</b><small>Veja e edite seus dados</small></span></button>
+      <button type="button" data-t="settings"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-gear"/></svg><span class="nav-text"><b>Configurações</b><small>Preferências da conta</small></span></button>
+      <button type="button" id="logoutBtn"><svg class="nav-icon" aria-hidden="true" focusable="false"><use href="#i-logout"/></svg><span class="nav-text"><b>Sair</b><small>Encerrar sessão</small></span></button>
     </div>
   </nav>
 </aside>
@@ -231,8 +275,20 @@
 <div id="lfgToast" class="lfg-toast" role="status" aria-live="polite"></div>
 
 <script src="/static/js/profile.js"></script>
+<script src="/static/js/hero-catalog.js"></script>
+<script src="/static/js/lobby/figure-catalog.js"></script>
+<script src="/static/js/lobby/assets.js"></script>
+<script src="/static/js/lobby/lobby.js"></script>
 <script src="/static/js/app.js"></script>
+<script src="/static/js/meta-picker.js"></script>
+<script src="/static/js/hero-data.js"></script>
+<script src="/static/js/hero-contrib.js"></script>
+<script src="/static/js/hero-hub.js"></script>
+<script src="/static/js/hero-tabs.js"></script>
+<script src="/static/js/hero-official.js"></script>
+<script src="/static/js/command-palette.js"></script>
 <script src="/static/js/tools.js"></script>
+<script src="/static/js/dm-extras.js" defer></script>
 <script type="module" src="/static/js/auth.js"></script>
 </body>
 </html>

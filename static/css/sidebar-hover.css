@@ -1,0 +1,79 @@
+/* ==========================================================================
+   sidebar-hover.css
+   Barra lateral escondida que aparece quando o mouse chega na borda esquerda.
+   Carregue DEPOIS de todos os outros CSS (depois de meta-builds.css).
+
+   Vale só para telas largas (900px ou mais) com mouse. Em celular, tablet e
+   janelas estreitas o menu continua funcionando como antes.
+   ========================================================================== */
+
+#sidebarHotzone { display: none; }
+
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+
+  /* ---- O conteúdo passa a usar a largura toda (antes reservava 274px) ---- */
+  #game { padding-left: 28px; }
+
+  /* ---- Barra lateral: fora da tela, aparece no hover ---- */
+  #sidebar {
+    transform: translateX(-100%);
+    /* pequeno atraso ao fechar, para não piscar se o mouse escapar sem querer */
+    transition: transform .2s ease .25s, box-shadow .2s ease .25s;
+  }
+  #sidebarHotzone:hover + #sidebar,
+  #sidebar:hover,
+  #sidebar:has(:focus-visible) {
+    transform: translateX(0);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, .55);
+    transition-delay: 0s;
+  }
+
+  /* ---- Faixa sensível + alça dourada que indica "tem menu aqui" ---- */
+  #sidebarHotzone {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 16px;
+    z-index: 19;
+  }
+  #sidebarHotzone::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 5px;
+    height: 72px;
+    transform: translateY(-50%);
+    border-radius: 0 6px 6px 0;
+    background: var(--gold, #e6c35c);
+    opacity: .55;
+    transition: opacity .2s ease, width .2s ease;
+  }
+  #sidebarHotzone:hover::after { opacity: 1; width: 8px; }
+
+  /* O logo já está no topo da página; o cabeçalho da barra some */
+  #sidebar .sidebar-heading { display: none; }
+  #sidebar #nav { padding-top: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sidebar, #sidebarHotzone::after { transition: none; }
+}
+
+/* ==========================================================================
+   Menu no estilo "mega menu": ícone dourado, título e explicação curta
+   (vale para a barra lateral e para o menu do celular)
+   ========================================================================== */
+#nav .nav-icon { width: 20px; height: 20px; flex: 0 0 20px; stroke: var(--gold, #e6c35c); }
+#nav button { align-items: center; min-height: 48px; }
+#nav .nav-text { display: grid; gap: 1px; min-width: 0; }
+#nav .nav-text b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .76rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+#nav .nav-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: .68rem; font-weight: 500; }
+#nav .nav-group-label { display: flex; align-items: center; gap: 10px; color: var(--gold, #e6c35c); opacity: .85; }
+#nav .nav-group-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(230,195,92,.4), transparent); }
+
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  #sidebar { width: 300px; }
+}

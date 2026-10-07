@@ -1,6 +1,8 @@
 /* Society MLBB — Ferramentas */
 (() => {
   const content = document.getElementById("toolsContent");
+  let toolsReadyResolve;
+  const toolsReady = new Promise(resolve => { toolsReadyResolve = resolve; });
   const eventSkinEvents = {
     eventX: {name:"Evento X (exemplo)", tokenName:"tokens", skinTokens:500, spinTokens:20, bonusTokensPerSpin:0,
       spinDiamonds:50, discountDiamonds:25, discountedSpinsPerDay:1, maxSpinsPerDay:null, endDate:null},
@@ -529,11 +531,25 @@
         document.getElementById(id).addEventListener("input", updateSkinCost);
       });
       setupEventSkinCalculator();
+      toolsReadyResolve();
     } catch (error) {
       console.error(error);
       showLoadError();
+      toolsReadyResolve();
     }
   }
+
+  window.SocietyTools = {
+    async openWinRate() {
+      await toolsReady;
+      const input = document.getElementById("wrN");
+      const panel = input && input.closest(".tool-panel");
+      if (!panel) return;
+      showTool(panel.id.replace(/^tool-/, ""));
+      panel.scrollIntoView({behavior: "smooth", block: "start"});
+      input.focus({preventScroll: true});
+    }
+  };
 
   loadTools();
 })();

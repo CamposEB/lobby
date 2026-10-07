@@ -1,0 +1,348 @@
+<main class="home-page">
+
+  <!-- ═══════════════════════════════════════════════════════
+       TICKER DE META — preenchido via JS em #homeTickerTrack
+       ═══════════════════════════════════════════════════════ -->
+  <div class="home-ticker" aria-label="Heróis em alta no meta">
+    <span class="home-ticker-badge">
+      <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-flame"/></svg>
+      <span>Bombando</span>
+    </span>
+
+    <div class="home-ticker-viewport">
+      <div id="homeTickerTrack" class="home-ticker-track is-static" aria-live="off">
+        <span class="home-ticker-item">Carregando meta da comunidade...</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-hero">
+    <div class="home-hero-inner">
+
+      <p class="home-eyebrow">
+        <span class="home-eyebrow-dot"></span>
+        Community · Season 2026
+      </p>
+
+      <h1 class="home-hero-title">
+        MLBB Society
+        <span>Win Rate &amp; Meta</span>
+      </h1>
+
+      <p class="home-hero-sub">Jogue com estratégia, não no escuro.</p>
+
+      <div class="home-hero-actions">
+        <button type="button" data-shortcut="winrate" class="btn btn-primary">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg>
+          Calcular win rate
+        </button>
+
+        <button type="button" data-shortcut="meta" class="btn btn-ghost">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg>
+          Meta ao vivo
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       FERRAMENTAS — 1 destaque (win rate) + 5 compactos
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Ferramentas</p>
+        <h2>Escolha e vá direto ao ponto.</h2>
+      </div>
+    </header>
+
+    <div class="home-tools">
+
+      <button type="button" data-shortcut="winrate" class="tool tool-featured">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Calculadora de Win Rate</b>
+          <small>Descubra sua próxima meta.</small>
+        </span>
+        <span class="tool-arrow" aria-hidden="true">→</span>
+      </button>
+
+      <button type="button" data-shortcut="meta" class="tool">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Meta por rota</b>
+          <small>Heróis por lane.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="builds" class="tool">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-build"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Builds</b>
+          <small>Itens e emblemas.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="lfg" class="tool">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-duo"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Encontrar duo</b>
+          <small>Parceiros no seu rank.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="lobby" class="tool">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-gamepad"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Lobby</b>
+          <small>Converse com a comunidade.</small>
+        </span>
+      </button>
+
+      <button type="button" data-shortcut="quiz" class="tool">
+        <span class="tool-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-help"/></svg>
+        </span>
+        <span class="tool-body">
+          <b>Quiz</b>
+          <small>Teste seu conhecimento.</small>
+        </span>
+      </button>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       TIER LIST — preenchido via JS em #homeTierPreview
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Meta ao vivo</p>
+        <h2>Tier list</h2>
+      </div>
+      <button type="button" data-shortcut="meta" class="link">
+        Ver completa <span aria-hidden="true">→</span>
+      </button>
+    </header>
+
+    <div id="homeTierPreview" class="home-tier-grid" aria-live="polite">
+      <p class="home-empty">Carregando tier list...</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       BUILDS — duas colunas compactas
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Comunidade</p>
+        <h2>Builds</h2>
+      </div>
+      <button type="button" data-shortcut="builds" class="link">
+        Ver todas <span aria-hidden="true">→</span>
+      </button>
+    </header>
+
+    <div class="home-builds-grid">
+
+      <div class="home-build-col">
+        <h3>Em destaque</h3>
+        <div id="homeBuildTrending" class="home-build-list" aria-live="polite">
+          <p class="home-empty">Carregando builds...</p>
+        </div>
+      </div>
+
+      <div class="home-build-col">
+        <h3>Recentes</h3>
+        <div id="homeBuildRecent" class="home-build-list" aria-live="polite">
+          <p class="home-empty">Carregando builds...</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       META POR ROTA — preenchido via JS em #homeMetaLanes
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Meta por rota</p>
+        <h2>Funções</h2>
+      </div>
+      <button type="button" data-shortcut="meta" class="link">
+        Abrir meta <span aria-hidden="true">→</span>
+      </button>
+    </header>
+
+    <div id="homeMetaLanes" class="home-lanes" aria-live="polite">
+      <p class="home-empty">Carregando meta da comunidade...</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       TORNEIOS — card único compacto
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <div class="home-tournament">
+      <div class="home-tournament-head">
+        <p class="home-eyebrow">Próxima disputa</p>
+        <h3>Tem lugar para o seu time.</h3>
+      </div>
+
+      <div id="lobbyTournamentPreview" class="home-tournament-preview" aria-live="polite">
+        <span class="home-tournament-emoji" aria-hidden="true">🏆</span>
+        <div class="home-preview-copy">
+          <b>Carregando campeonatos...</b>
+          <small>Buscando a próxima disputa</small>
+        </div>
+      </div>
+
+      <button type="button" data-shortcut="tournaments" class="btn btn-ghost">
+        Explorar torneios <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       DICAS RÁPIDAS — 3 apenas
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Guia rápido</p>
+        <h2>3 termos que importam</h2>
+      </div>
+      <button type="button" data-shortcut="builds" class="link">
+        Mais dicas <span aria-hidden="true">→</span>
+      </button>
+    </header>
+
+    <div class="home-tips">
+
+      <article class="tip">
+        <span class="tip-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg>
+        </span>
+        <div>
+          <h4>Wave</h4>
+          <p>Limpe a wave antes de sair da rota.</p>
+        </div>
+      </article>
+
+      <article class="tip">
+        <span class="tip-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg>
+        </span>
+        <div>
+          <h4>Split push</h4>
+          <p>Pressione uma lateral enquanto o time ocupa outra área.</p>
+        </div>
+      </article>
+
+      <article class="tip">
+        <span class="tip-icon" aria-hidden="true">
+          <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-duo"/></svg>
+        </span>
+        <div>
+          <h4>Rotacionar</h4>
+          <p>Avise o time antes de sair da sua lane.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       HÁBITOS — 3 indicadores
+       ═══════════════════════════════════════════════════════ -->
+  <section class="home-section">
+    <header class="home-head">
+      <div>
+        <p class="home-eyebrow">Hábitos</p>
+        <h2>Três passos para evoluir.</h2>
+      </div>
+    </header>
+
+    <div class="home-steps">
+
+      <div class="step">
+        <span class="step-num">01</span>
+        <b>Minimapa</b>
+        <p>Confira antes de cada rotação.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-num">02</span>
+        <b>Objetivos</b>
+        <p>Luta só vale se virar torre, Turtle ou Lord.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-num">03</span>
+        <b>Comunicação</b>
+        <p>Avise antes de iniciar ou rotacionar.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       CTA FINAL
+       ═══════════════════════════════════════════════════════ -->
+  <footer class="home-cta">
+    <div>
+      <p class="home-eyebrow">Pronto para a próxima?</p>
+      <h3>Encontre seu duo e entre preparado.</h3>
+    </div>
+
+    <div class="home-cta-actions">
+      <button type="button" data-shortcut="lfg" class="btn btn-primary">
+        Encontrar duo
+      </button>
+      <button type="button" data-shortcut="meta" class="btn btn-ghost">
+        Explorar meta
+      </button>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       DISCLAIMER
+       ═══════════════════════════════════════════════════════ -->
+  <p class="home-disclaimer">
+    Society MLBB é um projeto independente, não oficial e sem vínculo com a Moonton.
+    Mobile Legends: Bang Bang e seus nomes são marcas de seus respectivos titulares.
+    Meta e builds são contribuições da comunidade, não dados oficiais.
+    <a href="https://www.mobilelegends.com/" target="_blank" rel="noopener noreferrer">
+      Comunicados oficiais
+    </a>.
+  </p>
+
+</main>

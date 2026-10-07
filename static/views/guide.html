@@ -1,39 +1,413 @@
-<main class="community-game-page guide-page">
-  <header class="community-game-hero">
+<main class="guide-page">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="guide-hero">
     <div>
-      <p class="community-game-eyebrow">APRENDA E EVOLUA</p>
-      <h2>Guia rápido de MLBB</h2>
-      <p>Tutoriais curtos para entender as rotas, jogar em equipe e tomar decisões melhores durante a partida.</p>
+      <p class="guide-eyebrow">APRENDA E EVOLUA</p>
+      <h1>Guias de MLBB</h1>
+      <p>
+        Tutoriais práticos do básico ao avançado — rotas, selva, luta em equipe e
+        macro. Cada guia é independente: escolha o que você quer dominar hoje.
+      </p>
     </div>
     <span aria-hidden="true">📘</span>
   </header>
-  <section class="guide-grid" aria-label="Tutoriais de Mobile Legends">
-    <article class="guide-card">
-      <span class="guide-number">01</span><h3>Conheça as rotas</h3>
-      <p><b>EXP:</b> duelo e pressão na rota lateral. <b>Selva:</b> farm, emboscadas e objetivos. <b>Meio:</b> limpe a onda e ajude as laterais. <b>Ouro:</b> acumule recursos para crescer. <b>Roam:</b> dê visão e proteja o time.</p>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FILTROS
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="guide-filters" role="tablist" aria-label="Filtrar guias por categoria">
+    <button type="button" class="guide-filter is-active" data-filter="all" role="tab" aria-selected="true">
+      <span class="guide-filter-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      </span>
+      <span>Todos os guias</span>
+    </button>
+
+    <button type="button" class="guide-filter" data-filter="lane" role="tab" aria-selected="false">
+      <span class="guide-filter-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M5 3v18M5 5h12l-3 4 3 4H5"/></svg>
+      </span>
+      <span>Faixa</span>
+    </button>
+
+    <button type="button" class="guide-filter" data-filter="jungle" role="tab" aria-selected="false">
+      <span class="guide-filter-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4 .2 1.2.8 2 1.6 2.3C10.2 8.5 10.8 5.5 12 3z"/></svg>
+      </span>
+      <span>Selva</span>
+    </button>
+
+    <button type="button" class="guide-filter" data-filter="teamfight" role="tab" aria-selected="false">
+      <span class="guide-filter-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></svg>
+      </span>
+      <span>Luta em equipe</span>
+    </button>
+
+    <button type="button" class="guide-filter" data-filter="macro" role="tab" aria-selected="false">
+      <span class="guide-filter-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+      </span>
+      <span>Macro</span>
+    </button>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GRADE DE GUIAS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="guide-grid" aria-label="Lista de guias">
+
+    <!-- 1) FAIXA / INICIANTE -->
+    <article class="guide-card" data-category="lane" data-difficulty="beginner">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M5 3v18M5 5h12l-3 4 3 4H5"/></svg>
+          </span>
+          <span>Faixa</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Iniciante</span>
+          <span class="guide-card-time">8 min</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Domínio da fase de faixa do MLBB — guia de controle de ondas e negociação</h2>
+      <p class="guide-card-subtitle">
+        Domine sua pista desde o primeiro minuto com controle de ondas e padrões de negociação
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Noções básicas de gerenciamento de ondas</h3>
+        <p class="guide-card-body">
+          O gerenciamento de ondas é a habilidade mais impactante que você pode
+          desenvolver como laner. Em Mobile Legends, o mapa tem três pistas. A
+          faixa dourada concede ouro bônus aos últimos acertos do...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Somente automático quando o lane estiver a um golpe da morte para evitar empurrar a onda</li>
+          <li>Congele perto de sua torre para forçar seu oponente a se estender demais</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          4 seções · 20 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-faixa-ondas">Leia o guia completo</a>
+      </footer>
     </article>
-    <article class="guide-card">
-      <span class="guide-number">02</span><h3>Priorize os objetivos</h3>
-      <p>Depois de vencer uma luta ou expulsar o adversário da rota, transforme a vantagem em algo concreto: torre, Turtle ou Lord. Avise o time antes de iniciar e não abandone uma onda importante sem necessidade.</p>
+
+    <!-- 2) SELVA / INTERMEDIÁRIO -->
+    <article class="guide-card" data-category="jungle" data-difficulty="intermediate">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.2 2-4 .2 1.2.8 2 1.6 2.3C10.2 8.5 10.8 5.5 12 3z"/></svg>
+          </span>
+          <span>Selva</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Intermediário</span>
+          <span class="guide-card-time">12 minutos</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de rotação da selva MLBB — caminhos limpos, ganking e objetivos</h2>
+      <p class="guide-card-subtitle">
+        Configuração de retribuição, rotas claras ideais, janelas de ganking e
+        controle objetivo para caçadores na selva
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Configuração de retribuição e emblema</h3>
+        <p class="guide-card-body">
+          Antes de entrar na selva, sua configuração pré-jogo determina a eficácia
+          dos primeiros cinco minutos. Entender a Retribuição de Gelo e o sistema
+          de emblemas não é negociável para nenhum caçador...
+        </p>
+        <ul class="guide-card-tips">
+          <li><b>Retribuição de Gelo</b> é o padrão mais seguro. Tome Flame para duelistas 1v1. Bloody para caçadores de tanques como Fredrinn.</li>
+          <li><b>Caçador experiente</b> dá 15% de dano bônus à Tartaruga e ao Senhor. Nunca pule isso.</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          5 seções · 25 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-rotacao-selva">Leia o guia completo</a>
+      </footer>
     </article>
-    <article class="guide-card">
-      <span class="guide-number">03</span><h3>Monte a build com contexto</h3>
-      <p>Use os itens como resposta à partida, não como uma receita fixa. Considere o dano inimigo, cura, controle de grupo e quem está forte. Itens defensivos ou anti-cura podem valer mais do que repetir a build recomendada.</p>
+
+    <!-- 3) LUTA EM EQUIPE / AVANÇADO -->
+    <article class="guide-card" data-category="teamfight" data-difficulty="advanced">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a3.5 3.5 0 0 1 3.5 3.5V19"/></svg>
+          </span>
+          <span>Luta em equipe</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Avançado</span>
+          <span class="guide-card-time">12 minutos</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de posicionamento de luta em equipe — vença batalhas 5v5 no MLBB</h2>
+      <p class="guide-card-subtitle">
+        Vença lutas em equipe com posicionamento adequado, prioridade de alvo e
+        tempo de habilidade
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Posicionamento baseado em funções</h3>
+        <p class="guide-card-body">
+          Cada função tem um lugar específico nas lutas em equipe. Entender onde
+          ficar em relação à sua equipe é a base para vencer os 5v5. Tanques e
+          caças formam a linha de frente. O trabalho deles é iniciar...
+        </p>
+        <ul class="guide-card-tips">
+          <li><b>Tanques:</b> Seja o primeiro a se envolver. Absorva CC e afaste os inimigos da sua linha de fundo.</li>
+          <li><b>Lutadores:</b> Mergulhe na linha de fundo inimiga OU descaque para seu transporte, dependendo do que sua equipe precisa.</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          4 seções · 20 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-posicionamento-5v5">Leia o guia completo</a>
+      </footer>
     </article>
-    <article class="guide-card">
-      <span class="guide-number">04</span><h3>Olhe o mapa antes de avançar</h3>
-      <p>Confira onde os adversários apareceram e evite avançar sozinho quando estiverem desaparecidos. Acompanhe os objetivos que vão surgir e aproxime-se com antecedência, em vez de chegar depois da luta começar.</p>
+
+    <!-- 4) MACRO / INTERMEDIÁRIO -->
+    <article class="guide-card" data-category="macro" data-difficulty="intermediate">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+          </span>
+          <span>Macro</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Intermediário</span>
+          <span class="guide-card-time">10 minutos</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de conscientização de mapas e controle de visão — estratégia MLBB</h2>
+      <p class="guide-card-subtitle">
+        Domine a leitura do minimapa, o rastreamento do inimigo e o controle da
+        visão para dominar todas as partidas
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Hábitos de verificação de minimapa</h3>
+        <p class="guide-card-body">
+          O minimapa é a ferramenta mais poderosa do MLBB, mas a maioria dos
+          jogadores olha para ele apenas quando morre. Treine o hábito de
+          verificá-lo a cada 3 segundos, mesmo durante o farm...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Verifique o minimapa a cada 3 segundos — transforme em reflexo</li>
+          <li>Rastreie o jungler inimigo: onde ele apareceu pela última vez?</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          5 seções · 25 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-macro-visao">Leia o guia completo</a>
+      </footer>
     </article>
-    <article class="guide-card">
-      <span class="guide-number">05</span><h3>Jogue junto nas lutas</h3>
-      <p>Espere seus aliados antes de entrar, proteja os carregadores e use suas habilidades importantes com intenção. Depois de uma eliminação, reavalie a luta: recuar também pode preservar a vantagem.</p>
+
+    <!-- 5) FAIXA / INICIANTE (Gold) -->
+    <article class="guide-card" data-category="lane" data-difficulty="beginner">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M5 3v18M5 5h12l-3 4 3 4H5"/></svg>
+          </span>
+          <span>Faixa</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Iniciante</span>
+          <span class="guide-card-time">8 min</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de domínio da Gold Lane — posicionamento do atirador do MLBB</h2>
+      <p class="guide-card-subtitle">
+        Maximize seu potencial de atirador com eficiência agrícola, posicionamento
+        e picos de potência
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Posicionamento do atirador na pista</h3>
+        <p class="guide-card-body">
+          A pista dourada é a pista lateral mais distante da Tartaruga. Ele
+          abriga o atirador do time — a fonte de dano sustentado mais importante
+          do jogo tardio. Entenda como se posicionar desde o primeiro minuto...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Use o alcance para farmar sem se expor — só avance com o Roam colado</li>
+          <li>Evite morrer cedo: cada morte atrasa seu power spike em 2–3 minutos</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          4 seções · 20 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-gold-lane">Leia o guia completo</a>
+      </footer>
     </article>
-    <article class="guide-card">
-      <span class="guide-number">06</span><h3>Adapte-se ao draft</h3>
-      <p>Monte uma composição equilibrada com dano, resistência e controle. Se o adversário escolher um herói que depende de uma habilidade decisiva, guarde seu controle para interrompê-lo e comunique suas escolhas ao time.</p>
+
+    <!-- 6) FAIXA / INTERMEDIÁRIO (EXP) -->
+    <article class="guide-card" data-category="lane" data-difficulty="intermediate">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M5 3v18M5 5h12l-3 4 3 4H5"/></svg>
+          </span>
+          <span>Faixa</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Intermediário</span>
+          <span class="guide-card-time">9 min</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de dominação de faixa EXP — estratégia de lutador MLBB</h2>
+      <p class="guide-card-subtitle">
+        Confrontos de master fighter, controle de ondas, rotações e split push
+        na pista EXP
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Estratégia de confronto de pistas EXP</h3>
+        <p class="guide-card-body">
+          A pista EXP é a pista solo mais próxima do primeiro surgimento da
+          Tartaruga. Vencer seu confronto 1v1 abre espaço para o time inteiro
+          dominar o mapa. Aprenda a escolher quando trocar, congelar e...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Comece olhando o matchup. Se o adversário te vence no 1v1, congele perto da torre</li>
+          <li>Ajude o jungler a contestar o primeiro Turtle (2:00) — você é o mais próximo</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          4 seções · 20 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-exp-lane">Leia o guia completo</a>
+      </footer>
     </article>
+
+    <!-- 7) FAIXA / INTERMEDIÁRIO (Mid) -->
+    <article class="guide-card" data-category="lane" data-difficulty="intermediate">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><path d="M5 3v18M5 5h12l-3 4 3 4H5"/></svg>
+          </span>
+          <span>Faixa</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Intermediário</span>
+          <span class="guide-card-time">12 minutos</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia de controle de faixa intermediária — estratégia de roaming de mago MLBB</h2>
+      <p class="guide-card-subtitle">
+        Limpeza de ondas mestras, configurações de emblemas, tempos de roaming,
+        objetivos de rio e combos de rajadas
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Fundamentos do mage wave clear</h3>
+        <p class="guide-card-body">
+          A faixa do meio é a faixa mais curta do MLBB. As ondas Minion colidem
+          mais rápido e a faixa é redefinida mais rapidamente, tornando a
+          velocidade livre das ondas a habilidade mais importante...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Posicione sua habilidade de atingir todos os quatro lacaios do meio da pista (3 Lanceiros + 1 Infantaria) de uma só vez</li>
+          <li>Use ataques básicos para os últimos golpes quando não precisar de prioridade para conservar mana</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          5 seções · 25 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-mid-lane">Leia o guia completo</a>
+      </footer>
+    </article>
+
+    <!-- 8) MACRO / AVANÇADO (Roam) -->
+    <article class="guide-card" data-category="macro" data-difficulty="advanced">
+      <header class="guide-card-head">
+        <span class="guide-card-category">
+          <span class="guide-card-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+          </span>
+          <span>Macro</span>
+        </span>
+        <span class="guide-card-badges">
+          <span class="guide-card-difficulty">Avançado</span>
+          <span class="guide-card-time">12 minutos</span>
+        </span>
+      </header>
+
+      <h2 class="guide-card-title">Guia completo de roaming — suporte MLBB e estratégia de tanques</h2>
+      <p class="guide-card-subtitle">
+        Domine as bênçãos do roaming, os caminhos de rotação, a visão do mato,
+        as prioridades de descascamento e o tempo de engajamento
+      </p>
+
+      <section class="guide-card-section">
+        <h3 class="guide-card-section-title">Bênçãos itinerantes e economia de ouro</h3>
+        <p class="guide-card-body">
+          O roamer é o papel mais altruísta, mas impactante, no MLBB. Você
+          sacrifica ouro pessoal e XP para criar vantagens em todo o mapa. Sua
+          primeira compra deve ser botas com uma Bênção de Roaming...
+        </p>
+        <ul class="guide-card-tips">
+          <li>Compre botas com uma <b>Bênção de Roaming</b> como seu primeiro item. Nunca cultive lacaios durante os primeiros 8 minutos.</li>
+          <li>Escolha <b>Conceal</b> para engajamento, <b>Encourage</b> para auras, <b>Favor</b> para curandeiros, <b>Dire Hit</b> para roamers que cruzam o mapa.</li>
+        </ul>
+      </section>
+
+      <footer class="guide-card-foot">
+        <span class="guide-card-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"/></svg>
+          5 seções · 25 dicas
+        </span>
+        <a class="guide-card-cta" href="#guia-roaming">Leia o guia completo</a>
+      </footer>
+    </article>
+
   </section>
-  <aside class="community-game-disclaimer" role="note">
-    <b>Material educativo da comunidade.</b> As sugestões são gerais, podem mudar a cada atualização e não substituem a adaptação ao seu time, ao adversário e ao patch atual.
-  </aside>
+
+  <!-- Anúncio -->
+  <div class="guide-ad" aria-hidden="true">ANÚNCIO</div>
+
 </main>

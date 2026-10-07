@@ -7,7 +7,13 @@
 #   4. removido o bloco de setup do SQLite (CREATE TABLE / ALTER TABLE / class _MarkedConnection)
 #   5. adicionado "db = _connect_db()" no lugar
 #   6. lifespan não baixa/sobe mais backup — apenas gerencia a task de recompensas e fecha o pool
-import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata
+#   7. SESSION_SECRET ganhou fallback persistente (session_secret.txt) para sobreviver a restarts
+#   8. DM: mensagens retornam id e ts; handler dm_delete para apagar a própria mensagem
+#   9. Upload de anexos da DM (POST /api/dm/upload) + busca de usuários (GET /api/users/search) + lista de amigos (GET /api/friends/list)
+#  10. Upload agora aceita vídeo e limite subiu para 25 MB; dm_send aceita até 400 caracteres
+#  11. profile() agora retorna "online" — corrige o status Online/Offline no perfil (self e other)
+#  12. Reações em DM (tabela dm_reactions + handler dm_react + reactions no dm_open)
+import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -15,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Header, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Header, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -37,7 +43,33 @@ LOGIN_FAILURES = {}
 LOGIN_WINDOW_SECONDS = 900
 LOGIN_MAX_FAILURES = 5
 
-SESSION_SECRET = os.getenv("SESSION_SECRET", "").strip()
+
+def _load_or_create_session_secret():
+    env_secret = os.getenv("SESSION_SECRET", "").strip()
+    if env_secret:
+        print("🔑 SESSION_SECRET carregado do ambiente.")
+        return env_secret
+    secret_file = Path(__file__).resolve().parent / "session_secret.txt"
+    try:
+        if secret_file.exists():
+            stored = secret_file.read_text(encoding="utf-8").strip()
+            if stored:
+                print(f"🔑 SESSION_SECRET carregado de {secret_file.name}.")
+                return stored
+    except Exception as exc:
+        print(f"⚠️  Falha ao ler {secret_file.name}: {exc}")
+    generated = secrets.token_hex(48)
+    try:
+        secret_file.write_text(generated, encoding="utf-8")
+        print(f"⚠️  SESSION_SECRET gerado e salvo em {secret_file.name}. "
+              f"Defina SESSION_SECRET no ambiente para preservar sessões entre deploys.")
+    except Exception as exc:
+        print(f"⚠️  Não foi possível salvar {secret_file.name}: {exc}. "
+              f"As sessões serão invalidadas ao reiniciar.")
+    return generated
+
+
+SESSION_SECRET = _load_or_create_session_secret()
 SESSION_TTL = 30 * 86400
 
 
@@ -95,8 +127,65 @@ SHOP = {
 }
 ROOMS = {"lobby": "Salão Principal", "praca": "Praça", "arena": "Arena"}
 
-# Conexão única com o Postgres do Supabase (wrapper em db.py)
 db = _connect_db()
+
+# ═══════════════════════════════════════════════════════════
+# 🆕 MIGRAÇÃO IDEMPOTENTE — tabela de reações da DM
+# ═══════════════════════════════════════════════════════════
+def _ensure_dm_reactions_table():
+    try:
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS dm_reactions ("
+            "dm_id INTEGER NOT NULL, "
+            "voter TEXT NOT NULL, "
+            "emoji TEXT NOT NULL, "
+            "created_at DOUBLE PRECISION NOT NULL, "
+            "PRIMARY KEY (dm_id, voter))"
+        )
+        db.execute("CREATE INDEX IF NOT EXISTS idx_dm_reactions_dm ON dm_reactions(dm_id)")
+        db.commit()
+        print("✅ Tabela dm_reactions pronta.")
+    except Exception as exc:
+        print(f"⚠️  Falha ao garantir tabela dm_reactions: {exc}")
+
+
+try:
+    _ensure_dm_reactions_table()
+except Exception:
+    pass
+
+# ═══════════════════════════════════════════════════════════
+# 🖼️ Upload de anexos da DM
+# ═══════════════════════════════════════════════════════════
+UPLOAD_DIR = Path(__file__).resolve().parent / "static" / "uploads" / "dm"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+DM_MAX_SIZE = 25 * 1024 * 1024  # 25 MB (aceita imagens grandes e vídeos curtos)
+
+DM_ALLOWED_TYPES = {
+    "image/jpeg", "image/png", "image/gif", "image/webp",
+    "video/mp4", "video/webm", "video/ogg", "video/quicktime", "video/x-msvideo",
+    "application/pdf", "text/plain",
+    "application/zip", "application/x-zip-compressed",
+}
+
+DM_EXT_TO_MIME = {
+    ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+    ".png": "image/png", ".gif": "image/gif", ".webp": "image/webp",
+    ".mp4": "video/mp4", ".webm": "video/webm", ".ogv": "video/ogg",
+    ".mov": "video/quicktime", ".avi": "video/x-msvideo",
+    ".pdf": "application/pdf", ".txt": "text/plain",
+    ".zip": "application/zip",
+}
+
+DM_MIME_TO_EXT = {
+    "image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif",
+    "image/webp": ".webp",
+    "video/mp4": ".mp4", "video/webm": ".webm", "video/ogg": ".ogv",
+    "video/quicktime": ".mov", "video/x-msvideo": ".avi",
+    "application/pdf": ".pdf", "text/plain": ".txt",
+    "application/zip": ".zip", "application/x-zip-compressed": ".zip",
+}
 
 QUIZ = json.load(open("questions.json", encoding="utf-8"))
 
@@ -130,6 +219,8 @@ def profile(nick, viewer=None):
         "is_private": bool(data.get("is_private", False)),
         "is_owner": own,
         "community_roles": community_roles,
+        # ⬇️ marca presença real do usuário no servidor.
+        "online": nick in online,
     }
     if private:
         return result
@@ -171,6 +262,33 @@ def profile(nick, viewer=None):
 
 def unread(nick):
     return db.execute("SELECT COUNT(*) FROM dm WHERE b=? AND seen=0", (nick,)).fetchone()[0]
+
+
+# ═══════════════════════════════════════════════════════════
+# 🆕 Reações da DM — helper
+# ═══════════════════════════════════════════════════════════
+def dm_reactions_for(message_ids):
+    """Retorna { msg_id: [ {voter, emoji}, ... ] } para os ids informados."""
+    if not message_ids:
+        return {}
+    ids = [int(i) for i in message_ids]
+    placeholders = ",".join("?" * len(ids))
+    try:
+        rows = db.execute(
+            f"SELECT dm_id, voter, emoji FROM dm_reactions WHERE dm_id IN ({placeholders}) "
+            f"ORDER BY created_at ASC",
+            tuple(ids),
+        ).fetchall()
+    except Exception as exc:
+        print(f"⚠️  [dm_reactions_for] erro: {exc}")
+        return {}
+    result = {}
+    for row in rows:
+        result.setdefault(row["dm_id"], []).append({
+            "voter": row["voter"],
+            "emoji": row["emoji"],
+        })
+    return result
 
 
 def tournament_list(viewer):
@@ -360,12 +478,14 @@ def threads(nick):
     for row in rows:
         user = get_user(row["other"])
         data = json.loads(user["profile_data"] or "{}")
+        last_row = db.execute("SELECT m, ts FROM dm WHERE id=?", (row["last_id"],)).fetchone()
         result.append({
             "nick": row["other"],
             "name": data.get("display_name") or user["display"],
             "avatar": "" if data.get("is_private") else data.get("avatar", ""),
             "unread": row["unread"],
-            "last": db.execute("SELECT m FROM dm WHERE id=?", (row["last_id"],)).fetchone()["m"],
+            "last": last_row["m"] if last_row else "",
+            "ts": last_row["ts"] if last_row else 0,
         })
     return result
 
@@ -1455,18 +1575,37 @@ async def ws_endpoint(ws: WebSocket):
             elif t == "dm_open":
                 other = str(m.get("with", "")).lower()
                 if get_user(other) and other != nick:
-                    msgs = db.execute("SELECT a, m FROM dm WHERE (a=? AND b=?) OR (a=? AND b=?) ORDER BY id DESC LIMIT 50",
-                                      (nick, other, other, nick)).fetchall()[::-1]
+                    msgs = db.execute(
+                        "SELECT id, a, m, ts FROM dm WHERE (a=? AND b=?) OR (a=? AND b=?) ORDER BY id DESC LIMIT 50",
+                        (nick, other, other, nick)
+                    ).fetchall()[::-1]
+                    # 🆕 pega todas as reações das mensagens retornadas em um só SELECT
+                    reactions_map = dm_reactions_for([row["id"] for row in msgs])
                     db.execute("UPDATE dm SET seen=1 WHERE a=? AND b=?", (other, nick))
                     db.commit()
-                    await send(nick, {"t": "dm_history", "nick": other, "name": get_user(other)["display"],
-                                      "profile": profile(other, nick),
-                                      "msgs": [{"from": r["a"], "m": r["m"]} for r in msgs]})
+                    await send(nick, {
+                        "t": "dm_history",
+                        "nick": other,
+                        "name": get_user(other)["display"],
+                        "profile": profile(other, nick),
+                        "msgs": [
+                            {
+                                "id": row["id"],
+                                "from": row["a"],
+                                "m": row["m"],
+                                "ts": row["ts"],
+                                # 🆕 reações por mensagem
+                                "reactions": reactions_map.get(row["id"], []),
+                            }
+                            for row in msgs
+                        ],
+                    })
             elif t == "dm_seen":
                 db.execute("UPDATE dm SET seen=1 WHERE a=? AND b=?", (str(m.get("nick", "")), nick))
                 db.commit()
             elif t == "dm_send":
-                other, text = str(m.get("to", "")).lower(), str(m.get("m", "")).strip()[:200]
+                # Limite aumentado para 400 caracteres (marker de anexo ocupa ~100)
+                other, text = str(m.get("to", "")).lower(), str(m.get("m", "")).strip()[:400]
                 muted = mute_status(nick)
                 if muted:
                     await send(nick, {"t": "moderation_notice", "m": "Sua conta está silenciada temporariamente.",
@@ -1476,12 +1615,71 @@ async def ws_endpoint(ws: WebSocket):
                         or db.execute("SELECT 1 FROM blocks WHERE a=? AND b=?", (other, nick)).fetchone()):
                     continue
                 p["last_dm"] = time.time()
-                if any(b in text.lower() for b in BAD): text = "***"
-                db.execute("INSERT INTO dm(a,b,m,ts) VALUES(?,?,?,?)", (nick, other, text, time.time()))
+                if any(b in text.lower() for b in BAD):
+                    text = "***"
+                now = time.time()
+                row = db.execute(
+                    "INSERT INTO dm(a,b,m,ts) VALUES(?,?,?,?) RETURNING id",
+                    (nick, other, text, now)
+                ).fetchone()
                 db.commit()
-                pkt = {"t": "dm", "from": nick, "to": other, "m": text}
+                new_id = row["id"] if row else None
+                pkt = {"t": "dm", "id": new_id, "from": nick, "to": other, "m": text, "ts": now}
                 await send(nick, pkt)
-                if other in online: await send(other, pkt)
+                if other in online:
+                    await send(other, pkt)
+            elif t == "dm_delete":
+                try:
+                    msg_id = int(m.get("id"))
+                except (TypeError, ValueError):
+                    continue
+                row = db.execute("SELECT a FROM dm WHERE id=?", (msg_id,)).fetchone()
+                if not row or row["a"] != nick:
+                    # só permite apagar a própria mensagem
+                    continue
+                db.execute("DELETE FROM dm WHERE id=?", (msg_id,))
+                try:
+                    db.execute("DELETE FROM dm_reactions WHERE dm_id=?", (msg_id,))
+                except Exception:
+                    pass
+                db.commit()
+                for target in list(online):
+                    await send(target, {"t": "dm_deleted", "id": msg_id})
+            # ══════════════════════════════════════════════════════
+            # 🆕 REAÇÕES DA DM
+            # ══════════════════════════════════════════════════════
+            elif t == "dm_react":
+                try:
+                    msg_id = int(m.get("id"))
+                except (TypeError, ValueError):
+                    continue
+                emoji = str(m.get("emoji", "")).strip()
+                # aceita qualquer emoji curto (1 a 8 chars cobre ZWJ + variantes)
+                if not emoji or len(emoji) > 8:
+                    continue
+                row = db.execute("SELECT a, b FROM dm WHERE id=?", (msg_id,)).fetchone()
+                if not row or nick not in (row["a"], row["b"]):
+                    continue
+                existing = db.execute(
+                    "SELECT emoji FROM dm_reactions WHERE dm_id=? AND voter=?",
+                    (msg_id, nick)
+                ).fetchone()
+                if existing and existing["emoji"] == emoji:
+                    db.execute("DELETE FROM dm_reactions WHERE dm_id=? AND voter=?", (msg_id, nick))
+                    outgoing = ""
+                else:
+                    db.execute(
+                        "INSERT INTO dm_reactions(dm_id,voter,emoji,created_at) VALUES(?,?,?,?) "
+                        "ON CONFLICT(dm_id,voter) DO UPDATE SET emoji=excluded.emoji,created_at=excluded.created_at",
+                        (msg_id, nick, emoji, time.time())
+                    )
+                    outgoing = emoji
+                db.commit()
+                payload = {"t": "dm_reacted", "id": msg_id, "voter": nick, "emoji": outgoing}
+                await send(nick, payload)
+                other = row["b"] if row["a"] == nick else row["a"]
+                if other in online:
+                    await send(other, payload)
             elif t == "block":
                 target = str(m.get("nick", "")).strip().lower()
                 if target and target != nick and get_user(target):
@@ -1553,6 +1751,95 @@ async def ws_endpoint(ws: WebSocket):
         if nick and nick in online and online[nick].get("ws") is ws:
             await bc_room(nick, {"t": "leave", "nick": nick}, skip=nick)
             del online[nick]
+
+
+# ═══════════════════════════════════════════════════════════
+# 🖼️ TAREFA 2 — Upload de anexo da DM
+# ═══════════════════════════════════════════════════════════
+@app.post("/api/dm/upload")
+async def dm_upload(file: UploadFile = File(...)):
+    if not file or not file.filename:
+        raise HTTPException(400, "Nenhum arquivo enviado")
+
+    content = await file.read()
+    if not content:
+        raise HTTPException(400, "Arquivo vazio")
+    if len(content) > DM_MAX_SIZE:
+        raise HTTPException(413, "Arquivo muito grande (máx 25 MB)")
+
+    mime = (file.content_type or "").lower().strip()
+    ext = Path(file.filename).suffix.lower()
+
+    if mime not in DM_ALLOWED_TYPES:
+        mime = DM_EXT_TO_MIME.get(ext, "")
+        if not mime:
+            raise HTTPException(415, "Tipo de arquivo não permitido")
+
+    if not re.fullmatch(r"\.[a-z0-9]{1,6}", ext):
+        ext = DM_MIME_TO_EXT.get(mime, ".bin")
+
+    safe_name = f"{uuid.uuid4().hex}{ext}"
+    target = UPLOAD_DIR / safe_name
+    try:
+        target.write_bytes(content)
+    except Exception as exc:
+        print(f"⚠️ [dm-upload] falha ao salvar: {exc}")
+        raise HTTPException(500, "Não foi possível salvar o arquivo")
+
+    display_name = re.sub(r"[^\w\-. ]", "_", file.filename)[:120]
+    return {
+        "url": f"/static/uploads/dm/{safe_name}",
+        "type": mime,
+        "name": display_name,
+        "size": len(content),
+    }
+
+
+# ═══════════════════════════════════════════════════════════
+# 🖼️ TAREFA 5 — Busca de usuários
+# ═══════════════════════════════════════════════════════════
+@app.get("/api/users/search")
+def users_search(q: str = ""):
+    q = (q or "").strip()
+    if len(q) < 2:
+        return []
+    like = f"%{q.lower()}%"
+    try:
+        rows = db.execute(
+            "SELECT nick, display, profile_data FROM users "
+            "WHERE LOWER(nick) LIKE ? OR LOWER(display) LIKE ? "
+            "ORDER BY LENGTH(display) ASC, display ASC LIMIT 25",
+            (like, like),
+        ).fetchall()
+    except Exception as exc:
+        print(f"⚠️ [users-search] erro: {exc}")
+        return []
+
+    result = []
+    for row in rows:
+        other = row["nick"]
+        data = json.loads(row["profile_data"] or "{}")
+        if data.get("is_private"):
+            avatar = ""
+        else:
+            avatar = data.get("avatar", "")
+        result.append({
+            "id": other,
+            "nick": other,
+            "username": other,
+            "name": data.get("display_name") or row["display"],
+            "avatar": avatar,
+            "isFriend": False,
+        })
+    return result
+
+
+# ═══════════════════════════════════════════════════════════
+# 🖼️ TAREFA 5 — Lista de amigos (placeholder até existir tabela friends)
+# ═══════════════════════════════════════════════════════════
+@app.get("/api/friends/list")
+def friends_list():
+    return []
 
 
 @app.get("/sw.js")

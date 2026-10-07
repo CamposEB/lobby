@@ -1,33 +1,76 @@
 :root {
-  --bg: #0a0a0b;
-  --surface: #111113;
-  --surface-2: #17171a;
-  --border: #232327;
-  --text: #e8e8ea;
-  --text-muted: #8b8b93;
-  --accent: #7c6cf0;
-  --link: #22b8cf;
-  --positive: #22c55e;
+  /* ══════════════════════════════════════════════════════════════
+     BASE — fundo e texto (preto + branco quente)
+     ══════════════════════════════════════════════════════════════ */
+  --bg: #07080a;
+  --surface: #0f1114;
+  --surface-2: #15181c;
+  --border: #23262b;
+  --text: #ece9e2;
+  --text-muted: #8a8d94;
+
+  /* ══════════════════════════════════════════════════════════════
+     DESTAQUE — dourado (única cor de acento)
+     ══════════════════════════════════════════════════════════════ */
+  --accent: #d9b85c;
+  --accent-hover: #e8c96b;
+  --on-accent: #1a1405;
+
+  /* ══════════════════════════════════════════════════════════════
+     CORES DE DADO — azul/verde/vermelho (números, votos, alertas)
+     ══════════════════════════════════════════════════════════════ */
+  --link: #1ea7ff;
+  --info: #1ea7ff;
+  --positive: #3ddc84;
   --danger: #ef4444;
 
-  --warning: #f3c96c;
-  --gold: #f2b84b;
+  /* ══════════════════════════════════════════════════════════════
+     ALIASES LEGADOS — mantidos pra compatibilidade
+     (todo o CSS antigo continua funcionando; só o valor muda)
+     ══════════════════════════════════════════════════════════════ */
+  --warning: #d9b85c;
+  --gold: #d9b85c;
   --success: var(--positive);
   --muted: var(--text-muted);
   --panel: var(--surface);
   --surface-hover: var(--surface-2);
   --primary: var(--accent);
-  --primary-hover: var(--accent);
-  --text-subtle: #c4c4ca;
-  --text-soft: #a7a7af;
-  --text-inverse: #ffffff;
-  --input-bg: #0e0e10;
+  --primary-hover: var(--accent-hover);
+  --text-subtle: #c9c7c0;
+  --text-soft: #a8a6a0;
+  --text-inverse: #07080a;
+  --input-bg: #0c0e11;
   --game-canvas-bg: #1b3a4b;
-  --text-on-light: #24212d;
-  --logo-text: #111111;
-  --border-soft: rgba(232, 232, 234, .12);
+  --text-on-light: #1a1405;
+  --logo-text: #ece9e2;
+
+  /* ══════════════════════════════════════════════════════════════
+     RGBs — usados em rgba(var(--x-rgb), .n)
+     ══════════════════════════════════════════════════════════════ */
+  --bg-rgb: 7, 8, 10;
+  --white-rgb: 255, 255, 255;
+  --black-rgb: 0, 0, 0;
+  --accent-rgb: 217, 184, 92;
+  --positive-rgb: 61, 220, 132;
+  --danger-rgb: 239, 68, 68;
+  --warning-rgb: 217, 184, 92;
+  --gold-rgb: 217, 184, 92;
+
+  /* ══════════════════════════════════════════════════════════════
+     TEXTO SEMÂNTICO — mensagens de estado
+     ══════════════════════════════════════════════════════════════ */
+  --error-text: #f87171;
+  --success-text: var(--positive);
+  --warning-text: var(--warning);
+  --gold-text: var(--gold);
+
+  /* ══════════════════════════════════════════════════════════════
+     OVERLAYS E TINTURAS — sobreposições e camadas translúcidas
+     ══════════════════════════════════════════════════════════════ */
+  --border-soft: rgba(236, 233, 226, .12);
   --overlay: rgba(0, 0, 0, .55);
   --overlay-light: rgba(0, 0, 0, .32);
+
   --surface-tint-1: rgba(255, 255, 255, .025);
   --surface-tint-2: rgba(255, 255, 255, .045);
   --surface-tint-3: rgba(255, 255, 255, .075);
@@ -36,25 +79,18 @@
   --surface-tint-6: rgba(255, 255, 255, .055);
   --surface-tint-7: rgba(255, 255, 255, .09);
   --surface-tint-8: rgba(255, 255, 255, .04);
-  --accent-rgb: 124, 108, 240;
-  --bg-rgb: 10, 10, 11;
-  --white-rgb: 255, 255, 255;
-  --black-rgb: 0, 0, 0;
-  --positive-rgb: 34, 197, 94;
-  --danger-rgb: 239, 68, 68;
-  --warning-rgb: 243, 201, 108;
-  --gold-rgb: 242, 184, 75;
-  --error-text: #f87171;
-  --success-text: var(--positive);
-  --warning-text: var(--warning);
-  --gold-text: var(--gold);
 
+  /* ══════════════════════════════════════════════════════════════
+     ESTRUTURAIS — raios, sombras, transições
+     ══════════════════════════════════════════════════════════════ */
   --radius-sm: 8px;
   --radius-md: 10px;
   --radius-lg: 16px;
+
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, .18);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, .24);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, .32);
+
   --transition-fast: 140ms ease;
   --transition-normal: 200ms ease;
 }

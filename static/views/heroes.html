@@ -1,0 +1,55 @@
+<main class="hh-page" id="heroesPage">
+
+  <nav class="hh-crumbs" aria-label="Você está em">
+    <button type="button" data-hh-go="home">Início</button>
+    <span aria-hidden="true">›</span>
+    <b>Heróis</b>
+  </nav>
+
+  <header class="hh-list-head">
+    <div>
+      <p class="hh-eyebrow">CATÁLOGO</p>
+      <h2 id="heroesTitle">Todos os heróis</h2>
+      <p class="hh-lead">Escolha um herói para ver as builds e as indicações de meta enviadas pela comunidade.</p>
+      <p class="hh-note">Dados da comunidade, não oficiais. Os selos de tier vêm das indicações dos jogadores.</p>
+    </div>
+    <div id="heroesRoleStats" class="hh-role-stats" role="group" aria-label="Filtrar por classe"></div>
+  </header>
+
+  <section class="hh-panel" aria-label="Lista de heróis">
+    <div class="hh-toolbar">
+      <label class="hh-search">
+        <svg class="hh-ico" aria-hidden="true" focusable="false"><use href="#i-compass"/></svg>
+        <input id="heroesSearch" type="search" placeholder="Buscar heróis..." autocomplete="off" aria-label="Buscar heróis">
+      </label>
+      <select id="heroesSort" aria-label="Ordenar">
+        <option value="name">Nome (A–Z)</option>
+        <option value="tier">Melhor tier</option>
+        <option value="builds">Mais builds</option>
+      </select>
+      <select id="heroesRole" aria-label="Classe">
+        <option value="">Todas as classes</option>
+      </select>
+      <select id="heroesLane" aria-label="Rota">
+        <option value="">Todas as rotas</option>
+        <option value="EXP">EXP</option>
+        <option value="Jungle">Selva · Jungle</option>
+        <option value="Mid">Meio · Mid</option>
+        <option value="Gold">Ouro · Gold</option>
+        <option value="Roam">Roam · Suporte</option>
+      </select>
+      <select id="heroesTier" aria-label="Tier da comunidade">
+        <option value="">Todos os tiers</option>
+        <option value="S">Tier S</option>
+        <option value="A">Tier A</option>
+        <option value="B">Tier B</option>
+        <option value="none">Sem indicações</option>
+      </select>
+      <span id="heroesCount" class="hh-count" role="status" aria-live="polite"></span>
+    </div>
+
+    <div id="heroesGrid" class="hh-grid"></div>
+    <p id="heroesEmpty" class="hh-empty" hidden>Nenhum herói encontrado com esses filtros.</p>
+  </section>
+
+</main>

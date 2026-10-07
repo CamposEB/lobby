@@ -17,3 +17,6 @@ firebase-service-account.json
 *adminsdk*.json
 .env*
 !.env.example
+
+jogo.txt
+projeto.txt

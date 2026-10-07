@@ -7,14 +7,46 @@
     </div>
     <button type="button" data-shortcut="lfg">🤝 Encontrar duo</button>
   </header>
-  <div id="wrap">
+
+  <div id="wrap" class="habbo-room">
     <canvas id="c"></canvas>
-    <button id="centerBtn">Centralizar</button>
+
+    <div class="habbo-room-bar">
+      <span class="habbo-room-name" id="roomNameBar">Salão Principal</span>
+      <span class="habbo-room-online" id="roomOnlineBar">0 online</span>
+      <div class="habbo-room-bar-actions">
+        <button id="centerBtn" type="button" title="Centralizar">⊕</button>
+      </div>
+    </div>
+
     <div id="log" aria-live="polite"></div>
-    <div id="hud"><button data-p="rooms">🚪 Salas</button><button data-p="shop">🛍️ Loja</button><button data-p="inv">🎒 Inventário</button></div>
-    <div id="panel"><div class="phead"><b id="pTitle"></b><button id="pClose" aria-label="Fechar">✕</button></div>
-      <div id="roomList" class="pp"></div><div id="shopItems" class="pp"></div><div id="invItems" class="pp"></div></div>
-    <div id="pcard"></div>
+
+    <div id="hud" class="habbo-hud">
+      <button data-p="rooms" type="button"><span class="habbo-hud-ico">🚪</span><span class="habbo-hud-lbl">Salas</span></button>
+      <button data-p="shop"  type="button"><span class="habbo-hud-ico">🛍️</span><span class="habbo-hud-lbl">Loja</span></button>
+      <button data-p="inv"   type="button"><span class="habbo-hud-ico">🎒</span><span class="habbo-hud-lbl">Inventário</span></button>
+      <button data-p="look"  type="button"><span class="habbo-hud-ico">👕</span><span class="habbo-hud-lbl">Aparência</span></button>
+      <button data-p="act" type="button"><span class="habbo-hud-ico">😀</span><span class="habbo-hud-lbl">Ações</span></button>
+    </div>
+
+    <div id="panel" class="habbo-window">
+      <div class="habbo-window-title">
+        <span class="habbo-window-dot"></span>
+        <b id="pTitle"></b>
+        <button id="pClose" type="button" aria-label="Fechar">✕</button>
+      </div>
+      <div class="habbo-window-body">
+        <div id="roomList"  class="pp"></div>
+        <div id="shopItems" class="pp"></div>
+        <div id="invItems"  class="pp"></div>
+      </div>
+    </div>
+
+    <div id="pcard" class="habbo-card"></div>
   </div>
-  <div id="chatrow"><input id="msg" maxlength="100" placeholder="Digite e aperte Enter"><button id="send">Enviar</button></div>
+
+  <div id="chatrow" class="habbo-chatrow">
+    <input id="msg" maxlength="100" placeholder="Digite uma mensagem e aperte Enter" autocomplete="off">
+    <button id="send" type="button">Enviar</button>
+  </div>
 </main>
