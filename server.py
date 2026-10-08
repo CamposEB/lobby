@@ -23,6 +23,8 @@
 #      caíam no "else" e apareciam como "MEMBRO" no perfil.
 #  19. ⭐ FIX: _user_public_card e init do WS agora enviam flags is_vip /
 #      is_streamer / is_beta para o frontend.
+#  20. REDE SOCIAL: seguir/seguidores, posts, curtidas, republicações,
+#      comentários e feed de notificações (módulo social.py).
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -39,6 +41,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from identity_store import IdentityError, identity_store
 from db import connect as _connect_db
+import social
 
 BOT_KEY = os.getenv("BOT_KEY", "").strip()
 ALLOW_LEGACY_LOGIN = os.getenv("ALLOW_LEGACY_LOGIN", "true").strip().lower() in ("1", "true", "yes")
@@ -464,6 +467,9 @@ def profile(nick, viewer=None):
         "frame": data.get("frame", "default"),
         "theme": data.get("theme", "classic"),
     }
+
+    # contadores sociais + relação de quem vê (seguindo / segue você)
+    result["social"] = social.social_counts(nick, viewer)
 
     if not can_see_details:
         result["details_hidden"] = True
@@ -1022,6 +1028,16 @@ async def send(nick, data):
     except Exception: pass
 
 
+# Rede social (seguir, posts, notificações) — ver social.py
+social.init(
+    db=db, send=send, online=online,
+    get_user=lambda n: get_user(n),
+    friendship_status=lambda a, b: friendship_status(a, b),
+    user_card=lambda n: _user_public_card(n),
+    role_for=lambda n: role_for(n),
+)
+
+
 async def broadcast(data, skip=None):
     for n in list(online):
         if n != skip: await send(n, data)
@@ -1434,6 +1450,7 @@ async def ws_endpoint(ws: WebSocket):
         }))
         await send(nick, {"t": "tournaments", "list": tournament_list(nick)})
         await send(nick, friends_summary(nick))
+        await social.send_initial(nick)
         current_mute = mute_status(nick)
         if current_mute:
             await send(nick, {"t": "moderation_notice",
@@ -1444,6 +1461,9 @@ async def ws_endpoint(ws: WebSocket):
         while True:
             m = json.loads(await ws.receive_text())
             t, p = m.get("t"), online[nick]
+            if t in social.WS_TYPES:
+                await social.handle(nick, m)
+                continue
             if t == "move":
                 p["x"] = max(0, min(W, int(m.get("x", 0))))
                 p["y"] = max(0, min(H, int(m.get("y", 0))))
@@ -1502,6 +1522,7 @@ async def ws_endpoint(ws: WebSocket):
                     if target in online:
                         await send(target, {"t": "friend_notice",
                                             "m": f"@{nick} aceitou seu pedido de amizade."})
+                    await social.notify_friend_accepted(nick, target)
                     continue
                 now = time.time()
                 db.execute(
@@ -1543,6 +1564,7 @@ async def ws_endpoint(ws: WebSocket):
                 if target in online:
                     await send(target, {"t": "friend_notice",
                                         "m": f"@{nick} aceitou seu pedido de amizade."})
+                await social.notify_friend_accepted(nick, target)
             elif t == "friend_decline":
                 target = str(m.get("nick", "")).strip().lower()
                 db.execute(
@@ -2328,6 +2350,47 @@ async def dm_upload(file: UploadFile = File(...)):
         "name": display_name,
         "size": len(content),
     }
+
+
+POST_UPLOAD_DIR = Path(__file__).resolve().parent / "static" / "uploads" / "posts"
+POST_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+POST_IMAGE_MAX = 5 * 1024 * 1024
+
+
+def _sniff_image_ext(data: bytes):
+    """Confere os bytes iniciais: não confiamos em content-type nem extensão."""
+    if data.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return ".gif"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ".webp"
+    return None
+
+
+@app.post("/api/posts/upload")
+async def post_upload(file: UploadFile = File(...),
+                      x_session_token: str = Header(default="")):
+    nick = validate_session_token(x_session_token)
+    if not nick or not get_user(nick):
+        raise HTTPException(401, "Sessão inválida")
+    content = await file.read()
+    if not content:
+        raise HTTPException(400, "Arquivo vazio")
+    if len(content) > POST_IMAGE_MAX:
+        raise HTTPException(413, "Imagem muito grande (máx 5 MB)")
+    ext = _sniff_image_ext(content)
+    if not ext:
+        raise HTTPException(415, "Envie uma imagem JPG, PNG, GIF ou WebP")
+    name = f"{uuid.uuid4().hex}{ext}"
+    try:
+        (POST_UPLOAD_DIR / name).write_bytes(content)
+    except Exception as exc:
+        print(f"⚠️ [post-upload] falha ao salvar: {exc}")
+        raise HTTPException(500, "Não foi possível salvar a imagem")
+    return {"url": f"/static/uploads/posts/{name}"}
 
 
 @app.get("/api/users/search")

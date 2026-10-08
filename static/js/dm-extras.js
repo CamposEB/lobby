@@ -371,6 +371,16 @@
     }
     content.appendChild(summary || buildFallbackSummary(profile, displayName));
 
+    // Contadores + Seguir + Adicionar amigo (social.js)
+    if (window.SocialUI && typeof window.SocialUI.createQuickActions === 'function') {
+      try {
+        content.appendChild(window.SocialUI.createQuickActions(
+          profile, _profileNick || profile.username || _currentNick));
+      } catch (err) {
+        console.error('[dm-extras] createQuickActions falhou:', err);
+      }
+    }
+
     const target = _profileNick || profile.username || _currentNick;
     if (target && typeof window.abrirPerfil === 'function') {
       const btn = document.createElement('button');

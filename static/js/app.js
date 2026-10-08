@@ -72,6 +72,7 @@ let PROFILE_PREVIOUS_TAB = "home";
 
 // ⭐ Painel de amigos
 let FRIENDS_BOOTED = false;
+let SOCIAL_BOOTED = false;
 
 // ⭐ NOVO: filtros de moderação
 let MODERATION_FILTER = "open";
@@ -405,6 +406,10 @@ function handle(m){
     window.dispatchEvent(new CustomEvent("society:ws", {detail:m}));
     return;
   }
+  if (typeof t === "string" && t.indexOf("social_") === 0) {
+    try { window.SocialUI?.onMessage(m); } catch (e) { console.error("[social]", e); }
+    return;
+  }
   if (t === "error") {
     $("err").textContent = m.m;
     window.dispatchEvent(new CustomEvent("society-auth-error", {detail:m.m}));
@@ -664,6 +669,7 @@ function applyInit(m, fromCache) {
   try { renderModSelf(); } catch (e) {}
 
   try { mountFriendsUI(); } catch (e) { console.error("[friends] mount:", e); }
+  try { mountSocialUI(); } catch (e) { console.error("[social] mount:", e); }
 }
 
 function updateCoins(){ $("coinsAmount").textContent = Number(ME.coins || 0).toLocaleString("pt-BR"); }
@@ -690,6 +696,22 @@ function mountFriendsUI() {
     openProfile: (nick) => {
       if (!nick) return;
       try { window.abrirPerfil(nick); } catch (e) { console.error("[friends] openProfile:", e); }
+    },
+    openDM: (nick, name) => openDm(nick, name || nick),
+  });
+}
+
+function mountSocialUI() {
+  if (SOCIAL_BOOTED) return;
+  if (!window.SocialUI || typeof window.SocialUI.mount !== "function") return;
+  SOCIAL_BOOTED = true;
+  window.SocialUI.mount({
+    send,
+    getSelf: () => SELF,
+    toast: (msg) => showLfgToast(msg),
+    openProfile: (nick) => {
+      if (!nick) return;
+      try { window.abrirPerfil(nick); } catch (e) { console.error("[social] openProfile:", e); }
     },
     openDM: (nick, name) => openDm(nick, name || nick),
   });
@@ -895,12 +917,13 @@ window.Society = {
 
 window.dispatchEvent(new Event("society-app-ready"));
 
-if (!FRIENDS_BOOTED) {
+if (!FRIENDS_BOOTED || !SOCIAL_BOOTED) {
   let friendBootTries = 0;
   const friendBootInterval = setInterval(() => {
     friendBootTries++;
     try { mountFriendsUI(); } catch (e) { console.error("[friends] retry mount:", e); }
-    if (FRIENDS_BOOTED || friendBootTries >= 20) clearInterval(friendBootInterval);
+    try { mountSocialUI(); } catch (e) { console.error("[social] retry mount:", e); }
+    if ((FRIENDS_BOOTED && SOCIAL_BOOTED) || friendBootTries >= 20) clearInterval(friendBootInterval);
   }, 500);
 }
 

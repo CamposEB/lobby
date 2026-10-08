@@ -709,6 +709,16 @@
     renderAchievements();
     renderActivity();
     applyFriendshipStatus(data);
+
+    // Avisa módulos externos (SocialUI: contadores, seguir, posts) que o perfil foi desenhado.
+    try {
+      const evNick = currentMode === "other"
+        ? currentUserId
+        : (context?.getUsername?.() || data.username || username || "");
+      document.dispatchEvent(new CustomEvent("profile:rendered", {
+        detail: { mode: currentMode, nick: evNick ? String(evNick) : "", data },
+      }));
+    } catch (e) { console.error("[profile] profile:rendered", e); }
   }
 
   function applySelfChrome(data, username) {
