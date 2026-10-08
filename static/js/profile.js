@@ -1,5 +1,5 @@
 /* Reusable profile presentation and editor interactions. */
-/* v13 — sistema de amigos + visibilidade public/friends/private */
+/* v14 — sistema de amigos + visibilidade public/friends/private + createProfileSummary() */
 (() => {
   const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
   const MAX_AVATAR_DATA_LENGTH = 120000;
@@ -1130,6 +1130,159 @@
     setChromeVisibility();
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // ⭐ RESUMO DE PERFIL REUTILIZÁVEL (DM, LFG, cards em dialog)
+  // Mostra: avatar, nome, selo de verificado, @nick, título, bio,
+  // rank (com ícone e estrelas), função, herói (com ícone), ID, cargos
+  // e data de entrada — igual ao card do perfil.
+  // ─────────────────────────────────────────────────────────────
+  let _summaryStylesInjected = false;
+  function ensureSummaryStyles() {
+    if (_summaryStylesInjected) return;
+    if (document.getElementById("profile-summary-css")) { _summaryStylesInjected = true; return; }
+    const style = document.createElement("style");
+    style.id = "profile-summary-css";
+    style.textContent = `
+      .profile-summary { display:flex; flex-direction:column; gap:12px; min-width:0; }
+      .profile-summary-head { display:flex; align-items:center; gap:14px; min-width:0; }
+      .profile-summary-avatar { width:64px; height:64px; border-radius:50%; overflow:hidden; display:grid; place-items:center; flex:0 0 auto; background:linear-gradient(145deg,#262b34,#171a20); color:var(--profile-accent, var(--accent, #d4b45a)); font-weight:700; font-size:1.4rem; text-transform:uppercase; box-shadow:0 0 0 2px var(--profile-accent, var(--accent, #d4b45a)); }
+      .profile-summary-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+      .profile-summary-id { display:flex; flex-direction:column; gap:2px; min-width:0; flex:1 1 auto; }
+      .profile-summary-name { display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0; }
+      .profile-summary-name b { font-size:1.15rem; overflow-wrap:anywhere; }
+      .profile-summary-nick { color:var(--muted, #9298a3); font-size:.82rem; }
+      .profile-summary-title { align-self:flex-start; margin-top:4px; padding:2px 8px; border-radius:999px; font-size:.72rem; font-weight:600; color:var(--profile-accent, var(--accent, #d4b45a)); background:rgba(255,255,255,.06); }
+      .profile-summary-status { display:inline-flex; align-items:center; gap:5px; font-size:.75rem; color:var(--muted, #9298a3); }
+      .profile-summary-status i { width:8px; height:8px; border-radius:50%; background:#6b7280; display:inline-block; }
+      .profile-summary-status.is-online i { background:#3ddc84; box-shadow:0 0 6px rgba(61,220,132,.7); }
+      .profile-summary-bio { margin:0; color:var(--muted, #9298a3); font-size:.9rem; line-height:1.5; overflow-wrap:anywhere; white-space:pre-wrap; }
+      .profile-summary-note { margin:0; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.04); color:var(--muted, #9298a3); font-size:.9rem; }
+      .profile-summary-tags { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:8px; }
+      .profile-summary-tag { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,.04); box-shadow:inset 0 0 0 1px rgba(255,255,255,.07); min-width:0; }
+      .profile-summary-tag-icon { width:30px; height:30px; flex:0 0 auto; display:grid; place-items:center; }
+      .profile-summary-tag-icon img { width:100%; height:100%; object-fit:contain; display:block; }
+      .profile-summary-tag-copy { display:flex; flex-direction:column; min-width:0; }
+      .profile-summary-tag-copy small { color:var(--muted, #9298a3); font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; }
+      .profile-summary-tag-copy b { font-size:.92rem; overflow-wrap:anywhere; }
+      .profile-summary-roles { display:flex; flex-wrap:wrap; gap:6px; }
+      .profile-summary-role { padding:2px 8px; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.04em; background:rgba(255,255,255,.07); }
+      .profile-summary-role[data-role="dev"]   { color:#ff5f5f; }
+      .profile-summary-role[data-role="admin"] { color:#f2b84b; }
+      .profile-summary-role[data-role="mod"]   { color:#4c8dff; }
+      .profile-summary-joined { color:var(--muted, #9298a3); font-size:.78rem; }
+    `;
+    document.head.appendChild(style);
+    _summaryStylesInjected = true;
+  }
+
+  function summaryRankIcon(rank) {
+    const candidates = rankCandidatesForRank(rank);
+    if (!candidates.length) return null;
+    const wrap = node("span", null, "profile-summary-tag-icon");
+    const img = node("img"); img.alt = ""; img.loading = "lazy";
+    loadImageWithFallback(img, candidates);
+    wrap.append(img);
+    return wrap;
+  }
+  function summaryHeroIcon(name) {
+    const url = heroImageUrl(name);
+    if (!url) return null;
+    const wrap = node("span", null, "profile-summary-tag-icon");
+    const img = node("img"); img.alt = ""; img.loading = "lazy";
+    img.src = url; img.onerror = () => { img.hidden = true; };
+    wrap.append(img);
+    return wrap;
+  }
+  function summaryTag(label, value, icon) {
+    const item = node("span", null, "profile-summary-tag");
+    if (icon) item.append(icon);
+    const copy = node("span", null, "profile-summary-tag-copy");
+    copy.append(node("small", label), node("b", value));
+    item.append(copy);
+    return item;
+  }
+
+  function createProfileSummary(data, options) {
+    ensureSummaryStyles();
+    ensureInlineBadgeStyles();
+    const d = data && typeof data === "object" ? data : {};
+    const opts = options || {};
+    const nick = d.username || d.nick || opts.nick || "";
+    const displayName = d.display_name || d.display || nick || "Jogador";
+
+    const root = node("div", null, "profile-summary");
+
+    // Cabeçalho: avatar + nome + selo + @nick
+    const head = node("div", null, "profile-summary-head");
+    head.append(createAvatar({ ...d, display_name: displayName, username: nick }, "profile-summary-avatar"));
+    const identity = node("div", null, "profile-summary-id");
+    const nameRow = node("div", null, "profile-summary-name");
+    nameRow.append(node("b", displayName));
+    if (hasVerifiedRole(d)) {
+      const roleKey = verifiedRoleKey(d);
+      const label = verifiedRoleLabel(roleKey);
+      const badge = node("span", null, "profile-verified-badge-inline");
+      badge.setAttribute("role", "img");
+      badge.innerHTML = VERIFIED_BADGE_SVG;
+      badge.dataset.role = roleKey;
+      badge.setAttribute("aria-label", label);
+      badge.setAttribute("title", label);
+      nameRow.append(badge);
+    }
+    identity.append(nameRow, node("small", "@" + (nick || "jogador"), "profile-summary-nick"));
+    if (!d.details_hidden && d.title) identity.append(node("span", d.title, "profile-summary-title"));
+    const onlineFlag = typeof d.online === "boolean" ? d.online
+      : typeof opts.online === "boolean" ? opts.online : null;
+    if (onlineFlag !== null) {
+      const status = node("span", null, "profile-summary-status" + (onlineFlag ? " is-online" : ""));
+      status.append(node("i"), document.createTextNode(onlineFlag ? "Online agora" : "Offline"));
+      identity.append(status);
+    }
+    head.append(identity);
+    root.append(head);
+
+    // Perfis restritos
+    if (d.details_hidden) {
+      root.append(node("p", "🔒 Este perfil é " +
+        (d.visibility === "friends" ? "visível apenas para amigos." : "privado."), "profile-summary-note"));
+      return root;
+    }
+    if (d.is_private && !opts.isSelf) {
+      root.append(node("p", "Este jogador mantém o perfil privado.", "profile-summary-note"));
+      return root;
+    }
+
+    if (d.bio) root.append(node("p", d.bio, "profile-summary-bio"));
+
+    // Dados de jogo
+    const tags = node("div", null, "profile-summary-tags");
+    if (d.rank) {
+      const stars = profileStars(d);
+      tags.append(summaryTag("Rank", stars == null ? d.rank : d.rank + " · " + stars + " ★",
+        summaryRankIcon(d.rank)));
+    }
+    if (d.game_role) tags.append(summaryTag("Função principal", d.game_role, null));
+    if (d.hero) tags.append(summaryTag("Herói principal", d.hero, summaryHeroIcon(d.hero)));
+    if (d.gid) tags.append(summaryTag("ID no jogo", d.gid, null));
+    if (tags.childElementCount) root.append(tags);
+    else root.append(node("p", "Este jogador ainda não preencheu os dados de jogo.", "profile-summary-note"));
+
+    // Cargos da comunidade
+    const roles = Array.isArray(d.community_roles) ? d.community_roles : [];
+    if (roles.length) {
+      const box = node("div", null, "profile-summary-roles");
+      roles.forEach(role => {
+        const chip = node("span", String(role), "profile-summary-role");
+        chip.dataset.role = String(role).toLocaleLowerCase("pt-BR");
+        box.append(chip);
+      });
+      root.append(box);
+    }
+
+    if (d.joined_at) root.append(node("small", formatJoined(d.joined_at), "profile-summary-joined"));
+    return root;
+  }
+
   function setProfile(nextProfile, username) {
     renderProfile(nextProfile, username);
     const dialog = safe("profileEditor");
@@ -1163,6 +1316,8 @@
     handleFriendClick,
     rankBasesFor, rankImageCandidatesFromBases, rankCandidatesForRank,
     heroImageUrl, RANK_OPTIONS,
+    // ⭐ NOVO: resumo reutilizável (DM / LFG / dialogs)
+    createProfileSummary, profileStars, formatJoined,
   };
 
   if (document.readyState === "loading") {

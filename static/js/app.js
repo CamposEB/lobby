@@ -341,6 +341,21 @@ async function logout(){
   location.reload();
 }
 
+/* ⭐ NOVO: entrega perfis ao dm-extras.js sem depender de interceptar o WebSocket.
+   Retorna true se o bridge aceitou o perfil (era da conversa aberta). */
+function sendProfileToDmBridge(profile, nick){
+  if (!profile || !nick || !DM.with) return false;
+  if (String(nick).toLowerCase() !== String(DM.with).toLowerCase()) return false;
+  const bridge = window.DmProfileBridge;
+  if (!bridge || typeof bridge.applyProfile !== "function") return false;
+  try {
+    return bridge.applyProfile(profile, nick) === true;
+  } catch (e) {
+    console.error("[app] DmProfileBridge.applyProfile:", e);
+    return false;
+  }
+}
+
 function handle(m){
   const t = m.t;
   if (typeof t === "string" && t.indexOf("hero_") === 0) {
@@ -377,7 +392,11 @@ function handle(m){
   else if (t === "pview"){
     fillCard(m);
     if (LFG_PROFILE_TARGET === m.nick) fillLfgProfile(m);
-    if (DM_PROFILE_TARGET === m.nick) fillDmProfile(m);
+
+    // ⭐ Ponte para o dm-extras.js: cabeçalho + dialog da conversa aberta.
+    // Quando o bridge assume, ele é o dono do #dmProfileContent (evita sobrescrita).
+    const handledByDmBridge = sendProfileToDmBridge(m.p, m.nick);
+    if (DM_PROFILE_TARGET === m.nick && !handledByDmBridge) fillDmProfile(m);
 
     if (m.nick && m.nick !== SELF && PROFILE_VIEW_TARGET === m.nick) {
       try {
@@ -776,6 +795,8 @@ window.Society = {
   getCurrentDmNick: () => DM.with || null,
   getCurrentDmName: () => DM.name || null,
   openCurrentDmProfile: () => { if (DM.with) openDmProfile(); },
+  // ⭐ NOVO: abre uma conversa direta por código
+  openDm: (nick, name) => { if (nick) openDm(String(nick), name || String(nick)); },
 
   openHero: (name, buildId, tabId) => {
     if (!name) return;
@@ -2585,8 +2606,29 @@ function openDm(nick, name){
   send({t:"dm_open", with:nick});
 }
 
+/* ⭐ Fallback do diálogo "nova conversa" do dm-extras.js (quando o FriendsUI não assume o botão) */
+window.addEventListener("dm:new-conversation", event => {
+  const user = event.detail && event.detail.user;
+  if (!user) return;
+  const nick = user.nick || user.username || user.id || user.userId || user.user_id;
+  if (!nick) return;
+  openDm(String(nick), user.display_name || user.name || user.displayName || String(nick));
+});
+
 function openDmProfile(){
   if (!DM.with) return;
+
+  // ⭐ O dm-extras.js é o dono do dialog quando está carregado.
+  const bridge = window.DmProfileBridge;
+  if (bridge && typeof bridge.openProfile === "function") {
+    try {
+      if (bridge.openProfile()) return;
+    } catch (e) {
+      console.error("[app] DmProfileBridge.openProfile:", e);
+    }
+  }
+
+  // Fallback sem dm-extras.js
   DM_PROFILE_TARGET = DM.with;
   $("dmProfileName").textContent = DM.name || DM.with;
   $("dmProfileContent").textContent = "Carregando perfil...";
@@ -2597,6 +2639,20 @@ function openDmProfile(){
 function fillDmProfile(message){
   const profile = message.p || {};
   const content = $("dmProfileContent");
+
+  // ⭐ Mesmo renderer do card do perfil (nome, avatar, selo, bio, rank, herói, ID…)
+  try {
+    if (window.ProfileUI && typeof ProfileUI.createProfileSummary === "function") {
+      const summary = ProfileUI.createProfileSummary(profile, { nick: message.nick });
+      content.replaceChildren(summary);
+      appendReportButton(content, message.nick, profile.display_name || profile.username);
+      return;
+    }
+  } catch (e) {
+    console.error("[app] createProfileSummary:", e);
+  }
+
+  // Fallback antigo
   if (profile.details_hidden) {
     content.replaceChildren(
       ProfileUI.createAvatar(profile, "profile-dialog-avatar"),
@@ -2813,6 +2869,10 @@ function openChat(m){
   $("dmMsgs").textContent = "";
   m.msgs.forEach(x => addBubble(x.from, x.m, x.ts, x.id));
   if (!m.msgs.length) $("dmMsgs").append(el("small", "Nenhuma mensagem ainda. Diga oi!"));
+
+  // ⭐ Entrega o perfil completo ao dm-extras.js (cabeçalho: nome, avatar, selo de verificado, status).
+  // Roda por último para que o cabeçalho final seja o do bridge.
+  sendProfileToDmBridge(m.profile, m.nick);
 }
 
 function onDm(m){

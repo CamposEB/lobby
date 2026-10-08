@@ -19,12 +19,27 @@
   const MAX_AVATAR_DATA_LENGTH = 120000;
 
   // ═══════════════════════════════════════════════════════════
-  // 0. SELO DE VERIFICADO (Dev / Admin / Mod)
+  // 0. ESTADO COMPARTILHADO
   // ═══════════════════════════════════════════════════════════
-  const VERIFIED_ROLE_KEYS = new Set([
-    'DEV', 'ADMIN', 'MOD', 'MODERADOR', 'MODERATOR'
-  ]);
+  let _currentProfile = null;   // último perfil aplicado
+  let _profileNick = null;      // nick ao qual _currentProfile pertence
+  let _currentNick = null;      // nick da conversa atual (melhor palpite)
+  let currentUserId = null;     // fallback: capturado por clique na lista
+  let currentUserName = null;
+  let _loadingTimer = null;
+  let _openingProfile = false;  // evita render/pedido duplicado ao abrir o dialog
 
+  const ROLE_COLORS = { dev: '#ff5f5f', admin: '#f2b84b', mod: '#4c8dff' };
+  const BADGE_SVG =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
+    '</svg>';
+
+  const normNick = (v) => String(v == null ? '' : v).trim().toLocaleLowerCase('pt-BR');
+
+  // ═══════════════════════════════════════════════════════════
+  // 0a. SELO DE VERIFICADO (Dev / Admin / Mod)
+  // ═══════════════════════════════════════════════════════════
   function roleKeyFromProfile(data) {
     if (!data) return 'user';
     const raw = String(data.role || '').toLocaleLowerCase('pt-BR').trim();
@@ -54,8 +69,27 @@
     return 'Conta verificada';
   }
 
+  // Usa o #dmWithVerified do HTML; se não existir, cria ao lado do nome.
+  function ensureHeaderBadge() {
+    let badge = $('dmWithVerified');
+    if (!badge) {
+      const nameEl = $('dmWith');
+      if (!nameEl || !nameEl.parentNode) return null;
+      badge = document.createElement('span');
+      badge.id = 'dmWithVerified';
+      badge.dataset.dmCreated = '1';
+      badge.hidden = true;
+      badge.setAttribute('role', 'img');
+      badge.style.cssText =
+        'display:none;place-items:center;width:16px;height:16px;margin-left:6px;vertical-align:middle;flex:0 0 auto;';
+      nameEl.insertAdjacentElement('afterend', badge);
+    }
+    if (!badge.firstElementChild) badge.innerHTML = BADGE_SVG;
+    return badge;
+  }
+
   function setVerifiedBadge(isVerifiedFlag, roleOrProfile) {
-    const badge = $('dmWithVerified');
+    const badge = ensureHeaderBadge();
     if (!badge) return;
 
     let roleKey = 'user';
@@ -75,6 +109,12 @@
     if (isVerifiedFlag === false) verified = false;
 
     badge.hidden = !verified;
+    if (badge.dataset.dmCreated === '1') {
+      badge.style.display = verified ? 'inline-grid' : 'none';
+      badge.style.color = ROLE_COLORS[roleKey] || '#4c8dff';
+      badge.style.filter = verified
+        ? 'drop-shadow(0 0 5px ' + (ROLE_COLORS[roleKey] || '#4c8dff') + '88)' : '';
+    }
 
     if (verified) {
       const label = labelForRole(roleKey);
@@ -92,11 +132,8 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0b. APLICAR PERFIL CONFIGURADO NA DM
+  // 0b. CABEÇALHO DA CONVERSA
   // ═══════════════════════════════════════════════════════════
-  let _currentProfile = null;
-  let _currentNick = null;
-
   function initialLetter(name) {
     const s = String(name || '?').trim();
     return s.slice(0, 1).toLocaleUpperCase('pt-BR') || '?';
@@ -137,8 +174,10 @@
     if (statusEl) {
       const online = typeof profile.online === 'boolean' ? profile.online : null;
       let text;
-      if (online === true)  text = 'Online agora';
+      if (profile.details_hidden) text = 'Perfil restrito';
+      else if (online === true) text = 'Online agora';
       else if (online === false) text = 'Offline';
+      else if (profile.rank) text = 'Rank ' + profile.rank;
       else text = 'visto por último recentemente';
       statusEl.textContent = text;
       statusEl.classList.toggle('is-online', online === true);
@@ -149,9 +188,15 @@
       typeof profile.verified === 'boolean' ? profile.verified : undefined,
       profile
     );
+  }
 
-    _currentProfile = profile;
-    window.__dmCurrentProfile = profile;
+  // ═══════════════════════════════════════════════════════════
+  // 0c. DIALOG "VER PERFIL"
+  // ═══════════════════════════════════════════════════════════
+  function isMythicPlus(rank) {
+    const key = String(rank || '').toLocaleLowerCase('pt-BR').normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '').trim();
+    return key === 'mitico' || key === 'honra mitica' || key === 'gloria mitica' || key === 'imortal';
   }
 
   function buildProfileDialogRow(icon, label, value) {
@@ -173,22 +218,10 @@
     return row;
   }
 
-  function renderProfileDialog(profile) {
-    const content = $('dmProfileContent');
-    const nameEl = $('dmProfileName');
-    if (!content) return;
+  // Fallback usado só se window.ProfileUI.createProfileSummary não existir.
+  function buildFallbackSummary(profile, displayName) {
+    const wrap = el('div');
 
-    if (!profile) {
-      content.textContent = 'Sem informações do perfil ainda.';
-      return;
-    }
-
-    const displayName = profile.display_name || profile.username || _currentNick || 'Jogador';
-    if (nameEl) nameEl.textContent = displayName;
-
-    content.replaceChildren();
-
-    // Cabeçalho: avatar + nome + selo
     const head = el('div');
     head.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:14px;';
 
@@ -215,10 +248,10 @@
 
     if (isVerifiedProfile(profile)) {
       const roleKey = roleKeyFromProfile(profile);
-      const colors = { dev: '#ff5f5f', admin: '#f2b84b', mod: '#4c8dff' };
+      const color = ROLE_COLORS[roleKey] || '#4c8dff';
       const badge = el('span');
-      badge.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/></svg>';
-      badge.style.cssText = `display:inline-grid;place-items:center;width:16px;height:16px;color:${colors[roleKey] || '#4c8dff'};filter:drop-shadow(0 0 5px ${colors[roleKey] || '#4c8dff'}88);`;
+      badge.innerHTML = BADGE_SVG;
+      badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;color:' + color + ';filter:drop-shadow(0 0 5px ' + color + '88);';
       badge.title = labelForRole(roleKey);
       nmRow.appendChild(badge);
     }
@@ -226,76 +259,164 @@
     const nick = el('small');
     nick.textContent = '@' + (profile.username || _currentNick || '');
     nick.style.cssText = 'color:var(--dm-muted,#9298a3);font-size:.82rem;';
-
     info.append(nmRow, nick);
     head.append(avatar, info);
-    content.appendChild(head);
+    wrap.appendChild(head);
+
+    if (profile.details_hidden) {
+      const note = el('p');
+      note.textContent = '🔒 Este perfil é ' +
+        (profile.visibility === 'friends' ? 'visível apenas para amigos.' : 'privado.');
+      note.style.cssText = 'margin:0;color:var(--dm-muted,#9298a3);';
+      wrap.appendChild(note);
+      return wrap;
+    }
 
     if (profile.bio) {
       const bio = el('p');
       bio.textContent = profile.bio;
       bio.style.cssText = 'margin:0 0 12px;color:var(--dm-muted,#9298a3);font-size:.9rem;line-height:1.5;';
-      content.appendChild(bio);
+      wrap.appendChild(bio);
     }
 
     const details = el('div');
     details.style.cssText = 'margin:6px 0 4px;';
-
     if (profile.rank) {
-      const stars = profile.stars != null ? ' · ' + profile.stars + ' ★' : '';
+      const stars = (isMythicPlus(profile.rank) && profile.stars != null && profile.stars !== '')
+        ? ' · ' + profile.stars + ' ★' : '';
       details.appendChild(buildProfileDialogRow('🏅', 'Rank', profile.rank + stars));
     }
-    // ✅ game_role (função de jogo), não role (papel do sistema)
-    if (profile.game_role) {
-      details.appendChild(buildProfileDialogRow('🎯', 'Função principal', profile.game_role));
-    }
-    if (profile.hero) {
-      details.appendChild(buildProfileDialogRow('🦸', 'Herói principal', profile.hero));
-    }
-    if (profile.gid) {
-      details.appendChild(buildProfileDialogRow('🆔', 'ID no jogo', profile.gid));
-    }
-    if (profile.title) {
-      details.appendChild(buildProfileDialogRow('✨', 'Título', profile.title));
-    }
+    if (profile.game_role) details.appendChild(buildProfileDialogRow('🎯', 'Função principal', profile.game_role));
+    if (profile.hero) details.appendChild(buildProfileDialogRow('🦸', 'Herói principal', profile.hero));
+    if (profile.gid) details.appendChild(buildProfileDialogRow('🆔', 'ID no jogo', profile.gid));
+    if (profile.title) details.appendChild(buildProfileDialogRow('✨', 'Título', profile.title));
     if (profile.joined_at) {
       try {
-        const d = new Date(profile.joined_at);
-        const text = new Intl.DateTimeFormat('pt-BR', {
-          day: '2-digit', month: 'long', year: 'numeric'
-        }).format(d);
+        const text = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+          .format(new Date(profile.joined_at));
         details.appendChild(buildProfileDialogRow('📅', 'Na comunidade desde', text));
       } catch (e) {}
     }
-
-    if (details.childElementCount) content.appendChild(details);
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = '👤 Ver perfil completo';
-    btn.style.cssText = 'display:block;width:100%;margin-top:14px;min-height:40px;border-radius:10px;background:var(--dm-s3,#1b1f26);box-shadow:inset 0 0 0 1px var(--dm-line-2,rgba(255,255,255,.12));color:var(--dm-text,#f5f5f5);font-weight:600;cursor:pointer;';
-    btn.addEventListener('click', () => {
-      const dlg = $('dmProfileDialog');
-      if (dlg) dlg.close();
-      if (window.DmProfileBridge?.openProfile) window.DmProfileBridge.openProfile();
-    });
-    content.appendChild(btn);
+    if (details.childElementCount) wrap.appendChild(details);
+    return wrap;
   }
 
-  function applyDmProfile(profile) {
-    if (!profile) return;
+  function dialogMessage(text) {
+    const p = document.createElement('p');
+    p.textContent = text;
+    p.style.cssText = 'margin:0;color:var(--dm-muted,#9298a3);';
+    return p;
+  }
+
+  function renderProfileDialog(profile) {
+    const content = $('dmProfileContent');
+    const nameEl = $('dmProfileName');
+    if (!content) return;
+
+    clearTimeout(_loadingTimer);
+
+    if (!profile) {
+      content.replaceChildren(dialogMessage('Carregando perfil…'));
+      // Se o servidor não responder, avisa em vez de ficar carregando para sempre.
+      _loadingTimer = setTimeout(() => {
+        const dlg = $('dmProfileDialog');
+        if (dlg && dlg.open && !_currentProfile) {
+          content.replaceChildren(dialogMessage('Não foi possível carregar o perfil agora.'));
+        }
+      }, 5000);
+      return;
+    }
+
+    const displayName = profile.display_name || profile.username || _currentNick || 'Jogador';
+    if (nameEl) nameEl.textContent = displayName;
+
+    content.replaceChildren();
+
+    // Mesmo renderer do card do perfil (profile.js)
+    let summary = null;
+    if (window.ProfileUI && typeof window.ProfileUI.createProfileSummary === 'function') {
+      try {
+        summary = window.ProfileUI.createProfileSummary(profile, { nick: _profileNick || _currentNick });
+      } catch (err) {
+        console.error('[dm-extras] createProfileSummary falhou:', err);
+      }
+    }
+    content.appendChild(summary || buildFallbackSummary(profile, displayName));
+
+    // Ação: abrir a página completa do perfil
+    const target = _profileNick || profile.username || _currentNick;
+    if (target && typeof window.abrirPerfil === 'function') {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = '👤 Ver perfil completo';
+      btn.style.cssText = 'display:block;width:100%;margin-top:14px;min-height:40px;border-radius:10px;background:var(--dm-s3,#1b1f26);box-shadow:inset 0 0 0 1px var(--dm-line-2,rgba(255,255,255,.12));color:var(--dm-text,#f5f5f5);font-weight:600;cursor:pointer;';
+      btn.addEventListener('click', () => {
+        const dlg = $('dmProfileDialog');
+        if (dlg && dlg.open) dlg.close();
+        window.abrirPerfil(target);
+      });
+      content.appendChild(btn);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // 0d. APLICAR PERFIL (chamado pelo app.js via DmProfileBridge)
+  // ═══════════════════════════════════════════════════════════
+  function activeNick() {
+    try {
+      const n = window.Society && window.Society.getCurrentDmNick && window.Society.getCurrentDmNick();
+      if (n) return n;
+    } catch (e) {}
+    return currentUserId || _currentNick || null;
+  }
+
+  // Descarta respostas atrasadas de outra conversa.
+  function matchesActive(nick, profile) {
+    const active = normNick(activeNick());
+    if (!active) return true;
+    const candidates = [nick, profile && profile.username, profile && profile.nick]
+      .map(normNick).filter(Boolean);
+    if (!candidates.length) return true;
+    return candidates.includes(active);
+  }
+
+  function cachedFor(nick) {
+    if (!_currentProfile) return null;
+    const want = normNick(nick);
+    if (!want) return _currentProfile;
+    const have = [_profileNick, _currentProfile.username].map(normNick);
+    return have.includes(want) ? _currentProfile : null;
+  }
+
+  function applyDmProfile(profile, nick) {
+    if (!profile || typeof profile !== 'object') return false;
+    if (!matchesActive(nick, profile)) {
+      console.log('[dm-extras] perfil ignorado (outra conversa):', nick || profile.username);
+      return false;
+    }
+
     _currentProfile = profile;
+    _profileNick = nick || profile.username || profile.nick || activeNick();
+    _currentNick = _profileNick || _currentNick;
     window.__dmCurrentProfile = profile;
-    _currentNick = profile.username || profile.nick || _currentNick;
 
     applyProfileToHeader(profile);
 
     const dlg = $('dmProfileDialog');
     if (dlg && dlg.open) renderProfileDialog(profile);
+    return true;
+  }
+
+  // Aceita mensagens cruas do servidor (dm_history / pview)
+  function handleServerMessage(msg) {
+    if (!msg || typeof msg !== 'object') return false;
+    if (msg.t === 'dm_history' && msg.profile) return applyDmProfile(msg.profile, msg.nick);
+    if (msg.t === 'pview' && msg.p) return applyDmProfile(msg.p, msg.nick);
+    return false;
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0c. REQUEST DE PERFIL via WS (profile_view → pview)
+  // 0e. REQUEST DE PERFIL via WS (profile_view → pview)
   // ═══════════════════════════════════════════════════════════
   function getSendFn() {
     return (typeof window.appSend === 'function' && window.appSend) ||
@@ -311,8 +432,12 @@
       return false;
     }
     try {
-      // O server espera {t:"profile_view", nick}
-      sendFn({ t: 'profile_view', nick: String(nick).toLowerCase() });
+      // O server espera {t:"profile_view", nick}. O nick já é o canônico (vem do app.js).
+      const ok = sendFn({ t: 'profile_view', nick: String(nick) });
+      if (ok === false) {
+        console.warn('[dm-extras] profile_view não enviado (WebSocket fechado)');
+        return false;
+      }
       console.log('[dm-extras] 📡 profile_view enviado para:', nick);
       return true;
     } catch (err) {
@@ -320,6 +445,141 @@
       return false;
     }
   }
+
+  // ═══════════════════════════════════════════════════════════
+  // 0f. RESOLUÇÃO DO USUÁRIO DA CONVERSA + ABRIR PERFIL
+  // ═══════════════════════════════════════════════════════════
+  function extractIdFromEl(node) {
+    if (!node) return null;
+    const d = node.dataset || {};
+    const candidates = [
+      d.userId, d.userid, d.user, d.uid, d.id,
+      d.jid, d.contact, d.contactId, d.peer, d.peerId,
+      d.target, d.targetId, d.who, d.whoId,
+    ];
+    for (const c of candidates) {
+      if (c && String(c).length > 0) return String(c);
+    }
+    return null;
+  }
+
+  function extractIdFromTree(node) {
+    let cur = node;
+    let depth = 0;
+    while (cur && depth < 8) {
+      const id = extractIdFromEl(cur);
+      if (id) return id;
+      cur = cur.parentElement;
+      depth++;
+    }
+    return null;
+  }
+
+  function readName() {
+    const b = $('dmWith');
+    if (b && b.textContent.trim()) return b.textContent.trim();
+    const t = $('dmProfileName');
+    if (t && t.textContent.trim()) return t.textContent.trim();
+    return null;
+  }
+
+  // Ordem: 1) app.js (fonte da verdade)  2) #dmChat[data-user-id]  3) último clique na lista
+  function resolveUserId() {
+    try {
+      const n = window.Society && window.Society.getCurrentDmNick && window.Society.getCurrentDmNick();
+      if (n) return n;
+    } catch (e) {}
+
+    const chat = $('dmChat');
+    if (chat) {
+      const id = extractIdFromTree(chat);
+      if (id) return id;
+    }
+    return currentUserId || null;
+  }
+
+  function dumpDiagnostic() {
+    console.group('[dm-extras] 🔍 DIAGNÓSTICO');
+    console.log('Society.getCurrentDmNick():', window.Society?.getCurrentDmNick?.());
+    console.log('currentUserId:', currentUserId);
+    console.log('currentUserName:', currentUserName);
+    console.log('_currentNick:', _currentNick);
+    console.log('_profileNick:', _profileNick);
+    console.log('_currentProfile:', _currentProfile);
+    console.log('Nome no cabeçalho:', readName());
+    console.log('appSend disponível?', typeof window.appSend === 'function');
+    console.log('ProfileUI.createProfileSummary?', typeof window.ProfileUI?.createProfileSummary);
+    console.groupEnd();
+  }
+
+  // Retorna true se tratou o pedido (usado pelo menu ⋯)
+  function openCurrentProfile() {
+    const userId = resolveUserId();
+    if (!userId) {
+      console.warn('[dm-extras] ❌ Sem userId na conversa atual — não dá pra abrir o perfil.');
+      dumpDiagnostic();
+      return false;
+    }
+
+    const cached = cachedFor(userId);
+    const dlg = $('dmProfileDialog');
+    if (dlg && typeof dlg.showModal === 'function') {
+      renderProfileDialog(cached);
+      _openingProfile = true;
+      if (!dlg.open) dlg.showModal();
+      setTimeout(() => { _openingProfile = false; }, 0);
+    }
+
+    // Sempre pede perfil atualizado; a resposta chega via app.js → applyProfile
+    requestProfile(userId);
+    return true;
+  }
+
+  // Quando a conversa muda: descarta o perfil antigo (sem apagar o nome que o app.js já pôs)
+  function onThreadChanged(nick) {
+    if (!nick) return;
+    if (normNick(nick) !== normNick(_profileNick)) {
+      _currentProfile = null;
+      window.__dmCurrentProfile = null;
+    }
+    _currentNick = nick;
+    setVerifiedBadge(false);
+
+    // O dm_history já traz o perfil; este é só um plano B se ele não chegar.
+    setTimeout(() => {
+      if (!_currentProfile && normNick(activeNick()) === normNick(nick)) requestProfile(nick);
+    }, 1200);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // 0g. API PÚBLICA — definida já no carregamento do script
+  //     (o app.js pode chamar antes mesmo do DOM da DM existir)
+  // ═══════════════════════════════════════════════════════════
+  window.DmProfileBridge = {
+    // ⭐ usado pelo app.js (pview / dm_history)
+    applyProfile: (profile, nick) => applyDmProfile(profile, nick),
+    handleMessage: handleServerMessage,
+
+    setCurrentUser(userId, userName) {
+      currentUserId = userId || null;
+      if (userName) currentUserName = userName;
+      const btn = $('dmViewProfile');
+      if (btn) {
+        if (userId) btn.dataset.userId = String(userId);
+        else delete btn.dataset.userId;
+      }
+      onThreadChanged(userId);
+    },
+    getCurrentUser() {
+      return { userId: resolveUserId(), name: currentUserName || readName() };
+    },
+    openProfile: openCurrentProfile,
+    diagnose: dumpDiagnostic,
+    setVerified: (verified, roleOrProfile) => setVerifiedBadge(verified, roleOrProfile),
+    getCurrentProfile: () => _currentProfile,
+    requestProfile,
+  };
+
 
   // ═══════════════════════════════════════════════════════════
   // 1. EMOJI
@@ -635,7 +895,7 @@
 
     let menu = null;
     const items = [
-      { label: 'Ver perfil', icon: '👤', go: () => window.DmProfileBridge?.openProfile?.() || $('dmViewProfile')?.click() },
+      { label: 'Ver perfil', icon: '👤', go: () => { if (!window.DmProfileBridge?.openProfile?.()) $('dmViewProfile')?.click(); } },
       { label: 'Denunciar', icon: '🚩', go: () => $('dmReportPlayer')?.click() },
       { label: 'Bloquear', icon: '🚫', danger: true, go: () => { if (confirm('Bloquear este jogador? Você não receberá mais mensagens dele.')) $('dmBlock')?.click(); } }
     ];
@@ -688,8 +948,11 @@
     window.addEventListener('scroll', () => { if (menu && !menu.hidden) position(); }, true);
   }
 
+
   // ═══════════════════════════════════════════════════════════
-  // 4. VER PERFIL — bridge + preenchimento do dialog
+  // 4. VER PERFIL — ligações com o DOM (a lógica está na seção 0)
+  //    O perfil chega pelo app.js (pview / dm_history →
+  //    DmProfileBridge.applyProfile). Sem interceptar WebSocket.
   // ═══════════════════════════════════════════════════════════
   function initProfileBridge() {
     const btn = $('dmViewProfile');
@@ -698,99 +961,7 @@
     btn.dataset.dmBridge = '1';
     console.log('[dm-extras] ✅ profile bridge bound');
 
-    let currentUserId = null;
-    let currentUserName = null;
-
-    function extractIdFromEl(node) {
-      if (!node) return null;
-      const d = node.dataset || {};
-      const candidates = [
-        d.userId, d.userid, d.user, d.uid, d.id,
-        d.jid, d.contact, d.contactId, d.peer, d.peerId,
-        d.target, d.targetId, d.who, d.whoId,
-      ];
-      for (const c of candidates) {
-        if (c && String(c).length > 0) return String(c);
-      }
-      return null;
-    }
-
-    function extractRoleFromEl(node) {
-      if (!node) return { role: null, verified: null };
-      const d = node.dataset || {};
-      const role = (d.role || d.userRole || d.userrole || '').toLowerCase().trim() || null;
-      let verified = null;
-      if (d.verified === 'true') verified = true;
-      else if (d.verified === 'false') verified = false;
-      return { role, verified };
-    }
-
-    function extractIdFromTree(node) {
-      let cur = node;
-      let depth = 0;
-      while (cur && depth < 8) {
-        const id = extractIdFromEl(cur);
-        if (id) return id;
-        cur = cur.parentElement;
-        depth++;
-      }
-      return null;
-    }
-
-    function readName() {
-      const b = $('dmWith');
-      if (b && b.textContent.trim()) return b.textContent.trim();
-      const t = $('dmProfileName');
-      if (t && t.textContent.trim()) return t.textContent.trim();
-      return null;
-    }
-
-    function resolveIdByName(name) {
-      if (!name) return null;
-      const norm = String(name).trim().toLowerCase();
-
-      const globals = [
-        window.players, window.users, window.contacts, window.friends,
-        window.Players, window.Users, window.Contacts, window.dmContacts,
-        window.dm?.contacts, window.dm?.users,
-        window.state?.players, window.state?.users, window.state?.contacts,
-        window.app?.players, window.app?.users,
-        window.store?.players, window.store?.users,
-      ];
-
-      for (const bag of globals) {
-        if (!bag) continue;
-        const list = Array.isArray(bag) ? bag : Object.values(bag);
-        for (const u of list) {
-          if (!u || typeof u !== 'object') continue;
-          const candName = (u.name || u.display_name || u.displayName || u.username || u.nick || '').toLowerCase();
-          if (candName === norm) {
-            return u.id || u.userId || u.user_id || u.uid || u.jid || u.username || u.nick || null;
-          }
-        }
-      }
-      return null;
-    }
-
-    // Quando o usuário da conversa muda, limpa o perfil guardado e pede um novo
-    function onThreadChanged(nick) {
-      if (!nick) return;
-      _currentProfile = null;
-      window.__dmCurrentProfile = null;
-      _currentNick = nick;
-
-      // Limpa cabeçalho imediatamente
-      const nameEl = $('dmWith');
-      const avatarEl = $('dmWithAvatar');
-      if (nameEl) nameEl.textContent = nick;
-      if (avatarEl) avatarEl.textContent = initialLetter(nick);
-      setVerifiedBadge(false);
-
-      // Pede o perfil atualizado ao servidor (via WS profile_view → pview)
-      requestProfile(nick);
-    }
-
-    // Fonte 1: clique na thread da lista
+    // Fonte 1: clique na thread da lista (fallback; o app.js é a fonte principal)
     const list = $('dmListBody');
     if (list) {
       list.addEventListener('click', (e) => {
@@ -800,247 +971,47 @@
         if (id) {
           currentUserId = id;
           currentUserName = thread.querySelector('b')?.textContent?.trim() || null;
-          console.log('[dm-extras] 🧲 userId capturado via thread:', id);
           onThreadChanged(id);
         }
       }, true);
     }
 
-    // Fonte 2: evento custom de nova conversa
+    // Fonte 2: nova conversa pelo diálogo do dm-extras
     window.addEventListener('dm:new-conversation', (e) => {
       const u = e.detail?.user;
       if (!u) return;
-      const id = u.id || u.userId || u.user_id || u.uid || u.username || u.jid || u.nick;
+      const id = u.nick || u.username || u.id || u.userId || u.user_id || u.uid || u.jid;
       if (id) {
-        currentUserId = id;
+        currentUserId = String(id);
         currentUserName = u.name || u.displayName || u.username || null;
-        console.log('[dm-extras] 🧲 userId capturado via dm:new-conversation:', id);
-        onThreadChanged(id);
+        onThreadChanged(String(id));
       }
     });
 
-    // Fonte 3: clique com data-*
-    document.addEventListener('click', (e) => {
-      const node = e.target.closest('[data-user-id], [data-userid], [data-user], [data-jid], [data-contact-id]');
-      if (!node) return;
-      const id = extractIdFromEl(node);
-      if (id) {
-        currentUserId = id;
-        currentUserName = node.querySelector('b')?.textContent?.trim() || null;
-        console.log('[dm-extras] 🧲 userId capturado via clique com data-*:', id);
-      }
-    }, true);
-
-    // Fonte 4: observar mudança de nome no cabeçalho
-    const headerB = $('dmWith');
-    if (headerB) {
-      const obs = new MutationObserver(() => {
-        const name = readName();
-        if (!name) return;
-        if (name === currentUserName && _currentProfile) return; // já temos
-        currentUserName = name;
-        const id = resolveIdByName(name);
-        if (id && id !== currentUserId) {
-          currentUserId = id;
-          console.log('[dm-extras] 🧲 userId resolvido por nome:', name, '→', id);
-          if (!_currentProfile) requestProfile(id);
-        }
-      });
-      obs.observe(headerB, { childList: true, characterData: true, subtree: true });
-      const initialName = readName();
-      if (initialName) currentUserName = initialName;
-    }
-
-    // ─────────────────────────────────────────────
-    // Patch do WebSocket: captura dm_history e pview
-    // ─────────────────────────────────────────────
-    function handleIncoming(msg) {
-      if (!msg || typeof msg !== 'object') return;
-
-      // dm_history — já vem com profile completo
-      if (msg.t === 'dm_history' && msg.profile) {
-        const nick = msg.nick || msg.name;
-        if (nick) {
-          _currentNick = nick;
-          currentUserName = nick;
-        }
-        console.log('[dm-extras] 📥 dm_history recebido para:', nick);
-        applyDmProfile(msg.profile);
-        return;
-      }
-
-      // pview — resposta de profile_view
-      if (msg.t === 'pview' && msg.p) {
-        const nick = msg.nick;
-        if (nick) _currentNick = nick;
-        console.log('[dm-extras] 📥 pview recebido para:', nick);
-        applyDmProfile(msg.p);
-        return;
-      }
-    }
-
-    function hookWs(ws) {
-      if (!ws || ws.__dmHooked) return;
-      ws.__dmHooked = true;
-      console.log('[dm-extras] 🔌 WebSocket hookado para captura de perfil');
-      ws.addEventListener('message', (ev) => {
-        if (typeof ev.data !== 'string' || ev.data.length < 12) return;
-        // Filtro rápido
-        if (ev.data.indexOf('dm_history') === -1 &&
-            ev.data.indexOf('"pview"') === -1) return;
-        try {
-          const msg = JSON.parse(ev.data);
-          handleIncoming(msg);
-        } catch (e) { /* ignora */ }
-      });
-    }
-
-    // 1) Patch do construtor (pega WSe criados depois)
-    try {
-      const OrigWS = window.WebSocket;
-      if (OrigWS && !OrigWS.__dmPatched) {
-        const Patched = function (...args) {
-          const ws = new OrigWS(...args);
-          hookWs(ws);
-          return ws;
-        };
-        Patched.__dmPatched = true;
-        Patched.prototype = OrigWS.prototype;
-        ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'].forEach((k) => {
-          try { Patched[k] = OrigWS[k]; } catch (e) {}
+    // Eventos custom (fallback para outros scripts)
+    if (!window.__dmProfileEventsBound) {
+      window.__dmProfileEventsBound = true;
+      const handleProfileEvent = (ev) => {
+        const d = ev?.detail || {};
+        const profileData = d.profile || d.p || d.data || null;
+        if (!profileData) return;
+        applyDmProfile(profileData, d.nick || d.userId || d.username);
+      };
+      ['dm:profile', 'dm:history', 'dm:open', 'profile:loaded']
+        .forEach((evt) => {
+          window.addEventListener(evt, handleProfileEvent);
+          document.addEventListener(evt, handleProfileEvent);
         });
-        window.WebSocket = Patched;
-      }
-    } catch (e) { /* ignora */ }
-
-    // 2) Procura ativamente por um WebSocket já aberto (caso o dm.js
-    //    já tenha criado a conexão ANTES deste script ser carregado).
-    const wsRefs = [
-      'ws', 'socket', 'conn', 'connection', 'websocket', 'sock',
-      'dm', 'app', 'state', 'store', 'client', 'realtime',
-    ];
-    function huntOpenWs() {
-      let found = false;
-      for (const key of wsRefs) {
-        try {
-          const obj = window[key];
-          if (!obj) continue;
-          // Pode ser o próprio WS ou um objeto que contém
-          if (obj instanceof WebSocket) {
-            hookWs(obj);
-            found = true;
-          } else if (typeof obj === 'object') {
-            for (const sub of ['ws', 'socket', 'conn', 'connection', 'sock', 'client']) {
-              const candidate = obj[sub];
-              if (candidate instanceof WebSocket) {
-                hookWs(candidate);
-                found = true;
-              }
-            }
-          }
-        } catch (e) { /* ignora */ }
-      }
-      return found;
-    }
-    huntOpenWs();
-    let wsHuntTries = 0;
-    const wsHuntInterval = setInterval(() => {
-      wsHuntTries++;
-      if (huntOpenWs() || wsHuntTries >= 20) clearInterval(wsHuntInterval);
-    }, 500);
-
-    // Também escuta eventos custom (fallback)
-    function handleProfileEvent(ev) {
-      const d = ev?.detail || {};
-      const profileData = d.profile || d.p || d.data || null;
-      const nick = d.nick || d.userId || d.username || currentUserName;
-      if (!profileData) return;
-      if (nick) _currentNick = nick;
-      applyDmProfile(profileData);
-    }
-    ['dm:profile', 'dm:history', 'dm:open', 'profile:loaded', 'pview']
-      .forEach((evt) => {
-        window.addEventListener(evt, handleProfileEvent);
-        document.addEventListener(evt, handleProfileEvent);
-      });
-
-    function resolveUserId() {
-      if (currentUserId) return currentUserId;
-
-      const chat = $('dmChat');
-      if (chat) {
-        const id = extractIdFromTree(chat);
-        if (id) return id;
-      }
-
-      const active = $('dmListBody')?.querySelector('.dm-thread.is-active');
-      if (active) {
-        const id = extractIdFromTree(active);
-        if (id) return id;
-      }
-
-      const name = readName();
-      if (name) {
-        currentUserName = name;
-        const id = resolveIdByName(name);
-        if (id) return id;
-      }
-
-      const opened = document.querySelector('.dm-thread[aria-current="true"], .dm-thread[data-active="1"]');
-      if (opened) {
-        const id = extractIdFromTree(opened);
-        if (id) return id;
-      }
-
-      return null;
     }
 
-    function dumpDiagnostic() {
-      console.group('[dm-extras] 🔍 DIAGNÓSTICO');
-      console.log('currentUserId:', currentUserId);
-      console.log('currentUserName:', currentUserName);
-      console.log('_currentNick:', _currentNick);
-      console.log('_currentProfile:', _currentProfile);
-      console.log('Nome no cabeçalho:', readName());
-      console.log('appSend disponível?', typeof window.appSend === 'function');
-      console.log('send disponível?', typeof window.send === 'function');
-      console.groupEnd();
-    }
-
-    function openCurrentProfile() {
-      const userId = resolveUserId();
-
-      if (!userId) {
-        console.warn('[dm-extras] ❌ Sem userId na conversa atual — não dá pra abrir o perfil.');
-        dumpDiagnostic();
-        return;
-      }
-
-      console.log('[dm-extras] 🎯 Abrindo perfil de:', userId, '(nome:', currentUserName || '?', ')');
-
-      // Sempre pede perfil atualizado ao servidor
-      requestProfile(userId);
-
-      // Abre dialog local com o que temos (para feedback imediato)
-      const dlg = $('dmProfileDialog');
-      if (dlg && typeof dlg.showModal === 'function') {
-        renderProfileDialog(_currentProfile);
-        if (!dlg.open) dlg.showModal();
-      }
-    }
-
-    // Interceptor em CAPTURE no #dmChat — intercepta o clique no botão
-    const chatEl = $('dmChat');
-    const interceptor = chatEl || document;
-
+    // Intercepta o clique em "Ver perfil" (captura no #dmChat)
+    const interceptor = $('dmChat') || document;
     interceptor.addEventListener('click', (e) => {
       const t = e.target;
       if (t !== btn && !btn.contains(t)) return;
-
       e.stopImmediatePropagation();
       e.stopPropagation();
       e.preventDefault();
-
       openCurrentProfile();
     }, true);
 
@@ -1048,31 +1019,19 @@
     const dmDialog = $('dmProfileDialog');
     if (dmDialog) {
       const obsDialog = new MutationObserver(() => {
-        if (!dmDialog.open) return;
-        if (_currentProfile) renderProfileDialog(_currentProfile);
+        if (!dmDialog.open || _openingProfile) return;
+        const nick = resolveUserId();
+        const cached = cachedFor(nick);
+        if (cached) renderProfileDialog(cached);
+        else if (nick) { renderProfileDialog(null); requestProfile(nick); }
       });
       obsDialog.observe(dmDialog, { attributes: true, attributeFilter: ['open'] });
     }
 
-    window.DmProfileBridge = {
-      setCurrentUser(userId, userName) {
-        currentUserId = userId || null;
-        if (userName) currentUserName = userName;
-        if (userId) btn.dataset.userId = String(userId);
-        else delete btn.dataset.userId;
-        onThreadChanged(userId);
-      },
-      getCurrentUser() {
-        return { userId: resolveUserId(), name: currentUserName || readName() };
-      },
-      openProfile: openCurrentProfile,
-      diagnose: dumpDiagnostic,
-      setVerified: (verified, roleOrProfile) => setVerifiedBadge(verified, roleOrProfile),
-      applyProfile: (profile) => applyDmProfile(profile),
-      getCurrentProfile: () => _currentProfile,
-      requestProfile,
-    };
+    // Se um perfil já chegou antes do DOM estar pronto, aplica agora
+    if (_currentProfile && cachedFor(resolveUserId())) applyProfileToHeader(_currentProfile);
   }
+
 
   // ═══════════════════════════════════════════════════════════
   // 5. NOVA CONVERSA
@@ -1184,6 +1143,8 @@
     }
 
     btn.addEventListener('click', (e) => {
+      // Se o FriendsUI estiver montado, ele é dono deste botão — não intercepta.
+      if (window.FriendsUI && typeof window.FriendsUI.mount === 'function') return;
       e.preventDefault(); e.stopImmediatePropagation();
       if (!dialog) build();
       dialog.showModal();
@@ -1197,8 +1158,8 @@
   // ═══════════════════════════════════════════════════════════
   window.dmSetVerified = (verified, roleOrProfile) =>
     window.DmProfileBridge?.setVerified?.(verified, roleOrProfile);
-  window.dmApplyProfile = (profile) =>
-    window.DmProfileBridge?.applyProfile?.(profile);
+  window.dmApplyProfile = (profile, nick) =>
+    window.DmProfileBridge?.applyProfile?.(profile, nick);
   window.dmRequestProfile = (nick) =>
     window.DmProfileBridge?.requestProfile?.(nick);
 
@@ -1217,7 +1178,14 @@
   }
 
   boot();
-  const observer = new MutationObserver(() => { boot(); });
+
+  // Debounce: o observer dispara a cada mudança de DOM (inclusive mensagens do chat).
+  let bootQueued = false;
+  const observer = new MutationObserver(() => {
+    if (bootQueued) return;
+    bootQueued = true;
+    requestAnimationFrame(() => { bootQueued = false; boot(); });
+  });
   observer.observe(document.body, { childList: true, subtree: true });
 
   let tries = 0;
@@ -1237,7 +1205,7 @@
   window.dmExtras = {
     getPendingAttach: () => window.__dmPendingAttach || null,
     clearPendingAttach: () => { window.__dmPendingAttach = null; },
-    applyProfile: (profile) => window.DmProfileBridge?.applyProfile?.(profile),
+    applyProfile: (profile, nick) => window.DmProfileBridge?.applyProfile?.(profile, nick),
     getCurrentProfile: () => window.__dmCurrentProfile || null,
     requestProfile: (nick) => window.DmProfileBridge?.requestProfile?.(nick),
     reinit: boot,
