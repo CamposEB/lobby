@@ -1,317 +1,496 @@
 // /static/js/hero-official.js
-// Dados oficiais do jogo por herói (win/pick/ban, counters, compatibilidade, notas, skills, combo, wallpapers).
-// Lê /static/data/official/<herói>.json (formato em OFICIAL-schema.md). Se o arquivo não existir, nada aparece.
-// Depende de: hero-hub.js (window.HeroHub) e hero-tabs.js (ganchos matchups/skills/stats).
+// Camada de DADOS OFICIAIS dos heróis (export_official.py / export_skins.py).
+// NÃO monta nada por conta própria — hero-hub.js e hero-tabs.js chamam as
+// funções renderXxx e inserem os Nodes onde fizer sentido.
+//
+// Imagens: URLs do CDN da Moonton passam pelo proxy /api/img (evita 500
+// por hotlink protection). O proxy adiciona Referer + User-Agent corretos.
+//
+// Navegação: cards de herói (counters) usam SocietyHero.open() em vez de
+// hash routing (#/heroi/...), que não existe no app.js.
+//
+// Uso:
+//   HeroOfficial.loadHeroByName('Akai').then(function (d) { ... });
+//   HeroOfficial.renderSkills(d);  // retorna HTMLElement
+//
+// API:
+//   loadIndex([force])           → Promise<index>
+//   loadHero(slug, [force])      → Promise<hero>
+//   loadHeroByName(name)         → Promise<hero>
+//   getIndexSync()               → cache | null
+//   getHeroSync(nameOrSlug)      → cache | null
+//
+//   renderHeader(d)              → HTMLElement
+//   renderStats(d)               → HTMLElement
+//   renderSkills(d)              → HTMLElement | null
+//   renderCounters(d)            → HTMLElement | null
+//   renderLore(d)                → HTMLElement | null
+//   renderSkins(d)               → HTMLElement | null
+//   renderSections(d)            → DocumentFragment
 (function () {
   'use strict';
 
-  var Hub = window.HeroHub, HC = window.HeroCatalog;
-  if (!Hub || !HC) { console.warn('[hero-official] dependências ausentes'); return; }
-
-  var U = Hub.ui, el = U.el;
   var BASE = '/static/data/official/';
-  var cache = new Map();           // chave -> { status:'loading'|'ready'|'missing', data }
-  var skillSel = 0;
+  var indexCache = null;
+  var heroCache = new Map();   // slug → d
+  var slugByName = null;       // nameLower → slug
 
-  var RANKS = [['epic', 'Épico'], ['legend', 'Lenda'], ['mythic', 'Mítico'], ['honor', 'Honra Mítica'], ['glory', 'Glória Mítica+']];
-  var SLOTS = { passive: 'Passiva', '1': 'Skill 1', '2': 'Skill 2', '3': 'Skill 3', ult: 'Ultimate' };
+  // Hosts do CDN da Moonton que passam pelo proxy /api/img
+  var CDN_HOSTS = /akmweb\.youngjoygame\.com|esportpedia\.b-cdn\.net|static\.wikia\.nocookie\.net|cdn\.mobilelegends\.com/i;
 
-  var keyOf = function (name) { return HC.norm(name).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); };
-
-  function load(name) {
-    var k = keyOf(name);
-    var c = cache.get(k);
-    if (c) return c;
-    c = { status: 'loading', data: null };
-    cache.set(k, c);
-    fetch(BASE + k + '.json', { cache: 'no-cache' })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (d) { c.data = d; c.status = 'ready'; })
-      .catch(function () { c.status = 'missing'; })
-      .then(function () { Hub.rerender(); });
-    return c;
+  // ─── fetch ───
+  function fetchJson(url) {
+    return fetch(url, { cache: 'force-cache' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' — ' + url);
+      return r.json();
+    });
   }
 
-  function official() {
-    var cur = Hub.current();
-    if (!cur || !cur.name) return null;
-    var c = load(cur.name);
-    return c.status === 'ready' ? c.data : null;
+  function loadIndex(force) {
+    if (indexCache && !force) return Promise.resolve(indexCache);
+    return fetchJson(BASE + 'index.json').then(function (d) {
+      indexCache = d;
+      slugByName = {};
+      (d.heroes || []).forEach(function (h) {
+        if (h.name) slugByName[h.name.toLowerCase().trim()] = h.slug;
+      });
+      return d;
+    });
   }
 
-  // ───────────── formatação ─────────────
-  function num(n, d) {
-    return Number(n).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  function loadHero(slug, force) {
+    if (!force && heroCache.has(slug)) return Promise.resolve(heroCache.get(slug));
+    return fetchJson(BASE + slug + '.json').then(function (d) {
+      heroCache.set(slug, d);
+      return d;
+    });
   }
-  function pct(n) { return n == null ? '—' : num(n, 2) + '%'; }
-  function signed(n, d, suffix) {
-    if (n == null) return '';
-    return (n > 0 ? '+' : n < 0 ? '−' : '') + num(Math.abs(n), d) + (suffix || '');
+
+  function loadHeroByName(name) {
+    if (!name) return Promise.reject(new Error('nome vazio'));
+    var key = name.toLowerCase().trim();
+    if (slugByName && slugByName[key]) {
+      return loadHero(slugByName[key]);
+    }
+    return loadIndex().then(function () {
+      var slug = slugByName && slugByName[key];
+      if (!slug) throw new Error('herói não encontrado no índice: ' + name);
+      return loadHero(slug);
+    });
   }
-  function deltaEl(n, d, suffix) {
-    var e = el('small', signed(n, d, suffix), 'ho-delta ' + (n > 0 ? 'is-up' : n < 0 ? 'is-down' : ''));
+
+  function getIndexSync() { return indexCache; }
+  function getHeroSync(nameOrSlug) {
+    if (!nameOrSlug) return null;
+    if (heroCache.has(nameOrSlug)) return heroCache.get(nameOrSlug);
+    var key = String(nameOrSlug).toLowerCase().trim();
+    if (slugByName && slugByName[key]) return heroCache.get(slugByName[key]) || null;
+    return null;
+  }
+
+  // ─── helpers de DOM ───
+  function el(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = String(text);
+    if (cls) e.className = cls;
     return e;
   }
-  function img(url, alt, cls) {
-    var i = new Image();
-    i.alt = alt || '';
+
+  /**
+   * Roteia uma URL de imagem:
+   *   - "/static/..." ou "/api/..." → retorna como está
+   *   - "https://cdn/..."           → roteia pelo /api/img (evita 500 do CDN)
+   *   - "//cdn/..."                 → normaliza pra https e roteia
+   *   - ""                          → ''
+   */
+  function cdnUrl(url) {
+    if (!url) return '';
+    var f = String(url).trim();
+    if (!f) return '';
+
+    if (f.charAt(0) === '/') return f;
+
+    if (f.indexOf('//') === 0) f = 'https:' + f;
+
+    if (/^https?:\/\//i.test(f)) {
+      if (CDN_HOSTS.test(f)) {
+        return '/api/img?url=' + encodeURIComponent(f);
+      }
+      return f;
+    }
+    return f;
+  }
+
+  // Toda <img> passa por aqui — referrerPolicy + cdnUrl num lugar só.
+  function img(src, alt, cls) {
+    var i = document.createElement('img');
+    i.referrerPolicy = 'no-referrer';
     i.loading = 'lazy';
     i.decoding = 'async';
-    i.referrerPolicy = 'no-referrer';
+    if (src) i.src = cdnUrl(src);
+    if (alt != null) i.alt = alt;
     if (cls) i.className = cls;
-    i.src = url;
-    i.addEventListener('error', function () { i.style.visibility = 'hidden'; }, { once: true });
     return i;
   }
-  function credit(o) {
-    var parts = [];
-    if (o.source) parts.push('Fonte: ' + o.source);
-    if (o.patch) parts.push('Patch ' + o.patch);
-    if (o.updated) parts.push('atualizado em ' + o.updated);
-    var p = el('p', parts.join(' · ') + '. Dados do jogo, não substituem o que você vê no cliente.', 'hc-muted ht-source');
-    return p;
-  }
-  function sampleFlag(o) {
-    return o.sample ? el('p', 'DADOS DE EXEMPLO · não são reais. Remova o arquivo de exemplo quando importar os dados oficiais.', 'ho-sample') : null;
+
+  function slugify(s) {
+    return String(s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
 
-  function heroRow(name, right, extra) {
-    var known = !!HC.find(name);
-    var r = el(known ? 'button' : 'div', null, 'hh-row ho-row' + (known ? ' is-link' : ''));
-    if (known) {
-      r.type = 'button';
-      r.addEventListener('click', function () { if (window.SocietyHero) window.SocietyHero.open(name); });
+  /**
+   * Abre a página de um herói usando a API do app/hub.
+   * Prefere `SocietyHero.open` (registrada pelo hero-hub.js), com fallback
+   * pra `Society.openHero` (bridge no app.js). Não usa hash routing.
+   */
+  function abrirHeroi(nome, buildId, tabId) {
+    if (!nome) return;
+    var fn = null;
+    if (window.SocietyHero && typeof window.SocietyHero.open === 'function') {
+      fn = window.SocietyHero.open;
+    } else if (window.Society && typeof window.Society.openHero === 'function') {
+      fn = window.Society.openHero;
     }
-    r.appendChild(U.portrait(name, 'hh-portrait-sm'));
-    var copy = el('span', null, 'hh-row-copy');
-    copy.appendChild(el('b', name));
-    if (extra) copy.appendChild(el('small', extra));
-    r.appendChild(copy);
-    if (right instanceof Node) r.appendChild(right);
-    else if (right != null) r.appendChild(el('span', right, 'hh-row-score'));
-    return r;
-  }
-
-  function metricText(metric, v) {
-    return metric === 'score' ? num(v, 2) : signed(v, 1, ' pp');
-  }
-
-  // ───────────── topo: win / pick / ban ─────────────
-  Hub.hooks.banner.push(function (main, row, facts) {
-    var o = official();
-    if (!o || !o.stats) return;
-    var st = o.stats;
-    var box = el('div', null, 'ho-stats');
-    [['WIN RATE', st.win, st.dWin], ['PICK RATE', st.pick, st.dPick], ['BAN RATE', st.ban, st.dBan]].forEach(function (c) {
-      var cell = el('div', null, 'ho-stat');
-      cell.appendChild(el('small', c[0], 'ho-stat-label'));
-      cell.appendChild(el('b', pct(c[1])));
-      if (c[2] != null) cell.appendChild(deltaEl(c[2], 1, ' pp'));
-      box.appendChild(cell);
-    });
-    var foot = el('small', 'Ranked' + (o.patch ? ' · patch ' + o.patch : '') + (o.updated ? ' · ' + o.updated : ''), 'ho-stats-src');
-    box.appendChild(foot);
-    main.insertBefore(box, facts);
-  });
-
-  // ───────────── visão geral: perfil do herói ─────────────
-  function bar(label, v) { return U.bar(label, v == null ? null : Math.round(v), 'is-blue'); }
-
-  Hub.hooks.overview.push(function () {
-    var o = official();
-    if (!o || !o.hero) return null;
-    var h = o.hero, a = h.attrs || {};
-    var c = U.card('PERFIL DO HERÓI', h.title || 'Dados do jogo');
-    var chips = el('div', null, 'ht-badges');
-    (h.specialty || []).forEach(function (s) { chips.appendChild(el('span', s, 'ht-spec')); });
-    (h.lanes || []).forEach(function (l) { chips.appendChild(el('span', l, 'ht-pro')); });
-    if (chips.childNodes.length) c.appendChild(chips);
-    c.appendChild(bar('RESISTÊNCIA', a.durability));
-    c.appendChild(bar('ATAQUE', a.offense));
-    c.appendChild(bar('CONTROLE', a.control));
-    c.appendChild(bar('DIFICULDADE', a.difficulty));
-    var f = sampleFlag(o); if (f) c.appendChild(f);
-    c.appendChild(credit(o));
-    return c;
-  });
-
-  // ───────────── aba Matchups: counters, compatibilidade, notas ─────────────
-  function listCard(title, subtitle, list, metric) {
-    var c = U.card(title, subtitle);
-    if (!list || !list.length) { c.appendChild(el('p', 'Sem dados.', 'hc-muted')); return c; }
-    var rows = el('div', null, 'hh-rows');
-    list.slice(0, 8).forEach(function (it, i) {
-      var right = el('span', metricText(metric, it.value), 'hh-row-score' + (it.value < 0 ? ' is-neg' : ''));
-      rows.appendChild(heroRow(it.hero, right, '#' + (i + 1)));
-    });
-    c.appendChild(rows);
-    return c;
-  }
-
-  Hub.hooks.matchups.push(function () {
-    var o = official();
-    if (!o) return null;
-    var wrap = el('section', null, 'ho-section');
-    var f = sampleFlag(o); if (f) wrap.appendChild(f);
-    var metric = (o.counters && o.counters.metric) || 'pp';
-    var explain = metric === 'score'
-      ? 'Counter score: quanto maior, mais o herói é counterado.'
-      : 'Diferença de win rate em pontos percentuais (pp) no confronto.';
-
-    if (o.counters) {
-      wrap.appendChild(el('h3', 'COUNTERS (DADOS DO JOGO)', 'ht-section-title'));
-      var cols = el('div', null, 'ht-cols');
-      cols.appendChild(listCard('FRACO CONTRA', 'Quem mais atrapalha ' + Hub.current().name, o.counters.weak, metric));
-      cols.appendChild(listCard('FORTE CONTRA', 'Quem ' + Hub.current().name + ' mais atrapalha', o.counters.strong, metric));
-      wrap.appendChild(cols);
-      wrap.appendChild(el('p', explain, 'hc-muted ht-source'));
-    }
-    if (o.compat) {
-      wrap.appendChild(el('h3', 'COMPATIBILIDADE', 'ht-section-title'));
-      var cc = el('div', null, 'ht-cols');
-      cc.appendChild(listCard('MELHORES COMPANHEIROS', 'Combinam bem com ' + Hub.current().name, o.compat.best, o.compat.metric || 'score'));
-      cc.appendChild(listCard('MENOS COMPATÍVEIS', 'Combinam pior', o.compat.worst, o.compat.metric || 'score'));
-      wrap.appendChild(cc);
-    }
-    var notes = o.notes || {};
-    var groups = [['ally', 'ALIADOS', 'Parcerias indicadas pelo jogo'], ['counter', 'COMO ENFRENTAR', 'Heróis que este herói atrapalha'], ['threat', 'AMEAÇAS', 'Heróis que mais atrapalham este herói']];
-    var has = groups.some(function (g) { return notes[g[0]] && notes[g[0]].length; });
-    if (has) {
-      wrap.appendChild(el('h3', 'NOTAS DO JOGO', 'ht-section-title'));
-      var grid = el('div', null, 'ht-guide');
-      groups.forEach(function (g) {
-        var list = notes[g[0]];
-        if (!list || !list.length) return;
-        var c = U.card(g[1], g[2]);
-        list.forEach(function (n) {
-          var item = el('div', null, 'ho-note');
-          item.appendChild(heroRow(n.hero, null));
-          item.appendChild(el('p', n.text, 'hc-body'));
-          c.appendChild(item);
-        });
-        grid.appendChild(c);
-      });
-      wrap.appendChild(grid);
-    }
-    wrap.appendChild(credit(o));
-    return wrap;
-  });
-
-  // ───────────── aba Skills: habilidades, prioridade e combo ─────────────
-  Hub.hooks.skills.push(function () {
-    var o = official();
-    if (!o || !o.skills || !o.skills.length) return null;
-    var wrap = el('section', null, 'ho-section');
-    var f = sampleFlag(o); if (f) wrap.appendChild(f);
-
-    var c = U.card('HABILIDADES', 'Descrições do jogo');
-    var icons = el('div', null, 'ho-skill-icons');
-    var detail = el('div', null, 'ho-skill-detail');
-    if (skillSel >= o.skills.length) skillSel = 0;
-
-    function paint() {
-      Array.prototype.forEach.call(icons.children, function (b, i) { b.classList.toggle('is-on', i === skillSel); b.setAttribute('aria-pressed', String(i === skillSel)); });
-      var s = o.skills[skillSel];
-      detail.replaceChildren();
-      var head = el('div', null, 'ho-skill-head');
-      head.appendChild(el('h4', s.name));
-      head.appendChild(el('small', SLOTS[s.slot] || s.slot, 'ho-slot'));
-      (s.tags || (s.tag ? [s.tag] : [])).forEach(function (t) { head.appendChild(el('span', t, 'ho-tag')); });
-      detail.appendChild(head);
-      detail.appendChild(el('p', s.desc, 'ho-skill-desc'));
-    }
-
-    o.skills.forEach(function (s, i) {
-      var b = el('button', null, 'ho-skill-btn');
-      b.type = 'button';
-      b.title = s.name;
-      b.setAttribute('aria-label', s.name);
-      if (s.icon) b.appendChild(img(s.icon, '')); else b.appendChild(el('span', String(s.name).slice(0, 2).toUpperCase(), 'hh-portrait-ph'));
-      b.addEventListener('click', function () { skillSel = i; paint(); });
-      icons.appendChild(b);
-    });
-    c.append(icons, detail);
-    paint();
-    wrap.appendChild(c);
-
-    if (o.skillPriority) {
-      var pc = U.card('PRIORIDADE DE EVOLUÇÃO', 'Qual skill evoluir primeiro');
-      pc.appendChild(el('p', o.skillPriority, 'hc-body'));
-      wrap.appendChild(pc);
-    }
-    if (o.combo && (o.combo.text || (o.combo.steps || []).length)) {
-      var cb = U.card('COMBO DE TEAMFIGHT', 'Sequência indicada pelo jogo');
-      var steps = el('div', null, 'ho-combo');
-      (o.combo.steps || []).forEach(function (u, i) {
-        if (i) steps.appendChild(el('span', '→', 'hc-step-arrow'));
-        steps.appendChild(img(u, 'Passo ' + (i + 1), 'ho-combo-step'));
-      });
-      if (steps.childNodes.length) cb.appendChild(steps);
-      if (o.combo.text) cb.appendChild(el('p', o.combo.text, 'hc-body'));
-      wrap.appendChild(cb);
-    }
-    wrap.appendChild(credit(o));
-    return wrap;
-  });
-
-  // ───────────── aba Stats: por rank ─────────────
-  Hub.hooks.stats.push(function () {
-    var o = official();
-    if (!o || !o.ranks) return null;
-    var c = U.card('POR RANK', 'Win, pick e ban rate em cada faixa');
-    var rankKeys = RANKS.filter(function (r) { return o.ranks[r[0]]; });
-    if (!rankKeys.length) return null;
-    var wrapT = el('div', null, 'ho-table-wrap');
-    var table = el('table', null, 'ho-table');
-    var thead = el('thead'), hr = el('tr');
-    hr.appendChild(el('th', 'Métrica'));
-    rankKeys.forEach(function (r) { hr.appendChild(el('th', r[1])); });
-    thead.appendChild(hr);
-    table.appendChild(thead);
-    var tbody = el('tbody');
-    [['win', 'Win rate'], ['pick', 'Pick rate'], ['ban', 'Ban rate']].forEach(function (m) {
-      var tr = el('tr');
-      tr.appendChild(el('th', m[1]));
-      rankKeys.forEach(function (r) {
-        var v = o.ranks[r[0]][m[0]];
-        var td = el('td');
-        td.appendChild(el('b', pct(v)));
-        if (o.stats && o.stats[m[0]] != null && v != null) td.appendChild(deltaEl(v - o.stats[m[0]], 2, ' vs geral'));
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody);
-    wrapT.appendChild(table);
-    c.appendChild(wrapT);
-    var f = sampleFlag(o); if (f) c.appendChild(f);
-    c.appendChild(credit(o));
-    return c;
-  });
-
-  // ───────────── aba Wallpapers ─────────────
-  function renderWallpapers(panel) {
-    var cur = Hub.current();
-    var c = load(cur.name);
-    var card = U.card('WALLPAPERS', 'Artes oficiais de ' + cur.name);
-    var o = c.status === 'ready' ? c.data : null;
-    if (c.status === 'loading') card.appendChild(el('p', 'Carregando...', 'hc-muted'));
-    else if (!o || !o.wallpapers || !o.wallpapers.length) {
-      card.appendChild(U.emptyBlock('Os wallpapers oficiais deste herói ainda não foram importados.'));
+    if (fn) {
+      try { fn(nome, buildId || null, tabId || 'overview'); } catch (e) {
+        console.error('[hero-official] falha ao abrir herói:', e);
+      }
     } else {
-      var grid = el('div', null, 'ho-wallpapers');
-      o.wallpapers.forEach(function (w, i) {
-        var url = typeof w === 'string' ? w : w.url;
-        var a = el('a', null, 'ho-wall');
-        a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.title = 'Abrir imagem ' + (i + 1) + ' em nova aba';
-        a.appendChild(img(url, 'Wallpaper ' + (i + 1) + ' de ' + cur.name));
-        grid.appendChild(a);
-      });
-      card.appendChild(grid);
-      card.appendChild(el('p', 'Imagens © Moonton, exibidas a partir do endereço oficial. Clique para abrir em tamanho original.', 'hc-muted ht-source'));
+      console.warn('[hero-official] nenhum handler de herói disponível para:', nome);
     }
-    panel.appendChild(card);
   }
-  Hub.register({ id: 'wallpapers', order: 85, label: 'Wallpapers', render: renderWallpapers });
+
+  // Cria um <a> acessível que chama abrirHeroi ao clique/Enter/Espaço.
+  function linkHeroi(nome, cls) {
+    var a = document.createElement('a');
+    a.className = cls || 'hh-hero-link';
+    a.href = 'javascript:void(0)';
+    a.setAttribute('role', 'button');
+    a.setAttribute('tabindex', '0');
+    if (nome) a.setAttribute('aria-label', 'Abrir ' + nome);
+
+    function disparar(e) {
+      if (e) e.preventDefault();
+      abrirHeroi(nome);
+    }
+    a.addEventListener('click', disparar);
+    a.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') disparar(e);
+    });
+    return a;
+  }
+
+  // ─── render header (banner) ───
+  function renderHeader(d) {
+    var hero = d.hero || {};
+    var meta = d.meta || {};
+    var stats = d.stats || {};
+
+    var header = el('header', null, 'hh-hero-head');
+
+    if (hero.wallpaper) {
+      var bg = img(hero.wallpaper, '', 'hh-hero-bg');
+      header.appendChild(bg);
+    }
+
+    var inner = el('div', null, 'hh-hero-head-inner');
+
+    if (hero.head) {
+      var avatar = img(hero.head, hero.name || '', 'hh-hero-avatar');
+      inner.appendChild(avatar);
+    }
+
+    var info = el('div', null, 'hh-hero-info');
+    info.appendChild(el('h2', hero.name || '?', 'hh-hero-name'));
+
+    if (meta.roadsort && meta.roadsort.length) {
+      info.appendChild(el('p', meta.roadsort.join(' · '), 'hh-hero-lanes'));
+    }
+    if (meta.sort && meta.sort.length) {
+      info.appendChild(el('p', meta.sort.join(' · '), 'hh-hero-roles'));
+    }
+
+    var statsRow = el('div', null, 'hh-hero-stats');
+    if (stats.win  != null) statsRow.appendChild(chipStat('WR',  stats.win.toFixed(1) + '%'));
+    if (stats.pick != null) statsRow.appendChild(chipStat('Pick', stats.pick.toFixed(1) + '%'));
+    if (stats.ban  != null) statsRow.appendChild(chipStat('Ban',  stats.ban.toFixed(1) + '%'));
+    if (statsRow.children.length) info.appendChild(statsRow);
+
+    inner.appendChild(info);
+    header.appendChild(inner);
+    return header;
+  }
+
+  function chipStat(label, value) {
+    var c = el('span', null, 'hh-chip');
+    c.appendChild(el('small', label));
+    c.appendChild(el('b', value));
+    return c;
+  }
+
+  // ─── render stats (só o chip row, sem banner) ───
+  function renderStats(d) {
+    var stats = d.stats || {};
+    var box = el('div', null, 'ho-stats-block');
+
+    var row = el('div', null, 'hh-hero-stats');
+    if (stats.win  != null) row.appendChild(chipStat('WR',  stats.win.toFixed(1) + '%'));
+    if (stats.pick != null) row.appendChild(chipStat('Pick', stats.pick.toFixed(1) + '%'));
+    if (stats.ban  != null) row.appendChild(chipStat('Ban',  stats.ban.toFixed(1) + '%'));
+    if (row.children.length) box.appendChild(row);
+
+    var c = d.compat || {};
+    if (c.best && c.best.length) {
+      var b = el('div', null, 'ho-compat');
+      b.appendChild(el('small', 'Melhores duos (pp)'));
+      var rowBest = el('div', null, 'ho-compat-row');
+      c.best.forEach(function (x) {
+        var chip = el('span', null, 'ho-compat-chip');
+        chip.appendChild(el('b', x.hero));
+        chip.appendChild(el('span', (x.value >= 0 ? '+' : '') + x.value + 'pp'));
+        rowBest.appendChild(chip);
+      });
+      b.appendChild(rowBest);
+      box.appendChild(b);
+    }
+
+    if (c.worst && c.worst.length) {
+      var w = el('div', null, 'ho-compat');
+      w.appendChild(el('small', 'Piores duos (pp)'));
+      var rowW = el('div', null, 'ho-compat-row');
+      c.worst.forEach(function (x) {
+        var chip = el('span', null, 'ho-compat-chip is-bad');
+        chip.appendChild(el('b', x.hero));
+        chip.appendChild(el('span', (x.value >= 0 ? '+' : '') + x.value + 'pp'));
+        rowW.appendChild(chip);
+      });
+      w.appendChild(rowW);
+      box.appendChild(w);
+    }
+
+    return box;
+  }
+
+  // ─── render skills ───
+  function renderSkills(d) {
+    if (!d.skills || !d.skills.length) return null;
+    var grid = el('div', null, 'hh-skills');
+
+    d.skills.forEach(function (s, i) {
+      var card = el('article', null, 'hh-skill' + (s.is_passive ? ' is-passive' : ''));
+      var head = el('div', null, 'hh-skill-head');
+
+      if (s.icon) head.appendChild(img(s.icon, s.name || '', 'hh-skill-icon'));
+
+      var titulo = el('div', null, 'hh-skill-title');
+      titulo.appendChild(el('small', s.is_passive ? 'Passiva' : 'Skill ' + i));
+      titulo.appendChild(el('b', s.name || '?'));
+      head.appendChild(titulo);
+      card.appendChild(head);
+
+      var mm = el('div', null, 'hh-skill-meta');
+      if (s.cd != null)   mm.appendChild(el('span', 'CD ' + s.cd + 's', 'hh-tag'));
+      if (s.cost != null) mm.appendChild(el('span', 'Custo ' + s.cost, 'hh-tag'));
+      (s.tags || []).forEach(function (t) {
+        var tag = el('span', t.name, 'hh-tag hh-tag-color');
+        if (t.rgb) tag.style.color = 'rgb(' + t.rgb + ')';
+        mm.appendChild(tag);
+      });
+      if (mm.children.length) card.appendChild(mm);
+
+      if (s.description) card.appendChild(el('p', s.description, 'hh-skill-desc'));
+
+      grid.appendChild(card);
+    });
+
+    return grid;
+  }
+
+  // ─── render counters (com PP à direita + clique abre o herói) ───
+  function renderCounters(d) {
+    var c = d.counters || {};
+    var temAlgo =
+      (c.strong && c.strong.heroes && c.strong.heroes.length) ||
+      (c.weak   && c.weak.heroes   && c.weak.heroes.length) ||
+      (c.assist && c.assist.heroes && c.assist.heroes.length);
+    if (!temAlgo) return null;
+
+    var wrap = el('div', null, 'hh-counters');
+
+    [['strong', 'Vantagem contra'],
+     ['weak',   'Fraco contra'],
+     ['assist', 'Bom com']].forEach(function (par) {
+      var kind = par[0], titulo = par[1];
+      var bloco = c[kind];
+      if (!bloco || !(bloco.heroes || []).length) return;
+
+      var card = el('article', null, 'hh-counter hh-counter-' + kind);
+      card.appendChild(el('h4', titulo, 'hh-counter-title'));
+      if (bloco.desc) card.appendChild(el('p', bloco.desc, 'hh-counter-desc'));
+
+      var col = el('div', null, 'hh-counter-heroes');
+      bloco.heroes.forEach(function (h) {
+        var nome = h.name || ('#' + h.id);
+        var a = linkHeroi(h.name || nome, 'hh-counter-hero');
+        if (h.head) a.appendChild(img(h.head, nome, 'hh-counter-face'));
+        a.appendChild(el('span', nome));
+        if (h.value != null) {
+          a.setAttribute('data-pp', (h.value >= 0 ? '+' : '') + h.value + 'pp');
+        }
+        col.appendChild(a);
+      });
+
+      card.appendChild(col);
+      wrap.appendChild(card);
+    });
+
+    return wrap;
+  }
+
+  // ─── render lore (moldura dourada + capitular + CTA) ───
+  function renderLore(d) {
+    if (!d.lore || !(d.lore.short || d.lore.long)) return null;
+
+    var frame = el('div', null, 'ho-lore-frame');
+
+    frame.appendChild(el('span', null, 'ho-lore-corner-tl'));
+    frame.appendChild(el('span', null, 'ho-lore-corner-tr'));
+
+    var title = el('div', null, 'ho-lore-title');
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    var path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', 'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z');
+    svg.appendChild(path);
+    title.appendChild(svg);
+    var heroName = (d.hero && d.hero.name) || '';
+    title.appendChild(el('b', 'A Lenda de ' + heroName));
+    frame.appendChild(title);
+
+    var div = el('div', null, 'ho-lore-divider');
+    div.appendChild(el('span', '◆ ◆ ◆'));
+    frame.appendChild(div);
+
+    var body = el('div', null, 'ho-lore-body');
+    body.textContent = d.lore.long || d.lore.short || '';
+    frame.appendChild(body);
+
+    if (d.official_url) {
+      var cta = el('div', null, 'ho-lore-cta');
+      var a = document.createElement('a');
+      a.href = d.official_url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.appendChild(document.createTextNode('Ler a história completa em Legends of Dawn'));
+
+      var svg2 = document.createElementNS(svgNS, 'svg');
+      svg2.setAttribute('viewBox', '0 0 24 24');
+      svg2.setAttribute('aria-hidden', 'true');
+      var path2 = document.createElementNS(svgNS, 'path');
+      path2.setAttribute('d', 'M7 17 17 7M8 7h9v9');
+      svg2.appendChild(path2);
+      a.appendChild(svg2);
+
+      cta.appendChild(a);
+      frame.appendChild(cta);
+    }
+
+    var wrap = el('div', null, 'hh-lore');
+    wrap.appendChild(frame);
+    return wrap;
+  }
+
+  // ─── render skins (grid cinematográfico) ───
+  function renderSkins(d) {
+    if (!d.skins || !d.skins.length) return null;
+    var grid = el('div', null, 'hh-skins');
+
+    d.skins.forEach(function (s) {
+      var card = el('article', null, 'hh-skin' + (s.is_original ? ' is-original' : ''));
+
+      var wrapImg = el('div', null, 'hh-skin-imgwrap');
+      wrapImg.appendChild(img(s.image, s.name || '', 'hh-skin-img'));
+
+      if (s.badge || s.event || s.rarity) {
+        var badgeText = s.badge || s.event || String(s.rarity).toUpperCase();
+        var badge = el('span', badgeText, 'hh-skin-badge');
+        if (s.rarity) badge.setAttribute('data-rarity', String(s.rarity).toLowerCase());
+        wrapImg.appendChild(badge);
+      }
+
+      if (s.name) wrapImg.appendChild(el('h4', s.name, 'hh-skin-name'));
+
+      card.appendChild(wrapImg);
+
+      var info = el('div', null, 'hh-skin-info');
+
+      if (s.desc) info.appendChild(el('p', s.desc, 'hh-skin-desc'));
+
+      if (s.price != null) {
+        var price = el('span', null, 'hh-skin-price');
+        price.textContent = '💎 ' + s.price;
+        info.appendChild(price);
+      }
+
+      if (s.released) {
+        var dt = new Date(s.released + 'T00:00:00Z');
+        var fmt = isNaN(dt.getTime()) ? s.released :
+          String(dt.getUTCDate()).padStart(2, '0') + '/' +
+          String(dt.getUTCMonth() + 1).padStart(2, '0') + '/' +
+          dt.getUTCFullYear();
+        info.appendChild(el('small', fmt, 'hh-skin-date'));
+      }
+
+      if (info.children.length) card.appendChild(info);
+      grid.appendChild(card);
+    });
+
+    return grid;
+  }
+
+  // ─── render tudo junto (aba "Oficial") ───
+  function renderSections(d) {
+    var frag = document.createDocumentFragment();
+    var s1 = renderStats(d);    if (s1) frag.appendChild(section('Stats', s1));
+    var s2 = renderSkills(d);   if (s2) frag.appendChild(section('Skills', s2));
+    var s3 = renderCounters(d); if (s3) frag.appendChild(section('Matchups', s3));
+    var s4 = renderLore(d);     if (s4) frag.appendChild(section('Lore', s4));
+    var s5 = renderSkins(d);    if (s5) frag.appendChild(section('Skins (' + d.skins.length + ')', s5));
+    return frag;
+  }
+
+  function section(titulo, conteudo) {
+    var s = el('section', null, 'hh-secao');
+    s.appendChild(el('h3', titulo, 'hh-secao-title'));
+    s.appendChild(conteudo);
+    return s;
+  }
+
+  // ─── API pública ───
+  window.HeroOfficial = {
+    loadIndex: loadIndex,
+    loadHero:  loadHero,
+    loadHeroByName: loadHeroByName,
+    getIndexSync: getIndexSync,
+    getHeroSync:  getHeroSync,
+
+    renderHeader:   renderHeader,
+    renderStats:    renderStats,
+    renderSkills:   renderSkills,
+    renderCounters: renderCounters,
+    renderLore:     renderLore,
+    renderSkins:    renderSkins,
+    renderSections: renderSections,
+
+    abrirHeroi: abrirHeroi,
+    linkHeroi:  linkHeroi,
+
+    el: el,
+    img: img,
+    cdnUrl: cdnUrl,
+    slugify: slugify,
+  };
 })();

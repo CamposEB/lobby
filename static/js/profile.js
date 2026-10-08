@@ -194,7 +194,13 @@
 
   function heroImageUrl(name) {
     const file = heroIconFile(name);
-    return file ? HERO_IMAGE_DIR + file : "";
+    if (!file) return "";
+if (window.HeroCatalog && window.HeroCatalog.routeImg) {
+  return window.HeroCatalog.routeImg(file);
+}
+// Fallback (se HeroCatalog não carregou ainda)
+if (/^(?:https?:)?\/\//i.test(file) || file.charAt(0) === "/") return file;
+return HERO_IMAGE_DIR + file;
   }
 
   // ─────────────────────────────────────────────────────────────

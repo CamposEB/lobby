@@ -1,0 +1,333 @@
+/* /static/css/heroes-catalog.css
+   Estilo do catálogo de heróis (inspirado no MLBBHub).
+*/
+
+/* ─── Tokens locais ─── */
+.hc-page {
+  --hc-card-bg: #14141a;
+  --hc-card-hover: #1c1c24;
+  --hc-gold: #f0c060;
+  --hc-green: #4caf50;
+  --hc-blue: #4a90e2;
+  --hc-gray: #7a7a80;
+  --hc-red: #e94b5e;
+  --hc-border: rgba(255, 255, 255, 0.06);
+  --hc-text: #e8e8ec;
+  --hc-mute: #8a8a90;
+}
+
+/* ─── Seções ─── */
+.hc-section {
+  margin: 20px 0 32px;
+}
+.hc-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.hc-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hc-text);
+  margin: 0;
+}
+.hc-section-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--hc-gold);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hc-count {
+  font-size: 0.78rem;
+  color: var(--hc-mute);
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Grid de cards (ambas as seções) ─── */
+.hc-recent,
+.hc-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.hc-recent {
+  margin-bottom: 12px;
+}
+
+/* ─── Card ─── */
+.hc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--hc-card-bg);
+  border: 1px solid var(--hc-border);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.hc-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(240, 192, 96, 0.5);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Imagem de fundo ─── */
+.hc-card-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a20, #0e0e12);
+}
+.hc-card-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.35s ease;
+}
+.hc-card:hover .hc-card-bg {
+  transform: scale(1.06);
+}
+.hc-card-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.65) 100%);
+  pointer-events: none;
+}
+
+/* ─── Badges (tier, ano) ─── */
+.hc-card-tier {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--hc-gray);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.hc-card-tier[data-tier="S"] { background: linear-gradient(135deg, #f7c948, #d4911c); color: #1a1a1a; }
+.hc-card-tier[data-tier="A"] { background: linear-gradient(135deg, #66bb6a, #388e3c); }
+.hc-card-tier[data-tier="B"] { background: linear-gradient(135deg, #42a5f5, #1565c0); }
+.hc-card-tier[data-tier="C"] { background: linear-gradient(135deg, #757575, #424242); }
+
+.hc-card-year {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Info do card ─── */
+.hc-card-info {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.hc-card-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hc-card-name {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--hc-text);
+  margin: 0;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hc-card-arrow {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--hc-gold);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.hc-card:hover .hc-card-arrow { opacity: 1; }
+.hc-card-arrow svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hc-card-roles {
+  font-size: 0.72rem;
+  color: var(--hc-mute);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Linha de stats ─── */
+.hc-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hc-border);
+}
+.hc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.hc-stat small {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--hc-mute);
+}
+.hc-stat b {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--hc-text);
+  line-height: 1;
+}
+.hc-stat[data-kind="win"]  b { color: #a5d6a7; }
+.hc-stat[data-kind="pick"] b { color: #90caf9; }
+.hc-stat[data-kind="ban"]  b { color: #ef9a9a; }
+
+/* ─── Filtros ─── */
+.hc-filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(6, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.hc-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--hc-card-bg);
+  border: 1px solid var(--hc-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 38px;
+}
+.hc-search svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--hc-mute);
+  stroke-width: 2;
+  stroke-linecap: round;
+  margin-right: 8px;
+}
+.hc-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--hc-text);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+.hc-search input::placeholder {
+  color: var(--hc-mute);
+}
+
+.hc-filters select {
+  background: var(--hc-card-bg);
+  border: 1px solid var(--hc-border);
+  border-radius: 8px;
+  color: var(--hc-text);
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 0 10px;
+  height: 38px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.hc-filters select:hover { border-color: rgba(240, 192, 96, 0.4); }
+.hc-filters select:focus {
+  outline: none;
+  border-color: var(--hc-gold);
+}
+.hc-filters select option {
+  background: #1a1a20;
+  color: var(--hc-text);
+}
+
+/* ─── Estado vazio ─── */
+.hc-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--hc-mute);
+  font-size: 0.9rem;
+}
+
+/* ─── Responsivo ─── */
+@media (max-width: 1200px) {
+  .hc-recent, .hc-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .hc-filters { grid-template-columns: 1fr 1fr 1fr; }
+  .hc-search { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .hc-recent, .hc-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hc-filters { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .hc-recent, .hc-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .hc-filters { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .hc-card-info { padding: 8px; }
+  .hc-card-name { font-size: 0.88rem; }
+  .hc-card-roles { font-size: 0.66rem; }
+  .hc-stat b { font-size: 0.74rem; }
+  .hc-stat small { font-size: 0.52rem; }
+  .hc-card-tier { width: 22px; height: 22px; font-size: 0.75rem; }
+}
+@media (max-width: 420px) {
+  .hc-recent, .hc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

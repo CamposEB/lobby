@@ -185,15 +185,22 @@
 
   function initList() {
     var roleSel = $('heroesRole');
-    HC.ROLES.forEach(function (r) { roleSel.appendChild(new Option(HC.roleLabel(r), r)); });
+    if (roleSel) {
+      HC.ROLES.forEach(function (r) { roleSel.appendChild(new Option(HC.roleLabel(r), r)); });
+    }
     var t;
-    $('heroesSearch').addEventListener('input', function (e) {
-      clearTimeout(t);
-      var v = e.target.value;
-      t = setTimeout(function () { listUI.q = v; renderHeroes(); }, 120);
-    });
+    var search = $('heroesSearch');
+    if (search) {
+      search.addEventListener('input', function (e) {
+        clearTimeout(t);
+        var v = e.target.value;
+        t = setTimeout(function () { listUI.q = v; renderHeroes(); }, 120);
+      });
+    }
     [['heroesSort', 'sort'], ['heroesRole', 'role'], ['heroesLane', 'lane'], ['heroesTier', 'tier']].forEach(function (p) {
-      $(p[0]).addEventListener('change', function (e) { listUI[p[1]] = e.target.value; renderHeroes(); });
+      var el = $(p[0]);
+      if (!el) return;                     // ← guard: pula selects ausentes
+      el.addEventListener('change', function (e) { listUI[p[1]] = e.target.value; renderHeroes(); });
     });
     renderHeroes();
   }

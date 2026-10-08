@@ -1,0 +1,854 @@
+/* /static/css/hero-official.css
+   Redesign "MLBBHub-inspired" para as seções oficiais do herói.
+   - Banner cinematográfico com badge de tier + stats coloridas
+   - Skills em cards escuros com ícone grande
+   - Counters em split view (forte/fraco) com PP colorido
+   - Skins em grid com overlay de nome + badge de canto
+   - Lore com moldura dourada ornada e capitular
+*/
+
+/* ═══════════════════════════════════════════════════════════════
+   TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --ho-gold: #f0c060;
+  --ho-gold-soft: rgba(240, 192, 96, 0.55);
+  --ho-gold-faint: rgba(240, 192, 96, 0.10);
+  --ho-red: #e94b5e;
+  --ho-green: #4caf50;
+  --ho-blue: #4a90e2;
+  --ho-purple: #9c6ade;
+  --ho-bg: var(--bg, #0d0d10);
+  --ho-surface: var(--surface, #16161a);
+  --ho-surface-2: #1e1e24;
+  --ho-border: rgba(255, 255, 255, 0.08);
+  --ho-border-strong: rgba(255, 255, 255, 0.14);
+  --ho-border-gold: rgba(240, 192, 96, 0.35);
+  --ho-text: var(--fg, #e8e8ec);
+  --ho-text-dim: #b8b8be;
+  --ho-text-mute: #7a7a80;
+  --ho-radius: 12px;
+  --ho-radius-sm: 8px;
+  --ho-font-display: 'Rajdhani', 'Outfit', system-ui, sans-serif;
+  --ho-font-body: 'Outfit', system-ui, sans-serif;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WRAPPER "OFICIAL · fonte"
+   ═══════════════════════════════════════════════════════════════ */
+.ho-official-block {
+  position: relative;
+  margin: 0 0 22px;
+  padding: 18px 20px 22px;
+  border-radius: var(--ho-radius);
+  background: var(--ho-surface);
+  border: 1px solid var(--ho-border);
+  border-left: 3px solid var(--ho-gold);
+}
+.ho-official-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.ho-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ho-font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: var(--ho-gold);
+  color: #1a1a1a;
+  text-transform: uppercase;
+}
+.ho-source {
+  font-family: var(--ho-font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ho-text-mute);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BANNER (hero-hub monta o esqueleto; refinamos aqui)
+   ═══════════════════════════════════════════════════════════════ */
+.hh-hero-head {
+  position: relative;
+  min-height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+.hh-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: 0;
+  filter: brightness(0.5) saturate(0.95);
+  user-select: none;
+  pointer-events: none;
+}
+.hh-hero-head::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg,
+              rgba(0, 0, 0, 0.55) 0%,
+              rgba(0, 0, 0, 0.25) 45%,
+              transparent 100%);
+  pointer-events: none;
+}
+.hh-hero-head-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 24px;
+  min-height: 200px;
+}
+.hh-hero-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+}
+.hh-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.hh-hero-name {
+  font-family: var(--ho-font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+}
+.hh-hero-lanes,
+.hh-hero-roles {
+  font-family: var(--ho-font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+.hh-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.hh-chip {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  min-width: 76px;
+}
+.hh-chip small {
+  font-family: var(--ho-font-display);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+.hh-chip b {
+  font-family: var(--ho-font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS BLOCK (aba Stats)
+   ═══════════════════════════════════════════════════════════════ */
+.ho-stats-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ho-stats-block .hh-hero-stats {
+  margin-top: 0;
+}
+.ho-stats-block .hh-chip {
+  background: var(--ho-surface-2);
+  border-color: var(--ho-border);
+}
+.ho-stats-block .hh-chip small { color: var(--ho-text-mute); }
+.ho-stats-block .hh-chip b { color: var(--ho-text); }
+
+.ho-compat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ho-compat > small {
+  font-family: var(--ho-font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ho-text-mute);
+}
+.ho-compat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ho-compat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.32);
+  font-size: 0.8rem;
+  font-family: var(--ho-font-display);
+  font-weight: 600;
+  color: #c8e6c9;
+}
+.ho-compat-chip b {
+  color: #fff;
+  font-weight: 700;
+}
+.ho-compat-chip span {
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+.ho-compat-chip.is-bad {
+  background: rgba(233, 75, 94, 0.12);
+  border-color: rgba(233, 75, 94, 0.32);
+  color: #ffcdd2;
+}
+.ho-compat-chip.is-bad b { color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SKILLS — cards escuros com ícone grande
+   ═══════════════════════════════════════════════════════════════ */
+.hh-skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+}
+.hh-skill {
+  position: relative;
+  background: var(--ho-surface-2);
+  border: 1px solid var(--ho-border);
+  border-radius: var(--ho-radius);
+  padding: 14px 16px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.hh-skill:hover {
+  border-color: var(--ho-border-strong);
+  transform: translateY(-1px);
+}
+.hh-skill.is-passive {
+  border-left: 3px solid var(--ho-gold);
+}
+.hh-skill-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.hh-skill-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  border: 1px solid var(--ho-border);
+}
+.hh-skill-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.hh-skill-title small {
+  font-family: var(--ho-font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ho-text-mute);
+}
+.hh-skill-title b {
+  font-family: var(--ho-font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ho-text);
+  line-height: 1.15;
+}
+.hh-skill-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.hh-skill-desc {
+  font-family: var(--ho-font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ho-text-dim);
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COUNTERS — split view (forte vs fraco)
+   ═══════════════════════════════════════════════════════════════ */
+.hh-counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.hh-counter {
+  background: var(--ho-surface-2);
+  border: 1px solid var(--ho-border);
+  border-radius: var(--ho-radius);
+  padding: 14px 16px;
+}
+.hh-counter-strong { border-left: 3px solid var(--ho-green); }
+.hh-counter-weak   { border-left: 3px solid var(--ho-red); }
+.hh-counter-assist { border-left: 3px solid var(--ho-blue); }
+
+.hh-counter-title {
+  font-family: var(--ho-font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  color: var(--ho-text);
+}
+.hh-counter-desc {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ho-text-dim);
+  margin: 0 0 12px;
+}
+.hh-counter-heroes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hh-counter-hero {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  color: inherit;
+  text-decoration: none;
+  font-family: var(--ho-font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.hh-counter-hero:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--ho-border);
+}
+.hh-counter-face {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.hh-counter-hero span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* PP valoriza à direita */
+.hh-counter-hero::after {
+  content: attr(data-pp);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ho-green);
+  letter-spacing: 0.02em;
+}
+.hh-counter-weak .hh-counter-hero::after { color: var(--ho-red); }
+.hh-counter-assist .hh-counter-hero::after { color: var(--ho-blue); }
+
+/* ═══════════════════════════════════════════════════════════════
+   SKINS — grid cinematográfico (padrão MLBBHub)
+   ═══════════════════════════════════════════════════════════════ */
+.hh-skins {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+.hh-skin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-radius: var(--ho-radius);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.hh-skin:hover {
+  transform: translateY(-3px);
+}
+.hh-skin-imgwrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: var(--ho-radius);
+  background: linear-gradient(135deg, #1a1a1f, #101014);
+  border: 2px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+/* Cores de borda por raridade — ativadas quando temos o dado */
+.hh-skin:hover .hh-skin-imgwrap {
+  border-color: var(--ho-gold);
+  box-shadow: 0 8px 24px rgba(240, 192, 96, 0.15);
+}
+.hh-skin.is-original .hh-skin-imgwrap {
+  border-color: var(--ho-gold);
+}
+.hh-skin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.35s;
+}
+.hh-skin:hover .hh-skin-img {
+  transform: scale(1.05);
+}
+
+/* Nome da skin no rodapé da imagem */
+.hh-skin-imgwrap::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.hh-skin-name {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  right: 14px;
+  z-index: 2;
+  font-family: var(--ho-font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  margin: 0;
+  line-height: 1.15;
+  pointer-events: none;
+}
+
+/* Badge de canto (raridade/evento) */
+.hh-skin-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  font-family: var(--ho-font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  border: 1px solid var(--ho-gold);
+  color: var(--ho-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+/* Variações (quando tivermos raridade) */
+.hh-skin-badge[data-rarity="elite"]        { border-color: #9c6ade; color: #9c6ade; }
+.hh-skin-badge[data-rarity="epic"]         { border-color: #4a90e2; color: #4a90e2; }
+.hh-skin-badge[data-rarity="legend"]       { border-color: #f0c060; color: #f0c060; }
+.hh-skin-badge[data-rarity="collector"]    { border-color: #e94b5e; color: #e94b5e; }
+.hh-skin-badge[data-rarity="starlight"]    { border-color: #4caf50; color: #4caf50; }
+.hh-skin-badge[data-rarity="luckybox"]     { border-color: #4a90e2; color: #4a90e2; }
+.hh-skin-badge[data-rarity="event"]        { border-color: #f0c060; color: #f0c060; }
+
+/* Info abaixo da imagem */
+.hh-skin-info {
+  padding: 10px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hh-skin-date {
+  font-family: var(--ho-font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ho-text-mute);
+}
+.hh-skin-desc {
+  font-size: 0.78rem;
+  color: var(--ho-text-dim);
+  line-height: 1.4;
+}
+.hh-skin-price {
+  font-family: var(--ho-font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ho-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LORE — moldura dourada ornada + capitular
+   ═══════════════════════════════════════════════════════════════ */
+.hh-lore {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ho-lore-frame {
+  position: relative;
+  padding: 44px 52px 40px;
+  background:
+    linear-gradient(180deg, rgba(240, 192, 96, 0.04), transparent 70%),
+    var(--ho-bg);
+  border: 1px solid var(--ho-border-gold);
+  border-radius: var(--ho-radius);
+}
+/* Cantos ornados */
+.ho-lore-frame::before,
+.ho-lore-frame::after,
+.ho-lore-frame > .ho-lore-corner-tl,
+.ho-lore-frame > .ho-lore-corner-tr {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--ho-gold);
+}
+.ho-lore-frame::before {
+  top: -1px; left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.ho-lore-frame::after {
+  bottom: -1px; right: -1px;
+  border-left: none;
+  border-top: none;
+}
+.ho-lore-frame > .ho-lore-corner-tl {
+  top: -1px; right: -1px;
+  border-left: none;
+  border-bottom: none;
+}
+.ho-lore-frame > .ho-lore-corner-tr {
+  bottom: -1px; left: -1px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Título com ícone */
+.ho-lore-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.ho-lore-title svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--ho-gold);
+  fill: none;
+  stroke-width: 1.5;
+}
+.ho-lore-title b {
+  font-family: var(--ho-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ho-gold);
+}
+
+/* Divider ornamentado ─ ◇ ─ */
+.ho-lore-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 22px;
+  color: var(--ho-gold);
+  opacity: 0.65;
+}
+.ho-lore-divider::before,
+.ho-lore-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ho-gold), transparent);
+  max-width: 45%;
+}
+.ho-lore-divider span {
+  font-size: 0.9rem;
+  letter-spacing: 6px;
+}
+
+/* Corpo com capitular */
+.ho-lore-body {
+  font-family: var(--ho-font-body);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ho-text);
+  text-align: justify;
+}
+.ho-lore-body::first-letter {
+  font-family: var(--ho-font-display);
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 0.9;
+  float: left;
+  margin: 6px 12px 0 0;
+  color: var(--ho-gold);
+}
+
+/* CTA para lore completa */
+.ho-lore-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+.ho-lore-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border: 1px solid var(--ho-gold);
+  border-radius: 6px;
+  font-family: var(--ho-font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ho-gold);
+  background: transparent;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.ho-lore-cta a:hover {
+  background: var(--ho-gold);
+  color: #1a1a1a;
+}
+.ho-lore-cta a svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ALIADOS / RIVAIS (lore extra)
+   ═══════════════════════════════════════════════════════════════ */
+.ho-relations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
+}
+.ho-relations-block {
+  background: var(--ho-surface-2);
+  border: 1px solid var(--ho-border);
+  border-radius: var(--ho-radius);
+  padding: 14px 16px;
+}
+.ho-relations-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: var(--ho-font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ho-relations-head svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+.ho-relations-block.is-allies .ho-relations-head { color: var(--ho-green); }
+.ho-relations-block.is-rivals .ho-relations-head { color: var(--ho-red); }
+
+.ho-relations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ho-relations-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+.ho-relations-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--ho-border);
+}
+.ho-relations-item b {
+  font-family: var(--ho-font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ho-text);
+}
+.ho-relations-item small {
+  font-size: 0.78rem;
+  color: var(--ho-text-dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEÇÃO GENÉRICA
+   ═══════════════════════════════════════════════════════════════ */
+.hh-secao {
+  margin-top: 24px;
+}
+.hh-secao:first-child {
+  margin-top: 0;
+}
+.hh-secao-title {
+  font-family: var(--ho-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ho-text);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ho-border);
+  position: relative;
+}
+.hh-secao-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 60px;
+  height: 2px;
+  background: var(--ho-gold);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAGS (cd, custo, tipo)
+   ═══════════════════════════════════════════════════════════════ */
+.hh-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ho-font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--ho-text-dim);
+  line-height: 1.5;
+}
+.hh-tag-color {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ESTADOS VAZIOS
+   ═══════════════════════════════════════════════════════════════ */
+.hh-empty,
+.hh-muted {
+  color: var(--ho-text-mute);
+  font-family: var(--ho-font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 26px 12px;
+}
+.hh-muted {
+  text-align: left;
+  padding: 8px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .hh-hero-head-inner { padding: 16px; gap: 14px; }
+  .hh-hero-avatar { width: 72px; height: 72px; }
+  .hh-hero-name { font-size: 1.45rem; }
+  .hh-hero-lanes, .hh-hero-roles { font-size: 0.72rem; }
+  .hh-chip { padding: 5px 10px; min-width: 66px; }
+  .hh-chip b { font-size: 1rem; }
+
+  .ho-lore-frame { padding: 32px 22px 28px; }
+  .ho-lore-body { font-size: 0.92rem; line-height: 1.65; }
+  .ho-lore-body::first-letter { font-size: 2.8rem; }
+}
+
+@media (max-width: 560px) {
+  .hh-skills,
+  .hh-counters,
+  .ho-relations { grid-template-columns: 1fr; }
+  .hh-skins { grid-template-columns: 1fr; }
+  .ho-official-block { padding: 14px 14px 18px; }
+}

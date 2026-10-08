@@ -13,16 +13,19 @@
 #  10. Upload agora aceita vídeo e limite subiu para 25 MB; dm_send aceita até 400 caracteres
 #  11. profile() agora retorna "online" — corrige o status Online/Offline no perfil (self e other)
 #  12. Reações em DM (tabela dm_reactions + handler dm_react + reactions no dm_open)
+#  13. Proxy /api/img para imagens do CDN da Moonton (dribla hotlink protection)
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
+from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Header, HTTPException, UploadFile, File
-from fastapi.responses import FileResponse
+import httpx
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Header, HTTPException, UploadFile, File, Query
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from identity_store import IdentityError, identity_store
@@ -261,7 +264,6 @@ def profile(nick, viewer=None):
         "is_private": bool(data.get("is_private", False)),
         "is_owner": own,
         "community_roles": community_roles,
-        # ⬇️ marca presença real do usuário no servidor.
         "online": nick in online,
     }
     if private:
@@ -1633,7 +1635,6 @@ async def ws_endpoint(ws: WebSocket):
                         "SELECT id, a, m, ts FROM dm WHERE (a=? AND b=?) OR (a=? AND b=?) ORDER BY id DESC LIMIT 50",
                         (nick, other, other, nick)
                     ).fetchall()[::-1]
-                    # 🆕 pega todas as reações das mensagens retornadas em um só SELECT
                     reactions_map = dm_reactions_for([row["id"] for row in msgs])
                     db.execute("UPDATE dm SET seen=1 WHERE a=? AND b=?", (other, nick))
                     db.commit()
@@ -1648,7 +1649,6 @@ async def ws_endpoint(ws: WebSocket):
                                 "from": row["a"],
                                 "m": row["m"],
                                 "ts": row["ts"],
-                                # 🆕 reações por mensagem
                                 "reactions": reactions_map.get(row["id"], []),
                             }
                             for row in msgs
@@ -1658,7 +1658,6 @@ async def ws_endpoint(ws: WebSocket):
                 db.execute("UPDATE dm SET seen=1 WHERE a=? AND b=?", (str(m.get("nick", "")), nick))
                 db.commit()
             elif t == "dm_send":
-                # Limite aumentado para 400 caracteres (marker de anexo ocupa ~100)
                 other, text = str(m.get("to", "")).lower(), str(m.get("m", "")).strip()[:400]
                 muted = mute_status(nick)
                 if muted:
@@ -1689,7 +1688,6 @@ async def ws_endpoint(ws: WebSocket):
                     continue
                 row = db.execute("SELECT a FROM dm WHERE id=?", (msg_id,)).fetchone()
                 if not row or row["a"] != nick:
-                    # só permite apagar a própria mensagem
                     continue
                 db.execute("DELETE FROM dm WHERE id=?", (msg_id,))
                 try:
@@ -1699,16 +1697,12 @@ async def ws_endpoint(ws: WebSocket):
                 db.commit()
                 for target in list(online):
                     await send(target, {"t": "dm_deleted", "id": msg_id})
-            # ══════════════════════════════════════════════════════
-            # 🆕 REAÇÕES DA DM
-            # ══════════════════════════════════════════════════════
             elif t == "dm_react":
                 try:
                     msg_id = int(m.get("id"))
                 except (TypeError, ValueError):
                     continue
                 emoji = str(m.get("emoji", "")).strip()
-                # aceita qualquer emoji curto (1 a 8 chars cobre ZWJ + variantes)
                 if not emoji or len(emoji) > 8:
                     continue
                 row = db.execute("SELECT a, b FROM dm WHERE id=?", (msg_id,)).fetchone()
@@ -1808,7 +1802,7 @@ async def ws_endpoint(ws: WebSocket):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ TAREFA 2 — Upload de anexo da DM
+# 🖼️ Upload de anexo da DM
 # ═══════════════════════════════════════════════════════════
 @app.post("/api/dm/upload")
 async def dm_upload(file: UploadFile = File(...)):
@@ -1850,7 +1844,7 @@ async def dm_upload(file: UploadFile = File(...)):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ TAREFA 5 — Busca de usuários
+# 🖼️ Busca de usuários
 # ═══════════════════════════════════════════════════════════
 @app.get("/api/users/search")
 def users_search(q: str = ""):
@@ -1889,11 +1883,89 @@ def users_search(q: str = ""):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ TAREFA 5 — Lista de amigos (placeholder até existir tabela friends)
+# 🖼️ Lista de amigos (placeholder até existir tabela friends)
 # ═══════════════════════════════════════════════════════════
 @app.get("/api/friends/list")
 def friends_list():
     return []
+
+
+# ═══════════════════════════════════════════════════════════
+# 🖼️ PROXY DE IMAGENS — dribla hotlink protection do CDN da Moonton
+# ═══════════════════════════════════════════════════════════
+# O CDN akmweb.youngjoygame.com responde 500 quando o Referer não é
+# do domínio oficial. Esse proxy busca a imagem com os headers corretos
+# e devolve pro navegador. Cache em memória por URL + Cache-Control longo.
+#
+# Uso (do frontend):
+#   <img src="/api/img?url=https%3A%2F%2Fakmweb.youngjoygame.com%2F...">
+#
+# Hosts permitidos (whitelist):
+_IMG_HOSTS_PERMITIDOS = {
+    "akmweb.youngjoygame.com",
+    "esportpedia.b-cdn.net",
+    "static.wikia.nocookie.net",
+    "cdn.mobilelegends.com",
+}
+
+_IMG_HEADERS = {
+    "Referer": "https://www.mobilelegends.com/",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "image/avif,image/webp,image/apng,image/png,image/*,*/*;q=0.8",
+    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+}
+
+_img_cache: dict[str, tuple[bytes, str]] = {}
+_IMG_CACHE_MAX = 2000
+
+
+@app.get("/api/img")
+async def proxy_img(url: str = Query(..., min_length=8)):
+    """Faz proxy de imagens externas com os headers corretos."""
+    host = (urlparse(url).hostname or "").lower()
+    if host not in _IMG_HOSTS_PERMITIDOS:
+        raise HTTPException(400, "host não permitido")
+
+    # Cache hit (memória)
+    if url in _img_cache:
+        data, content_type = _img_cache[url]
+        return Response(
+            content=data,
+            media_type=content_type,
+            headers={"Cache-Control": "public, max-age=604800, immutable"},
+        )
+
+    try:
+        async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as cli:
+            r = await cli.get(url, headers=_IMG_HEADERS)
+    except httpx.RequestError as exc:
+        print(f"⚠️ [img-proxy] erro upstream: {url} → {exc}")
+        raise HTTPException(502, f"upstream error: {exc}")
+
+    if r.status_code != 200:
+        print(f"⚠️ [img-proxy] upstream {r.status_code}: {url}")
+        raise HTTPException(r.status_code, f"upstream respondeu {r.status_code}")
+
+    content_type = (r.headers.get("content-type") or "image/png").split(";")[0].strip()
+    data = r.content
+
+    # Evicção FIFO simples quando bate o teto
+    if len(_img_cache) >= _IMG_CACHE_MAX:
+        try:
+            _img_cache.pop(next(iter(_img_cache)))
+        except StopIteration:
+            pass
+
+    _img_cache[url] = (data, content_type)
+    return Response(
+        content=data,
+        media_type=content_type,
+        headers={"Cache-Control": "public, max-age=604800, immutable"},
+    )
 
 
 @app.get("/sw.js")

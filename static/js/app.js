@@ -57,13 +57,13 @@ let HERO_REQUEST_SEQ = 0;
 let DM_THREADS = [];
 let DM_FILTER = "all";
 let DM_SEARCH = "";
-let DM_LAST_DAY_KEY = null;   // 🆕 separador de dia (estilo WhatsApp)
+let DM_LAST_DAY_KEY = null;   // separador de dia (estilo WhatsApp)
 
 let LOBBY_STARTED = false;
 
 // guarda o último nick pedido via abrirPerfil pra renderOtherProfile
 let PROFILE_VIEW_TARGET = null;
-// 🆕 FIX 3: memoriza a aba de origem pra o botão "Voltar" do perfil
+// memoriza a aba de origem pra o botão "Voltar" do perfil
 let PROFILE_PREVIOUS_TAB = "home";
 
 const INIT_CACHE_KEY = "society.init_cache";
@@ -97,7 +97,6 @@ function clearInitCache() {
   try { localStorage.removeItem(INIT_CACHE_KEY); } catch (e) {}
 }
 
-const HERO_IMAGE_DIR = "/static/img/icons/herois/";
 const ITEM_IMAGE_DIR = "/static/img/icons/itens/";
 
 const ITEM_CATEGORIES = [
@@ -216,6 +215,8 @@ window.addEventListener("hero-catalog-ready", () => {
   try {
     if (BUILD_LIST_STATE === "ready") renderCommunityBuilds();
     renderHomeCommunityPreviews();
+    // Re-renderiza o meta quando os ícones chegarem (resolve os placeholders)
+    if (typeof renderCommunityMeta === "function") renderCommunityMeta();
   } catch (e) { /* ignora */ }
 });
 
@@ -621,7 +622,7 @@ window.societyGoogleProfileSubmit = profileName =>
   send({t:"google_profile_name", profile_name:profileName});
 window.societyGoogleProfileCancel = () => send({t:"google_profile_cancel"});
 
-/* ---------- 🆕 ABRIR PERFIL DE OUTRO USUÁRIO ---------- */
+/* ---------- ABRIR PERFIL DE OUTRO USUÁRIO ---------- */
 window.abrirPerfil = function(userId) {
   if (!userId) return;
   console.log("[app] abrirPerfil:", userId);
@@ -666,6 +667,16 @@ window.Society = {
   getCurrentDmNick: () => DM.with || null,
   getCurrentDmName: () => DM.name || null,
   openCurrentDmProfile: () => { if (DM.with) openDmProfile(); },
+
+  // 🔗 Abre a página de um herói (fallback usado por heroes-catalog.js / hero-official.js)
+  openHero: (name, buildId, tabId) => {
+    if (!name) return;
+    if (window.SocietyHero && typeof window.SocietyHero.open === "function") {
+      try { window.SocietyHero.open(name, buildId || null, tabId || "overview"); return; }
+      catch (e) { console.error("[society] SocietyHero.open falhou:", e); }
+    }
+    console.warn("[society] SocietyHero ainda não está pronto para abrir:", name);
+  },
 
   state: () => ({
     meta: COMMUNITY_META,
@@ -1261,8 +1272,14 @@ function getIcon(tipo, nome){
   let imageUrl = null;
 
   if (tipo === "herois") {
-    const knownHero = HERO_CATALOG.find(hero => hero.name.toLocaleLowerCase("pt-BR") === nameLower);
-    if (knownHero && knownHero.file) imageUrl = HERO_IMAGE_DIR + knownHero.file;
+    // safe access — HERO_CATALOG pode não ter chegado ainda
+    const list = window.HERO_CATALOG || [];
+    const knownHero = list.find(hero => hero.name.toLocaleLowerCase("pt-BR") === nameLower);
+    if (knownHero && knownHero.file) {
+      imageUrl = (window.HeroCatalog && window.HeroCatalog.imageUrl)
+        ? window.HeroCatalog.imageUrl(knownHero)
+        : knownHero.file;
+    }
   } else if (tipo === "itens") {
     const knownItem = BUILD_ITEM_CATALOG.find(item => {
       if (item.name.toLocaleLowerCase("pt-BR") === nameLower) return true;
@@ -2371,9 +2388,7 @@ function fillDmProfile(message){
 }
 
 /* ══════════════════════════════════════════════════════════════
-   🆕 SEPARADOR DE DIA — estilo WhatsApp
-   Mostra "Hoje", "Ontem", dia da semana ou data completa
-   sempre que o dia muda entre duas mensagens consecutivas.
+   SEPARADOR DE DIA — estilo WhatsApp
    ══════════════════════════════════════════════════════════════ */
 function dmDayKey(ts) {
   const date = new Date(Number(ts) * 1000);
@@ -2436,7 +2451,7 @@ function dmResetDayTracking() {
 /* ══════════════════════════════════════════════════════════════ */
 
 function addBubble(from, text, ts, msgId){
-  dmMaybeInsertDaySeparator(ts);   // 🆕 insere "Hoje"/"Ontem"/data antes do bubble
+  dmMaybeInsertDaySeparator(ts);
 
   const isMine = from === SELF;
   const bubble = el("div", null, "bub" + (isMine ? " me" : ""));
@@ -2559,7 +2574,7 @@ function openChat(m){
       : "visto por último recentemente";
   }
 
-  dmResetDayTracking();   // 🆕 limpa o rastreamento da conversa anterior
+  dmResetDayTracking();
   $("dmMsgs").textContent = "";
   m.msgs.forEach(x => addBubble(x.from, x.m, x.ts, x.id));
   if (!m.msgs.length) $("dmMsgs").append(el("small", "Nenhuma mensagem ainda. Diga oi!"));
@@ -2658,6 +2673,87 @@ function fillCard(m){
   [profile.rank, profile.role, profile.hero].filter(Boolean).forEach(x => i.append(el("span", x, "tag")));
   if (profile.bio) i.append(el("div", profile.bio));
   if (!profile.rank && !profile.role && !profile.hero && !profile.bio) i.append(el("div", "Este jogador ainda não preencheu o perfil."));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   🔗 FALLBACK DE NAVEGAÇÃO — links "#/heroi/<slug>"
+   Resolve qualquer clique/URL que aponte para um herói e chama
+   SocietyHero.open() (API do hero-hub.js). Independe do renderer
+   ter gerado o link certo ou não.
+   ══════════════════════════════════════════════════════════════ */
+function abrirHeroiPorSlug(slug) {
+  if (!slug) return;
+  slug = String(slug).toLowerCase().replace(/\/+$/, '');
+
+  function tentarAbrir(nome) {
+    if (!nome) return false;
+    if (window.SocietyHero && typeof window.SocietyHero.open === 'function') {
+      try { window.SocietyHero.open(nome, null, 'overview'); return true; }
+      catch (e) { console.error('[router] SocietyHero.open falhou:', e); }
+    }
+    if (window.Society && typeof window.Society.openHero === 'function') {
+      try { window.Society.openHero(nome, null, 'overview'); return true; }
+      catch (e) { console.error('[router] Society.openHero falhou:', e); }
+    }
+    console.warn('[router] nenhum handler disponível para abrir:', nome);
+    return false;
+  }
+
+  const norm = function (s) {
+    return String(s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  };
+
+  // 1) Catálogo já carregado? Resolve direto.
+  const list = window.HERO_CATALOG || [];
+  const hero = list.find(function (h) { return norm(h.name) === slug; });
+  if (hero) { tentarAbrir(hero.name); return; }
+
+  // 2) Sem catálogo — pede pro HeroOfficial carregar o índice.
+  if (window.HeroOfficial && typeof window.HeroOfficial.loadIndex === 'function') {
+    window.HeroOfficial.loadIndex().then(function (idx) {
+      const found = (idx.heroes || []).find(function (x) { return x.slug === slug; });
+      if (found) tentarAbrir(found.name);
+      else console.warn('[router] slug não encontrado no índice:', slug);
+    }).catch(function () {
+      tentarAbrir(slug.split('-').map(function (w) {
+        return w.charAt(0).toUpperCase() + w.slice(1);
+      }).join(' '));
+    });
+    return;
+  }
+
+  // 3) Último recurso — Title Case
+  tentarAbrir(slug.split('-').map(function (w) {
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(' '));
+}
+
+// Clique em qualquer link "#/heroi/..."
+document.addEventListener('click', function (e) {
+  const a = e.target && e.target.closest && e.target.closest('a[href^="#/heroi/"]');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  const slug = href.replace(/^#\/heroi\//i, '').split(/[?#]/)[0];
+  if (!slug) return;
+  e.preventDefault();
+  abrirHeroiPorSlug(slug);
+});
+
+// Navegação direta / back-forward com hash
+window.addEventListener('hashchange', function () {
+  const m = (location.hash || '').match(/^#\/heroi\/(.+)$/i);
+  if (m) abrirHeroiPorSlug(m[1]);
+});
+
+// Boot: se a página abriu já com hash de herói
+if (/^#\/heroi\//i.test(location.hash)) {
+  // Delay curto pra dar tempo do SocietyHero registrar
+  setTimeout(function () {
+    const m = location.hash.match(/^#\/heroi\/(.+)$/i);
+    if (m) abrirHeroiPorSlug(m[1]);
+  }, 800);
 }
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");

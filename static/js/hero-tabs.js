@@ -2,6 +2,10 @@
 // Abas extras da página do herói: Matchups, Guia, Skills, Stats, Skins, Lore
 // + blocos da Visão geral (build dos pros, matchups, combo, dica) e selos do topo.
 // Depende de: hero-hub.js (window.HeroHub), hero-contrib.js, hero-data.js.
+//
+// Integração com hero-official-tabs.js:
+//   Cada render de aba chama callTabHook(id, panel), que injeta Nodes
+//   produzidos por outros módulos (ex: dados oficiais no topo da aba).
 (function () {
   'use strict';
 
@@ -22,6 +26,21 @@
   }
 
   function goTab(id) { return function () { Hub.setTab(id); window.scrollTo(0, 0); }; }
+
+  // Chama hooks "tab_<id>" registrados por outros módulos (ex: hero-official-tabs.js).
+  // Cada hook recebe o nome do herói atual e devolve um Node (ou null).
+  function callTabHook(id, panel) {
+    var list = Hub.hooks && Hub.hooks['tab_' + id];
+    if (!list || !list.length) return;
+    list.forEach(function (fn) {
+      try {
+        var n = fn(cur().name);
+        if (n) panel.appendChild(n);
+      } catch (e) {
+        console.error('[hero-tabs] hook tab_' + id, e);
+      }
+    });
+  }
 
   function writeBox(summary, formEl) {
     var d = el('details', null, 'ht-write');
@@ -214,6 +233,8 @@
     var name = cur().name;
     HX.ensure(name);
     gate(panel);
+    callTabHook('matchups', panel);
+
     var cols = el('div', null, 'ht-cols');
     [['counter_weak', 'SOFRE CONTRA', 'Heróis que costumam atrapalhar ' + name],
      ['counter_strong', 'SE DÁ BEM CONTRA', 'Heróis em que ' + name + ' leva vantagem']].forEach(function (d) {
@@ -262,6 +283,8 @@
     var name = cur().name;
     HX.ensure(name);
     gate(panel);
+    callTabHook('guide', panel);
+
     panel.appendChild(el('p', 'Guia escrito pela comunidade. Os textos são dos jogadores, não são oficiais; confira o patch e teste no seu elo.', 'hc-muted ht-intro'));
     var grid = el('div', null, 'ht-guide');
     GUIDE.forEach(function (g) {
@@ -291,6 +314,7 @@
     var name = cur().name;
     HX.ensure(name);
     gate(panel);
+    callTabHook('skills', panel);
 
     var combos = HX.byKind(name, 'combo');
     var cc = U.card('COMBOS', 'Sequências que funcionam em teamfight e em duelo');
@@ -378,6 +402,9 @@
 
   function renderStats(panel) {
     var name = cur().name;
+    gate(panel);
+    callTabHook('stats', panel);
+
     var meta = U.heroMeta(), builds = cur().builds, contribs = HX.all(name);
     var lanes = U.LANES.filter(function (l) {
       return meta.some(function (e) { return e.lane === l; }) || builds.some(function (b) { return b.lane === l; });
@@ -461,6 +488,8 @@
     var name = cur().name;
     HX.ensure(name);
     gate(panel);
+    callTabHook('skins', panel);
+
     var entries = HX.byKind(name, 'skin');
     var c = U.card('SKINS', 'Skins de ' + name + ' que a comunidade recomenda ou comenta');
     if (!entries.length) c.appendChild(el('p', 'Nenhuma skin cadastrada ainda.', 'hc-muted'));
@@ -486,6 +515,8 @@
     var name = cur().name;
     HX.ensure(name);
     gate(panel);
+    callTabHook('lore', panel);
+
     var entries = HX.byKind(name, 'lore');
     var c = U.card('LORE', 'História e curiosidades de ' + name + ', contadas pela comunidade');
     if (!entries.length) c.appendChild(el('p', 'Ninguém contou a história deste herói ainda.', 'hc-muted'));
@@ -501,6 +532,12 @@
   }
 
   // ───────────── registro ─────────────
+  // Garante que os arrays de hook existam, mesmo se hero-official-tabs.js
+  // (ou outro módulo) carregar antes deste arquivo.
+  ['matchups', 'guide', 'skills', 'stats', 'skins', 'lore'].forEach(function (id) {
+    if (!Hub.hooks['tab_' + id]) Hub.hooks['tab_' + id] = [];
+  });
+
   var count = function (kinds) { return function () { var n = HX.byKind(cur().name, kinds).length; return n ? ' (' + n + ')' : ''; }; };
   var matchCount = count(['counter_weak', 'counter_strong']);
   Hub.register({ id: 'matchups', order: 40, label: function () { return 'Matchups' + matchCount(); }, render: renderMatchups });

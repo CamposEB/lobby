@@ -1,4 +1,4 @@
-<main class="hh-page" id="heroesPage">
+<main class="hh-page hc-page" id="heroesPage">
 
   <nav class="hh-crumbs" aria-label="Você está em">
     <button type="button" data-hh-go="home">Início</button>
@@ -6,50 +6,86 @@
     <b>Heróis</b>
   </nav>
 
-  <header class="hh-list-head">
-    <div>
-      <p class="hh-eyebrow">CATÁLOGO</p>
-      <h2 id="heroesTitle">Todos os heróis</h2>
-      <p class="hh-lead">Escolha um herói para ver as builds e as indicações de meta enviadas pela comunidade.</p>
-      <p class="hh-note">Dados da comunidade, não oficiais. Os selos de tier vêm das indicações dos jogadores.</p>
-    </div>
-    <div id="heroesRoleStats" class="hh-role-stats" role="group" aria-label="Filtrar por classe"></div>
-  </header>
+  <!-- ═══════════ RECENTES ═══════════ -->
+  <section class="hc-section">
+    <header class="hc-section-head">
+      <h2 class="hc-section-title">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="hc-section-icon">
+          <path d="M12 2v6M12 16v6M2 12h6M16 12h6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M19.1 4.9l-4.2 4.2M9.1 14.9l-4.2 4.2"/>
+        </svg>
+        Heróis Mais Recentes
+      </h2>
+    </header>
+    <div class="hc-recent" id="hcRecent"></div>
+  </section>
 
-  <section class="hh-panel" aria-label="Lista de heróis">
-    <div class="hh-toolbar">
-      <label class="hh-search">
-        <svg class="hh-ico" aria-hidden="true" focusable="false"><use href="#i-compass"/></svg>
-        <input id="heroesSearch" type="search" placeholder="Buscar heróis..." autocomplete="off" aria-label="Buscar heróis">
+  <!-- ═══════════ TODOS ═══════════ -->
+  <section class="hc-section">
+    <header class="hc-section-head">
+      <h2 class="hc-section-title">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="hc-section-icon">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Ver Todos os Heróis
+      </h2>
+      <span class="hc-count" id="hcCount">Carregando…</span>
+    </header>
+
+    <div class="hc-filters">
+      <label class="hc-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.8" cy="10.8" r="6.3"/>
+          <path d="m15.5 15.5 4.2 4.2"/>
+        </svg>
+        <input id="hcSearch" type="search" placeholder="Buscar heróis..." autocomplete="off">
       </label>
-      <select id="heroesSort" aria-label="Ordenar">
-        <option value="name">Nome (A–Z)</option>
-        <option value="tier">Melhor tier</option>
-        <option value="builds">Mais builds</option>
+
+      <select id="hcSort" aria-label="Ordenar">
+        <option value="name">Nome</option>
+        <option value="win">Maior win rate</option>
+        <option value="pick">Mais escolhidos</option>
+        <option value="ban">Mais banidos</option>
+        <option value="recent">Mais recentes</option>
       </select>
-      <select id="heroesRole" aria-label="Classe">
-        <option value="">Todas as classes</option>
+
+      <select id="hcRole" aria-label="Classe">
+        <option value="">Todas as Roles</option>
       </select>
-      <select id="heroesLane" aria-label="Rota">
-        <option value="">Todas as rotas</option>
+
+      <select id="hcLane" aria-label="Rota">
+        <option value="">Todas as Lanes</option>
         <option value="EXP">EXP</option>
-        <option value="Jungle">Selva · Jungle</option>
-        <option value="Mid">Meio · Mid</option>
-        <option value="Gold">Ouro · Gold</option>
-        <option value="Roam">Roam · Suporte</option>
+        <option value="Jungle">Jungle</option>
+        <option value="Mid">Mid</option>
+        <option value="Gold">Gold</option>
+        <option value="Roam">Roam</option>
       </select>
-      <select id="heroesTier" aria-label="Tier da comunidade">
-        <option value="">Todos os tiers</option>
+
+      <select id="hcTier" aria-label="Tier">
+        <option value="">Todos os Tiers</option>
         <option value="S">Tier S</option>
         <option value="A">Tier A</option>
         <option value="B">Tier B</option>
-        <option value="none">Sem indicações</option>
+        <option value="C">Tier C</option>
       </select>
-      <span id="heroesCount" class="hh-count" role="status" aria-live="polite"></span>
+
+      <select id="hcDifficulty" aria-label="Dificuldade">
+        <option value="">Qualquer Dificuldade</option>
+        <option value="easy">Fácil</option>
+        <option value="medium">Média</option>
+        <option value="hard">Difícil</option>
+      </select>
+
+      <select id="hcSpeciality" aria-label="Especialidade">
+        <option value="">Todas as Especialidades</option>
+      </select>
     </div>
 
-    <div id="heroesGrid" class="hh-grid"></div>
-    <p id="heroesEmpty" class="hh-empty" hidden>Nenhum herói encontrado com esses filtros.</p>
+    <div class="hc-grid" id="hcGrid"></div>
+    <p class="hc-empty" id="hcEmpty" hidden>Nenhum herói encontrado com esses filtros.</p>
   </section>
 
 </main>
