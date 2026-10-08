@@ -377,6 +377,7 @@
   }
 
   function refreshBadge() {
+    refreshBell();
     const badge = $('friendsTabBadge');
     if (!badge) return;
     if (_incoming.length > 0) {
@@ -417,14 +418,198 @@
     }
   }
   function onRequestReceived(info) {
-    context.toast && context.toast('@' + info.from + ' quer ser seu amigo.');
+    // O toast já vem do evento 'friend_notice' (app.js); aqui só atualizamos o sino.
     context.send({ t: 'friends_list' });
   }
   function refresh() { context.send({ t: 'friends_list' }); }
 
+  // ─── Sino de notificações de amizade ───
+  let _bellBtn = null, _bellBadge = null, _bellPanel = null;
+  let _prevIncoming = null;
+
+  function ensureBellStyles() {
+    ensureStyles();
+    if (document.getElementById('friends-bell-css')) return;
+    const style = document.createElement('style');
+    style.id = 'friends-bell-css';
+    style.textContent = `
+      .friends-bell {
+        position: relative; display: grid; place-items: center; flex: 0 0 auto;
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 1px solid var(--line, rgba(255,255,255,.07));
+        background: var(--s2, #14171c); color: var(--muted, #9298a3);
+        cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+      }
+      .friends-bell:hover, .friends-bell[aria-expanded="true"] {
+        background: var(--s3, #1b1f26); color: var(--fg, #f5f5f5);
+      }
+      .friends-bell.has-pending { color: #b9a8ff; border-color: rgba(139,114,255,.45); }
+      .friends-bell svg { display: block; width: 20px; height: 20px; }
+      .friends-bell-badge {
+        position: absolute; top: -3px; right: -3px;
+        display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px;
+        border-radius: 9px; background: #ff5f5f; color: #fff;
+        font-size: .68rem; font-weight: 700; line-height: 1;
+        box-shadow: 0 0 0 2px var(--s1, #0e1013);
+      }
+      .friends-bell.is-ringing svg { animation: friends-bell-ring .9s ease-in-out; transform-origin: 50% 10%; }
+      @keyframes friends-bell-ring {
+        0%,100% { transform: rotate(0); }
+        15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); }
+        45% { transform: rotate(10deg); } 60% { transform: rotate(-8deg); }
+        75% { transform: rotate(4deg); }
+      }
+      @media (prefers-reduced-motion: reduce) { .friends-bell.is-ringing svg { animation: none; } }
+      .friends-bell-panel {
+        position: fixed; z-index: 1200; width: 360px; max-width: calc(100vw - 24px);
+        max-height: min(70dvh, 460px); display: flex; flex-direction: column;
+        border: 1px solid var(--line-2, rgba(255,255,255,.12)); border-radius: 16px;
+        background: var(--s1, #0e1013); color: var(--fg, #f5f5f5);
+        box-shadow: 0 18px 50px rgba(0,0,0,.6); overflow: hidden;
+      }
+      .friends-bell-panel[hidden] { display: none; }
+      .friends-bell-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 14px; font-weight: 700; font-size: .95rem;
+        border-bottom: 1px solid var(--line, rgba(255,255,255,.07));
+        background: linear-gradient(180deg, rgba(139,114,255,.12), transparent), var(--s2, #14171c);
+      }
+      .friends-bell-head small { color: var(--muted, #9298a3); font-weight: 600; }
+      .friends-bell-list { overflow-y: auto; padding: 6px; scrollbar-width: thin; }
+      .friends-bell-list .friends-row { grid-template-columns: 40px minmax(0,1fr); row-gap: 8px; }
+      .friends-bell-list .friends-avatar { width: 40px; height: 40px; }
+      .friends-bell-list .friends-row-actions { grid-column: 2 / -1; }
+      .friends-bell-list .friends-btn { flex: 1 1 0; justify-content: center; }
+      .friends-bell-list .friends-btn:disabled { opacity: .55; cursor: default; }
+      .friends-bell-foot { padding: 8px; border-top: 1px solid var(--line, rgba(255,255,255,.07)); }
+      .friends-bell-foot .friends-btn { width: 100%; justify-content: center; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function mountBell() {
+    if (_bellBtn && document.body.contains(_bellBtn)) return;
+    const account = $('topbarAccount');
+    if (!account) return;
+    ensureBellStyles();
+
+    _bellBtn = el('button', {
+      type: 'button', id: 'friendsBellBtn', class: 'friends-bell',
+      'aria-label': 'Notificações de amizade', 'aria-haspopup': 'dialog', 'aria-expanded': 'false',
+    });
+    _bellBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+    _bellBadge = el('span', { class: 'friends-bell-badge' });
+    _bellBadge.hidden = true;
+    _bellBtn.append(_bellBadge);
+    account.insertBefore(_bellBtn, $('sideProfile') || null);
+
+    _bellPanel = el('div', { id: 'friendsBellPanel', class: 'friends-bell-panel', role: 'dialog', 'aria-label': 'Pedidos de amizade' });
+    _bellPanel.hidden = true;
+    document.body.appendChild(_bellPanel);
+
+    _bellBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBell(); });
+    document.addEventListener('click', (e) => {
+      if (_bellPanel.hidden) return;
+      if (_bellPanel.contains(e.target) || _bellBtn.contains(e.target)) return;
+      closeBell();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !_bellPanel.hidden) { closeBell(); _bellBtn.focus(); }
+    });
+    window.addEventListener('resize', () => { if (!_bellPanel.hidden) positionBell(); });
+    refreshBell();
+  }
+
+  function positionBell() {
+    const r = _bellBtn.getBoundingClientRect();
+    const w = Math.min(360, window.innerWidth - 24);
+    const left = Math.max(12, Math.min(r.right - w, window.innerWidth - w - 12));
+    _bellPanel.style.width = w + 'px';
+    _bellPanel.style.left = left + 'px';
+    _bellPanel.style.top = (r.bottom + 8) + 'px';
+  }
+
+  function toggleBell() { _bellPanel.hidden ? openBell() : closeBell(); }
+
+  function openBell() {
+    if (!_bellPanel) return;
+    renderBellPanel();
+    _bellPanel.hidden = false;
+    _bellBtn.setAttribute('aria-expanded', 'true');
+    positionBell();
+    context.send && context.send({ t: 'friends_list' }); // garante lista atualizada
+  }
+
+  function closeBell() {
+    if (!_bellPanel) return;
+    _bellPanel.hidden = true;
+    _bellBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderBellPanel() {
+    _bellPanel.replaceChildren();
+
+    const head = el('div', { class: 'friends-bell-head' });
+    head.append(el('span', { textContent: 'Pedidos de amizade' }));
+    if (_incoming.length) head.append(el('small', { textContent: String(_incoming.length) }));
+    _bellPanel.append(head);
+
+    const list = el('div', { class: 'friends-bell-list' });
+    if (!_incoming.length) {
+      const empty = el('div', { class: 'friends-empty' });
+      empty.append(el('b', { textContent: 'Tudo em dia' }));
+      empty.append(document.createTextNode('Você não tem pedidos de amizade pendentes.'));
+      list.append(empty);
+    } else {
+      _incoming.forEach(user => {
+        const row = rowCard(user, {
+          primaryLabel: 'Aceitar', primaryClass: 'is-success',
+          onPrimary: () => { lockRow(row); context.send({ t: 'friend_accept', nick: user.nick }); },
+          secondaryLabel: 'Recusar',
+          onSecondary: () => { lockRow(row); context.send({ t: 'friend_decline', nick: user.nick }); },
+          onCard: () => { closeBell(); openProfile(user.nick); },
+        });
+        list.append(row);
+      });
+    }
+    _bellPanel.append(list);
+
+    const foot = el('div', { class: 'friends-bell-foot' });
+    const all = el('button', { type: 'button', class: 'friends-btn', textContent: 'Ver todos os amigos' });
+    all.addEventListener('click', () => { closeBell(); open(); });
+    foot.append(all);
+    _bellPanel.append(foot);
+  }
+
+  function lockRow(row) {
+    row.querySelectorAll('button').forEach(b => { b.disabled = true; });
+  }
+
+  function refreshBell() {
+    if (!_bellBtn) return;
+    const n = _incoming.length;
+    _bellBadge.hidden = n === 0;
+    _bellBadge.textContent = n > 99 ? '99+' : String(n);
+    _bellBtn.classList.toggle('has-pending', n > 0);
+    _bellBtn.setAttribute('aria-label', n > 0
+      ? 'Notificações: ' + n + (n === 1 ? ' pedido de amizade' : ' pedidos de amizade')
+      : 'Notificações de amizade');
+
+    // Balança o sino quando chega um pedido novo (não no primeiro carregamento)
+    if (_prevIncoming !== null && n > _prevIncoming) {
+      _bellBtn.classList.remove('is-ringing');
+      void _bellBtn.offsetWidth;
+      _bellBtn.classList.add('is-ringing');
+    }
+    _prevIncoming = n;
+
+    if (_bellPanel && !_bellPanel.hidden) { renderBellPanel(); positionBell(); }
+  }
+
   // ─── Init ───
   function mount(opts) {
     context = opts || {};
+    mountBell();
     // Substitui o botão "Nova conversa" da DM por "Amigos"
     const oldBtn = $('dmNewConversation');
     if (oldBtn && !oldBtn.dataset.friendsReplaced) {
