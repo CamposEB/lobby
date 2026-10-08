@@ -50,6 +50,7 @@ let ws, SHOP = {}, ME = {coins:0, owned:[], equip:{}}, SELF = null, LFG = [];
 let PROFILE = {}, DM = {with:null}, DM_PROFILE_TARGET = null, UNREAD = 0, QZ = null;
 let LFG_DETAILS = {}, LFG_PROFILE_TARGET = null, LFG_TOAST_TIMER = null, LFG_LOADED = false;
 let IS_ADMIN = false, IS_MODERATOR = false, IS_DEV = false;
+let IS_VIP = false, IS_STREAMER = false, IS_BETA = false;
 let TOURNAMENTS = [], TOURNAMENT_EDIT_ID = null;
 let COMMUNITY_META = [], COMMUNITY_BUILDS = [], COMMUNITY_BUILDS_TRENDING = [], COMMUNITY_BUILDS_RECENT = [];
 let COMMUNITY_META_LANE = "all", BUILD_REQUEST_ID = 0, BUILD_LOAD_TIMER = null, BUILD_FILTER_TIMER = null;
@@ -69,8 +70,12 @@ let LOBBY_STARTED = false;
 let PROFILE_VIEW_TARGET = null;
 let PROFILE_PREVIOUS_TAB = "home";
 
-// ⭐ NOVO: preserva o destinatário ao reabrir o modal de amigos
+// ⭐ Painel de amigos
 let FRIENDS_BOOTED = false;
+
+// ⭐ NOVO: filtros de moderação
+let MODERATION_FILTER = "open";
+let MODERATION_SEARCH = "";
 
 const INIT_CACHE_KEY = "society.init_cache";
 
@@ -82,6 +87,9 @@ function saveInitCache(m) {
       is_admin: Boolean(m.is_admin),
       is_moderator: Boolean(m.is_moderator),
       is_dev: Boolean(m.is_dev),
+      is_vip: Boolean(m.is_vip),
+      is_streamer: Boolean(m.is_streamer),
+      is_beta: Boolean(m.is_beta),
       role: m.role || "user", auth_provider: m.auth_provider || "password",
       unread: m.unread || 0,
       saved_at: Date.now()
@@ -218,7 +226,10 @@ const BUILD_ITEM_CATALOG = [
   {name:"Bênção do Favor",          category:"roaming", file:"favor"}
 ];
 
-const ROLE_ORDER = ["user", "admin", "mod", "dev"];
+/* ══════════════════════════════════════════════════════════════
+   HIERARQUIA DE PAPÉIS · user < beta < streamer < vip < admin < mod < dev
+   ══════════════════════════════════════════════════════════════ */
+const ROLE_ORDER = ["user", "beta", "streamer", "vip", "admin", "mod", "dev"];
 
 const ROLE_PERMS = {
   user: {
@@ -230,6 +241,39 @@ const ROLE_PERMS = {
       ["❌", "Moderar denúncias", false],
       ["❌", "Silenciar jogadores", false],
       ["❌", "Gerenciar papéis", false]
+    ]
+  },
+  beta: {
+    title: "Beta Tester",
+    badge: "BETA",
+    cls: "is-beta",
+    perms: [
+      ["✅", "Acesso a recursos em teste", true],
+      ["✅", "Reportar bugs diretamente à equipe", true],
+      ["✅", "Denunciar jogadores", true],
+      ["❌", "Moderar denúncias", false]
+    ]
+  },
+  streamer: {
+    title: "Streamer",
+    badge: "STREAMER",
+    cls: "is-streamer",
+    perms: [
+      ["✅", "Divulgar transmissões", true],
+      ["✅", "Selo de streamer no perfil", true],
+      ["✅", "Denunciar jogadores", true],
+      ["❌", "Moderar denúncias", false]
+    ]
+  },
+  vip: {
+    title: "VIP",
+    badge: "VIP",
+    cls: "is-vip",
+    perms: [
+      ["✅", "Selo de verificado azul", true],
+      ["✅", "Destaque no perfil e na comunidade", true],
+      ["✅", "Denunciar jogadores", true],
+      ["❌", "Moderar denúncias", false]
     ]
   },
   admin: {
@@ -261,8 +305,8 @@ const ROLE_PERMS = {
     cls: "is-dev",
     perms: [
       ["✅", "Todas as permissões do MOD", true],
-      ["✅", "Atribuir ADM / MOD / DEV", true],
-      ["✅", "Remover ADM / MOD / DEV", true],
+      ["✅", "Atribuir qualquer cargo (BETA / STREAMER / VIP / ADM / MOD / DEV)", true],
+      ["✅", "Remover qualquer cargo", true],
       ["✅", "Ver lista completa de contas", true]
     ]
   }
@@ -341,8 +385,7 @@ async function logout(){
   location.reload();
 }
 
-/* ⭐ NOVO: entrega perfis ao dm-extras.js sem depender de interceptar o WebSocket.
-   Retorna true se o bridge aceitou o perfil (era da conversa aberta). */
+/* ⭐ Entrega perfis ao dm-extras.js sem depender de interceptar o WebSocket. */
 function sendProfileToDmBridge(profile, nick){
   if (!profile || !nick || !DM.with) return false;
   if (String(nick).toLowerCase() !== String(DM.with).toLowerCase()) return false;
@@ -393,8 +436,6 @@ function handle(m){
     fillCard(m);
     if (LFG_PROFILE_TARGET === m.nick) fillLfgProfile(m);
 
-    // ⭐ Ponte para o dm-extras.js: cabeçalho + dialog da conversa aberta.
-    // Quando o bridge assume, ele é o dono do #dmProfileContent (evita sobrescrita).
     const handledByDmBridge = sendProfileToDmBridge(m.p, m.nick);
     if (DM_PROFILE_TARGET === m.nick && !handledByDmBridge) fillDmProfile(m);
 
@@ -484,9 +525,13 @@ function handle(m){
     }
   }
   else if (t === "role_updated"){
-    IS_ADMIN = m.role === "admin";
-    IS_MODERATOR = m.role === "admin" || m.role === "mod" || m.role === "dev";
+    // ⭐ hierarquia nova: user < beta < streamer < vip < admin < mod < dev
+    IS_ADMIN = m.role === "admin" || m.role === "mod" || m.role === "dev";
+    IS_MODERATOR = m.role === "mod" || m.role === "dev";
     IS_DEV = m.role === "dev";
+    IS_VIP = m.role === "vip";
+    IS_STREAMER = m.role === "streamer";
+    IS_BETA = m.role === "beta";
     const adminNav = document.querySelector("#nav button[data-t='admin']");
     if (adminNav) adminNav.hidden = !IS_MODERATOR;
     const roleBlock = $("adminRoleManagement");
@@ -526,13 +571,11 @@ function handle(m){
   }
   else if (t === "quiz_result"){ QZ.done = true; renderQuiz(); $("qMsg").textContent = m.ok ? "Acertou! +10 moedas." : "Errou. A resposta era: " + QZ.o[m.correct]; }
   else if (t === "me"){ ME = {coins:m.coins, owned:m.owned, equip:m.equip}; renderItems(); updateCoins(); }
-  // ⭐ NOVO: sistema de amigos
   else if (t === "friends"){
     try { window.FriendsUI?.setFriends(m); } catch (e) { console.error("[friends]", e); }
   }
   else if (t === "friend_updated"){
     try { window.FriendsUI?.onFriendUpdated(m); } catch (e) { console.error("[friends]", e); }
-    // Se o perfil aberto é o alvo, recarrega
     if (PROFILE_VIEW_TARGET && PROFILE_VIEW_TARGET === m.nick) {
       try { send({ t: "profile_view", nick: PROFILE_VIEW_TARGET }); } catch (e) {}
     }
@@ -562,6 +605,9 @@ function applyInit(m, fromCache) {
   IS_ADMIN = Boolean(m.is_admin);
   IS_MODERATOR = Boolean(m.is_moderator);
   IS_DEV = Boolean(m.is_dev);
+  IS_VIP = Boolean(m.is_vip);
+  IS_STREAMER = Boolean(m.is_streamer);
+  IS_BETA = Boolean(m.is_beta);
 
   if (!fromCache) {
     saveInitCache(m);
@@ -617,7 +663,6 @@ function applyInit(m, fromCache) {
   try { setupCommunity(); } catch (e) {}
   try { renderModSelf(); } catch (e) {}
 
-  // ⭐ NOVO: monta o painel de amigos uma única vez
   try { mountFriendsUI(); } catch (e) { console.error("[friends] mount:", e); }
 }
 
@@ -634,7 +679,6 @@ function addLog(text, who){
   setTimeout(() => d.remove(), 30000);
 }
 
-/* ⭐ NOVO: montagem do painel de amigos (idempotente) */
 function mountFriendsUI() {
   if (FRIENDS_BOOTED) return;
   if (!window.FriendsUI || typeof window.FriendsUI.mount !== "function") return;
@@ -795,8 +839,12 @@ window.Society = {
   getCurrentDmNick: () => DM.with || null,
   getCurrentDmName: () => DM.name || null,
   openCurrentDmProfile: () => { if (DM.with) openDmProfile(); },
-  // ⭐ NOVO: abre uma conversa direta por código
   openDm: (nick, name) => { if (nick) openDm(String(nick), name || String(nick)); },
+  openProfile: (nick) => {
+    if (!nick) return;
+    try { window.abrirPerfil(String(nick)); }
+    catch (e) { console.error("[society] openProfile:", e); }
+  },
 
   openHero: (name, buildId, tabId) => {
     if (!name) return;
@@ -847,7 +895,6 @@ window.Society = {
 
 window.dispatchEvent(new Event("society-app-ready"));
 
-// ⭐ NOVO: se o FriendsUI ainda não estava carregado, tenta montar assim que ele aparecer
 if (!FRIENDS_BOOTED) {
   let friendBootTries = 0;
   const friendBootInterval = setInterval(() => {
@@ -1835,72 +1882,245 @@ function showModerationMessage(message, isError){
   status.classList.toggle("is-error", Boolean(isError));
 }
 
-function renderModeration(data){
-  const reports = $("moderationReports"), mutes = $("moderationMutes");
-  if (!reports || !mutes) return;
-  reports.textContent = "";
-  const openReports = data.reports.filter(report => report.status === "open" || report.status === "reviewed");
-  $("moderationReportsEmpty").hidden = openReports.length > 0;
-  openReports.forEach(report => {
-    const card = el("article", null, "moderation-report-card");
-    const heading = el("div", null, "moderation-report-heading");
-    const identity = el("div", null, "moderation-report-identity");
-    identity.append(el("span", "#" + report.id, "moderation-report-id"));
-    identity.append(el("b", "@" + report.target));
-    identity.append(el("small", "Denunciado por @" + report.reporter + " · " +
-      new Intl.DateTimeFormat("pt-BR", {dateStyle:"short", timeStyle:"short"}).format(new Date(report.created_at * 1000))));
-    heading.append(identity);
-    heading.append(el("span", report.status === "open" ? "PENDENTE" : "EM ANÁLISE",
-      "moderation-status moderation-status-" + report.status));
-    card.append(heading);
-    card.append(el("b", ({harassment:"Assédio ou intimidação",hate:"Discurso de ódio",spam:"Spam ou golpe",
-      cheating:"Trapaça ou antidesportivo",inappropriate:"Conteúdo impróprio",other:"Outro problema"})[report.category] || "Outro problema",
-      "moderation-category"));
-    card.append(el("p", report.details, "moderation-details"));
-    const actions = el("div", null, "moderation-actions");
-    if (report.status === "open") {
-      actions.append(moderationActionButton("Marcar em análise", "review", report.id, "moderation-secondary"));
-    }
-    if (IS_MODERATOR) {
-      actions.append(moderationActionButton("Silenciar 10 min", "mute_10m", report.id, "moderation-secondary"));
-      actions.append(moderationActionButton("Silenciar 1 hora", "mute_1h", report.id, "moderation-secondary"));
-      actions.append(moderationActionButton("Silenciar 24 h", "mute_24h", report.id, "moderation-warn"));
-    }
-    actions.append(moderationActionButton("Encerrar denúncia", "close", report.id, "moderation-secondary"));
-    actions.append(moderationActionButton("Descartar", "dismiss", report.id, "moderation-secondary"));
-    card.append(actions);
-    reports.append(card);
+/* ══════════════════════════════════════════════════════════════
+   MODERAÇÃO · helpers + render com filtros e links de perfil
+   ══════════════════════════════════════════════════════════════ */
+
+function makeUserLink(nick) {
+  const b = el("button", "@" + nick, "moderation-user-link");
+  b.type = "button";
+  b.setAttribute("aria-label", "Ver perfil de @" + nick);
+  b.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openModerationProfile(nick);
   });
-  mutes.textContent = "";
-  $("moderationMutesEmpty").hidden = data.mutes.length > 0;
-  data.mutes.forEach(mute => {
-    const item = el("div", null, "moderation-mute-item");
-    const info = el("div");
-    info.append(el("b", "@" + mute.nick));
-    info.append(el("small", "Até " + new Intl.DateTimeFormat("pt-BR", {dateStyle:"short", timeStyle:"short"})
-      .format(new Date(mute.muted_until * 1000)) + (mute.reason ? " · " + mute.reason : "")));
-    const unmute = el("button", "Remover silenciamento", "moderation-secondary");
-    unmute.type = "button";
-    unmute.disabled = !IS_MODERATOR;
-    unmute.title = IS_MODERATOR ? "" : "Apenas MOD/DEV podem remover silenciamentos.";
-    unmute.addEventListener("click", () => send({t:"moderation_unmute", target:mute.nick}));
-    item.append(info, unmute);
-    mutes.append(item);
-  });
+  return b;
 }
 
-function moderationActionButton(label, action, id, className){
-  const button = el("button", label, className);
-  button.type = "button";
-  button.addEventListener("click", () => send({t:"moderation_action", id, action}));
-  return button;
+function makeActionButton(label, onClick, className) {
+  const b = el("button", label, className);
+  b.type = "button";
+  b.addEventListener("click", onClick);
+  return b;
+}
+
+function makeModerationAction(label, action, id, className) {
+  return makeActionButton(label, () => send({ t: "moderation_action", id, action }), className);
+}
+
+function categoryLabel(cat) {
+  return ({
+    harassment: "Assédio ou intimidação",
+    hate: "Discurso de ódio",
+    spam: "Spam ou golpe",
+    cheating: "Trapaça ou antidesportivo",
+    inappropriate: "Conteúdo impróprio",
+    other: "Outro problema",
+  })[cat] || "Outro problema";
+}
+
+function openModerationProfile(nick) {
+  if (!nick) return;
+  if (typeof window.abrirPerfil === "function") {
+    window.abrirPerfil(nick);
+  } else {
+    console.warn("[moderation] abrirPerfil não disponível");
+  }
+}
+
+const MOD_STATUS_LABELS = {
+  open: "PENDENTE",
+  reviewed: "EM ANÁLISE",
+  resolved: "RESOLVIDA",
+  dismissed: "DESCARTADA",
+};
+
+function renderReportCard(report) {
+  const card = el("article", null, "moderation-report-card");
+  const heading = el("div", null, "moderation-report-heading");
+  const identity = el("div", null, "moderation-report-identity");
+
+  identity.append(el("span", "#" + report.id, "moderation-report-id"));
+  identity.append(makeUserLink(report.target));
+  identity.append(el("small",
+    "Denunciado por " + report.reporter + " · " +
+    new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" })
+      .format(new Date(report.created_at * 1000))));
+
+  heading.append(identity);
+  heading.append(el("span",
+    MOD_STATUS_LABELS[report.status] || String(report.status).toUpperCase(),
+    "moderation-status moderation-status-" + report.status));
+  card.append(heading);
+
+  card.append(el("b", categoryLabel(report.category), "moderation-category"));
+  card.append(el("p", report.details, "moderation-details"));
+
+  if (report.reviewed_by) {
+    const when = report.reviewed_at
+      ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" })
+          .format(new Date(report.reviewed_at * 1000))
+      : "";
+    card.append(el("small",
+      "Revisado por @" + report.reviewed_by + (when ? " · " + when : ""),
+      "moderation-reviewed-by"));
+  }
+
+  const actions = el("div", null, "moderation-actions");
+
+  actions.append(makeActionButton(
+    "👤 Ver perfil do denunciado",
+    () => openModerationProfile(report.target),
+    "moderation-secondary"
+  ));
+
+  if (report.reporter && report.reporter !== report.target) {
+    actions.append(makeActionButton(
+      "👤 Ver perfil do autor",
+      () => openModerationProfile(report.reporter),
+      "moderation-secondary"
+    ));
+  }
+
+  if (report.status === "open") {
+    actions.append(makeModerationAction("Marcar em análise", "review", report.id, "moderation-secondary"));
+  }
+
+  if (IS_MODERATOR && report.status !== "resolved" && report.status !== "dismissed") {
+    actions.append(makeModerationAction("Silenciar 10 min", "mute_10m", report.id, "moderation-secondary"));
+    actions.append(makeModerationAction("Silenciar 1 hora", "mute_1h", report.id, "moderation-secondary"));
+    actions.append(makeModerationAction("Silenciar 24 h", "mute_24h", report.id, "moderation-warn"));
+  }
+
+  if (report.status !== "resolved" && report.status !== "dismissed") {
+    actions.append(makeModerationAction("Encerrar denúncia", "close", report.id, "moderation-secondary"));
+    actions.append(makeModerationAction("Descartar", "dismiss", report.id, "moderation-secondary"));
+  }
+
+  card.append(actions);
+  return card;
+}
+
+function renderMuteCard(mute) {
+  const item = el("div", null, "moderation-mute-item");
+  const info = el("div");
+  info.append(makeUserLink(mute.nick));
+
+  const until = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" })
+    .format(new Date(mute.muted_until * 1000));
+  info.append(el("small", "Até " + until + (mute.reason ? " · " + mute.reason : "")));
+  if (mute.by_nick) info.append(el("small", "Aplicado por @" + mute.by_nick));
+
+  const actions = el("div", null, "moderation-mute-actions");
+  actions.append(makeActionButton(
+    "👤 Ver perfil",
+    () => openModerationProfile(mute.nick),
+    "moderation-secondary"
+  ));
+
+  const unmute = el("button", "Remover silenciamento", "moderation-secondary");
+  unmute.type = "button";
+  unmute.disabled = !IS_MODERATOR;
+  unmute.title = IS_MODERATOR ? "" : "Apenas MOD/DEV podem remover silenciamentos.";
+  unmute.addEventListener("click", () => send({ t: "moderation_unmute", target: mute.nick }));
+  actions.append(unmute);
+
+  item.append(info, actions);
+  return item;
+}
+
+function renderModeration(data) {
+  const reports = $("moderationReports"), mutes = $("moderationMutes");
+  if (!reports || !mutes) return;
+
+  renderModeration._reports = (data && data.reports) || [];
+  renderModeration._mutes = (data && data.mutes) || [];
+
+  const filter = MODERATION_FILTER;
+  const query = MODERATION_SEARCH.trim().toLocaleLowerCase("pt-BR");
+
+  const filtered = renderModeration._reports.filter(report => {
+    if (filter === "open" && report.status !== "open") return false;
+    if (filter === "reviewed" && report.status !== "reviewed") return false;
+    if (filter === "closed" && report.status !== "resolved" && report.status !== "dismissed") return false;
+    if (query) {
+      const hay = (
+        (report.target || "") + " " +
+        (report.reporter || "") + " " +
+        (report.details || "") + " " +
+        (report.category || "")
+      ).toLocaleLowerCase("pt-BR");
+      if (!hay.includes(query)) return false;
+    }
+    return true;
+  });
+
+  reports.textContent = "";
+  const empty = $("moderationReportsEmpty");
+  if (empty) {
+    empty.hidden = filtered.length > 0;
+    const b = empty.querySelector("b");
+    if (b) {
+      b.textContent = query
+        ? "Nenhuma denúncia corresponde à busca."
+        : filter === "open" ? "Não há denúncias pendentes."
+        : filter === "reviewed" ? "Nenhuma denúncia em análise."
+        : filter === "closed" ? "Nenhuma denúncia encerrada."
+        : "Nenhuma denúncia registrada.";
+    }
+  }
+
+  filtered.forEach(report => reports.append(renderReportCard(report)));
+
+  mutes.textContent = "";
+  const mutesEmpty = $("moderationMutesEmpty");
+  if (mutesEmpty) mutesEmpty.hidden = renderModeration._mutes.length > 0;
+  renderModeration._mutes.forEach(mute => mutes.append(renderMuteCard(mute)));
+}
+
+function setupModerationFilters() {
+  if (setupModerationFilters._bound) return;
+  setupModerationFilters._bound = true;
+
+  document.querySelectorAll("[data-mod-filter]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      MODERATION_FILTER = chip.dataset.modFilter || "open";
+      document.querySelectorAll("[data-mod-filter]").forEach(c => {
+        c.setAttribute("aria-pressed", String(c === chip));
+      });
+      renderModeration({
+        reports: renderModeration._reports || [],
+        mutes: renderModeration._mutes || [],
+      });
+    });
+  });
+
+  const searchInput = $("moderationSearchInput");
+  if (searchInput) {
+    let t = null;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        MODERATION_SEARCH = searchInput.value;
+        renderModeration({
+          reports: renderModeration._reports || [],
+          mutes: renderModeration._mutes || [],
+        });
+      }, 120);
+    });
+  }
 }
 
 function renderModSelf(){
+  // ⭐ hierarquia nova: user < beta < streamer < vip < admin < mod < dev
   let role = "user";
   if (IS_DEV) role = "dev";
-  else if (IS_ADMIN) role = "admin";
   else if (IS_MODERATOR) role = "mod";
+  else if (IS_ADMIN) role = "admin";
+  else if (IS_VIP) role = "vip";
+  else if (IS_STREAMER) role = "streamer";
+  else if (IS_BETA) role = "beta";
 
   const info = ROLE_PERMS[role] || ROLE_PERMS.user;
 
@@ -1933,11 +2153,24 @@ function renderAdminRoles(accounts) {
   renderAdminRoles._all = allAccounts;
 
   const ROLE_LABEL = {
-    user:  { label: "Jogador", cls: "is-user"  },
-    admin: { label: "ADM",     cls: "is-admin" },
-    mod:   { label: "MOD",     cls: "is-mod"   },
-    dev:   { label: "DEV",     cls: "is-dev"   }
+    user:     { label: "Jogador",  cls: "is-user"     },
+    beta:     { label: "Beta",     cls: "is-beta"     },
+    streamer: { label: "Streamer", cls: "is-streamer" },
+    vip:      { label: "VIP",      cls: "is-vip"      },
+    admin:    { label: "ADM",      cls: "is-admin"    },
+    mod:      { label: "MOD",      cls: "is-mod"      },
+    dev:      { label: "DEV",      cls: "is-dev"      },
   };
+
+  const ROLE_OPTIONS = [
+    ["user",     "🟦 Jogador"],
+    ["beta",     "⬜ Beta"],
+    ["streamer", "🟪 Streamer"],
+    ["vip",      "🟨 VIP"],
+    ["admin",    "🟧 ADM"],
+    ["mod",      "🟫 MOD"],
+    ["dev",      "🟥 DEV"],
+  ];
 
   function paint() {
     const q = (search && search.value || "").trim().toLowerCase();
@@ -1960,7 +2193,7 @@ function renderAdminRoles(accounts) {
       if (account.nick === SELF) row.classList.add("is-self");
 
       const identity = el("div");
-      identity.append(el("b", "@" + account.nick));
+      identity.append(makeUserLink(account.nick));
 
       const meta = el("div", null, "role-meta");
       meta.append(el("small", account.source === "google" ? "Google vinculado" : "Conta antiga"));
@@ -1969,16 +2202,20 @@ function renderAdminRoles(accounts) {
       if (account.nick === SELF) meta.append(el("small", "Você"));
       identity.append(meta);
 
+      const actions = el("div", null, "moderation-role-actions");
+
+      actions.append(makeActionButton(
+        "👤 Ver perfil",
+        () => openModerationProfile(account.nick),
+        "moderation-secondary"
+      ));
+
       const select = document.createElement("select");
       select.setAttribute("aria-label", "Papel de @" + account.nick);
-      [
-        ["user",  "🟦 Jogador"],
-        ["admin", "🟨 ADM"],
-        ["mod",   "🟧 MOD"],
-        ["dev",   "🟥 DEV"]
-      ].forEach(([value, label]) => select.append(new Option(label, value)));
+      ROLE_OPTIONS.forEach(([value, label]) => select.append(new Option(label, value)));
       select.value = account.role || "user";
       select.disabled = account.nick === SELF;
+      actions.append(select);
 
       const save = el("button", "Salvar papel", "moderation-secondary");
       save.type = "button";
@@ -1989,14 +2226,16 @@ function renderAdminRoles(accounts) {
       save.addEventListener("click", () => {
         if (account.nick === SELF) return;
         const nextRole = select.value;
-        if (!confirm(`Alterar @${account.nick} para ${ROLE_LABEL[nextRole]?.label || nextRole}?`)) return;
+        if (!confirm("Alterar @" + account.nick + " para " +
+                     (ROLE_LABEL[nextRole]?.label || nextRole) + "?")) return;
         send({ t: "admin_role_set", nick: account.nick, role: nextRole });
         save.disabled = true;
         save.textContent = "Salvando…";
         setTimeout(() => { save.textContent = "Salvar papel"; }, 4000);
       });
+      actions.append(save);
 
-      row.append(identity, select, save);
+      row.append(identity, actions);
       list.append(row);
     });
   }
@@ -2019,6 +2258,9 @@ function setupModeration(){
 
   const roleBlock = $("adminRoleManagement");
   if (roleBlock) roleBlock.hidden = !IS_DEV;
+
+  // ⭐ Ativa filtros e busca de denúncias (uma vez)
+  setupModerationFilters();
 
   if (IS_MODERATOR) send({t:"moderation_list"});
   if (IS_DEV) send({t:"admin_roles_list"});
@@ -2577,8 +2819,6 @@ function renderThreads(list, unread){
       dmRenderThreadList();
     });
   });
-  // ⭐ NOTA: o botão #dmNewConversation agora é controlado pelo FriendsUI
-  // (o handler antigo de tab('lfg') foi removido intencionalmente)
 })();
 
 function openDm(nick, name){
@@ -2606,7 +2846,6 @@ function openDm(nick, name){
   send({t:"dm_open", with:nick});
 }
 
-/* ⭐ Fallback do diálogo "nova conversa" do dm-extras.js (quando o FriendsUI não assume o botão) */
 window.addEventListener("dm:new-conversation", event => {
   const user = event.detail && event.detail.user;
   if (!user) return;
@@ -2618,7 +2857,6 @@ window.addEventListener("dm:new-conversation", event => {
 function openDmProfile(){
   if (!DM.with) return;
 
-  // ⭐ O dm-extras.js é o dono do dialog quando está carregado.
   const bridge = window.DmProfileBridge;
   if (bridge && typeof bridge.openProfile === "function") {
     try {
@@ -2628,7 +2866,6 @@ function openDmProfile(){
     }
   }
 
-  // Fallback sem dm-extras.js
   DM_PROFILE_TARGET = DM.with;
   $("dmProfileName").textContent = DM.name || DM.with;
   $("dmProfileContent").textContent = "Carregando perfil...";
@@ -2640,7 +2877,6 @@ function fillDmProfile(message){
   const profile = message.p || {};
   const content = $("dmProfileContent");
 
-  // ⭐ Mesmo renderer do card do perfil (nome, avatar, selo, bio, rank, herói, ID…)
   try {
     if (window.ProfileUI && typeof ProfileUI.createProfileSummary === "function") {
       const summary = ProfileUI.createProfileSummary(profile, { nick: message.nick });
@@ -2652,7 +2888,6 @@ function fillDmProfile(message){
     console.error("[app] createProfileSummary:", e);
   }
 
-  // Fallback antigo
   if (profile.details_hidden) {
     content.replaceChildren(
       ProfileUI.createAvatar(profile, "profile-dialog-avatar"),
@@ -2870,8 +3105,6 @@ function openChat(m){
   m.msgs.forEach(x => addBubble(x.from, x.m, x.ts, x.id));
   if (!m.msgs.length) $("dmMsgs").append(el("small", "Nenhuma mensagem ainda. Diga oi!"));
 
-  // ⭐ Entrega o perfil completo ao dm-extras.js (cabeçalho: nome, avatar, selo de verificado, status).
-  // Roda por último para que o cabeçalho final seja o do bridge.
   sendProfileToDmBridge(m.profile, m.nick);
 }
 

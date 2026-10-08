@@ -442,3 +442,26 @@ sobre o perfil: ideia para as estatisticas do perfil: no grupo temos partidas pe
 e qual heroi ele usou, qual medalha pegou e essas coisas,
 
 
+Streamer — ideias:
+
+Botão no perfil: "🔴 Assistir stream" (link do YouTube/Twitch)
+
+Campo no editor: URL do canal (podemos fazer com q o streamer associe o canal dele ao site, dando permissão para ver os videos dele, por exemplo quando iniciar live avisar para o site e enviar o link da live pro site automaticamente)
+
+Destaque na home: "Streamers online agora"
+
+VIP — ideias:
+
+Cor custom de nome no chat (acima do normal)
+
+Emoji exclusivo no nick
+
+Prioridade em salas lotadas
+
+Beta — ideias:
+
+Acesso a /beta com features em teste
+
+Badge especial na lista de usuários
+
+Canal #beta-tester no Discord

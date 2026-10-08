@@ -7,10 +7,13 @@
    TOKENS LOCAIS
    ══════════════════════════════════════════════════════════════ */
 :root {
-  --role-user:  #5a8ddc;   /* azul */
-  --role-admin: #e0b64e;   /* amarelo/dourado */
-  --role-mod:   #e08a3c;   /* laranja */
-  --role-dev:   #d24a5a;   /* vermelho */
+  --role-user:     #5a8ddc;   /* azul */
+  --role-beta:     #b8bdc7;   /* cinza claro */
+  --role-streamer: #b46bff;   /* roxo */
+  --role-vip:      #f2b84b;   /* dourado */
+  --role-admin:    #e0b64e;   /* amarelo/dourado */
+  --role-mod:      #e08a3c;   /* laranja */
+  --role-dev:      #d24a5a;   /* vermelho */
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -147,10 +150,13 @@
   border: 1px solid rgba(255, 255, 255, .1);
   color: var(--text);
 }
-.role-badge.is-user  { background: rgba(90, 141, 220, .14);  border-color: rgba(90, 141, 220, .35);  color: var(--role-user); }
-.role-badge.is-admin { background: rgba(224, 182, 78, .14);  border-color: rgba(224, 182, 78, .35);  color: var(--role-admin); }
-.role-badge.is-mod   { background: rgba(224, 138, 60, .14);  border-color: rgba(224, 138, 60, .35);  color: var(--role-mod); }
-.role-badge.is-dev   { background: rgba(210, 74, 90, .16);   border-color: rgba(210, 74, 90, .4);    color: var(--role-dev); }
+.role-badge.is-user     { background: rgba(90, 141, 220, .14);   border-color: rgba(90, 141, 220, .35);   color: var(--role-user); }
+.role-badge.is-beta     { background: rgba(184, 189, 199, .14);  border-color: rgba(184, 189, 199, .35);  color: var(--role-beta); }
+.role-badge.is-streamer { background: rgba(180, 107, 255, .14);  border-color: rgba(180, 107, 255, .35);  color: var(--role-streamer); }
+.role-badge.is-vip      { background: rgba(242, 184, 75, .14);   border-color: rgba(242, 184, 75, .35);   color: var(--role-vip); }
+.role-badge.is-admin    { background: rgba(224, 182, 78, .14);   border-color: rgba(224, 182, 78, .35);   color: var(--role-admin); }
+.role-badge.is-mod      { background: rgba(224, 138, 60, .14);   border-color: rgba(224, 138, 60, .35);   color: var(--role-mod); }
+.role-badge.is-dev      { background: rgba(210, 74, 90, .16);    border-color: rgba(210, 74, 90, .4);     color: var(--role-dev); }
 
 .role-dot {
   display: inline-block;
@@ -161,10 +167,13 @@
   vertical-align: middle;
   background: currentColor;
 }
-.role-dot.is-user  { background: var(--role-user); }
-.role-dot.is-admin { background: var(--role-admin); }
-.role-dot.is-mod   { background: var(--role-mod); }
-.role-dot.is-dev   { background: var(--role-dev); }
+.role-dot.is-user     { background: var(--role-user); }
+.role-dot.is-beta     { background: var(--role-beta); }
+.role-dot.is-streamer { background: var(--role-streamer); }
+.role-dot.is-vip      { background: var(--role-vip); }
+.role-dot.is-admin    { background: var(--role-admin); }
+.role-dot.is-mod      { background: var(--role-mod); }
+.role-dot.is-dev      { background: var(--role-dev); }
 
 .mod-permissions {
   list-style: none;
@@ -213,10 +222,13 @@
   border-left: 3px solid transparent;
   background: var(--surface);
 }
-.mod-role-legend-item[data-role="user"]  { border-left-color: var(--role-user); }
-.mod-role-legend-item[data-role="admin"] { border-left-color: var(--role-admin); }
-.mod-role-legend-item[data-role="mod"]   { border-left-color: var(--role-mod); }
-.mod-role-legend-item[data-role="dev"]   { border-left-color: var(--role-dev); }
+.mod-role-legend-item[data-role="user"]     { border-left-color: var(--role-user); }
+.mod-role-legend-item[data-role="beta"]     { border-left-color: var(--role-beta); }
+.mod-role-legend-item[data-role="streamer"] { border-left-color: var(--role-streamer); }
+.mod-role-legend-item[data-role="vip"]      { border-left-color: var(--role-vip); }
+.mod-role-legend-item[data-role="admin"]    { border-left-color: var(--role-admin); }
+.mod-role-legend-item[data-role="mod"]      { border-left-color: var(--role-mod); }
+.mod-role-legend-item[data-role="dev"]      { border-left-color: var(--role-dev); }
 .mod-role-legend-item b { font-size: .88rem; }
 .mod-role-legend-item small {
   font-size: .74rem;
@@ -266,7 +278,7 @@
 .moderation-role-list { display: grid; gap: 8px; }
 .moderation-role-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(140px, 190px) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
@@ -330,6 +342,16 @@
   border-color: rgba(var(--warning-rgb), .27);
   background: rgba(var(--warning-rgb), .08);
   color: var(--warning);
+}
+.moderation-status-resolved {
+  border-color: rgba(62, 207, 142, .27);
+  background: rgba(62, 207, 142, .08);
+  color: #3ecf8e;
+}
+.moderation-status-dismissed {
+  border-color: rgba(146, 152, 163, .27);
+  background: rgba(146, 152, 163, .08);
+  color: var(--muted);
 }
 .moderation-category { display: block; margin-top: 10px; font-size: .82rem; }
 .moderation-details {
@@ -410,4 +432,168 @@
   }
   .moderation-mute-item button { width: 100%; }
   .moderation-section-header { align-items: flex-start; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   ⭐ NOVO: FILTROS DE DENÚNCIAS
+   ══════════════════════════════════════════════════════════════ */
+.moderation-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 0 0 14px;
+}
+.moderation-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.moderation-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.moderation-chip:hover {
+  background: rgba(255, 255, 255, .05);
+  color: var(--text);
+}
+.moderation-chip[aria-pressed="true"] {
+  background: var(--accent, var(--role-admin));
+  border-color: var(--accent, var(--role-admin));
+  color: #1a1405;
+}
+.moderation-chip:focus-visible {
+  outline: 2px solid var(--accent, var(--role-admin));
+  outline-offset: 2px;
+}
+
+.moderation-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 240px;
+  min-width: 0;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: border-color .15s;
+}
+.moderation-search:focus-within {
+  border-color: var(--accent, var(--role-admin));
+}
+.moderation-search svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.moderation-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: .88rem;
+  outline: none;
+}
+.moderation-search input::placeholder {
+  color: var(--muted);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ⭐ NOVO: LINK CLICÁVEL PARA O PERFIL
+   ══════════════════════════════════════════════════════════════ */
+.moderation-user-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.moderation-user-link:hover {
+  background: rgba(255, 255, 255, .08);
+  color: var(--accent, var(--role-admin));
+}
+.moderation-user-link:focus-visible {
+  outline: 2px solid var(--accent, var(--role-admin));
+  outline-offset: 2px;
+}
+.moderation-user-link::after {
+  content: "↗";
+  font-size: .7em;
+  opacity: .5;
+  transition: opacity .15s;
+}
+.moderation-user-link:hover::after { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════════
+   ⭐ NOVO: AÇÕES DE PAPEL (ver perfil + select + salvar)
+   ══════════════════════════════════════════════════════════════ */
+.moderation-role-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.moderation-role-actions select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-tint-2, rgba(255, 255, 255, .04));
+  color: var(--text);
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 140px;
+}
+.moderation-role-actions select:focus-visible {
+  outline: 2px solid var(--accent, var(--role-admin));
+  outline-offset: 2px;
+}
+.moderation-role-actions button {
+  min-height: 36px;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ⭐ NOVO: RODAPÉ DE AUDITORIA (quem revisou)
+   ══════════════════════════════════════════════════════════════ */
+.moderation-reviewed-by {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: .72rem;
+  font-style: italic;
 }

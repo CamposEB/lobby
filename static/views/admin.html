@@ -29,6 +29,25 @@
       </div>
       <button id="moderationRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
     </header>
+
+    <!-- ⭐ NOVO: filtros + busca -->
+    <div class="moderation-filters">
+      <div class="moderation-chips" role="tablist" aria-label="Filtrar denúncias">
+        <button type="button" class="moderation-chip" data-mod-filter="open" aria-pressed="true">Pendentes</button>
+        <button type="button" class="moderation-chip" data-mod-filter="reviewed" aria-pressed="false">Em análise</button>
+        <button type="button" class="moderation-chip" data-mod-filter="closed" aria-pressed="false">Encerradas</button>
+        <button type="button" class="moderation-chip" data-mod-filter="all" aria-pressed="false">Todas</button>
+      </div>
+      <label class="moderation-search" aria-label="Buscar denúncia">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input id="moderationSearchInput" type="search" autocomplete="off"
+               placeholder="Buscar por @nick, motivo ou categoria..." />
+      </label>
+    </div>
+
     <p id="moderationMessage" class="moderation-message" role="status"></p>
     <div id="moderationReports" class="moderation-report-list"></div>
     <div id="moderationReportsEmpty" class="moderation-empty" hidden>
@@ -60,13 +79,26 @@
       <button id="adminRolesRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
     </header>
     <p class="moderation-message">
-      Atribua permissões de <b>ADM</b>, <b>MOD</b> ou <b>DEV</b>. As mudanças são aplicadas em tempo real.
+      Atribua permissões. As mudanças são aplicadas em tempo real.
     </p>
 
+    <!-- ⭐ NOVO: legenda completa com todos os cargos -->
     <div class="mod-role-legend" role="note" aria-label="Hierarquia de papéis">
       <div class="mod-role-legend-item" data-role="user">
         <b><span class="role-dot is-user"></span>Jogador</b>
         <small>Acesso normal ao site. Pode denunciar jogadores.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="beta">
+        <b><span class="role-dot is-beta"></span>Beta</b>
+        <small>Acesso a recursos em teste. Pode reportar bugs.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="streamer">
+        <b><span class="role-dot is-streamer"></span>Streamer</b>
+        <small>Divulga transmissões. Selo próprio no perfil.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="vip">
+        <b><span class="role-dot is-vip"></span>VIP</b>
+        <small>Destaque no perfil. Selo de verificado azul.</small>
       </div>
       <div class="mod-role-legend-item" data-role="admin">
         <b><span class="role-dot is-admin"></span>ADM</b>
@@ -78,7 +110,7 @@
       </div>
       <div class="mod-role-legend-item" data-role="dev">
         <b><span class="role-dot is-dev"></span>DEV</b>
-        <small>Tudo do MOD + atribui e remove ADM, MOD e DEV.</small>
+        <small>Tudo do MOD + atribui e remove qualquer cargo.</small>
       </div>
     </div>
 
