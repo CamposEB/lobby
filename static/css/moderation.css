@@ -273,39 +273,135 @@
 .mod-role-search input::placeholder { color: var(--muted); }
 
 /* ══════════════════════════════════════════════════════════════
-   LISTA DE CONTAS E PAPÉIS
+   ⭐ LISTA DE CONTAS E PAPÉIS (redesenhada)
+   Card em 2 linhas:
+     1) identidade (nick + meta) + botão Ver perfil à direita
+     2) barra de ações (select + salvar) com espaçamento generoso
    ══════════════════════════════════════════════════════════════ */
-.moderation-role-list { display: grid; gap: 8px; }
+.moderation-role-list { display: grid; gap: 12px; }
+
 .moderation-role-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  grid-template-areas:
+    "identity  profile"
+    "actions   actions";
+  align-items: start;
+  gap: 14px 16px;
+  padding: 14px 16px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--surface);
+  transition: border-color .15s, background .15s;
+}
+.moderation-role-item:hover {
+  border-color: rgba(255, 255, 255, .14);
 }
 .moderation-role-item.is-self {
-  border-color: var(--accent, var(--border));
+  border-color: var(--accent, var(--role-admin));
   background: rgba(255, 255, 255, .03);
 }
-.moderation-role-item > div { display: grid; gap: 2px; min-width: 0; }
-.moderation-role-item small { color: var(--muted); font-size: .73rem; }
-.moderation-role-item select { width: 100%; font-weight: 600; }
-.moderation-role-item button { min-height: 36px; }
+
+/* Linha 1: identidade */
+.moderation-role-item > div:first-child {
+  grid-area: identity;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Meta (chips pequenos) */
 .moderation-role-item .role-meta {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: 4px;
 }
 .moderation-role-item .role-meta small {
-  font-size: .68rem;
-  padding: 2px 6px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .06);
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Linha 2: barra de ações */
+.moderation-role-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* Botão "Ver perfil" fica no canto superior direito */
+.moderation-role-item > .moderation-secondary:first-of-type,
+.moderation-role-actions > button.moderation-secondary:first-child {
+  grid-area: profile;
+}
+
+/* Estilo dos controles dentro da barra */
+.moderation-role-actions select {
+  flex: 0 1 190px;
+  min-width: 150px;
+  max-width: 220px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-tint-2, rgba(255, 255, 255, .04));
+  color: var(--text);
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 16px) 16px,
+    calc(100% - 11px) 16px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 34px;
+}
+.moderation-role-actions select:focus-visible {
+  outline: 2px solid var(--accent, var(--role-admin));
+  outline-offset: 2px;
+}
+.moderation-role-actions select:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+/* Opções: fundo escuro + texto claro, sem cor do browser */
+.moderation-role-actions select option {
+  background: #14171c;
+  color: #f5f5f5;
+  font-size: .88rem;
+  padding: 6px 10px;
+}
+
+.moderation-role-actions button {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: .82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.moderation-role-actions button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -414,29 +510,7 @@
 .moderation-mute-item button:disabled { opacity: .45; cursor: not-allowed; }
 
 /* ══════════════════════════════════════════════════════════════
-   RESPONSIVO
-   ══════════════════════════════════════════════════════════════ */
-@media (max-width: 720px) {
-  .moderation-role-item { grid-template-columns: 1fr; }
-  .moderation-role-item button { width: 100%; }
-  .mod-role-legend { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 600px) {
-  .community-report-dialog { padding: 15px; }
-  .moderation-report-heading { flex-direction: column; }
-  .moderation-actions button { flex: 1 1 calc(50% - 6px); }
-  .moderation-mute-item {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .moderation-mute-item button { width: 100%; }
-  .moderation-section-header { align-items: flex-start; }
-}
-
-
-/* ══════════════════════════════════════════════════════════════
-   ⭐ NOVO: FILTROS DE DENÚNCIAS
+   ⭐ FILTROS DE DENÚNCIAS
    ══════════════════════════════════════════════════════════════ */
 .moderation-filters {
   display: flex;
@@ -518,12 +592,10 @@
   font-size: .88rem;
   outline: none;
 }
-.moderation-search input::placeholder {
-  color: var(--muted);
-}
+.moderation-search input::placeholder { color: var(--muted); }
 
 /* ══════════════════════════════════════════════════════════════
-   ⭐ NOVO: LINK CLICÁVEL PARA O PERFIL
+   ⭐ LINK CLICÁVEL PARA O PERFIL
    ══════════════════════════════════════════════════════════════ */
 .moderation-user-link {
   display: inline-flex;
@@ -557,38 +629,7 @@
 .moderation-user-link:hover::after { opacity: 1; }
 
 /* ══════════════════════════════════════════════════════════════
-   ⭐ NOVO: AÇÕES DE PAPEL (ver perfil + select + salvar)
-   ══════════════════════════════════════════════════════════════ */
-.moderation-role-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-.moderation-role-actions select {
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface-tint-2, rgba(255, 255, 255, .04));
-  color: var(--text);
-  font: inherit;
-  font-size: .84rem;
-  font-weight: 600;
-  cursor: pointer;
-  min-width: 140px;
-}
-.moderation-role-actions select:focus-visible {
-  outline: 2px solid var(--accent, var(--role-admin));
-  outline-offset: 2px;
-}
-.moderation-role-actions button {
-  min-height: 36px;
-  white-space: nowrap;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   ⭐ NOVO: RODAPÉ DE AUDITORIA (quem revisou)
+   ⭐ RODAPÉ DE AUDITORIA (quem revisou)
    ══════════════════════════════════════════════════════════════ */
 .moderation-reviewed-by {
   display: block;
@@ -596,4 +637,45 @@
   color: var(--muted);
   font-size: .72rem;
   font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVO
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .moderation-role-item {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "identity"
+      "profile"
+      "actions";
+    gap: 10px;
+  }
+  .moderation-role-item > button.moderation-secondary:first-of-type {
+    grid-area: profile;
+    justify-self: start;
+  }
+  .moderation-role-actions {
+    padding-top: 10px;
+  }
+  .moderation-role-actions select {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .moderation-role-actions button {
+    flex: 1 1 auto;
+  }
+  .mod-role-legend { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .community-report-dialog { padding: 15px; }
+  .moderation-report-heading { flex-direction: column; }
+  .moderation-actions button { flex: 1 1 calc(50% - 6px); }
+  .moderation-mute-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .moderation-mute-item button { width: 100%; }
+  .moderation-section-header { align-items: flex-start; }
 }
