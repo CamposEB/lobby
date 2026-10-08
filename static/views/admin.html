@@ -1,35 +1,100 @@
 <main class="moderation-page">
   <header class="moderation-hero">
-    <div><p class="moderation-eyebrow">SOCIETY MLBB · EQUIPE DE CONFIANÇA</p>
+    <div>
+      <p class="moderation-eyebrow">SOCIETY MLBB · EQUIPE DE CONFIANÇA</p>
       <h2>Moderação da comunidade</h2>
-      <p>Analise denúncias com privacidade, registre decisões e gerencie silenciamentos.</p>
+      <p>Analise denúncias com privacidade, registre decisões, gerencie silenciamentos e permissões.</p>
     </div>
     <span aria-hidden="true">🛡️</span>
   </header>
-  <section class="moderation-section">
+
+  <!-- ═══════════ SEU ACESSO ═══════════ -->
+  <section class="moderation-section mod-self" aria-labelledby="modSelfRoleTitle">
     <header class="moderation-section-header">
-      <div><p class="moderation-eyebrow">FILA DE ANÁLISE</p><h3>Denúncias</h3></div>
+      <div>
+        <p class="moderation-eyebrow">SEU ACESSO</p>
+        <h3 id="modSelfRoleTitle">—</h3>
+      </div>
+      <span id="modSelfRoleBadge" class="role-badge is-user">JOGADOR</span>
+    </header>
+    <ul class="mod-permissions" id="modSelfPerms" aria-label="Permissões do seu papel"></ul>
+  </section>
+
+  <!-- ═══════════ DENÚNCIAS ═══════════ -->
+  <section class="moderation-section" id="moderationReportsSection">
+    <header class="moderation-section-header">
+      <div>
+        <p class="moderation-eyebrow">FILA DE ANÁLISE</p>
+        <h3>Denúncias</h3>
+      </div>
       <button id="moderationRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
     </header>
     <p id="moderationMessage" class="moderation-message" role="status"></p>
     <div id="moderationReports" class="moderation-report-list"></div>
     <div id="moderationReportsEmpty" class="moderation-empty" hidden>
-      <span>✅</span><b>Não há denúncias pendentes.</b><small>Novas denúncias aparecem aqui em tempo real.</small>
+      <span>✅</span>
+      <b>Não há denúncias pendentes.</b>
+      <small>Novas denúncias aparecem aqui em tempo real.</small>
     </div>
   </section>
-  <section class="moderation-section">
+
+  <!-- ═══════════ SILENCIAMENTOS ═══════════ -->
+  <section class="moderation-section" id="moderationMutesSection">
     <header class="moderation-section-header">
-      <div><p class="moderation-eyebrow">MEDIDAS ATIVAS</p><h3>Silenciamentos temporários</h3></div>
+      <div>
+        <p class="moderation-eyebrow">MEDIDAS ATIVAS</p>
+        <h3>Silenciamentos temporários</h3>
+      </div>
     </header>
     <div id="moderationMutes" class="moderation-mute-list"></div>
     <p id="moderationMutesEmpty" class="moderation-empty" hidden>Não há silenciamentos ativos.</p>
   </section>
+
+  <!-- ═══════════ CONTAS E PAPÉIS (só DEV) ═══════════ -->
   <section id="adminRoleManagement" class="moderation-section" hidden>
     <header class="moderation-section-header">
-      <div><p class="moderation-eyebrow">ACESSO RESTRITO</p><h3>Contas e papéis</h3></div>
+      <div>
+        <p class="moderation-eyebrow">ACESSO RESTRITO · DEV</p>
+        <h3>Contas e papéis</h3>
+      </div>
       <button id="adminRolesRefresh" class="moderation-secondary" type="button">↻ Atualizar</button>
     </header>
-    <p class="moderation-message">Papéis armazenados no Firebase Firestore. Não são exibidos e-mails nem identificadores Google.</p>
+    <p class="moderation-message">
+      Atribua permissões de <b>ADM</b>, <b>MOD</b> ou <b>DEV</b>. As mudanças são aplicadas em tempo real.
+    </p>
+
+    <div class="mod-role-legend" role="note" aria-label="Hierarquia de papéis">
+      <div class="mod-role-legend-item" data-role="user">
+        <b><span class="role-dot is-user"></span>Jogador</b>
+        <small>Acesso normal ao site. Pode denunciar jogadores.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="admin">
+        <b><span class="role-dot is-admin"></span>ADM</b>
+        <small>Revisa denúncias, marca em análise, encerra e descarta.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="mod">
+        <b><span class="role-dot is-mod"></span>MOD</b>
+        <small>Tudo do ADM + silencia jogadores e remove silenciamentos.</small>
+      </div>
+      <div class="mod-role-legend-item" data-role="dev">
+        <b><span class="role-dot is-dev"></span>DEV</b>
+        <small>Tudo do MOD + atribui e remove ADM, MOD e DEV.</small>
+      </div>
+    </div>
+
+    <div class="mod-role-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="10.8" cy="10.8" r="6.3"/>
+        <path d="m15.5 15.5 4.2 4.2"/>
+      </svg>
+      <input id="adminRolesSearch" type="search" placeholder="Buscar conta por nick..." autocomplete="off" aria-label="Buscar conta">
+    </div>
+
     <div id="adminRoleList" class="moderation-role-list"></div>
+    <p id="adminRolesEmpty" class="moderation-empty" hidden>
+      <span>🔍</span>
+      <b>Nenhuma conta encontrada.</b>
+      <small>Ajuste a busca ou clique em Atualizar.</small>
+    </p>
   </section>
 </main>

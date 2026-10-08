@@ -9,6 +9,10 @@ from datetime import datetime, timezone
 from google.api_core.exceptions import AlreadyExists, GoogleAPICallError, NotFound
 
 
+# Papéis válidos na hierarquia: user < admin < mod < dev
+VALID_ROLES = ("user", "admin", "mod", "dev")
+
+
 class IdentityError(Exception):
     """A user-facing identity operation failed safely."""
 
@@ -19,14 +23,37 @@ class IdentityStore:
         self._firebase_app = None
         self._lock = threading.RLock()
 
+    # ───────────────────────────────────────────────────────
+    # CONFIG
+    # ───────────────────────────────────────────────────────
+
     @property
     def firestore_configured(self):
+        """Retorna True só se houver credencial admin de verdade.
+
+        FIREBASE_PROJECT_ID sozinho NÃO basta — ele é usado apenas para
+        configurar a web config do Firebase no frontend e não fornece
+        credencial de serviço ao servidor. Se for incluído na checagem,
+        ambientes locais com `.env` contendo FIREBASE_PROJECT_ID vão tentar
+        conectar ao Firestore sem credencial e explodir com
+        DefaultCredentialsError.
+        """
         return bool(
             os.getenv("FIREBASE_ADMIN_CREDENTIALS_FILE", "").strip()
             or os.getenv("FIREBASE_ADMIN_CREDENTIALS_JSON", "").strip()
             or os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
-            or os.getenv("FIREBASE_PROJECT_ID", "").strip()
         )
+
+    def _require_firestore(self):
+        """Garante que o Firestore está configurado antes de qualquer I/O.
+        Joga IdentityError limpo, evitando o DefaultCredentialsError cru."""
+        if not self.firestore_configured:
+            raise IdentityError(
+                "Firestore não está configurado neste ambiente. "
+                "Defina FIREBASE_ADMIN_CREDENTIALS_FILE, "
+                "FIREBASE_ADMIN_CREDENTIALS_JSON ou "
+                "GOOGLE_APPLICATION_CREDENTIALS."
+            )
 
     def web_config(self):
         raw = os.getenv("FIREBASE_WEB_CONFIG", "").strip()
@@ -41,12 +68,20 @@ class IdentityStore:
             raise IdentityError("A configuração pública do Firebase está incompleta.")
         return {key: str(config[key]) for key in (*required, "measurementId") if config.get(key)}
 
+    # ───────────────────────────────────────────────────────
+    # CONEXÃO
+    # ───────────────────────────────────────────────────────
+
     def _admin_auth(self):
         if self._firebase_app is not None:
             return self._firebase_app
         with self._lock:
             if self._firebase_app is not None:
                 return self._firebase_app
+
+            # Falha rápido se não há credencial — evita DefaultCredentialsError
+            self._require_firestore()
+
             try:
                 import firebase_admin
                 from firebase_admin import credentials
@@ -79,6 +114,10 @@ class IdentityStore:
         with self._lock:
             if self._client is not None:
                 return self._client
+
+            # Falha rápido se não há credencial
+            self._require_firestore()
+
             try:
                 from firebase_admin import firestore
                 self._client = firestore.client(self._admin_auth())
@@ -87,6 +126,10 @@ class IdentityStore:
             except Exception as error:
                 raise IdentityError("Não foi possível conectar ao Firebase Firestore.") from error
         return self._client
+
+    # ───────────────────────────────────────────────────────
+    # HELPERS
+    # ───────────────────────────────────────────────────────
 
     @staticmethod
     def _account(document):
@@ -109,9 +152,14 @@ class IdentityStore:
             )
         return IdentityError("Falha ao consultar conta no Firestore.")
 
+    # ───────────────────────────────────────────────────────
+    # VERIFICAÇÃO DE TOKEN GOOGLE
+    # ───────────────────────────────────────────────────────
+
     def verify_google_token(self, token):
         if not isinstance(token, str) or not token.strip() or len(token) > 10000:
             raise IdentityError("Token de autenticação inválido.")
+        self._require_firestore()
         try:
             import firebase_admin
             from firebase_admin import auth
@@ -127,6 +175,10 @@ class IdentityStore:
         if not isinstance(uid, str) or not uid or claims.get("email_verified") is False:
             raise IdentityError("Use uma conta Google verificada para entrar.")
         return {"uid": uid}
+
+    # ───────────────────────────────────────────────────────
+    # LEITURA
+    # ───────────────────────────────────────────────────────
 
     def get_by_uid(self, uid):
         try:
@@ -151,7 +203,27 @@ class IdentityStore:
         except Exception as error:
             raise self._account_lookup_error(error) from error
 
+    def list_accounts(self):
+        try:
+            rows = self._db().collection("accounts").order_by("nick").limit(500).stream()
+            return [{
+                "nick": row.get("nick", row.id),
+                "role": row.get("role", "user"),
+                "google_linked": bool(row.get("google_uid")),
+                "source": row.get("source", "legacy"),
+            } for row in rows]
+        except IdentityError:
+            raise
+        except Exception as error:
+            raise IdentityError("Falha ao listar contas no Firestore.") from error
+
+    # ───────────────────────────────────────────────────────
+    # ESCRITA
+    # ───────────────────────────────────────────────────────
+
     def ensure_legacy_account(self, nick, role="user"):
+        if role not in VALID_ROLES:
+            role = "user"
         reference = self._db().collection("accounts").document(nick)
         try:
             reference.create({
@@ -204,6 +276,8 @@ class IdentityStore:
     def create_google_account(self, uid, nick, role="user"):
         from firebase_admin import firestore
 
+        if role not in VALID_ROLES:
+            role = "user"
         database = self._db()
         account_ref = database.collection("accounts").document(nick)
         claim_ref = database.collection("identity_uid_claims").document(
@@ -252,25 +326,17 @@ class IdentityStore:
             account_ref.delete()
             claim_ref.delete()
 
+    # ───────────────────────────────────────────────────────
+    # PAPÉIS
+    # ───────────────────────────────────────────────────────
+
     def role_for(self, nick, fallback="user"):
         account = self.get_by_nick(nick)
         role = account.get("role") if account else None
-        return role if role in ("user", "mod", "admin") else fallback
-
-    def list_accounts(self):
-        try:
-            rows = self._db().collection("accounts").order_by("nick").limit(500).stream()
-            return [{
-                "nick": row.get("nick", row.id),
-                "role": row.get("role", "user"),
-                "google_linked": bool(row.get("google_uid")),
-                "source": row.get("source", "legacy"),
-            } for row in rows]
-        except Exception as error:
-            raise IdentityError("Falha ao listar contas no Firestore.") from error
+        return role if role in VALID_ROLES else fallback
 
     def set_role(self, nick, role):
-        if role not in ("user", "mod", "admin"):
+        if role not in VALID_ROLES:
             raise IdentityError("Papel inválido.")
         database = self._db()
         reference = database.collection("accounts").document(nick)
@@ -278,10 +344,33 @@ class IdentityStore:
             account = self._account(reference.get())
             if not account:
                 raise IdentityError("Conta não encontrada no Firestore.")
-            if account.get("role") == "admin" and role != "admin":
-                admins = database.collection("accounts").where("role", "==", "admin").limit(2).stream()
-                if len(list(admins)) <= 1:
+
+            current = account.get("role") or "user"
+            if current == role:
+                return account  # nada a fazer
+
+            # Proteção: não rebaixar o último admin
+            if current == "admin" and role != "admin":
+                admins = list(
+                    database.collection("accounts")
+                    .where("role", "==", "admin")
+                    .limit(2)
+                    .stream()
+                )
+                if len(admins) <= 1:
                     raise IdentityError("Não é possível remover o único administrador.")
+
+            # Proteção: não rebaixar o último dev
+            if current == "dev" and role != "dev":
+                devs = list(
+                    database.collection("accounts")
+                    .where("role", "==", "dev")
+                    .limit(2)
+                    .stream()
+                )
+                if len(devs) <= 1:
+                    raise IdentityError("Não é possível remover o único desenvolvedor.")
+
             reference.update({"role": role})
             return self._account(reference.get())
         except IdentityError:

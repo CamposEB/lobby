@@ -17,6 +17,110 @@
   };
 
   // ═══════════════════════════════════════════════════════════
+  // 0. SELO DE VERIFICADO (Dev / Admin / Mod)
+  // ═══════════════════════════════════════════════════════════
+  const VERIFIED_ROLE_KEYS = new Set([
+    'DEV', 'ADMIN', 'MOD', 'MODERADOR', 'MODERATOR'
+  ]);
+
+  function roleKeyFromProfile(data) {
+    if (!data) return 'user';
+    const raw = String(data.role || '').toLocaleLowerCase('pt-BR').trim();
+    if (raw === 'dev' || raw === 'admin' || raw === 'mod') return raw;
+
+    const roles = Array.isArray(data.community_roles) ? data.community_roles : [];
+    for (const role of roles) {
+      const key = String(role || '').toLocaleUpperCase('pt-BR').trim();
+      if (key === 'DEV') return 'dev';
+      if (key === 'ADMIN') return 'admin';
+      if (key === 'MOD' || key === 'MODERADOR' || key === 'MODERATOR') return 'mod';
+    }
+    return 'user';
+  }
+
+  function isVerifiedProfile(data) {
+    if (!data) return false;
+    if (typeof data.verified === 'boolean' && data.verified) return true;
+    const key = roleKeyFromProfile(data);
+    return key === 'dev' || key === 'admin' || key === 'mod';
+  }
+
+  function labelForRole(roleKey) {
+    if (roleKey === 'dev')   return 'DEV verificado';
+    if (roleKey === 'admin') return 'Administrador verificado';
+    if (roleKey === 'mod')   return 'Moderador verificado';
+    return 'Conta verificada';
+  }
+
+  /**
+   * Atualiza o selo do cabeçalho.
+   * - setVerified(true, 'dev' | 'admin' | 'mod')
+   * - setVerified(true, { role: 'dev', verified: true, community_roles: [...] })
+   * - setVerified(false)                       → esconde
+   */
+  function setVerifiedBadge(isVerifiedFlag, roleOrProfile) {
+    const badge = $('dmWithVerified');
+    if (!badge) return;
+
+    let roleKey = 'user';
+    let verified = Boolean(isVerifiedFlag);
+
+    if (roleOrProfile && typeof roleOrProfile === 'object') {
+      roleKey = roleKeyFromProfile(roleOrProfile);
+      verified = isVerifiedProfile(roleOrProfile);
+    } else if (typeof roleOrProfile === 'string') {
+      const key = String(roleOrProfile).toLocaleLowerCase('pt-BR').trim();
+      if (key === 'dev' || key === 'admin' || key === 'mod') {
+        roleKey = key;
+        verified = true;
+      }
+    }
+
+    // Se o flag veio como "false" explícito, respeita.
+    if (isVerifiedFlag === false) verified = false;
+
+    badge.hidden = !verified;
+
+    if (verified) {
+      const label = labelForRole(roleKey);
+      badge.dataset.role = roleKey;
+      badge.setAttribute('aria-label', label);
+      badge.setAttribute('title', label);
+      // reinicia animação
+      badge.style.animation = 'none';
+      void badge.offsetWidth;
+      badge.style.animation = '';
+    } else {
+      badge.removeAttribute('data-role');
+      badge.setAttribute('aria-label', 'Conta verificada');
+      badge.setAttribute('title', 'Conta verificada');
+    }
+  }
+
+  /**
+   * Aplica o selo a partir de um objeto de perfil completo
+   * (o mesmo `profile` que o servidor manda em `dm_history`).
+   */
+  function applyProfileToBadge(profile) {
+    setVerifiedBadge(
+      typeof profile?.verified === 'boolean' ? profile.verified : undefined,
+      profile
+    );
+  }
+
+  // Cache simples por nick → role, para não depender do WS
+  const _roleCache = new Map();
+  function rememberRole(nick, profile) {
+    if (!nick || !profile) return;
+    const key = roleKeyFromProfile(profile);
+    if (key !== 'user') _roleCache.set(String(nick).toLowerCase(), key);
+  }
+  function recallRole(nick) {
+    if (!nick) return null;
+    return _roleCache.get(String(nick).toLowerCase()) || null;
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // 1. EMOJI
   // ═══════════════════════════════════════════════════════════
   const EMOJI_CATS = [
@@ -384,7 +488,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 4. VER PERFIL — bridge AGRESSIVO pro perfil completo
+  // 4. VER PERFIL — bridge AGRESSIVO + selo de verificado
   // ═══════════════════════════════════════════════════════════
   function initProfileBridge() {
     const btn = $('dmViewProfile');
@@ -413,7 +517,17 @@
       return null;
     }
 
-    // Varre o nó e TODOS os pais procurando data-* com id
+    // Tenta pegar informação de role/verified do nó (data-role / data-verified)
+    function extractRoleFromEl(node) {
+      if (!node) return { role: null, verified: null };
+      const d = node.dataset || {};
+      const role = (d.role || d.userRole || d.userrole || '').toLowerCase().trim() || null;
+      let verified = null;
+      if (d.verified === 'true') verified = true;
+      else if (d.verified === 'false') verified = false;
+      return { role, verified };
+    }
+
     function extractIdFromTree(node) {
       let cur = node;
       let depth = 0;
@@ -426,40 +540,37 @@
       return null;
     }
 
-    // Lê o nome do contato atual no cabeçalho
+    function extractRoleFromTree(node) {
+      let cur = node;
+      let depth = 0;
+      while (cur && depth < 8) {
+        const info = extractRoleFromEl(cur);
+        if (info.role || info.verified !== null) return info;
+        cur = cur.parentElement;
+        depth++;
+      }
+      return { role: null, verified: null };
+    }
+
     function readName() {
       const b = $('dmWith');
       if (b && b.textContent.trim()) return b.textContent.trim();
-      // fallback: título do dialog de perfil
       const t = $('dmProfileName');
       if (t && t.textContent.trim()) return t.textContent.trim();
       return null;
     }
 
-    // Procura o ID do usuário pelo nome em mapas globais
     function resolveIdByName(name) {
       if (!name) return null;
       const norm = String(name).trim().toLowerCase();
 
-      // Lista de possíveis "containers" globais do app
       const globals = [
-        window.players,         // lobby do site
-        window.users,
-        window.contacts,
-        window.friends,
-        window.Players,
-        window.Users,
-        window.Contacts,
-        window.dmContacts,
-        window.dm?.contacts,
-        window.dm?.users,
-        window.state?.players,
-        window.state?.users,
-        window.state?.contacts,
-        window.app?.players,
-        window.app?.users,
-        window.store?.players,
-        window.store?.users,
+        window.players, window.users, window.contacts, window.friends,
+        window.Players, window.Users, window.Contacts, window.dmContacts,
+        window.dm?.contacts, window.dm?.users,
+        window.state?.players, window.state?.users, window.state?.contacts,
+        window.app?.players, window.app?.users,
+        window.store?.players, window.store?.users,
       ];
 
       for (const bag of globals) {
@@ -476,6 +587,20 @@
       return null;
     }
 
+    // ─────────────────────────────────────────────
+    // Aplica o selo ao trocar de conversa
+    // ─────────────────────────────────────────────
+    function refreshBadgeForCurrent() {
+      const nick = (currentUserName || readName() || '').toLowerCase();
+      const cached = recallRole(nick);
+      if (cached) {
+        setVerifiedBadge(true, cached);
+      } else {
+        // Não sabemos ainda — esconde até chegar profile
+        setVerifiedBadge(false);
+      }
+    }
+
     // Fonte 1: clique na thread da lista
     const list = $('dmListBody');
     if (list) {
@@ -483,10 +608,18 @@
         const thread = e.target.closest('.dm-thread');
         if (!thread) return;
         const id = extractIdFromTree(thread);
+        const roleInfo = extractRoleFromTree(thread);
         if (id) {
           currentUserId = id;
           currentUserName = thread.querySelector('b')?.textContent?.trim() || null;
           console.log('[dm-extras] 🧲 userId capturado via thread:', id);
+        }
+        if (roleInfo.role) {
+          setVerifiedBadge(roleInfo.verified !== false, roleInfo.role);
+          if (currentUserName) rememberRole(currentUserName, { role: roleInfo.role, verified: roleInfo.verified });
+        } else {
+          // Sem info no DOM → tenta cache pelo nome; senão esconde
+          refreshBadgeForCurrent();
         }
       }, true);
     }
@@ -501,6 +634,10 @@
         currentUserName = u.name || u.displayName || u.username || null;
         console.log('[dm-extras] 🧲 userId capturado via dm:new-conversation:', id);
       }
+      if (u.role || u.verified !== undefined) {
+        setVerifiedBadge(u.verified !== false, u);
+        if (currentUserName) rememberRole(currentUserName, u);
+      }
     });
 
     // Fonte 3: qualquer clique com data-* que dê pra ler
@@ -513,9 +650,14 @@
         currentUserName = node.querySelector('b')?.textContent?.trim() || null;
         console.log('[dm-extras] 🧲 userId capturado via clique com data-*:', id);
       }
+      const roleInfo = extractRoleFromEl(node);
+      if (roleInfo.role) {
+        setVerifiedBadge(roleInfo.verified !== false, roleInfo.role);
+        if (currentUserName) rememberRole(currentUserName, { role: roleInfo.role, verified: roleInfo.verified });
+      }
     }, true);
 
-    // Fonte 4: observar mudança de nome no cabeçalho → resolve por nome
+    // Fonte 4: observar mudança de nome no cabeçalho
     const headerB = $('dmWith');
     if (headerB) {
       const obs = new MutationObserver(() => {
@@ -527,35 +669,105 @@
           currentUserId = id;
           console.log('[dm-extras] 🧲 userId resolvido por nome:', name, '→', id);
         }
+        // Sempre que o nome muda, reavalia o selo pelo cache
+        refreshBadgeForCurrent();
       });
       obs.observe(headerB, { childList: true, characterData: true, subtree: true });
-      // tenta também agora
       const initialName = readName();
       if (initialName) currentUserName = initialName;
+      refreshBadgeForCurrent();
     }
 
     // ─────────────────────────────────────────────
-    // Resolve o ID do usuário atual com TODAS as fontes
+    // 🔔 Escuta eventos de perfil carregado (para pegar role/verified)
+    // Aceita vários formatos para ser compatível com o dm.js principal:
+    //   - 'dm:profile'         detail: { nick, profile }
+    //   - 'dm:history'         detail: { nick, profile, msgs }
+    //   - 'dm:open'            detail: { nick, profile }
+    //   - 'profile:loaded'     detail: { nick, profile }
+    // ─────────────────────────────────────────────
+    function handleProfileEvent(ev) {
+      const d = ev?.detail || {};
+      const profile = d.profile || d.p || d.data || null;
+      const nick = d.nick || d.userId || d.username || currentUserName;
+      if (!profile) return;
+
+      rememberRole(nick, profile);
+
+      // Se for a conversa atual, aplica
+      const isCurrent =
+        (nick && currentUserName && String(nick).toLowerCase() === String(currentUserName).toLowerCase()) ||
+        (d.userId && currentUserId && String(d.userId) === String(currentUserId));
+
+      if (isCurrent || !currentUserName) {
+        setVerifiedBadge(
+          typeof profile.verified === 'boolean' ? profile.verified : undefined,
+          profile
+        );
+      }
+    }
+
+    ['dm:profile', 'dm:history', 'dm:open', 'profile:loaded'].forEach((evt) => {
+      window.addEventListener(evt, handleProfileEvent);
+      document.addEventListener(evt, handleProfileEvent);
+    });
+
+    // ─────────────────────────────────────────────
+    // Intercepta mensagens do WebSocket quando possível,
+    // para capturar `profile` que vem em `dm_history`.
+    // ─────────────────────────────────────────────
+    try {
+      const OrigWS = window.WebSocket;
+      if (OrigWS && !OrigWS.__dmPatched) {
+        const Patched = function (...args) {
+          const ws = new OrigWS(...args);
+          ws.addEventListener('message', (ev) => {
+            if (typeof ev.data !== 'string' || ev.data.length < 20) return;
+            // Filtro rápido: só tenta parsear mensagens que contenham "dm_history"
+            if (ev.data.indexOf('dm_history') === -1) return;
+            try {
+              const msg = JSON.parse(ev.data);
+              if (msg && msg.t === 'dm_history' && msg.profile) {
+                const nick = msg.nick || msg.name;
+                rememberRole(nick, msg.profile);
+                if (!currentUserName || String(currentUserName).toLowerCase() === String(nick).toLowerCase()) {
+                  setVerifiedBadge(
+                    typeof msg.profile.verified === 'boolean' ? msg.profile.verified : undefined,
+                    msg.profile
+                  );
+                }
+              }
+            } catch (e) { /* ignora */ }
+          });
+          return ws;
+        };
+        Patched.__dmPatched = true;
+        Patched.prototype = OrigWS.prototype;
+        ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'].forEach((k) => {
+          try { Patched[k] = OrigWS[k]; } catch (e) {}
+        });
+        window.WebSocket = Patched;
+      }
+    } catch (e) { /* ignora */ }
+
+    // ─────────────────────────────────────────────
+    // Resolve o ID do usuário atual
     // ─────────────────────────────────────────────
     function resolveUserId() {
-      // 1) memória
       if (currentUserId) return currentUserId;
 
-      // 2) árvore do #dmChat
       const chat = $('dmChat');
       if (chat) {
         const id = extractIdFromTree(chat);
         if (id) return id;
       }
 
-      // 3) thread ativa
       const active = $('dmListBody')?.querySelector('.dm-thread.is-active');
       if (active) {
         const id = extractIdFromTree(active);
         if (id) return id;
       }
 
-      // 4) resolver por nome
       const name = readName();
       if (name) {
         currentUserName = name;
@@ -563,7 +775,6 @@
         if (id) return id;
       }
 
-      // 5) qualquer thread marcada como "aberta" no DOM
       const opened = document.querySelector('.dm-thread[aria-current="true"], .dm-thread[data-active="1"]');
       if (opened) {
         const id = extractIdFromTree(opened);
@@ -574,7 +785,7 @@
     }
 
     // ─────────────────────────────────────────────
-    // Diagnóstico — só quando falha, mostra tudo
+    // Diagnóstico
     // ─────────────────────────────────────────────
     function dumpDiagnostic() {
       const chat = $('dmChat');
@@ -606,13 +817,11 @@
 
       console.log('[dm-extras] 🎯 Abrindo perfil de:', userId, '(nome:', currentUserName || '?', ')');
 
-      // 1) função global do app
       if (typeof window.abrirPerfil === 'function') {
         window.abrirPerfil(userId);
         return;
       }
 
-      // 2) ProfileUI + WS
       if (window.ProfileUI && typeof window.ProfileUI.renderOtherProfile === 'function') {
         const sendFn = window.appSend || window.send;
         if (typeof sendFn === 'function') {
@@ -627,12 +836,11 @@
         }
       }
 
-      // 3) evento global
       window.dispatchEvent(new CustomEvent('profile:open', { detail: { userId, name: currentUserName } }));
     }
 
     // ─────────────────────────────────────────────
-    // Interceptor em CAPTURE no pai (#dmChat) — mata o dialog pequeno
+    // Interceptor em CAPTURE no pai (#dmChat)
     // ─────────────────────────────────────────────
     const chatEl = $('dmChat');
     const interceptor = chatEl || document;
@@ -680,12 +888,19 @@
         if (userId) btn.dataset.userId = String(userId);
         else delete btn.dataset.userId;
         console.log('[dm-extras] 👤 usuário da conversa definido:', userId, userName || '');
+        refreshBadgeForCurrent();
       },
       getCurrentUser() {
         return { userId: resolveUserId(), name: currentUserName || readName() };
       },
       openProfile: openCurrentProfile,
       diagnose: dumpDiagnostic,
+
+      // ✅ Selo de verificado
+      setVerified: (verified, roleOrProfile) => setVerifiedBadge(verified, roleOrProfile),
+      applyProfile: (profile) => applyProfileToBadge(profile),
+      rememberRole,
+      recallRole,
     };
   }
 
@@ -772,6 +987,10 @@
         item.style.width = '100%';
         const id = u.id || u.userId || u.user_id || u.username || '';
         if (id) item.dataset.userId = String(id);
+        // Propaga role/verified se a API um dia passar
+        if (u.role) item.dataset.role = String(u.role).toLowerCase();
+        if (typeof u.verified === 'boolean') item.dataset.verified = u.verified ? 'true' : 'false';
+
         const av = el('span', { class: 'dm-thread-avatar' });
         if (u.avatar || u.picture) { const img = el('img', { alt: '' }); img.src = u.avatar || u.picture; av.appendChild(img); }
         else av.textContent = (u.name || u.username || '?').charAt(0).toUpperCase();
@@ -805,6 +1024,14 @@
       loadResults();
     }, true);
   }
+
+  // ═══════════════════════════════════════════════════════════
+  // 6. ALIASES GLOBAIS (para o dm.js principal chamar)
+  // ═══════════════════════════════════════════════════════════
+  window.dmSetVerified = (verified, roleOrProfile) =>
+    window.DmProfileBridge?.setVerified?.(verified, roleOrProfile);
+  window.dmApplyProfile = (profile) =>
+    window.DmProfileBridge?.applyProfile?.(profile);
 
   // ═══════════════════════════════════════════════════════════
   // INIT

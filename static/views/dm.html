@@ -371,6 +371,39 @@
 #dmRoot .dm-attach-meta.is-error { color:var(--dm-danger); }
 #dmRoot .dm-composer-btn.is-on { color:var(--dm-accent); background:var(--dm-accent-soft); }
 
+/* ═══════════ SELO DE VERIFICADO (Dev / Admin / Mod) ═══════════ */
+#dmRoot .dm-chat-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+#dmRoot .dm-chat-name-row b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+#dmRoot .dm-verified-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: #4c8dff;
+  filter: drop-shadow(0 0 5px rgba(76, 141, 255, .55));
+  animation: dm-verified-pop 280ms cubic-bezier(.34, 1.56, .64, 1);
+}
+#dmRoot .dm-verified-badge svg { display: block; width: 100%; height: 100%; }
+#dmRoot .dm-verified-badge[hidden] { display: none !important; }
+#dmRoot .dm-verified-badge[data-role="dev"]   { color: #ff5f5f; filter: drop-shadow(0 0 6px rgba(255, 95, 95, .55)); }
+#dmRoot .dm-verified-badge[data-role="admin"] { color: #f2b84b; filter: drop-shadow(0 0 6px rgba(242, 184, 75, .55)); }
+#dmRoot .dm-verified-badge[data-role="mod"]   { color: #4c8dff; filter: drop-shadow(0 0 6px rgba(76, 141, 255, .55)); }
+@keyframes dm-verified-pop {
+  from { transform: scale(.4); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+
 /* ══════════════════════════════════════════════════════════════
    SEPARADOR DE DIA — estilo WhatsApp
    ══════════════════════════════════════════════════════════════ */
@@ -424,7 +457,6 @@
   #dmRoot .dm-emoji-panel { right:8px; bottom:68px; }
   #dmRoot .dm-attach-preview { left:8px; right:8px; bottom:68px; }
 
-  /* Separador em mobile */
   #dmRoot .dm-day-separator {
     top: 60px;
     margin: 12px auto 4px;
@@ -445,6 +477,7 @@
   #dmRoot .dm-chat, #dmRoot .dm-messages .bub, .dm-msg-menu, #dmRoot .dm-msg-menu, #dmRoot .dm-profile-dialog[open], #dmRoot .dm-emoji-panel { animation:none; }
   #dmRoot .dm-send:active, #dmRoot .dm-head-action:hover, #dmRoot .dm-icon-btn:active { transform:none; }
   #dmRoot .dm-day-separator { position: static; }
+  #dmRoot .dm-verified-badge { animation: none; }
 }
 @media (min-width:821px) {
   #dmRoot #dmList { display:flex !important; grid-column:1; grid-row:1; }
@@ -511,7 +544,22 @@
         <button id="dmViewProfile" type="button" class="dm-chat-identity" aria-label="Ver perfil">
           <span id="dmWithAvatar" class="dm-avatar-lg" aria-hidden="true"></span>
           <span class="dm-chat-text">
-            <b id="dmWith">Jogador</b>
+            <span class="dm-chat-name-row">
+              <b id="dmWith">Jogador</b>
+              <!-- ✅ SELO DE VERIFICADO (Dev / Admin / Mod) -->
+              <span
+                id="dmWithVerified"
+                class="dm-verified-badge"
+                role="img"
+                aria-label="Conta verificada"
+                title="Conta verificada"
+                hidden
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>
+                </svg>
+              </span>
+            </span>
             <small id="dmWithStatus">visto por último recentemente</small>
           </span>
         </button>
@@ -619,13 +667,45 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     PONTE: botão "Ver perfil" → perfil completo do usuário
+     PONTE: botão "Ver perfil" + selo verificado do cabeçalho
      ═══════════════════════════════════════════════════════════ -->
 <script id="dm-profile-bridge">
 (function () {
   'use strict';
 
   let currentUserId = null;
+
+  const VERIFIED_ROLE_KEYS = new Set([
+    'DEV', 'ADMIN', 'MOD', 'MODERADOR', 'MODERATOR'
+  ]);
+
+  function roleKeyFromProfile(data) {
+    if (!data) return 'user';
+    const raw = String(data.role || '').toLocaleLowerCase('pt-BR').trim();
+    if (raw === 'dev' || raw === 'admin' || raw === 'mod') return raw;
+    const roles = Array.isArray(data.community_roles) ? data.community_roles : [];
+    for (const role of roles) {
+      const key = String(role || '').toLocaleUpperCase('pt-BR').trim();
+      if (key === 'DEV') return 'dev';
+      if (key === 'ADMIN') return 'admin';
+      if (key === 'MOD' || key === 'MODERADOR' || key === 'MODERATOR') return 'mod';
+    }
+    return 'user';
+  }
+
+  function isVerified(data) {
+    if (!data) return false;
+    if (typeof data.verified === 'boolean' && data.verified) return true;
+    const key = roleKeyFromProfile(data);
+    return key === 'dev' || key === 'admin' || key === 'mod';
+  }
+
+  function labelForRole(roleKey) {
+    if (roleKey === 'dev')   return 'DEV verificado';
+    if (roleKey === 'admin') return 'Administrador verificado';
+    if (roleKey === 'mod')   return 'Moderador verificado';
+    return 'Conta verificada';
+  }
 
   function abrirPerfilAtual() {
     const userId = currentUserId;
@@ -698,7 +778,57 @@
 
     openProfile() {
       abrirPerfilAtual();
+    },
+
+    /* ✅ Atualiza o selo de verificado no cabeçalho da conversa.
+       Chame isso quando o servidor entregar o `profile` do outro usuário
+       (por ex. ao tratar a mensagem "dm_history"). */
+    setVerified(isVerifiedFlag, roleOrProfile) {
+      const badge = document.getElementById('dmWithVerified');
+      if (!badge) return;
+
+      let roleKey = 'user';
+      let verified = Boolean(isVerifiedFlag);
+
+      if (roleOrProfile && typeof roleOrProfile === 'object') {
+        roleKey = roleKeyFromProfile(roleOrProfile);
+        verified = isVerified(roleOrProfile);
+      } else if (typeof roleOrProfile === 'string') {
+        const key = roleOrProfile.toLocaleLowerCase('pt-BR').trim();
+        if (key === 'dev' || key === 'admin' || key === 'mod') {
+          roleKey = key;
+          verified = true;
+        }
+      }
+
+      badge.hidden = !verified;
+
+      if (verified) {
+        const label = labelForRole(roleKey);
+        badge.dataset.role = roleKey;
+        badge.setAttribute('aria-label', label);
+        badge.setAttribute('title', label);
+        badge.style.animation = 'none';
+        void badge.offsetWidth;
+        badge.style.animation = '';
+      } else {
+        badge.removeAttribute('data-role');
+        badge.setAttribute('aria-label', 'Conta verificada');
+        badge.setAttribute('title', 'Conta verificada');
+      }
+    },
+
+    /* ✅ Conveniência: recebe o objeto de perfil inteiro do servidor
+       (aquele que vem em "dm_history" como `profile`) e aplica o selo. */
+    applyProfile(profile) {
+      this.setVerified(profile, profile);
     }
   };
+
+  // Também deixa disponível globalmente para facilitar a integração
+  window.dmSetVerified = (verified, roleOrProfile) =>
+    window.DmProfileBridge.setVerified(verified, roleOrProfile);
+  window.dmApplyProfile = (profile) =>
+    window.DmProfileBridge.applyProfile(profile);
 })();
 </script>

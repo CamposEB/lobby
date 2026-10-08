@@ -1,23 +1,16 @@
 /* Reusable profile presentation and editor interactions. */
-/* v7 — caminho e sufixo corretos: /static/assets/ + "-png-ml.png" */
+/* v11 — header: oculta o @username quando for redundante com o display_name */
 (() => {
   const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
   const MAX_AVATAR_DATA_LENGTH = 120000;
   const MAX_BANNER_DATA_LENGTH = 350000;
 
-  // 🛠️ CORRIGIDO: os arquivos estão em /static/assets/, não em /elos/
   const ELOS_DIR = "/static/assets/";
   const HERO_IMAGE_DIR = "/static/img/icons/herois/";
 
   const defaultAccent = () =>
     getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
 
-  // ─────────────────────────────────────────────────────────────
-  // Sufixos testados em ordem. O primeiro é o que existe HOJE na
-  // pasta (D:\lobby\static\assets\*-png-ml.png). Os demais ficam
-  // como reserva para o caso de os arquivos serem renomeados no
-  // futuro para o padrão "tradicional" (.png, .webp).
-  // ─────────────────────────────────────────────────────────────
   const RANK_FILE_SUFFIXES = [
     "-png-ml.png",
     "-png-ml.webp",
@@ -32,11 +25,6 @@
     ".svg",
   ];
 
-  // ─────────────────────────────────────────────────────────────
-  // Bases (sem sufixo). Cada opção pode ter mais de uma base
-  // porque "grandmaster" aparece de duas formas em diferentes
-  // distribuições do dataset.
-  // ─────────────────────────────────────────────────────────────
   const RANK_OPTIONS = [
     { value: "Guerreiro",     label: "Guerreiro",     bases: ["logo-icon-rank-warrior"] },
     { value: "Elite",         label: "Elite",         bases: ["logo-icon-rank-elite"] },
@@ -62,8 +50,6 @@
     { value: "Imortal",       label: "Imortal",       bases: ["logo-icon-rank-immortal"] },
   ];
 
-  // Aliases de texto aceitos para o rank digitado (tolera acentos,
-  // variações em inglês e escrita livre).
   const RANK_ALIASES = [
     {
       bases: ["logo-icon-rank-mythical-glory"],
@@ -138,7 +124,6 @@
     return parseStarsValue(data.stars);
   }
 
-  /** Lista de bases candidatas para um rank digitado. */
   function rankBasesFor(rank) {
     const normalized = normalizeRank(rank);
     if (!normalized) return [];
@@ -157,12 +142,6 @@
     return [];
   }
 
-  /**
-   * Constrói as URLs candidatas: para cada base, cada sufixo.
-   * Com ELOS_DIR = "/static/assets/" e base = "logo-icon-rank-elite",
-   * a primeira URL fica:
-   *   /static/assets/logo-icon-rank-elite-png-ml.png
-   */
   function rankImageCandidatesFromBases(bases) {
     if (!Array.isArray(bases) || !bases.length) return [];
     const urls = [];
@@ -195,12 +174,11 @@
   function heroImageUrl(name) {
     const file = heroIconFile(name);
     if (!file) return "";
-if (window.HeroCatalog && window.HeroCatalog.routeImg) {
-  return window.HeroCatalog.routeImg(file);
-}
-// Fallback (se HeroCatalog não carregou ainda)
-if (/^(?:https?:)?\/\//i.test(file) || file.charAt(0) === "/") return file;
-return HERO_IMAGE_DIR + file;
+    if (window.HeroCatalog && window.HeroCatalog.routeImg) {
+      return window.HeroCatalog.routeImg(file);
+    }
+    if (/^(?:https?:)?\/\//i.test(file) || file.charAt(0) === "/") return file;
+    return HERO_IMAGE_DIR + file;
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -296,6 +274,271 @@ return HERO_IMAGE_DIR + file;
   function setVal(id, value) {
     const el = safe(id);
     if (el) el.value = value;
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // UTIL: comparação tolerante de nick vs display_name
+  // Retorna true se forem "a mesma coisa" aos olhos do usuário
+  // (ignora case, acentos, @, espaços e underscores).
+  // ─────────────────────────────────────────────────────────────
+  function looksLikeSameName(a, b) {
+    const clean = (s) =>
+      String(s || "")
+        .toLocaleLowerCase("pt-BR")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/^@+/, "")
+        .replace(/[^a-z0-9]/g, "");
+    const ca = clean(a);
+    const cb = clean(b);
+    if (!ca || !cb) return false;
+    return ca === cb;
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SELO DE VERIFICADO  (Dev / Admin / Mod)
+  // ─────────────────────────────────────────────────────────────
+  const VERIFIED_ROLE_KEYS = new Set([
+    "DEV",
+    "ADMIN",
+    "MOD",
+    "MODERADOR",
+    "MODERATOR",
+  ]);
+
+  const VERIFIED_BADGE_SVG =
+    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
+    "</svg>";
+
+  function hasVerifiedRole(data) {
+    if (!data) return false;
+
+    if (typeof data.verified === "boolean" && data.verified) return true;
+
+    const rawRole = String(data.role || "").toLocaleLowerCase("pt-BR").trim();
+    if (rawRole === "dev" || rawRole === "admin" || rawRole === "mod") return true;
+
+    const roles = Array.isArray(data.community_roles) ? data.community_roles : [];
+    return roles.some((role) => {
+      const key = String(role || "").toLocaleUpperCase("pt-BR").trim();
+      return VERIFIED_ROLE_KEYS.has(key);
+    });
+  }
+
+  function verifiedRoleKey(data) {
+    const rawRole = String(data?.role || "").toLocaleLowerCase("pt-BR").trim();
+    if (rawRole === "dev" || rawRole === "admin" || rawRole === "mod") {
+      return rawRole;
+    }
+    const roles = Array.isArray(data?.community_roles) ? data.community_roles : [];
+    for (const role of roles) {
+      const key = String(role || "").toLocaleUpperCase("pt-BR").trim();
+      if (key === "DEV") return "dev";
+      if (key === "ADMIN") return "admin";
+      if (key === "MOD" || key === "MODERADOR" || key === "MODERATOR") return "mod";
+    }
+    return "user";
+  }
+
+  function verifiedRoleLabel(roleKey) {
+    if (roleKey === "dev")   return "DEV verificado";
+    if (roleKey === "admin") return "Administrador verificado";
+    if (roleKey === "mod")   return "Moderador verificado";
+    return "Conta verificada";
+  }
+
+  function renderVerifiedBadge(data) {
+    const badge = safe("profileVerifiedBadge");
+    if (!badge) return;
+
+    const isVerified = hasVerifiedRole(data);
+    badge.hidden = !isVerified;
+
+    if (!isVerified) {
+      badge.removeAttribute("data-role");
+      badge.removeAttribute("title");
+      badge.setAttribute("aria-label", "Conta verificada");
+      return;
+    }
+
+    const roleKey = verifiedRoleKey(data);
+    const label = verifiedRoleLabel(roleKey);
+    badge.dataset.role = roleKey;
+    badge.setAttribute("aria-label", label);
+    badge.setAttribute("title", label);
+
+    badge.style.animation = "none";
+    void badge.offsetWidth;
+    badge.style.animation = "";
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // SELO DE VERIFICADO INLINE (header superior direito)
+  // ─────────────────────────────────────────────────────────────
+  let _inlineBadgeStylesInjected = false;
+  function ensureInlineBadgeStyles() {
+    if (_inlineBadgeStylesInjected) return;
+    if (document.getElementById("profile-inline-verified-css")) {
+      _inlineBadgeStylesInjected = true;
+      return;
+    }
+    const style = document.createElement("style");
+    style.id = "profile-inline-verified-css";
+    style.textContent = `
+      #sidebarDisplayName.has-verified-badge-support {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      #sidebarDisplayName > .sidebar-display-name-text {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .profile-verified-badge-inline {
+        display: inline-grid;
+        place-items: center;
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        color: #4c8dff;
+        filter: drop-shadow(0 0 5px rgba(76,141,255,.55));
+        animation: profile-verified-pop 320ms cubic-bezier(.34, 1.56, .64, 1);
+        pointer-events: auto;
+        vertical-align: middle;
+      }
+      .profile-verified-badge-inline svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .profile-verified-badge-inline[hidden] { display: none !important; }
+      .profile-verified-badge-inline[data-role="dev"]   { color: #ff5f5f; filter: drop-shadow(0 0 6px rgba(255,95,95,.55)); }
+      .profile-verified-badge-inline[data-role="admin"] { color: #f2b84b; filter: drop-shadow(0 0 6px rgba(242,184,75,.55)); }
+      .profile-verified-badge-inline[data-role="mod"]   { color: #4c8dff; filter: drop-shadow(0 0 6px rgba(76,141,255,.55)); }
+    `;
+    document.head.appendChild(style);
+    _inlineBadgeStylesInjected = true;
+  }
+
+  /**
+   * Injeta/atualiza o selo ao lado do nome no header superior direito.
+   */
+  function renderSidebarVerifiedBadge(data) {
+    ensureInlineBadgeStyles();
+
+    const nameEl = safe("sidebarDisplayName");
+    if (!nameEl) return false;
+
+    const name =
+      (data && (data.display_name || data.display || data.username || data.nick)) ||
+      (nameEl.textContent || "").trim() ||
+      "Jogador";
+
+    let textSpan = nameEl.querySelector(":scope > .sidebar-display-name-text");
+    if (!textSpan) {
+      textSpan = document.createElement("span");
+      textSpan.className = "sidebar-display-name-text";
+      nameEl.replaceChildren(textSpan);
+    }
+    textSpan.textContent = name;
+
+    nameEl
+      .querySelectorAll(":scope > .profile-verified-badge-inline")
+      .forEach((b) => b.remove());
+
+    const isVerified = hasVerifiedRole(data);
+
+    if (!isVerified) {
+      nameEl.classList.remove("has-verified-badge-support");
+      return true;
+    }
+
+    const badge = document.createElement("span");
+    badge.className = "profile-verified-badge-inline";
+    badge.setAttribute("role", "img");
+    badge.innerHTML = VERIFIED_BADGE_SVG;
+
+    const roleKey = verifiedRoleKey(data);
+    const label = verifiedRoleLabel(roleKey);
+    badge.dataset.role = roleKey;
+    badge.setAttribute("aria-label", label);
+    badge.setAttribute("title", label);
+
+    nameEl.classList.add("has-verified-badge-support");
+    nameEl.append(badge);
+
+    badge.style.animation = "none";
+    void badge.offsetWidth;
+    badge.style.animation = "";
+
+    return true;
+  }
+
+  /**
+   * Mostra/oculta o @username no header.
+   * Regra: se o display_name "parece" o mesmo que o nick, escondemos
+   * o @username para não repetir a informação. Se forem diferentes,
+   * mostramos os dois (nome + @handle), como Twitter/Instagram.
+   */
+  function renderSidebarUsername(data, username, displayName) {
+    const el = safe("sidebarUsername");
+    if (!el) return;
+
+    const nick = (data?.username || username || data?.nick || "").trim();
+    const name = (displayName || data?.display_name || "").trim();
+
+    // Sem nick pra mostrar → esconde
+    if (!nick) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+
+    // Se o nome "parece" o nick → esconde (evita repetição)
+    if (name && looksLikeSameName(name, nick)) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+
+    // Caso contrário, mostra @nick normalmente
+    el.hidden = false;
+    el.textContent = "@" + nick;
+  }
+
+  function watchSidebarBadge() {
+    if (watchSidebarBadge.__installed) return;
+    watchSidebarBadge.__installed = true;
+
+    const tryApply = () => {
+      if (!selfProfile) return;
+      renderSidebarVerifiedBadge(selfProfile);
+    };
+
+    [0, 120, 400, 1200, 2500].forEach((ms) => setTimeout(tryApply, ms));
+
+    const obs = new MutationObserver(() => {
+      if (!selfProfile) return;
+      const nameEl = safe("sidebarDisplayName");
+      if (!nameEl) return;
+      const hasBadge = nameEl.querySelector(
+        ":scope > .profile-verified-badge-inline"
+      );
+      const needsBadge = hasVerifiedRole(selfProfile);
+      if (needsBadge !== Boolean(hasBadge)) {
+        renderSidebarVerifiedBadge(selfProfile);
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -620,6 +863,8 @@ return HERO_IMAGE_DIR + file;
     const displayName = data.display_name || username || "Jogador";
 
     setText("profileDisplayName", displayName);
+    renderVerifiedBadge(data);
+
     setText("profileUsername", "@" + (data.username || username || "jogador"));
     setText(
       "profileBio",
@@ -685,8 +930,11 @@ return HERO_IMAGE_DIR + file;
       );
     }
 
-    setText("sidebarDisplayName", displayName);
-    setText("sidebarUsername", usernameHandle);
+    // Nome + selo de verificado no header
+    renderSidebarVerifiedBadge({ ...data, display_name: displayName });
+
+    // @username — escondido se for redundante com o display_name
+    renderSidebarUsername(data, username, displayName);
 
     setText("settingsDisplayName", displayName);
     setText("settingsUsername", usernameHandle);
@@ -1346,6 +1594,8 @@ return HERO_IMAGE_DIR + file;
       if (editor && editor.open) refreshHeroPreview();
     });
 
+    watchSidebarBadge();
+
     setChromeVisibility();
   }
 
@@ -1399,10 +1649,56 @@ return HERO_IMAGE_DIR + file;
     getMode,
     getCurrentUserId,
 
+    // ✅ helpers do selo de verificado (útil para DM e outros componentes)
+    hasVerifiedRole,
+    verifiedRoleKey,
+    verifiedRoleLabel,
+    renderVerifiedBadge,
+    renderSidebarVerifiedBadge,
+    renderSidebarUsername,
+    looksLikeSameName,
+
     rankBasesFor,
     rankImageCandidatesFromBases,
     rankCandidatesForRank,
     heroImageUrl,
     RANK_OPTIONS,
   };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.__selfProfile) {
+        renderSidebarVerifiedBadge(window.__selfProfile);
+        renderSidebarUsername(
+          window.__selfProfile,
+          window.__selfProfile.username,
+          window.__selfProfile.display_name
+        );
+      }
+    });
+  } else {
+    if (window.__selfProfile) {
+      renderSidebarVerifiedBadge(window.__selfProfile);
+      renderSidebarUsername(
+        window.__selfProfile,
+        window.__selfProfile.username,
+        window.__selfProfile.display_name
+      );
+    }
+  }
+
+  document.addEventListener("profile:self-updated", (ev) => {
+    const data = ev?.detail?.profile;
+    if (data) {
+      renderSidebarVerifiedBadge(data);
+      renderSidebarUsername(data, data.username, data.display_name);
+    }
+  });
+  window.addEventListener("profile:self-updated", (ev) => {
+    const data = ev?.detail?.profile;
+    if (data) {
+      renderSidebarVerifiedBadge(data);
+      renderSidebarUsername(data, data.username, data.display_name);
+    }
+  });
 })();

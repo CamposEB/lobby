@@ -1,3 +1,41 @@
+<style id="profile-verified-css">
+/* ═══════════ SELO DE VERIFICADO ═══════════ */
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-verified-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  color: #4c8dff;
+  filter: drop-shadow(0 0 6px rgba(76, 141, 255, .55));
+  animation: profile-verified-pop 320ms cubic-bezier(.34, 1.56, .64, 1);
+  cursor: help;
+}
+.profile-verified-badge svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.profile-verified-badge[hidden] { display: none !important; }
+
+/* Cores por papel */
+.profile-verified-badge[data-role="dev"]   { color: #ff5f5f; filter: drop-shadow(0 0 7px rgba(255, 95, 95, .55)); }
+.profile-verified-badge[data-role="admin"] { color: #f2b84b; filter: drop-shadow(0 0 7px rgba(242, 184, 75, .55)); }
+.profile-verified-badge[data-role="mod"]   { color: #4c8dff; filter: drop-shadow(0 0 7px rgba(76, 141, 255, .55)); }
+
+@keyframes profile-verified-pop {
+  from { transform: scale(.4); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+</style>
+
 <section class="profile-page" data-profile-mode="self" id="profileRoot">
 
   <!-- ═══════════════════════════════════════════════════════════
@@ -110,6 +148,20 @@
 
         <div class="profile-name-row">
           <h1 id="profileDisplayName">Jogador</h1>
+
+          <!-- ✅ SELO DE VERIFICADO (Dev / Admin / Mod) -->
+          <span
+            id="profileVerifiedBadge"
+            class="profile-verified-badge"
+            role="img"
+            aria-label="Conta verificada"
+            title="Conta verificada"
+            hidden
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>
+            </svg>
+          </span>
 
           <span id="profileStatus" class="profile-status">
             <i></i> Online

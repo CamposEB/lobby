@@ -4,16 +4,18 @@
 #   1. removido "sqlite3" dos imports
 #   2. removido "import persistence"
 #   3. adicionado "from db import connect as _connect_db"
-#   4. removido o bloco de setup do SQLite (CREATE TABLE / ALTER TABLE / class _MarkedConnection)
+#   4. removido o bloco de setup do SQLite
 #   5. adicionado "db = _connect_db()" no lugar
-#   6. lifespan não baixa/sobe mais backup — apenas gerencia a task de recompensas e fecha o pool
-#   7. SESSION_SECRET ganhou fallback persistente (session_secret.txt) para sobreviver a restarts
-#   8. DM: mensagens retornam id e ts; handler dm_delete para apagar a própria mensagem
-#   9. Upload de anexos da DM (POST /api/dm/upload) + busca de usuários (GET /api/users/search) + lista de amigos (GET /api/friends/list)
-#  10. Upload agora aceita vídeo e limite subiu para 25 MB; dm_send aceita até 400 caracteres
-#  11. profile() agora retorna "online" — corrige o status Online/Offline no perfil (self e other)
-#  12. Reações em DM (tabela dm_reactions + handler dm_react + reactions no dm_open)
-#  13. Proxy /api/img para imagens do CDN da Moonton (dribla hotlink protection)
+#   6. lifespan não baixa/sobe mais backup
+#   7. SESSION_SECRET ganhou fallback persistente
+#   8. DM: mensagens retornam id e ts; handler dm_delete
+#   9. Upload de anexos da DM + busca de usuários + lista de amigos
+#  10. Upload aceita vídeo e limite 25 MB; dm_send 400 chars
+#  11. profile() retorna "online"
+#  12. Reações em DM
+#  13. Proxy /api/img para imagens do CDN da Moonton
+#  14. HIERARQUIA DE PAPÉIS: user < admin < mod < dev
+#  15. Papéis no Supabase (fonte de verdade) com Firestore como espelho opcional
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -33,11 +35,27 @@ from db import connect as _connect_db
 
 BOT_KEY = os.getenv("BOT_KEY", "").strip()
 ALLOW_LEGACY_LOGIN = os.getenv("ALLOW_LEGACY_LOGIN", "true").strip().lower() in ("1", "true", "yes")
+
+# ─── PAPÉIS ───
 ADMIN_NICKS = {
     nick.strip().lower()
     for nick in os.getenv("LOBBY_ADMIN_NICKS", "").split(",")
     if nick.strip()
 }
+DEV_NICKS = {
+    nick.strip().lower()
+    for nick in os.getenv("LOBBY_DEV_NICKS", "").split(",")
+    if nick.strip()
+}
+# Se ninguém foi declarado como DEV, usa ADMIN como fallback (o dono do bot)
+if not DEV_NICKS:
+    DEV_NICKS = set(ADMIN_NICKS)
+
+VALID_ROLES = ("user", "admin", "mod", "dev")
+MUTE_ACTIONS = {"mute_10m", "mute_1h", "mute_24h"}
+STATUS_BY_ACTION = {"review": "reviewed", "dismiss": "dismissed", "close": "resolved"}
+MUTE_DURATIONS = {"mute_10m": 600, "mute_1h": 3600, "mute_24h": 86400}
+
 W, H = 800, 500
 COIN_EVERY = 60
 DAILY_ONLINE_CAP = 120
@@ -132,9 +150,7 @@ ROOMS = {"lobby": "Salão Principal", "praca": "Praça", "arena": "Arena"}
 
 db = _connect_db()
 
-# ═══════════════════════════════════════════════════════════
-# 🆕 MIGRAÇÃO IDEMPOTENTE — tabela de reações da DM
-# ═══════════════════════════════════════════════════════════
+
 def _ensure_dm_reactions_table():
     try:
         db.execute(
@@ -157,13 +173,14 @@ try:
 except Exception:
     pass
 
+
 # ═══════════════════════════════════════════════════════════
-# 🖼️ Upload de anexos da DM
+# Upload de anexos da DM
 # ═══════════════════════════════════════════════════════════
 UPLOAD_DIR = Path(__file__).resolve().parent / "static" / "uploads" / "dm"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-DM_MAX_SIZE = 25 * 1024 * 1024  # 25 MB (aceita imagens grandes e vídeos curtos)
+DM_MAX_SIZE = 25 * 1024 * 1024
 
 DM_ALLOWED_TYPES = {
     "image/jpeg", "image/png", "image/gif", "image/webp",
@@ -206,12 +223,7 @@ def _fold_rank(value):
     return "".join(ch for ch in nfd if unicodedata.category(ch) != "Mn").strip()
 
 
-_MYTHIC_PLUS_RANKS = {
-    "mitico",
-    "honra mitica",
-    "gloria mitica",
-    "imortal",
-}
+_MYTHIC_PLUS_RANKS = {"mitico", "honra mitica", "gloria mitica", "imortal"}
 
 
 def _is_mythic_plus_rank(rank):
@@ -248,14 +260,20 @@ def profile(nick, viewer=None):
     data = json.loads(u["profile_data"] or "{}")
     own = viewer == nick
     private = bool(data.get("is_private", False)) and not own
-    community_roles = ["MEMBRO"]
-    if nick.casefold() == "campos":
-        community_roles.insert(0, "DEV")
-    account_role = online.get(nick, {}).get("role")
-    if account_role == "admin":
-        community_roles.insert(0, "ADMIN")
-    elif account_role == "mod":
-        community_roles.insert(0, "MODERADOR")
+
+    # Papel real do usuário (env > Supabase > Firestore > default)
+    role = role_for(nick)
+
+    # Cargos exibidos no perfil — cada um no máximo 1 vez.
+    ROLE_LABELS = {"dev": "DEV", "admin": "ADMIN", "mod": "MODERADOR"}
+    if role in ROLE_LABELS:
+        community_roles = [ROLE_LABELS[role]]
+    else:
+        community_roles = ["MEMBRO"]
+
+    # Verificado azul: só dev, admin e mod ganham o selo
+    verified = role in ("dev", "admin", "mod")
+
     result = {
         "nick": nick,
         "username": nick,
@@ -263,8 +281,10 @@ def profile(nick, viewer=None):
         "joined_at": u["joined_at"] or "",
         "is_private": bool(data.get("is_private", False)),
         "is_owner": own,
-        "community_roles": community_roles,
+        "community_roles": community_roles,   # ← agora sem duplicatas
         "online": nick in online,
+        "role": role,                          # ← papel cru (pra debug/lógica)
+        "verified": verified,                  # ← flag pro frontend
     }
     if private:
         return result
@@ -311,11 +331,7 @@ def unread(nick):
     return db.execute("SELECT COUNT(*) FROM dm WHERE b=? AND seen=0", (nick,)).fetchone()[0]
 
 
-# ═══════════════════════════════════════════════════════════
-# 🆕 Reações da DM — helper
-# ═══════════════════════════════════════════════════════════
 def dm_reactions_for(message_ids):
-    """Retorna { msg_id: [ {voter, emoji}, ... ] } para os ids informados."""
     if not message_ids:
         return {}
     ids = [int(i) for i in message_ids]
@@ -690,19 +706,143 @@ def password_login_account(message):
 def get_user(nick): return db.execute("SELECT * FROM users WHERE nick=?", (nick,)).fetchone()
 
 
+# ═══════════════════════════════════════════════════════════
+# HIERARQUIA DE PAPÉIS: user < admin < mod < dev
+# Fonte de verdade: Supabase (profile_data._role).
+# Firestore é espelho opcional (best-effort).
+# ═══════════════════════════════════════════════════════════
+
+def _local_role_get(nick):
+    """Lê o papel do banco local. Retorna None se não definido."""
+    if not nick:
+        return None
+    try:
+        u = get_user(nick)
+        if not u:
+            return None
+        data = json.loads(u["profile_data"] or "{}")
+        role = data.get("_role")
+        if role in VALID_ROLES:
+            return role
+    except Exception:
+        pass
+    return None
+
+
+def _local_role_set(nick, role, by=None):
+    """Grava o papel do usuário no profile_data.
+    Registra também quem alterou e quando."""
+    if role not in VALID_ROLES:
+        raise IdentityError("Papel inválido.")
+    u = get_user(nick)
+    if not u:
+        raise IdentityError("Conta não encontrada.")
+    data = json.loads(u["profile_data"] or "{}")
+    data["_role"] = role
+    data["_role_at"] = int(time.time())
+    if by:
+        data["_role_by"] = str(by)[:30]
+    db.execute("UPDATE users SET profile_data=? WHERE nick=?",
+               (json.dumps(data, ensure_ascii=False), nick))
+    db.commit()
+
+
+def _local_list_accounts():
+    """Lista todas as contas do Supabase com papéis derivados.
+    Fonte de verdade: profile_data._role.
+    Fallback: DEV_NICKS / ADMIN_NICKS → role.
+    """
+    try:
+        rows = db.execute(
+            "SELECT nick, display, profile_data, joined_at "
+            "FROM users ORDER BY nick"
+        ).fetchall()
+    except Exception as exc:
+        raise IdentityError(f"Erro ao listar contas locais: {exc}")
+
+    result = []
+    for row in rows:
+        nick = row["nick"]
+        data = json.loads(row["profile_data"] or "{}")
+        stored_role = data.get("_role")
+
+        if stored_role in VALID_ROLES:
+            role = stored_role
+            role_source = "explicit"
+        elif nick in DEV_NICKS:
+            role = "dev"
+            role_source = "env"
+        elif nick in ADMIN_NICKS:
+            role = "admin"
+            role_source = "env"
+        else:
+            role = "user"
+            role_source = "default"
+
+        # Informações extras que ajudam a UI
+        google_linked = bool(data.get("google_uid") or data.get("google_id"))
+        entry = {
+            "nick": nick,
+            "display": data.get("display_name") or row["display"] or nick,
+            "role": role,
+            "role_source": role_source,
+            "role_at": data.get("_role_at"),
+            "role_by": data.get("_role_by"),
+            "google_linked": google_linked,
+            "source": "local",
+        }
+
+        try:
+            entry["joined_at"] = row["joined_at"]
+        except Exception:
+            pass
+
+        result.append(entry)
+
+    return result
+
+
 def role_for(nick):
-    fallback = "admin" if nick in ADMIN_NICKS else "user"
+    if not nick:
+        return "user"
+    # 1) DEV por env var (prioridade máxima — não pode ser mudado pela UI)
+    if nick in DEV_NICKS:
+        return "dev"
+    # 2) Papel gravado no Supabase (fonte de verdade)
+    local = _local_role_get(nick)
+    if local:
+        return local
+    # 3) Firestore (legado, só leitura)
     if identity_store.firestore_configured:
-        return identity_store.role_for(nick, fallback)
-    return fallback
+        try:
+            fallback = "admin" if nick in ADMIN_NICKS else "user"
+            return identity_store.role_for(nick, fallback)
+        except Exception:
+            pass
+    # 4) Fallback por env vars
+    if nick in ADMIN_NICKS:
+        return "admin"
+    return "user"
 
 
-def can_moderate(nick):
-    return nick in online and online[nick].get("role") in ("mod", "admin")
+def is_dev(nick):
+    if not nick:
+        return False
+    return role_for(nick) == "dev"
 
 
 def is_admin(nick):
-    return nick in online and online[nick].get("role") == "admin"
+    """ADMIN, MOD ou DEV."""
+    if not nick:
+        return False
+    return role_for(nick) in ("admin", "mod", "dev")
+
+
+def can_moderate(nick):
+    """MOD ou DEV."""
+    if not nick:
+        return False
+    return role_for(nick) in ("mod", "dev")
 
 
 def public(nick):
@@ -748,14 +888,39 @@ async def broadcast_community():
 async def broadcast_moderation():
     data = {"t": "moderation_data", "reports": moderation_reports(), "mutes": active_mutes()}
     for admin_nick in list(online):
-        if can_moderate(admin_nick):
+        if is_admin(admin_nick) or can_moderate(admin_nick):
             await send(admin_nick, data)
 
 
 async def broadcast_role_list():
-    data = {"t": "admin_roles", "list": identity_store.list_accounts()}
+    """Envia a lista de contas/papéis pra todos os DEVs online.
+    Fonte primária: Supabase (funciona sem Firestore)."""
+    try:
+        accounts = _local_list_accounts()
+
+        # Enriquece com papéis do Firestore se disponível (legado)
+        if identity_store.firestore_configured:
+            try:
+                firestore_accounts = identity_store.list_accounts()
+                by_nick = {a.get("nick"): a for a in firestore_accounts}
+                for acc in accounts:
+                    if acc["role_source"] != "explicit":
+                        fs = by_nick.get(acc["nick"])
+                        if fs and fs.get("role") in VALID_ROLES:
+                            acc["role"] = fs["role"]
+                            acc["role_source"] = "firestore"
+            except Exception as exc:
+                print(f"⚠️ [broadcast_role_list] Firestore sync falhou: {exc}")
+    except IdentityError as err:
+        print(f"⚠️ [broadcast_role_list] {err}")
+        return
+    except Exception as err:
+        print(f"⚠️ [broadcast_role_list] erro inesperado: {err}")
+        return
+
+    data = {"t": "admin_roles", "list": accounts}
     for admin_nick in list(online):
-        if is_admin(admin_nick):
+        if is_dev(admin_nick):
             await send(admin_nick, data)
 
 
@@ -819,7 +984,6 @@ class BotCoins(BaseModel):
 
 @app.post("/api/coins")
 async def bot_coins(body: BotCoins, x_bot_key: str = Header("")):
-    """O bot do WhatsApp chama isto para dar (ou tirar) moedas."""
     if not BOT_KEY:
         raise HTTPException(503, "BOT_KEY não foi configurada no servidor")
     if not secrets.compare_digest(x_bot_key, BOT_KEY):
@@ -1091,11 +1255,22 @@ async def ws_endpoint(ws: WebSocket):
         online[nick] = {"ws": ws, "x": W // 2, "y": H // 2, "last_chat": 0, "last_dm": 0,
                         "room": "lobby", "role": role, "auth_provider": auth_provider,
                         "community_build_filters": None}
-        await ws.send_text(json.dumps({"t": "init", "quiz": quiz_state(nick), "profile": profile(nick, nick), "unread": unread(nick), "shop": SHOP, "me": me(nick), "self": nick,
-                                       "is_admin": role == "admin", "is_moderator": role in ("mod", "admin"),
-                                       "role": role, "auth_provider": auth_provider,
-                                       "token": create_session_token(nick),
-                                       "players": [public(n) for n in online if online[n]["room"] == "lobby"]}))
+        await ws.send_text(json.dumps({
+            "t": "init",
+            "quiz": quiz_state(nick),
+            "profile": profile(nick, nick),
+            "unread": unread(nick),
+            "shop": SHOP,
+            "me": me(nick),
+            "self": nick,
+            "is_admin": role in ("admin", "mod", "dev"),
+            "is_moderator": role in ("mod", "dev"),
+            "is_dev": role == "dev",
+            "role": role,
+            "auth_provider": auth_provider,
+            "token": create_session_token(nick),
+            "players": [public(n) for n in online if online[n]["room"] == "lobby"]
+        }))
         await send(nick, {"t": "tournaments", "list": tournament_list(nick)})
         current_mute = mute_status(nick)
         if current_mute:
@@ -1173,13 +1348,13 @@ async def ws_endpoint(ws: WebSocket):
                 await send(nick, {"t": "report_submitted", "m": "Denúncia enviada à moderação. Obrigado por ajudar a comunidade."})
                 await broadcast_moderation()
             elif t == "moderation_list":
-                if not can_moderate(nick):
+                if not (is_admin(nick) or can_moderate(nick)):
                     await send(nick, {"t": "moderation_error", "m": "Você não tem acesso à moderação."})
                     continue
                 await send(nick, {"t": "moderation_data", "reports": moderation_reports(),
                                   "mutes": active_mutes()})
             elif t == "moderation_action":
-                if not can_moderate(nick):
+                if not (is_admin(nick) or can_moderate(nick)):
                     await send(nick, {"t": "moderation_error", "m": "Você não tem acesso à moderação."})
                     continue
                 try:
@@ -1194,13 +1369,14 @@ async def ws_endpoint(ws: WebSocket):
                     await send(nick, {"t": "moderation_error", "m": "Esta denúncia não existe mais."})
                     continue
                 action = str(m.get("action", "")).strip()
-                status_by_action = {"review": "reviewed", "dismiss": "dismissed", "close": "resolved"}
-                mute_durations = {"mute_10m": 600, "mute_1h": 3600, "mute_24h": 86400}
-                if action not in status_by_action and action not in mute_durations:
+                if action not in STATUS_BY_ACTION and action not in MUTE_ACTIONS:
                     await send(nick, {"t": "moderation_error", "m": "Ação de moderação inválida."})
                     continue
-                if action in mute_durations:
-                    muted_until = time.time() + mute_durations[action]
+                if action in MUTE_ACTIONS and not can_moderate(nick):
+                    await send(nick, {"t": "moderation_error", "m": "Apenas MOD/DEV podem silenciar."})
+                    continue
+                if action in MUTE_ACTIONS:
+                    muted_until = time.time() + MUTE_DURATIONS[action]
                     reason = str(m.get("reason", "")).strip()[:200] or "Denúncia #" + str(report_id)
                     db.execute(
                         "INSERT INTO user_mutes(nick,muted_until,reason,by_nick,created_at) VALUES(?,?,?,?,?) "
@@ -1214,7 +1390,7 @@ async def ws_endpoint(ws: WebSocket):
                             "m": "Você foi silenciado temporariamente pela moderação.",
                             "until": muted_until})
                 else:
-                    status = status_by_action[action]
+                    status = STATUS_BY_ACTION[action]
                 db.execute(
                     "UPDATE community_reports SET status=?,action=?,reviewed_by=?,reviewed_at=? WHERE id=?",
                     (status, action, nick, time.time(), report_id)
@@ -1224,7 +1400,7 @@ async def ws_endpoint(ws: WebSocket):
                 await broadcast_moderation()
             elif t == "moderation_unmute":
                 if not can_moderate(nick):
-                    await send(nick, {"t": "moderation_error", "m": "Você não tem acesso à moderação."})
+                    await send(nick, {"t": "moderation_error", "m": "Apenas MOD/DEV podem remover silenciamentos."})
                     continue
                 target = str(m.get("target", "")).strip().lower()
                 if not db.execute("SELECT 1 FROM user_mutes WHERE nick=?", (target,)).fetchone():
@@ -1237,34 +1413,79 @@ async def ws_endpoint(ws: WebSocket):
                 await send(nick, {"t": "moderation_saved", "m": "Silenciamento removido."})
                 await broadcast_moderation()
             elif t == "admin_roles_list":
-                if not is_admin(nick):
-                    await send(nick, {"t": "admin_roles_error", "m": "Apenas administradores podem gerenciar papéis."})
+                if not is_dev(nick):
+                    await send(nick, {"t": "admin_roles_error", "m": "Apenas DEV pode gerenciar papéis."})
                     continue
                 try:
-                    await send(nick, {"t": "admin_roles", "list": identity_store.list_accounts()})
+                    accounts = _local_list_accounts()
+
+                    if identity_store.firestore_configured:
+                        try:
+                            firestore_accounts = identity_store.list_accounts()
+                            by_nick = {a.get("nick"): a for a in firestore_accounts}
+                            for acc in accounts:
+                                if acc["role_source"] != "explicit":
+                                    fs = by_nick.get(acc["nick"])
+                                    if fs and fs.get("role") in VALID_ROLES:
+                                        acc["role"] = fs["role"]
+                                        acc["role_source"] = "firestore"
+                        except Exception as exc:
+                            print(f"⚠️ [admin_roles_list] Firestore sync falhou (ignorado): {exc}")
+
+                    await send(nick, {"t": "admin_roles", "list": accounts})
                 except IdentityError as error:
                     await send(nick, {"t": "admin_roles_error", "m": str(error)})
+                except Exception as error:
+                    print(f"⚠️ [admin_roles_list] erro: {error}")
+                    await send(nick, {"t": "admin_roles_error", "m": f"Erro inesperado: {error}"})
             elif t == "admin_role_set":
-                if not is_admin(nick):
-                    await send(nick, {"t": "admin_roles_error", "m": "Apenas administradores podem gerenciar papéis."})
+                if not is_dev(nick):
+                    await send(nick, {"t": "admin_roles_error", "m": "Apenas DEV pode gerenciar papéis."})
                     continue
                 target = str(m.get("nick", "")).strip().lower()
                 role = str(m.get("role", "")).strip()
+                if role not in VALID_ROLES:
+                    await send(nick, {"t": "admin_roles_error", "m": "Papel inválido."})
+                    continue
                 if target not in online and not get_user(target):
                     await send(nick, {"t": "admin_roles_error", "m": "Informe uma conta válida."})
                     continue
+                if target == nick:
+                    await send(nick, {"t": "admin_roles_error", "m": "Você não pode alterar seu próprio papel."})
+                    continue
+                if target in DEV_NICKS:
+                    await send(nick, {"t": "admin_roles_error", "m": "Este jogador é DEV por variável de ambiente e não pode ser alterado aqui."})
+                    continue
                 try:
-                    account = identity_store.set_role(target, role)
+                    # Fonte primária: Supabase
+                    _local_role_set(target, role, by=nick)
+                    new_role = role
+
+                    # Sincroniza com Firestore se estiver configurado (best-effort)
+                    if identity_store.firestore_configured:
+                        try:
+                            identity_store.set_role(target, role)
+                        except Exception as exc:
+                            print(f"⚠️ [admin_role_set] Firestore sync falhou (ignorado): {exc}")
+
                     if target in online:
-                        online[target]["role"] = account["role"]
-                        await send(target, {"t": "role_updated", "role": account["role"]})
+                        online[target]["role"] = new_role
+                        await send(target, {
+                            "t": "role_updated",
+                            "role": new_role,
+                            "is_dev": new_role == "dev"
+                        })
                         await send(target, {"t": "moderation_notice",
-                                            "m": "Seu papel na comunidade foi atualizado para " + account["role"] + "."})
-                    await send(nick, {"t": "admin_roles_saved", "m": "Papel atualizado."})
+                                            "m": f"Seu papel na comunidade foi atualizado para {new_role.upper()}."})
+
+                    await send(nick, {"t": "admin_roles_saved", "m": f"@{target} agora é {new_role.upper()}."})
                     await broadcast_role_list()
                     await broadcast_moderation()
                 except IdentityError as error:
                     await send(nick, {"t": "admin_roles_error", "m": str(error)})
+                except Exception as error:
+                    print(f"⚠️ [admin_role_set] erro: {error}")
+                    await send(nick, {"t": "admin_roles_error", "m": f"Erro inesperado: {error}"})
             elif t == "role_status":
                 await send(nick, {"t": "role_status", "role": p.get("role", "user"),
                                   "auth_provider": p.get("auth_provider", "legacy")})
@@ -1501,7 +1722,7 @@ async def ws_endpoint(ws: WebSocket):
             elif t == "tournament_list":
                 await send(nick, {"t": "tournaments", "list": tournament_list(nick)})
             elif t in ("tournament_save", "tournament_delete"):
-                if not is_admin(nick):
+                if not (is_admin(nick) or is_dev(nick)):
                     await send(nick, {"t": "tournament_error", "m": "Você não tem permissão para administrar torneios."})
                     continue
                 tournament_id = m.get("id")
@@ -1802,7 +2023,7 @@ async def ws_endpoint(ws: WebSocket):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ Upload de anexo da DM
+# Upload de anexo da DM
 # ═══════════════════════════════════════════════════════════
 @app.post("/api/dm/upload")
 async def dm_upload(file: UploadFile = File(...)):
@@ -1844,7 +2065,7 @@ async def dm_upload(file: UploadFile = File(...)):
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ Busca de usuários
+# Busca de usuários
 # ═══════════════════════════════════════════════════════════
 @app.get("/api/users/search")
 def users_search(q: str = ""):
@@ -1882,25 +2103,14 @@ def users_search(q: str = ""):
     return result
 
 
-# ═══════════════════════════════════════════════════════════
-# 🖼️ Lista de amigos (placeholder até existir tabela friends)
-# ═══════════════════════════════════════════════════════════
 @app.get("/api/friends/list")
 def friends_list():
     return []
 
 
 # ═══════════════════════════════════════════════════════════
-# 🖼️ PROXY DE IMAGENS — dribla hotlink protection do CDN da Moonton
+# Proxy de imagens
 # ═══════════════════════════════════════════════════════════
-# O CDN akmweb.youngjoygame.com responde 500 quando o Referer não é
-# do domínio oficial. Esse proxy busca a imagem com os headers corretos
-# e devolve pro navegador. Cache em memória por URL + Cache-Control longo.
-#
-# Uso (do frontend):
-#   <img src="/api/img?url=https%3A%2F%2Fakmweb.youngjoygame.com%2F...">
-#
-# Hosts permitidos (whitelist):
 _IMG_HOSTS_PERMITIDOS = {
     "akmweb.youngjoygame.com",
     "esportpedia.b-cdn.net",
@@ -1925,12 +2135,10 @@ _IMG_CACHE_MAX = 2000
 
 @app.get("/api/img")
 async def proxy_img(url: str = Query(..., min_length=8)):
-    """Faz proxy de imagens externas com os headers corretos."""
     host = (urlparse(url).hostname or "").lower()
     if host not in _IMG_HOSTS_PERMITIDOS:
         raise HTTPException(400, "host não permitido")
 
-    # Cache hit (memória)
     if url in _img_cache:
         data, content_type = _img_cache[url]
         return Response(
@@ -1953,7 +2161,6 @@ async def proxy_img(url: str = Query(..., min_length=8)):
     content_type = (r.headers.get("content-type") or "image/png").split(";")[0].strip()
     data = r.content
 
-    # Evicção FIFO simples quando bate o teto
     if len(_img_cache) >= _IMG_CACHE_MAX:
         try:
             _img_cache.pop(next(iter(_img_cache)))

@@ -45,7 +45,8 @@ const TITLES = {home:"", meta:"", builds:"", lobby:"", guide:"Guia do jogo", roo
 let ws, SHOP = {}, ME = {coins:0, owned:[], equip:{}}, SELF = null, LFG = [];
 let PROFILE = {}, DM = {with:null}, DM_PROFILE_TARGET = null, UNREAD = 0, QZ = null;
 let LFG_DETAILS = {}, LFG_PROFILE_TARGET = null, LFG_TOAST_TIMER = null, LFG_LOADED = false;
-let IS_ADMIN = false, IS_MODERATOR = false, TOURNAMENTS = [], TOURNAMENT_EDIT_ID = null;
+let IS_ADMIN = false, IS_MODERATOR = false, IS_DEV = false;
+let TOURNAMENTS = [], TOURNAMENT_EDIT_ID = null;
 let COMMUNITY_META = [], COMMUNITY_BUILDS = [], COMMUNITY_BUILDS_TRENDING = [], COMMUNITY_BUILDS_RECENT = [];
 let COMMUNITY_META_LANE = "all", BUILD_REQUEST_ID = 0, BUILD_LOAD_TIMER = null, BUILD_FILTER_TIMER = null;
 let BUILD_LIST_STATE = "idle", BUILD_DETAIL_ID = null, BUILD_LAST_KEY = "", BUILD_PENDING_KEY = "";
@@ -57,13 +58,11 @@ let HERO_REQUEST_SEQ = 0;
 let DM_THREADS = [];
 let DM_FILTER = "all";
 let DM_SEARCH = "";
-let DM_LAST_DAY_KEY = null;   // separador de dia (estilo WhatsApp)
+let DM_LAST_DAY_KEY = null;
 
 let LOBBY_STARTED = false;
 
-// guarda o último nick pedido via abrirPerfil pra renderOtherProfile
 let PROFILE_VIEW_TARGET = null;
-// memoriza a aba de origem pra o botão "Voltar" do perfil
 let PROFILE_PREVIOUS_TAB = "home";
 
 const INIT_CACHE_KEY = "society.init_cache";
@@ -73,7 +72,9 @@ function saveInitCache(m) {
     const cache = {
       shop: m.shop, me: m.me, self: m.self, profile: m.profile || {},
       quiz: m.quiz || null,
-      is_admin: Boolean(m.is_admin), is_moderator: Boolean(m.is_moderator),
+      is_admin: Boolean(m.is_admin),
+      is_moderator: Boolean(m.is_moderator),
+      is_dev: Boolean(m.is_dev),
       role: m.role || "user", auth_provider: m.auth_provider || "password",
       unread: m.unread || 0,
       saved_at: Date.now()
@@ -210,12 +211,63 @@ const BUILD_ITEM_CATALOG = [
   {name:"Bênção do Favor",          category:"roaming", file:"favor"}
 ];
 
-// HERO_CATALOG agora é global e vem de /static/js/hero-catalog.js
+/* ══════════════════════════════════════════════════════════════
+   HIERARQUIA DE PAPÉIS · user < admin < mod < dev
+   ══════════════════════════════════════════════════════════════ */
+const ROLE_ORDER = ["user", "admin", "mod", "dev"];
+
+const ROLE_PERMS = {
+  user: {
+    title: "Jogador",
+    badge: "JOGADOR",
+    cls: "is-user",
+    perms: [
+      ["✅", "Denunciar jogadores", true],
+      ["❌", "Moderar denúncias", false],
+      ["❌", "Silenciar jogadores", false],
+      ["❌", "Gerenciar papéis", false]
+    ]
+  },
+  admin: {
+    title: "Administrador",
+    badge: "ADM",
+    cls: "is-admin",
+    perms: [
+      ["✅", "Revisar denúncias", true],
+      ["✅", "Marcar em análise / encerrar / descartar", true],
+      ["❌", "Silenciar jogadores (só MOD/DEV)", false],
+      ["❌", "Gerenciar papéis (só DEV)", false]
+    ]
+  },
+  mod: {
+    title: "Moderador",
+    badge: "MOD",
+    cls: "is-mod",
+    perms: [
+      ["✅", "Revisar denúncias", true],
+      ["✅", "Marcar em análise / encerrar / descartar", true],
+      ["✅", "Silenciar (10min / 1h / 24h)", true],
+      ["✅", "Remover silenciamento", true],
+      ["❌", "Gerenciar papéis (só DEV)", false]
+    ]
+  },
+  dev: {
+    title: "Desenvolvedor",
+    badge: "DEV",
+    cls: "is-dev",
+    perms: [
+      ["✅", "Todas as permissões do MOD", true],
+      ["✅", "Atribuir ADM / MOD / DEV", true],
+      ["✅", "Remover ADM / MOD / DEV", true],
+      ["✅", "Ver lista completa de contas", true]
+    ]
+  }
+};
+
 window.addEventListener("hero-catalog-ready", () => {
   try {
     if (BUILD_LIST_STATE === "ready") renderCommunityBuilds();
     renderHomeCommunityPreviews();
-    // Re-renderiza o meta quando os ícones chegarem (resolve os placeholders)
     if (typeof renderCommunityMeta === "function") renderCommunityMeta();
   } catch (e) { /* ignora */ }
 });
@@ -410,10 +462,16 @@ function handle(m){
   }
   else if (t === "role_updated"){
     IS_ADMIN = m.role === "admin";
-    IS_MODERATOR = m.role === "admin" || m.role === "mod";
-    document.querySelector("#nav button[data-t='admin']").hidden = !IS_MODERATOR;
-    $("adminRoleManagement").hidden = !IS_ADMIN;
+    IS_MODERATOR = m.role === "admin" || m.role === "mod" || m.role === "dev";
+    IS_DEV = m.role === "dev";
+    const adminNav = document.querySelector("#nav button[data-t='admin']");
+    if (adminNav) adminNav.hidden = !IS_MODERATOR;
+    const roleBlock = $("adminRoleManagement");
+    if (roleBlock) roleBlock.hidden = !IS_DEV;
     if (!IS_MODERATOR && $("tab-admin").classList.contains("on")) tab("home");
+    try { renderModSelf(); } catch (e) {}
+    if (IS_MODERATOR) send({ t: "moderation_list" });
+    if (IS_DEV) send({ t: "admin_roles_list" });
   }
   else if (t === "block_result") showLfgToast(m.m);
   else if (t === "dm_threads") renderThreads(m.list, m.unread);
@@ -459,6 +517,7 @@ function applyInit(m, fromCache) {
   PROFILE = m.profile || PROFILE;
   IS_ADMIN = Boolean(m.is_admin);
   IS_MODERATOR = Boolean(m.is_moderator);
+  IS_DEV = Boolean(m.is_dev);
 
   if (!fromCache) {
     saveInitCache(m);
@@ -512,6 +571,7 @@ function applyInit(m, fromCache) {
   try { setupTournaments(); } catch (e) {}
   try { setupModeration(); } catch (e) {}
   try { setupCommunity(); } catch (e) {}
+  try { renderModSelf(); } catch (e) {}
 }
 
 function updateCoins(){ $("coinsAmount").textContent = Number(ME.coins || 0).toLocaleString("pt-BR"); }
@@ -557,7 +617,11 @@ function tab(n){
   if (n === "tournaments") send({t:"tournament_list"});
   if (n === "meta") { renderCommunityMeta(); send({t:"community_meta_list"}); }
   if (n === "builds") requestCommunityBuilds(true);
-  if (n === "admin") send({t:"moderation_list"});
+  if (n === "admin") {
+    if (IS_MODERATOR) send({t:"moderation_list"});
+    if (IS_DEV) send({t:"admin_roles_list"});
+    try { renderModSelf(); } catch (e) {}
+  }
   if (n === "dm"){ DM.with = null; $("dmChat").style.display = "none"; $("dmList").style.display = "block"; send({t:"dm_threads"}); }
   window.dispatchEvent(new CustomEvent("society:tab", {detail:n}));
 }
@@ -668,7 +732,6 @@ window.Society = {
   getCurrentDmName: () => DM.name || null,
   openCurrentDmProfile: () => { if (DM.with) openDmProfile(); },
 
-  // 🔗 Abre a página de um herói (fallback usado por heroes-catalog.js / hero-official.js)
   openHero: (name, buildId, tabId) => {
     if (!name) return;
     if (window.SocietyHero && typeof window.SocietyHero.open === "function") {
@@ -1272,7 +1335,6 @@ function getIcon(tipo, nome){
   let imageUrl = null;
 
   if (tipo === "herois") {
-    // safe access — HERO_CATALOG pode não ter chegado ainda
     const list = window.HERO_CATALOG || [];
     const knownHero = list.find(hero => hero.name.toLocaleLowerCase("pt-BR") === nameLower);
     if (knownHero && knownHero.file) {
@@ -1516,7 +1578,7 @@ function renderTournaments(){
     heading.append(el("span", badgeLabels[state], "tournament-status tournament-status-" + state));
     heading.append(el("h4", tournament.title));
     header.append(heading);
-    if (IS_ADMIN) {
+    if (IS_ADMIN || IS_DEV) {
       const actions = el("div", null, "tournament-admin-actions");
       const edit = el("button", "Editar", "tournament-button-secondary");
       edit.type = "button";
@@ -1623,7 +1685,7 @@ function renderTournaments(){
 }
 
 function setupTournaments(){
-  $("tournamentAdmin").hidden = !IS_ADMIN;
+  $("tournamentAdmin").hidden = !(IS_ADMIN || IS_DEV);
   document.querySelectorAll("[data-tournament-filter]").forEach(button => {
     button.addEventListener("click", () => {
       document.querySelectorAll("[data-tournament-filter]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
@@ -1697,6 +1759,10 @@ function showModerationMessage(message, isError){
   status.classList.toggle("is-error", Boolean(isError));
 }
 
+/* ══════════════════════════════════════════════════════════════
+   MODERAÇÃO · hierarquia completa
+   ══════════════════════════════════════════════════════════════ */
+
 function renderModeration(data){
   const reports = $("moderationReports"), mutes = $("moderationMutes");
   if (!reports || !mutes) return;
@@ -1723,9 +1789,12 @@ function renderModeration(data){
     if (report.status === "open") {
       actions.append(moderationActionButton("Marcar em análise", "review", report.id, "moderation-secondary"));
     }
-    actions.append(moderationActionButton("Silenciar 10 min", "mute_10m", report.id, "moderation-secondary"));
-    actions.append(moderationActionButton("Silenciar 1 hora", "mute_1h", report.id, "moderation-secondary"));
-    actions.append(moderationActionButton("Silenciar 24 h", "mute_24h", report.id, "moderation-warn"));
+    // Botões de silenciar só aparecem para MOD/DEV
+    if (IS_MODERATOR) {
+      actions.append(moderationActionButton("Silenciar 10 min", "mute_10m", report.id, "moderation-secondary"));
+      actions.append(moderationActionButton("Silenciar 1 hora", "mute_1h", report.id, "moderation-secondary"));
+      actions.append(moderationActionButton("Silenciar 24 h", "mute_24h", report.id, "moderation-warn"));
+    }
     actions.append(moderationActionButton("Encerrar denúncia", "close", report.id, "moderation-secondary"));
     actions.append(moderationActionButton("Descartar", "dismiss", report.id, "moderation-secondary"));
     card.append(actions);
@@ -1741,6 +1810,8 @@ function renderModeration(data){
       .format(new Date(mute.muted_until * 1000)) + (mute.reason ? " · " + mute.reason : "")));
     const unmute = el("button", "Remover silenciamento", "moderation-secondary");
     unmute.type = "button";
+    unmute.disabled = !IS_MODERATOR;
+    unmute.title = IS_MODERATOR ? "" : "Apenas MOD/DEV podem remover silenciamentos.";
     unmute.addEventListener("click", () => send({t:"moderation_unmute", target:mute.nick}));
     item.append(info, unmute);
     mutes.append(item);
@@ -1754,55 +1825,169 @@ function moderationActionButton(label, action, id, className){
   return button;
 }
 
-function renderAdminRoles(accounts){
+/**
+ * Renderiza o card "Seu acesso" com base no papel atual do usuário.
+ */
+function renderModSelf(){
+  // Papel real do usuário atual
+  let role = "user";
+  if (IS_DEV) role = "dev";
+  else if (IS_ADMIN) role = "admin";
+  else if (IS_MODERATOR) role = "mod";
+
+  const info = ROLE_PERMS[role] || ROLE_PERMS.user;
+
+  const titleEl = $("modSelfRoleTitle");
+  const badgeEl = $("modSelfRoleBadge");
+  const permsEl = $("modSelfPerms");
+
+  if (titleEl) titleEl.textContent = info.title;
+  if (badgeEl) {
+    badgeEl.textContent = info.badge;
+    badgeEl.className = "role-badge " + info.cls;
+  }
+  if (permsEl) {
+    permsEl.textContent = "";
+    info.perms.forEach(([icon, label, has]) => {
+      const li = el("li", null, has ? "" : "is-off");
+      li.append(el("span", icon, "perm-icon"), el("span", label));
+      permsEl.append(li);
+    });
+  }
+}
+
+/**
+ * Renderiza a lista de contas com seletor de papel (só DEV).
+ * Suporta busca por nick.
+ */
+function renderAdminRoles(accounts) {
   const list = $("adminRoleList");
+  const empty = $("adminRolesEmpty");
+  const search = $("adminRolesSearch");
   if (!list) return;
-  list.textContent = "";
-  accounts.forEach(account => {
-    const row = el("article", null, "moderation-role-item");
-    const identity = el("div");
-    identity.append(el("b", "@" + account.nick));
-    identity.append(el("small", (account.google_linked ? "Google vinculado" : "Conta antiga sem vínculo") +
-      " · " + (account.source === "google" ? "Google" : "legada")));
-    const role = document.createElement("select");
-    role.setAttribute("aria-label", "Papel de @" + account.nick);
-    [["user","Jogador"],["mod","Moderador"],["admin","Administrador"]].forEach(([value,label]) => {
-      role.append(new Option(label, value));
+
+  const allAccounts = Array.isArray(accounts) ? accounts : [];
+  renderAdminRoles._all = allAccounts;
+
+  const ROLE_LABEL = {
+    user:  { label: "Jogador", cls: "is-user"  },
+    admin: { label: "ADM",     cls: "is-admin" },
+    mod:   { label: "MOD",     cls: "is-mod"   },
+    dev:   { label: "DEV",     cls: "is-dev"   }
+  };
+
+  function paint() {
+    const q = (search && search.value || "").trim().toLowerCase();
+    const filtered = q
+      ? allAccounts.filter(a => (a.nick || "").toLowerCase().includes(q))
+      : allAccounts;
+
+    list.textContent = "";
+    if (empty) empty.hidden = filtered.length > 0;
+
+    if (!filtered.length) {
+      list.append(el("p", "Nenhuma conta encontrada.", "moderation-empty"));
+      return;
+    }
+
+    filtered.forEach(account => {
+      const roleInfo = ROLE_LABEL[account.role] || ROLE_LABEL.user;
+
+      const row = el("article", null, "moderation-role-item");
+      if (account.nick === SELF) row.classList.add("is-self");
+
+      // Identidade
+      const identity = el("div");
+      identity.append(el("b", "@" + account.nick));
+
+      const meta = el("div", null, "role-meta");
+      meta.append(el("small", account.source === "google" ? "Google vinculado" : "Conta antiga"));
+      meta.append(el("small", account.google_linked ? "🔗 Google" : "🔒 Senha"));
+      meta.append(el("small", roleInfo.label));
+      if (account.nick === SELF) meta.append(el("small", "Você"));
+      identity.append(meta);
+
+      // Select de papel
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", "Papel de @" + account.nick);
+      [
+        ["user",  "🟦 Jogador"],
+        ["admin", "🟨 ADM"],
+        ["mod",   "🟧 MOD"],
+        ["dev",   "🟥 DEV"]
+      ].forEach(([value, label]) => select.append(new Option(label, value)));
+      select.value = account.role || "user";
+      select.disabled = account.nick === SELF;
+
+      // Botão salvar
+      const save = el("button", "Salvar papel", "moderation-secondary");
+      save.type = "button";
+      const disableSave = () =>
+        (save.disabled = account.nick === SELF || select.value === account.role);
+      disableSave();
+      select.addEventListener("change", disableSave);
+      save.addEventListener("click", () => {
+        if (account.nick === SELF) return;
+        const nextRole = select.value;
+        if (!confirm(`Alterar @${account.nick} para ${ROLE_LABEL[nextRole]?.label || nextRole}?`)) return;
+        send({ t: "admin_role_set", nick: account.nick, role: nextRole });
+        save.disabled = true;
+        save.textContent = "Salvando…";
+        setTimeout(() => { save.textContent = "Salvar papel"; }, 4000);
+      });
+
+      row.append(identity, select, save);
+      list.append(row);
     });
-    role.value = account.role;
-    const save = el("button", "Salvar papel", "moderation-secondary");
-    save.type = "button";
-    save.disabled = account.nick === SELF || role.value === account.role;
-    role.addEventListener("change", () => {
-      save.disabled = account.nick === SELF || role.value === account.role;
+  }
+
+  // Bind da busca (uma vez)
+  if (search && !search._bound) {
+    search._bound = true;
+    let timer = null;
+    search.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(paint, 120);
     });
-    save.addEventListener("click", () => send({t:"admin_role_set", nick:account.nick, role:role.value}));
-    row.append(identity, role, save);
-    list.append(row);
-  });
-  if (!accounts.length) list.append(el("p", "Nenhuma conta encontrada no Firebase.", "moderation-empty"));
+  }
+
+  paint();
 }
 
 function setupModeration(){
-  document.querySelector("#nav button[data-t='admin']").hidden = !IS_MODERATOR;
-  $("adminRoleManagement").hidden = !IS_ADMIN;
+  const adminNav = document.querySelector("#nav button[data-t='admin']");
+  if (adminNav) adminNav.hidden = !IS_MODERATOR;
+
+  const roleBlock = $("adminRoleManagement");
+  if (roleBlock) roleBlock.hidden = !IS_DEV;
+
   if (IS_MODERATOR) send({t:"moderation_list"});
-  if (IS_ADMIN) send({t:"admin_roles_list"});
-  $("moderationRefresh").addEventListener("click", () => send({t:"moderation_list"}));
-  $("adminRolesRefresh").addEventListener("click", () => send({t:"admin_roles_list"}));
-  $("communityReportClose").addEventListener("click", () => $("communityReportDialog").close());
-  $("communityReportCancel").addEventListener("click", () => $("communityReportDialog").close());
-  $("communityReportForm").addEventListener("submit", event => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (!form.reportValidity()) return;
-    send({
-      t:"report_submit",
-      target:$("communityReportDialog").dataset.target,
-      category:$("communityReportCategory").value,
-      details:$("communityReportDetails").value.trim()
+  if (IS_DEV) send({t:"admin_roles_list"});
+
+  const r1 = $("moderationRefresh");
+  if (r1) r1.addEventListener("click", () => send({t:"moderation_list"}));
+  const r2 = $("adminRolesRefresh");
+  if (r2) r2.addEventListener("click", () => send({t:"admin_roles_list"}));
+
+  const reportClose = $("communityReportClose");
+  if (reportClose) reportClose.addEventListener("click", () => $("communityReportDialog").close());
+  const reportCancel = $("communityReportCancel");
+  if (reportCancel) reportCancel.addEventListener("click", () => $("communityReportDialog").close());
+
+  const reportForm = $("communityReportForm");
+  if (reportForm) {
+    reportForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+      send({
+        t:"report_submit",
+        target:$("communityReportDialog").dataset.target,
+        category:$("communityReportCategory").value,
+        details:$("communityReportDetails").value.trim()
+      });
     });
-  });
+  }
 }
 
 ProfileUI.mount({
@@ -2677,9 +2862,6 @@ function fillCard(m){
 
 /* ══════════════════════════════════════════════════════════════
    🔗 FALLBACK DE NAVEGAÇÃO — links "#/heroi/<slug>"
-   Resolve qualquer clique/URL que aponte para um herói e chama
-   SocietyHero.open() (API do hero-hub.js). Independe do renderer
-   ter gerado o link certo ou não.
    ══════════════════════════════════════════════════════════════ */
 function abrirHeroiPorSlug(slug) {
   if (!slug) return;
@@ -2705,12 +2887,10 @@ function abrirHeroiPorSlug(slug) {
       .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   };
 
-  // 1) Catálogo já carregado? Resolve direto.
   const list = window.HERO_CATALOG || [];
   const hero = list.find(function (h) { return norm(h.name) === slug; });
   if (hero) { tentarAbrir(hero.name); return; }
 
-  // 2) Sem catálogo — pede pro HeroOfficial carregar o índice.
   if (window.HeroOfficial && typeof window.HeroOfficial.loadIndex === 'function') {
     window.HeroOfficial.loadIndex().then(function (idx) {
       const found = (idx.heroes || []).find(function (x) { return x.slug === slug; });
@@ -2724,13 +2904,11 @@ function abrirHeroiPorSlug(slug) {
     return;
   }
 
-  // 3) Último recurso — Title Case
   tentarAbrir(slug.split('-').map(function (w) {
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(' '));
 }
 
-// Clique em qualquer link "#/heroi/..."
 document.addEventListener('click', function (e) {
   const a = e.target && e.target.closest && e.target.closest('a[href^="#/heroi/"]');
   if (!a) return;
@@ -2741,15 +2919,12 @@ document.addEventListener('click', function (e) {
   abrirHeroiPorSlug(slug);
 });
 
-// Navegação direta / back-forward com hash
 window.addEventListener('hashchange', function () {
   const m = (location.hash || '').match(/^#\/heroi\/(.+)$/i);
   if (m) abrirHeroiPorSlug(m[1]);
 });
 
-// Boot: se a página abriu já com hash de herói
 if (/^#\/heroi\//i.test(location.hash)) {
-  // Delay curto pra dar tempo do SocietyHero registrar
   setTimeout(function () {
     const m = location.hash.match(/^#\/heroi\/(.+)$/i);
     if (m) abrirHeroiPorSlug(m[1]);
