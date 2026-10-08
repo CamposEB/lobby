@@ -65,6 +65,9 @@ let LOBBY_STARTED = false;
 let PROFILE_VIEW_TARGET = null;
 let PROFILE_PREVIOUS_TAB = "home";
 
+// ⭐ NOVO: preserva o destinatário ao reabrir o modal de amigos
+let FRIENDS_BOOTED = false;
+
 const INIT_CACHE_KEY = "society.init_cache";
 
 function saveInitCache(m) {
@@ -211,9 +214,6 @@ const BUILD_ITEM_CATALOG = [
   {name:"Bênção do Favor",          category:"roaming", file:"favor"}
 ];
 
-/* ══════════════════════════════════════════════════════════════
-   HIERARQUIA DE PAPÉIS · user < admin < mod < dev
-   ══════════════════════════════════════════════════════════════ */
 const ROLE_ORDER = ["user", "admin", "mod", "dev"];
 
 const ROLE_PERMS = {
@@ -503,6 +503,27 @@ function handle(m){
   }
   else if (t === "quiz_result"){ QZ.done = true; renderQuiz(); $("qMsg").textContent = m.ok ? "Acertou! +10 moedas." : "Errou. A resposta era: " + QZ.o[m.correct]; }
   else if (t === "me"){ ME = {coins:m.coins, owned:m.owned, equip:m.equip}; renderItems(); updateCoins(); }
+  // ⭐ NOVO: sistema de amigos
+  else if (t === "friends"){
+    try { window.FriendsUI?.setFriends(m); } catch (e) { console.error("[friends]", e); }
+  }
+  else if (t === "friend_updated"){
+    try { window.FriendsUI?.onFriendUpdated(m); } catch (e) { console.error("[friends]", e); }
+    // Se o perfil aberto é o alvo, recarrega
+    if (PROFILE_VIEW_TARGET && PROFILE_VIEW_TARGET === m.nick) {
+      try { send({ t: "profile_view", nick: PROFILE_VIEW_TARGET }); } catch (e) {}
+    }
+  }
+  else if (t === "friend_request_received"){
+    try { window.FriendsUI?.onRequestReceived(m); } catch (e) { console.error("[friends]", e); }
+  }
+  else if (t === "friend_notice"){
+    showLfgToast(m.m);
+    try { window.FriendsUI?.refresh(); } catch (e) {}
+  }
+  else if (t === "friend_error"){
+    showLfgToast(m.m);
+  }
 }
 
 function applyInit(m, fromCache) {
@@ -572,6 +593,9 @@ function applyInit(m, fromCache) {
   try { setupModeration(); } catch (e) {}
   try { setupCommunity(); } catch (e) {}
   try { renderModSelf(); } catch (e) {}
+
+  // ⭐ NOVO: monta o painel de amigos uma única vez
+  try { mountFriendsUI(); } catch (e) { console.error("[friends] mount:", e); }
 }
 
 function updateCoins(){ $("coinsAmount").textContent = Number(ME.coins || 0).toLocaleString("pt-BR"); }
@@ -585,6 +609,23 @@ function addLog(text, who){
   log.append(d);
   while (log.children.length > 8) log.firstChild.remove();
   setTimeout(() => d.remove(), 30000);
+}
+
+/* ⭐ NOVO: montagem do painel de amigos (idempotente) */
+function mountFriendsUI() {
+  if (FRIENDS_BOOTED) return;
+  if (!window.FriendsUI || typeof window.FriendsUI.mount !== "function") return;
+  FRIENDS_BOOTED = true;
+  window.FriendsUI.mount({
+    send,
+    getSelf: () => SELF,
+    toast: (msg) => showLfgToast(msg),
+    openProfile: (nick) => {
+      if (!nick) return;
+      try { window.abrirPerfil(nick); } catch (e) { console.error("[friends] openProfile:", e); }
+    },
+    openDM: (nick, name) => openDm(nick, name || nick),
+  });
 }
 
 /* ---------- navegação ---------- */
@@ -708,7 +749,7 @@ window.abrirPerfil = function(userId) {
   tab("profile");
 };
 
-/* ---------- ponte para módulos externos (hero-hub.js, command-palette.js) ---------- */
+/* ---------- ponte para módulos externos ---------- */
 window.Society = {
   tab: n => tab(n),
   send: o => send(o),
@@ -780,6 +821,16 @@ window.Society = {
 };
 
 window.dispatchEvent(new Event("society-app-ready"));
+
+// ⭐ NOVO: se o FriendsUI ainda não estava carregado, tenta montar assim que ele aparecer
+if (!FRIENDS_BOOTED) {
+  let friendBootTries = 0;
+  const friendBootInterval = setInterval(() => {
+    friendBootTries++;
+    try { mountFriendsUI(); } catch (e) { console.error("[friends] retry mount:", e); }
+    if (FRIENDS_BOOTED || friendBootTries >= 20) clearInterval(friendBootInterval);
+  }, 500);
+}
 
 const savedSession = (() => { try { return localStorage.getItem("society.session"); } catch (e) { return null; } })();
 if (savedSession) {
@@ -1759,10 +1810,6 @@ function showModerationMessage(message, isError){
   status.classList.toggle("is-error", Boolean(isError));
 }
 
-/* ══════════════════════════════════════════════════════════════
-   MODERAÇÃO · hierarquia completa
-   ══════════════════════════════════════════════════════════════ */
-
 function renderModeration(data){
   const reports = $("moderationReports"), mutes = $("moderationMutes");
   if (!reports || !mutes) return;
@@ -1789,7 +1836,6 @@ function renderModeration(data){
     if (report.status === "open") {
       actions.append(moderationActionButton("Marcar em análise", "review", report.id, "moderation-secondary"));
     }
-    // Botões de silenciar só aparecem para MOD/DEV
     if (IS_MODERATOR) {
       actions.append(moderationActionButton("Silenciar 10 min", "mute_10m", report.id, "moderation-secondary"));
       actions.append(moderationActionButton("Silenciar 1 hora", "mute_1h", report.id, "moderation-secondary"));
@@ -1825,11 +1871,7 @@ function moderationActionButton(label, action, id, className){
   return button;
 }
 
-/**
- * Renderiza o card "Seu acesso" com base no papel atual do usuário.
- */
 function renderModSelf(){
-  // Papel real do usuário atual
   let role = "user";
   if (IS_DEV) role = "dev";
   else if (IS_ADMIN) role = "admin";
@@ -1856,10 +1898,6 @@ function renderModSelf(){
   }
 }
 
-/**
- * Renderiza a lista de contas com seletor de papel (só DEV).
- * Suporta busca por nick.
- */
 function renderAdminRoles(accounts) {
   const list = $("adminRoleList");
   const empty = $("adminRolesEmpty");
@@ -1896,7 +1934,6 @@ function renderAdminRoles(accounts) {
       const row = el("article", null, "moderation-role-item");
       if (account.nick === SELF) row.classList.add("is-self");
 
-      // Identidade
       const identity = el("div");
       identity.append(el("b", "@" + account.nick));
 
@@ -1907,7 +1944,6 @@ function renderAdminRoles(accounts) {
       if (account.nick === SELF) meta.append(el("small", "Você"));
       identity.append(meta);
 
-      // Select de papel
       const select = document.createElement("select");
       select.setAttribute("aria-label", "Papel de @" + account.nick);
       [
@@ -1919,7 +1955,6 @@ function renderAdminRoles(accounts) {
       select.value = account.role || "user";
       select.disabled = account.nick === SELF;
 
-      // Botão salvar
       const save = el("button", "Salvar papel", "moderation-secondary");
       save.type = "button";
       const disableSave = () =>
@@ -1941,7 +1976,6 @@ function renderAdminRoles(accounts) {
     });
   }
 
-  // Bind da busca (uma vez)
   if (search && !search._bound) {
     search._bound = true;
     let timer = null;
@@ -2220,10 +2254,21 @@ function openLfgProfile(player){
 function fillLfgProfile(message){
   const profile = message.p || {};
   const content = $("lfgProfileContent");
-  if (profile.is_private) {
+  if (profile.is_private && !profile.details_hidden) {
     content.replaceChildren(
       el("div", "@" + profile.username),
       el("p", "Este jogador mantém o perfil privado.")
+    );
+    appendReportButton(content, message.nick, profile.display_name || profile.username);
+    return;
+  }
+  if (profile.details_hidden) {
+    const avatarEl = ProfileUI.createAvatar(profile, "profile-dialog-avatar");
+    content.replaceChildren(
+      avatarEl,
+      el("h3", profile.display_name || profile.username || "Jogador"),
+      el("p", "🔒 Este perfil é " +
+        (profile.visibility === "friends" ? "visível apenas para amigos." : "privado."))
     );
     appendReportButton(content, message.nick, profile.display_name || profile.username);
     return;
@@ -2232,7 +2277,7 @@ function fillLfgProfile(message){
     ProfileUI.createAvatar(profile, "profile-dialog-avatar"),
     el("h3", profile.display_name || profile.username || "Jogador"),
     el("div", "Rank: " + (profile.rank || "Não informado")),
-    el("div", "Função principal: " + (profile.role || "Não informada")),
+    el("div", "Função principal: " + (profile.game_role || "Não informada")),
     el("div", "Herói principal: " + (profile.hero || "Não informado")),
     el("div", "Sobre: " + (profile.bio || "Este jogador ainda não preencheu o perfil.")),
     el("small", "Estatísticas de Win Rate e partidas não estão disponíveis no perfil atual.")
@@ -2391,10 +2436,7 @@ setInterval(() => {
   }
 }, 60000);
 
-/* ══════════════════════════════════════════════════════════════
-   MENSAGENS DIRETAS (DM)
-   ══════════════════════════════════════════════════════════════ */
-
+/* ---------- MENSAGENS DIRETAS (DM) ---------- */
 function setUnread(n){ UNREAD = n; $("dmBadge").textContent = n > 0 ? n : ""; }
 
 function dmFormatRelativeShort(ts){
@@ -2510,10 +2552,8 @@ function renderThreads(list, unread){
       dmRenderThreadList();
     });
   });
-  const novo = $("dmNewConversation");
-  if (novo) {
-    novo.addEventListener("click", () => tab(novo.dataset.shortcut || "lfg"));
-  }
+  // ⭐ NOTA: o botão #dmNewConversation agora é controlado pelo FriendsUI
+  // (o handler antigo de tab('lfg') foi removido intencionalmente)
 })();
 
 function openDm(nick, name){
@@ -2553,6 +2593,16 @@ function openDmProfile(){
 function fillDmProfile(message){
   const profile = message.p || {};
   const content = $("dmProfileContent");
+  if (profile.details_hidden) {
+    content.replaceChildren(
+      ProfileUI.createAvatar(profile, "profile-dialog-avatar"),
+      el("h3", profile.display_name || profile.username || "Jogador"),
+      el("p", "🔒 Este perfil é " +
+        (profile.visibility === "friends" ? "visível apenas para amigos." : "privado."))
+    );
+    appendReportButton(content, message.nick, profile.display_name || profile.username);
+    return;
+  }
   if (profile.is_private) {
     content.replaceChildren(
       el("div", "@" + profile.username),
@@ -2565,16 +2615,13 @@ function fillDmProfile(message){
     ProfileUI.createAvatar(profile, "profile-dialog-avatar"),
     el("h3", profile.display_name || profile.username || "Jogador"),
     el("div", "Rank: " + (profile.rank || "Não informado")),
-    el("div", "Função principal: " + (profile.role || "Não informada")),
+    el("div", "Função principal: " + (profile.game_role || "Não informada")),
     el("div", "Herói principal: " + (profile.hero || "Não informado")),
     el("div", "Sobre: " + (profile.bio || "Este jogador ainda não preencheu o perfil."))
   );
   appendReportButton(content, message.nick, profile.display_name || profile.username);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SEPARADOR DE DIA — estilo WhatsApp
-   ══════════════════════════════════════════════════════════════ */
 function dmDayKey(ts) {
   const date = new Date(Number(ts) * 1000);
   if (Number.isNaN(date.getTime())) return "";
@@ -2633,7 +2680,6 @@ function dmMaybeInsertDaySeparator(ts) {
 function dmResetDayTracking() {
   DM_LAST_DAY_KEY = null;
 }
-/* ══════════════════════════════════════════════════════════════ */
 
 function addBubble(from, text, ts, msgId){
   dmMaybeInsertDaySeparator(ts);
@@ -2851,18 +2897,21 @@ function fillCard(m){
   const i = document.querySelector("#pcard .cinfo"); if (!i) return; i.textContent = "";
   const profile = m.p || {};
   i.append(ProfileUI.createAvatar(profile, "profile-dialog-avatar"), el("b", profile.display_name || profile.username || m.nick));
+  if (profile.details_hidden) {
+    i.append(el("div", "🔒 Este perfil é " +
+      (profile.visibility === "friends" ? "visível apenas para amigos." : "privado.")));
+    return;
+  }
   if (profile.is_private) {
     i.append(el("div", "Este jogador mantém o perfil privado."));
     return;
   }
-  [profile.rank, profile.role, profile.hero].filter(Boolean).forEach(x => i.append(el("span", x, "tag")));
+  [profile.rank, profile.game_role, profile.hero].filter(Boolean).forEach(x => i.append(el("span", x, "tag")));
   if (profile.bio) i.append(el("div", profile.bio));
-  if (!profile.rank && !profile.role && !profile.hero && !profile.bio) i.append(el("div", "Este jogador ainda não preencheu o perfil."));
+  if (!profile.rank && !profile.game_role && !profile.hero && !profile.bio) i.append(el("div", "Este jogador ainda não preencheu o perfil."));
 }
 
-/* ══════════════════════════════════════════════════════════════
-   🔗 FALLBACK DE NAVEGAÇÃO — links "#/heroi/<slug>"
-   ══════════════════════════════════════════════════════════════ */
+/* ---------- ROUTER DE HERÓIS (#/heroi/<slug>) ---------- */
 function abrirHeroiPorSlug(slug) {
   if (!slug) return;
   slug = String(slug).toLowerCase().replace(/\/+$/, '');

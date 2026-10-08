@@ -18,22 +18,53 @@
   animation: profile-verified-pop 320ms cubic-bezier(.34, 1.56, .64, 1);
   cursor: help;
 }
-.profile-verified-badge svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
+.profile-verified-badge svg { display: block; width: 100%; height: 100%; }
 .profile-verified-badge[hidden] { display: none !important; }
-
-/* Cores por papel */
 .profile-verified-badge[data-role="dev"]   { color: #ff5f5f; filter: drop-shadow(0 0 7px rgba(255, 95, 95, .55)); }
 .profile-verified-badge[data-role="admin"] { color: #f2b84b; filter: drop-shadow(0 0 7px rgba(242, 184, 75, .55)); }
 .profile-verified-badge[data-role="mod"]   { color: #4c8dff; filter: drop-shadow(0 0 7px rgba(76, 141, 255, .55)); }
 
-@keyframes profile-verified-pop {
-  from { transform: scale(.4); opacity: 0; }
-  to   { transform: scale(1);  opacity: 1; }
+@keyframes profile-verified-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ═══════════ BOTÃO DE AMIZADE ═══════════ */
+.profile-friend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--profile-accent, #8b72ff);
+  background: transparent;
+  color: var(--profile-accent, #8b72ff);
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: background .15s, color .15s, transform .1s;
 }
+.profile-friend-btn:hover:not(:disabled) { background: var(--profile-accent, #8b72ff); color: #1a1405; }
+.profile-friend-btn:active:not(:disabled) { transform: scale(.96); }
+.profile-friend-btn:disabled { opacity: .55; cursor: not-allowed; }
+.profile-friend-btn.is-friends { border-color: #3ecf8e; color: #3ecf8e; }
+.profile-friend-btn.is-friends:hover { background: #3ecf8e; color: #0a1f16; }
+.profile-friend-btn.is-pending { border-color: #f2b84b; color: #f2b84b; }
+.profile-friend-btn.is-accept { border-color: #3ecf8e; background: #3ecf8e; color: #0a1f16; }
+.profile-friend-btn.is-accept:hover { background: transparent; color: #3ecf8e; }
+.profile-friend-btn svg { width: 16px; height: 16px; }
+
+/* ═══════════ SELETOR DE VISIBILIDADE ═══════════ */
+.profile-visibility-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2, rgba(255,255,255,.12));
+  background: var(--s3, #1b1f26);
+  color: var(--fg, #f5f5f5);
+  font: inherit;
+  font-size: .92rem;
+  cursor: pointer;
+}
+.profile-visibility-select:focus { outline: 2px solid var(--profile-accent, #8b72ff); outline-offset: 2px; }
 </style>
 
 <section class="profile-page" data-profile-mode="self" id="profileRoot">
@@ -45,9 +76,7 @@
 
     <div class="profile-page-heading-copy">
       <p class="profile-eyebrow" id="profileEyebrow">SOCIETY · PLAYER CARD</p>
-
       <h2 id="profilePageTitle">Meu perfil</h2>
-
       <p id="profilePageSubtitle">
         Seu espaço na comunidade. Mostre como você joga e personalize sua identidade.
       </p>
@@ -56,14 +85,8 @@
     <div class="profile-page-heading-actions">
 
       <!-- Voltar (só aparece em modo "other") -->
-      <button
-        id="profileBack"
-        class="profile-back-button"
-        type="button"
-        aria-label="Voltar"
-        title="Voltar"
-        hidden
-      >
+      <button id="profileBack" class="profile-back-button" type="button"
+              aria-label="Voltar" title="Voltar" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
              aria-hidden="true" focusable="false">
@@ -73,26 +96,29 @@
       </button>
 
       <!-- Editar (self) -->
-      <button
-        id="profileEditButton"
-        class="profile-primary"
-        type="button"
-      >Editar perfil</button>
+      <button id="profileEditButton" class="profile-primary" type="button">Editar perfil</button>
 
       <!-- Ações de terceiro (other) -->
-      <div
-        id="profileActions"
-        class="profile-other-actions"
-        role="group"
-        aria-label="Ações do perfil"
-        hidden
-      >
-        <button
-          id="profileMessageBtn"
-          type="button"
-          class="profile-primary profile-action-btn"
-          aria-label="Enviar mensagem"
-        >
+      <div id="profileActions" class="profile-other-actions"
+           role="group" aria-label="Ações do perfil" hidden>
+
+        <!-- ⭐ NOVO: botão de amizade -->
+        <button id="profileFriendBtn" type="button"
+                class="profile-friend-btn"
+                aria-label="Adicionar amigo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+          <span>Adicionar amigo</span>
+        </button>
+
+        <button id="profileMessageBtn" type="button"
+                class="profile-primary profile-action-btn" aria-label="Enviar mensagem">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                aria-hidden="true" focusable="false">
@@ -101,12 +127,8 @@
           <span>Mensagem</span>
         </button>
 
-        <button
-          id="profileReportBtn"
-          type="button"
-          class="profile-subtle-button profile-action-btn"
-          aria-label="Denunciar jogador"
-        >
+        <button id="profileReportBtn" type="button"
+                class="profile-subtle-button profile-action-btn" aria-label="Denunciar jogador">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                aria-hidden="true" focusable="false">
@@ -125,74 +147,34 @@
        ═══════════════════════════════════════════════════════════ -->
   <article id="profileCard" class="profile-card">
 
-    <!-- Banner -->
-    <div
-      id="profileBanner"
-      class="profile-banner"
-      role="img"
-      aria-label="Banner do perfil"
-    >
+    <div id="profileBanner" class="profile-banner" role="img" aria-label="Banner do perfil">
       <span id="profileBannerHint">SUA JORNADA, SEU ESTILO</span>
     </div>
 
-    <!-- Identidade + Badge de Elo -->
     <div class="profile-identity">
-
-      <div
-        id="profileAvatar"
-        class="profile-avatar"
-        aria-label="Foto de perfil"
-      ></div>
+      <div id="profileAvatar" class="profile-avatar" aria-label="Foto de perfil"></div>
 
       <div class="profile-name-block">
-
         <div class="profile-name-row">
           <h1 id="profileDisplayName">Jogador</h1>
 
-          <!-- ✅ SELO DE VERIFICADO (Dev / Admin / Mod) -->
-          <span
-            id="profileVerifiedBadge"
-            class="profile-verified-badge"
-            role="img"
-            aria-label="Conta verificada"
-            title="Conta verificada"
-            hidden
-          >
+          <span id="profileVerifiedBadge" class="profile-verified-badge"
+                role="img" aria-label="Conta verificada" title="Conta verificada" hidden>
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
               <path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>
             </svg>
           </span>
 
-          <span id="profileStatus" class="profile-status">
-            <i></i> Online
-          </span>
+          <span id="profileStatus" class="profile-status"><i></i> Online</span>
         </div>
 
-        <div
-          id="profileCommunityRoles"
-          class="profile-community-roles"
-          aria-label="Cargos da comunidade"
-        ></div>
-
+        <div id="profileCommunityRoles" class="profile-community-roles" aria-label="Cargos da comunidade"></div>
         <p id="profileUsername" class="profile-username">@jogador</p>
-
         <p id="profileTitle" class="profile-title" hidden></p>
       </div>
 
-      <!-- 🏅 Badge de Elo (imagem + texto) -->
-      <aside
-        id="profileRankBadge"
-        class="profile-rank-badge"
-        aria-live="polite"
-        hidden
-      >
-        <img
-          id="profileRankImage"
-          class="profile-rank-image"
-          alt=""
-          loading="lazy"
-          decoding="async"
-        >
+      <aside id="profileRankBadge" class="profile-rank-badge" aria-live="polite" hidden>
+        <img id="profileRankImage" class="profile-rank-image" alt="" loading="lazy" decoding="async">
         <div class="profile-rank-copy">
           <small>ELO ATUAL</small>
           <div class="profile-rank-label-row">
@@ -206,22 +188,11 @@
       </aside>
     </div>
 
-    <!-- Bio -->
     <p id="profileBio" class="profile-bio"></p>
-
-    <!-- Detalhes de jogo (rank, role, hero, id) -->
     <div id="profileGameDetails" class="profile-game-details"></div>
-
-    <!-- Membro desde -->
     <p id="profileJoined" class="profile-joined"></p>
 
-
-    <!-- ─── Estatísticas ─── -->
-    <section
-      id="profileStatsSection"
-      class="profile-section"
-      aria-labelledby="profileStatsTitle"
-    >
+    <section id="profileStatsSection" class="profile-section" aria-labelledby="profileStatsTitle">
       <div class="profile-section-heading">
         <div>
           <p class="profile-eyebrow">SEU PROGRESSO</p>
@@ -231,13 +202,7 @@
       <div id="profileStats" class="profile-stats-grid"></div>
     </section>
 
-
-    <!-- ─── Conquistas ─── -->
-    <section
-      id="profileAchievementsSection"
-      class="profile-section"
-      aria-labelledby="profileAchievementsTitle"
-    >
+    <section id="profileAchievementsSection" class="profile-section" aria-labelledby="profileAchievementsTitle">
       <div class="profile-section-heading">
         <div>
           <p class="profile-eyebrow">MARCOS DA COMUNIDADE</p>
@@ -247,13 +212,7 @@
       <div id="profileAchievements" class="profile-achievements"></div>
     </section>
 
-
-    <!-- ─── Atividade ─── -->
-    <section
-      id="profileActivitySection"
-      class="profile-section"
-      aria-labelledby="profileActivityTitle"
-    >
+    <section id="profileActivitySection" class="profile-section" aria-labelledby="profileActivityTitle">
       <div class="profile-section-heading">
         <div>
           <p class="profile-eyebrow">RECENTE</p>
@@ -267,13 +226,9 @@
 
 
   <!-- ═══════════════════════════════════════════════════════════
-       DIALOG DE EDIÇÃO (só no modo self)
+       DIALOG DE EDIÇÃO
        ═══════════════════════════════════════════════════════════ -->
-  <dialog
-    id="profileEditor"
-    class="profile-dialog"
-    aria-labelledby="profileEditorTitle"
-  >
+  <dialog id="profileEditor" class="profile-dialog" aria-labelledby="profileEditorTitle">
     <form id="profileForm" method="dialog">
 
       <header class="profile-dialog-heading">
@@ -281,25 +236,12 @@
           <p class="profile-eyebrow">PERSONALIZAÇÃO</p>
           <h2 id="profileEditorTitle">Editar perfil</h2>
         </div>
-
-        <button
-          id="profileEditorClose"
-          class="profile-icon-button"
-          type="button"
-          aria-label="Fechar"
-        >✕</button>
+        <button id="profileEditorClose" class="profile-icon-button" type="button" aria-label="Fechar">✕</button>
       </header>
 
       <div class="profile-editor-preview">
-        <div
-          id="profilePreviewBanner"
-          class="profile-banner profile-preview-banner"
-        ><span>Prévia do banner</span></div>
-
-        <div
-          id="profilePreviewAvatar"
-          class="profile-avatar profile-preview-avatar"
-        ></div>
+        <div id="profilePreviewBanner" class="profile-banner profile-preview-banner"><span>Prévia do banner</span></div>
+        <div id="profilePreviewAvatar" class="profile-avatar profile-preview-avatar"></div>
       </div>
 
       <div class="profile-form-grid">
@@ -308,77 +250,42 @@
           <input id="profileAvatarFile" type="file" accept="image/*">
           <small>Imagem até 8 MB. Será otimizada antes de salvar.</small>
         </label>
-        <button
-          id="profileRemoveAvatar"
-          class="profile-subtle-button"
-          type="button"
-        >Remover foto</button>
+        <button id="profileRemoveAvatar" class="profile-subtle-button" type="button">Remover foto</button>
 
         <label>Banner
           <input id="profileBannerFile" type="file" accept="image/*">
           <small>Imagem até 8 MB. Será ajustada para o cabeçalho do perfil.</small>
         </label>
-        <button
-          id="profileRemoveBanner"
-          class="profile-subtle-button"
-          type="button"
-        >Remover banner</button>
+        <button id="profileRemoveBanner" class="profile-subtle-button" type="button">Remover banner</button>
 
         <label>Nome de exibição
           <input id="profileDisplayNameInput" maxlength="28" required>
         </label>
 
         <label>Username
-          <input
-            id="profileUsernameInput"
-            readonly
-            aria-describedby="profileUsernameHint"
-          >
-          <small id="profileUsernameHint">
-            O username é permanente nesta versão.
-          </small>
+          <input id="profileUsernameInput" readonly aria-describedby="profileUsernameHint">
+          <small id="profileUsernameHint">O username é permanente nesta versão.</small>
         </label>
 
         <label>Bio
-          <textarea
-            id="pBio"
-            maxlength="60"
-            rows="3"
-            placeholder="Conte um pouco sobre você"
-          ></textarea>
+          <textarea id="pBio" maxlength="60" rows="3" placeholder="Conte um pouco sobre você"></textarea>
         </label>
 
-        <!-- 🏅 RANK com seletor + preview -->
         <label>Rank
           <div class="profile-picker">
             <select id="pRank" aria-describedby="pRankHint">
               <option value="">Sem rank informado</option>
-              <!-- opções preenchidas por profile.js -->
             </select>
-            <span
-              class="profile-picker-preview"
-              id="pRankPreview"
-              aria-hidden="true"
-            >
+            <span class="profile-picker-preview" id="pRankPreview" aria-hidden="true">
               <img id="pRankPreviewImage" alt="" loading="lazy" decoding="async">
             </span>
           </div>
-          <small id="pRankHint">
-            Selecione seu elo. A imagem aparece no topo do seu card.
-          </small>
+          <small id="pRankHint">Selecione seu elo. A imagem aparece no topo do seu card.</small>
         </label>
 
         <label id="pStarsField">Estrelas
-          <input
-            id="pStars"
-            type="number"
-            min="0"
-            max="9999"
-            step="1"
-            inputmode="numeric"
-            placeholder="0"
-            aria-describedby="pStarsHint"
-          >
+          <input id="pStars" type="number" min="0" max="9999" step="1"
+                 inputmode="numeric" placeholder="0" aria-describedby="pStarsHint">
           <small id="pStarsHint">
             Depois do MD10 no Mítico, informe suas estrelas. 0–24 Mítico, 25–49 Honra Mítica, 50–99 Glória Mítica, 100+ Imortal.
           </small>
@@ -395,24 +302,16 @@
           </select>
         </label>
 
-        <!-- 🦸 HERÓI PRINCIPAL com seletor + preview -->
         <label>Herói principal
           <div class="profile-picker">
             <select id="pHero" aria-describedby="pHeroHint">
               <option value="">Nenhum herói selecionado</option>
-              <!-- opções preenchidas por profile.js a partir de HERO_CATALOG -->
             </select>
-            <span
-              class="profile-picker-preview"
-              id="pHeroPreview"
-              aria-hidden="true"
-            >
+            <span class="profile-picker-preview" id="pHeroPreview" aria-hidden="true">
               <img id="pHeroPreviewImage" alt="" loading="lazy" decoding="async">
             </span>
           </div>
-          <small id="pHeroHint">
-            Escolha seu herói principal no catálogo oficial.
-          </small>
+          <small id="pHeroHint">Escolha seu herói principal no catálogo oficial.</small>
         </label>
 
         <label>ID no jogo
@@ -420,11 +319,7 @@
         </label>
 
         <label>Título
-          <input
-            id="profileTitleInput"
-            maxlength="30"
-            placeholder="Ex.: Jogador competitivo"
-          >
+          <input id="profileTitleInput" maxlength="30" placeholder="Ex.: Jogador competitivo">
         </label>
 
         <label>Cor de destaque
@@ -448,12 +343,18 @@
 
       </div>
 
+      <!-- ⭐ NOVO: visibilidade com 3 opções -->
       <fieldset class="profile-privacy-fieldset">
-        <legend>Privacidade do perfil</legend>
+        <legend>Quem pode ver seu perfil</legend>
 
-        <label class="profile-check">
-          <input id="profilePrivateInput" type="checkbox">
-          Perfil privado
+        <label>
+          Visibilidade
+          <select id="profileVisibilityInput" class="profile-visibility-select">
+            <option value="public">🌍 Público — qualquer pessoa vê seus detalhes</option>
+            <option value="friends">👥 Só amigos — apenas amigos veem seus detalhes</option>
+            <option value="private">🔒 Privado — ninguém vê seus detalhes</option>
+          </select>
+          <small>Avatar, nome e selo continuam visíveis para todos em qualquer modo.</small>
         </label>
 
         <label class="profile-check">
@@ -467,24 +368,11 @@
         </label>
       </fieldset>
 
-      <p
-        id="profileFormMessage"
-        class="profile-form-message"
-        role="status"
-      ></p>
+      <p id="profileFormMessage" class="profile-form-message" role="status"></p>
 
       <footer class="profile-dialog-actions">
-        <button
-          id="profileCancelButton"
-          class="profile-subtle-button"
-          type="button"
-        >Cancelar</button>
-
-        <button
-          id="pSave"
-          class="profile-primary"
-          type="submit"
-        >Salvar alterações</button>
+        <button id="profileCancelButton" class="profile-subtle-button" type="button">Cancelar</button>
+        <button id="pSave" class="profile-primary" type="submit">Salvar alterações</button>
       </footer>
 
     </form>

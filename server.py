@@ -17,8 +17,13 @@
 #  14. HIERARQUIA DE PAPÉIS: user < admin < mod < dev
 #  15. Papéis no Supabase (fonte de verdade) com Firestore como espelho opcional
 #  16. FIX: profile() não sobrescreve mais "role" (papel do sistema) com a função
-#      de jogo — esta agora vem em "game_role". Corrige bug onde perfis privados
-#      de Dev/Admin/Mod exibiam "Função principal: dev" no frontend.
+#      de jogo — esta agora vem em "game_role"
+#  17. SISTEMA DE AMIGOS + VISIBILIDADE public/friends/private
+#      - tabela friendships (requester, addressee, status)
+#      - friendship_status(a,b) → 'none'|'pending_out'|'pending_in'|'friends'
+#      - profile() sempre devolve avatar/banner/nome; oculta detalhes
+#        conforme visibility + relação de amizade
+#      - WS: friend_request / friend_accept / friend_decline / friend_remove / friends_list
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -50,11 +55,12 @@ DEV_NICKS = {
     for nick in os.getenv("LOBBY_DEV_NICKS", "").split(",")
     if nick.strip()
 }
-# Se ninguém foi declarado como DEV, usa ADMIN como fallback (o dono do bot)
 if not DEV_NICKS:
     DEV_NICKS = set(ADMIN_NICKS)
 
 VALID_ROLES = ("user", "admin", "mod", "dev")
+VALID_VISIBILITIES = ("public", "friends", "private")
+
 MUTE_ACTIONS = {"mute_10m", "mute_1h", "mute_24h"}
 STATUS_BY_ACTION = {"review": "reviewed", "dismiss": "dismissed", "close": "resolved"}
 MUTE_DURATIONS = {"mute_10m": 600, "mute_1h": 3600, "mute_24h": 86400}
@@ -171,10 +177,159 @@ def _ensure_dm_reactions_table():
         print(f"⚠️  Falha ao garantir tabela dm_reactions: {exc}")
 
 
+def _ensure_friendships_table():
+    try:
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS friendships ("
+            "requester TEXT NOT NULL, "
+            "addressee TEXT NOT NULL, "
+            "status TEXT NOT NULL, "
+            "created_at DOUBLE PRECISION NOT NULL, "
+            "updated_at DOUBLE PRECISION NOT NULL, "
+            "PRIMARY KEY (requester, addressee))"
+        )
+        db.execute("CREATE INDEX IF NOT EXISTS idx_friendships_addressee ON friendships(addressee)")
+        db.execute("CREATE INDEX IF NOT EXISTS idx_friendships_requester ON friendships(requester)")
+        db.execute("CREATE INDEX IF NOT EXISTS idx_friendships_status ON friendships(status)")
+        db.commit()
+        print("✅ Tabela friendships pronta.")
+    except Exception as exc:
+        print(f"⚠️  Falha ao garantir tabela friendships: {exc}")
+
+
 try:
     _ensure_dm_reactions_table()
 except Exception:
     pass
+
+try:
+    _ensure_friendships_table()
+except Exception:
+    pass
+
+
+# ═══════════════════════════════════════════════════════════
+# SISTEMA DE AMIGOS
+# ═══════════════════════════════════════════════════════════
+
+def friendship_status(a, b):
+    """Retorna: 'self' | 'friends' | 'pending_out' | 'pending_in' | 'none'.
+
+    - 'self': a == b
+    - 'friends': amizade aceita
+    - 'pending_out': a enviou pedido, aguardando b
+    - 'pending_in': b enviou pedido, aguardando a
+    - 'none': sem relação
+    """
+    if not a or not b:
+        return "none"
+    if a == b:
+        return "self"
+    row = db.execute(
+        "SELECT requester, status FROM friendships "
+        "WHERE (requester=? AND addressee=?) OR (requester=? AND addressee=?)",
+        (a, b, b, a)
+    ).fetchone()
+    if not row:
+        return "none"
+    if row["status"] == "accepted":
+        return "friends"
+    return "pending_out" if row["requester"] == a else "pending_in"
+
+
+def are_friends(a, b):
+    return friendship_status(a, b) == "friends"
+
+
+def _user_public_card(nick):
+    """Mini card do usuário para listas de amigos/pedidos."""
+    user = get_user(nick)
+    if not user:
+        return None
+    data = json.loads(user["profile_data"] or "{}")
+    return {
+        "nick": nick,
+        "username": nick,
+        "name": data.get("display_name") or user["display"],
+        "display_name": data.get("display_name") or user["display"],
+        "avatar": data.get("avatar", ""),
+        "online": nick in online,
+        "role": role_for(nick),
+        "verified": role_for(nick) in ("dev", "admin", "mod"),
+    }
+
+
+def friends_list(nick):
+    """Lista de amigos confirmados (ordem: mais recentes primeiro)."""
+    rows = db.execute(
+        "SELECT CASE WHEN requester=? THEN addressee ELSE requester END AS other, updated_at "
+        "FROM friendships "
+        "WHERE status='accepted' AND (requester=? OR addressee=?) "
+        "ORDER BY updated_at DESC",
+        (nick, nick, nick)
+    ).fetchall()
+    result = []
+    for row in rows:
+        card = _user_public_card(row["other"])
+        if card:
+            card["since"] = row["updated_at"]
+            result.append(card)
+    return result
+
+
+def incoming_requests(nick):
+    """Pedidos pendentes recebidos (quem quer ser seu amigo)."""
+    rows = db.execute(
+        "SELECT requester, created_at FROM friendships "
+        "WHERE addressee=? AND status='pending' ORDER BY created_at DESC",
+        (nick,)
+    ).fetchall()
+    result = []
+    for row in rows:
+        card = _user_public_card(row["requester"])
+        if card:
+            card["ts"] = row["created_at"]
+            result.append(card)
+    return result
+
+
+def outgoing_requests(nick):
+    """Pedidos pendentes enviados (você quer ser amigo)."""
+    rows = db.execute(
+        "SELECT addressee, created_at FROM friendships "
+        "WHERE requester=? AND status='pending' ORDER BY created_at DESC",
+        (nick,)
+    ).fetchall()
+    result = []
+    for row in rows:
+        card = _user_public_card(row["addressee"])
+        if card:
+            card["ts"] = row["created_at"]
+            result.append(card)
+    return result
+
+
+def friends_summary(nick):
+    """Payload completo para o WS `friends_list`."""
+    return {
+        "t": "friends",
+        "friends": friends_list(nick),
+        "incoming": incoming_requests(nick),
+        "outgoing": outgoing_requests(nick),
+        "count": len(friends_list(nick)),
+        "incoming_count": len(incoming_requests(nick)),
+    }
+
+
+async def notify_friend_change(a, b, status):
+    """Envia friend_updated para ambos se estiverem online."""
+    for who, other in ((a, b), (b, a)):
+        if who in online:
+            await send(who, {"t": "friend_updated", "nick": other, "status": status})
+    # Atualiza a lista completa de amigos para ambos
+    for who in (a, b):
+        if who in online:
+            await send(who, friends_summary(who))
 
 
 # ═══════════════════════════════════════════════════════════
@@ -258,23 +413,44 @@ def _rank_from_mythic_stars(stars):
     return "Mítico"
 
 
+def _normalize_visibility(data, fallback_private=None):
+    """Extrai a visibilidade efetiva do profile_data, com compat para is_private."""
+    vis = data.get("visibility")
+    if vis in VALID_VISIBILITIES:
+        return vis
+    if isinstance(fallback_private, bool):
+        return "private" if fallback_private else "public"
+    return "private" if data.get("is_private") else "public"
+
+
 def profile(nick, viewer=None):
     u = get_user(nick)
     data = json.loads(u["profile_data"] or "{}")
     own = viewer == nick
-    private = bool(data.get("is_private", False)) and not own
-
-    # Papel real do usuário (env > Supabase > Firestore > default)
     role = role_for(nick)
 
-    # Cargos exibidos no perfil — cada um no máximo 1 vez.
+    # Visibilidade
+    visibility = _normalize_visibility(data)
+
+    # Relação de amizade (para decidir o que mostrar)
+    friendship = "self" if own else (friendship_status(viewer, nick) if viewer else "none")
+
+    # Quem pode ver os detalhes?
+    if own:
+        can_see_details = True
+    elif visibility == "public":
+        can_see_details = True
+    elif visibility == "friends":
+        can_see_details = (friendship == "friends")
+    else:  # private
+        can_see_details = False
+
     ROLE_LABELS = {"dev": "DEV", "admin": "ADMIN", "mod": "MODERADOR"}
     if role in ROLE_LABELS:
         community_roles = [ROLE_LABELS[role]]
     else:
         community_roles = ["MEMBRO"]
 
-    # Verificado azul: só dev, admin e mod ganham o selo
     verified = role in ("dev", "admin", "mod")
 
     result = {
@@ -282,27 +458,29 @@ def profile(nick, viewer=None):
         "username": nick,
         "display_name": data.get("display_name") or u["display"],
         "joined_at": u["joined_at"] or "",
-        "is_private": bool(data.get("is_private", False)),
+        "visibility": visibility,
+        "is_private": visibility == "private",   # compat legado
         "is_owner": own,
-        "community_roles": community_roles,   # ← agora sem duplicatas
+        "community_roles": community_roles,
         "online": nick in online,
-        "role": role,                          # ← papel do SISTEMA (user/admin/mod/dev)
-        "verified": verified,                  # ← flag pro frontend
-    }
-    if private:
-        return result
-
-    # ATENÇÃO: NÃO incluir "role" no update abaixo — isso sobrescreveria
-    # o papel do sistema (dev/admin/mod/user). A função de jogo (Jungle,
-    # Mid, Roam, etc.) vai no campo separado "game_role".
-    result.update({k: u[k] or "" for k in ("bio", "rank", "hero", "gid")})
-    result["game_role"] = u["role"] or ""
-    result.update({
+        "role": role,
+        "verified": verified,
+        "friendship_status": friendship,          # 'self'|'friends'|'pending_out'|'pending_in'|'none'
+        # Identidade visual: sempre visível
         "avatar": data.get("avatar", ""),
         "banner": data.get("banner", ""),
         "accent": data.get("accent", "#8b72ff"),
         "frame": data.get("frame", "default"),
         "theme": data.get("theme", "classic"),
+    }
+
+    if not can_see_details:
+        result["details_hidden"] = True
+        return result
+
+    result.update({k: u[k] or "" for k in ("bio", "rank", "hero", "gid")})
+    result["game_role"] = u["role"] or ""
+    result.update({
         "title": data.get("title", ""),
         "show_stats": bool(data.get("show_stats", True)),
         "show_activity": bool(data.get("show_activity", True)),
@@ -390,7 +568,8 @@ COMMUNITY_LANES = {"EXP", "Jungle", "Mid", "Gold", "Roam"}
 def community_author_label(author, viewer):
     user = get_user(author)
     data = json.loads(user["profile_data"] or "{}")
-    if data.get("is_private") and author != viewer:
+    visibility = _normalize_visibility(data)
+    if visibility == "private" and author != viewer:
         return "Jogador da comunidade"
     return data.get("display_name") or user["display"]
 
@@ -552,7 +731,7 @@ def threads(nick):
         result.append({
             "nick": row["other"],
             "name": data.get("display_name") or user["display"],
-            "avatar": "" if data.get("is_private") else data.get("avatar", ""),
+            "avatar": data.get("avatar", ""),
             "unread": row["unread"],
             "last": last_row["m"] if last_row else "",
             "ts": last_row["ts"] if last_row else 0,
@@ -578,7 +757,7 @@ def lfg_list():
         item = dict(row)
         data = json.loads(item.pop("profile_data") or "{}")
         item["display"] = data.get("display_name") or item["display"]
-        item["avatar"] = "" if data.get("is_private") else data.get("avatar", "")
+        item["avatar"] = data.get("avatar", "")
         result.append({**item, "online": item["nick"] in online})
     return result
 
@@ -720,7 +899,6 @@ def get_user(nick): return db.execute("SELECT * FROM users WHERE nick=?", (nick,
 # ═══════════════════════════════════════════════════════════
 
 def _local_role_get(nick):
-    """Lê o papel do banco local. Retorna None se não definido."""
     if not nick:
         return None
     try:
@@ -737,8 +915,6 @@ def _local_role_get(nick):
 
 
 def _local_role_set(nick, role, by=None):
-    """Grava o papel do usuário no profile_data.
-    Registra também quem alterou e quando."""
     if role not in VALID_ROLES:
         raise IdentityError("Papel inválido.")
     u = get_user(nick)
@@ -755,10 +931,6 @@ def _local_role_set(nick, role, by=None):
 
 
 def _local_list_accounts():
-    """Lista todas as contas do Supabase com papéis derivados.
-    Fonte de verdade: profile_data._role.
-    Fallback: DEV_NICKS / ADMIN_NICKS → role.
-    """
     try:
         rows = db.execute(
             "SELECT nick, display, profile_data, joined_at "
@@ -786,7 +958,6 @@ def _local_list_accounts():
             role = "user"
             role_source = "default"
 
-        # Informações extras que ajudam a UI
         google_linked = bool(data.get("google_uid") or data.get("google_id"))
         entry = {
             "nick": nick,
@@ -812,21 +983,17 @@ def _local_list_accounts():
 def role_for(nick):
     if not nick:
         return "user"
-    # 1) DEV por env var (prioridade máxima — não pode ser mudado pela UI)
     if nick in DEV_NICKS:
         return "dev"
-    # 2) Papel gravado no Supabase (fonte de verdade)
     local = _local_role_get(nick)
     if local:
         return local
-    # 3) Firestore (legado, só leitura)
     if identity_store.firestore_configured:
         try:
             fallback = "admin" if nick in ADMIN_NICKS else "user"
             return identity_store.role_for(nick, fallback)
         except Exception:
             pass
-    # 4) Fallback por env vars
     if nick in ADMIN_NICKS:
         return "admin"
     return "user"
@@ -839,14 +1006,12 @@ def is_dev(nick):
 
 
 def is_admin(nick):
-    """ADMIN, MOD ou DEV."""
     if not nick:
         return False
     return role_for(nick) in ("admin", "mod", "dev")
 
 
 def can_moderate(nick):
-    """MOD ou DEV."""
     if not nick:
         return False
     return role_for(nick) in ("mod", "dev")
@@ -900,12 +1065,8 @@ async def broadcast_moderation():
 
 
 async def broadcast_role_list():
-    """Envia a lista de contas/papéis pra todos os DEVs online.
-    Fonte primária: Supabase (funciona sem Firestore)."""
     try:
         accounts = _local_list_accounts()
-
-        # Enriquece com papéis do Firestore se disponível (legado)
         if identity_store.firestore_configured:
             try:
                 firestore_accounts = identity_store.list_accounts()
@@ -1279,6 +1440,7 @@ async def ws_endpoint(ws: WebSocket):
             "players": [public(n) for n in online if online[n]["room"] == "lobby"]
         }))
         await send(nick, {"t": "tournaments", "list": tournament_list(nick)})
+        await send(nick, friends_summary(nick))
         current_mute = mute_status(nick)
         if current_mute:
             await send(nick, {"t": "moderation_notice",
@@ -1316,9 +1478,222 @@ async def ws_endpoint(ws: WebSocket):
                     add_activity(nick, "room", "Entrou em " + ROOMS[rid])
                     await send(nick, {"t": "room", "id": rid, "players": [public(n) for n in online if online[n]["room"] == rid]})
                     await bc_room(nick, {"t": "join", "p": public(nick)}, skip=nick)
+
+            # ═══════════════════════════════════════════
+            # SISTEMA DE AMIGOS
+            # ═══════════════════════════════════════════
+            elif t == "friends_list":
+                await send(nick, friends_summary(nick))
+            elif t == "friend_request":
+                target = str(m.get("nick", "")).strip().lower()
+                if target == nick or not get_user(target):
+                    await send(nick, {"t": "friend_error", "m": "Jogador inválido."})
+                    continue
+                status = friendship_status(nick, target)
+                if status == "friends":
+                    await send(nick, {"t": "friend_error", "m": "Você já é amigo deste jogador."})
+                    continue
+                if status == "pending_out":
+                    await send(nick, {"t": "friend_error", "m": "Você já enviou um pedido para este jogador."})
+                    continue
+                if status == "pending_in":
+                    db.execute(
+                        "UPDATE friendships SET status='accepted', updated_at=? "
+                        "WHERE requester=? AND addressee=?",
+                        (time.time(), target, nick)
+                    )
+                    db.commit()
+                    add_activity(nick, "community", f"Ficou amigo de @{target}")
+                    add_activity(target, "community", f"Ficou amigo de @{nick}")
+                    await notify_friend_change(nick, target, "friends")
+                    if target in online:
+                        await send(target, {"t": "friend_notice",
+                                            "m": f"@{nick} aceitou seu pedido de amizade."})
+                    continue
+                now = time.time()
+                db.execute(
+                    "INSERT INTO friendships(requester, addressee, status, created_at, updated_at) "
+                    "VALUES(?,?,?,?,?) ON CONFLICT(requester, addressee) DO UPDATE SET "
+                    "status=excluded.status, updated_at=excluded.updated_at",
+                    (nick, target, "pending", now, now)
+                )
+                db.commit()
+                await notify_friend_change(nick, target, "pending_out")
+                if target in online:
+                    user = get_user(nick)
+                    data = json.loads(user["profile_data"] or "{}")
+                    await send(target, {
+                        "t": "friend_request_received",
+                        "from": nick,
+                        "name": data.get("display_name") or user["display"],
+                        "avatar": data.get("avatar", ""),
+                    })
+                    await send(target, {"t": "friend_notice", "m": f"@{nick} quer ser seu amigo."})
+            elif t == "friend_accept":
+                target = str(m.get("nick", "")).strip().lower()
+                row = db.execute(
+                    "SELECT 1 FROM friendships WHERE requester=? AND addressee=? AND status='pending'",
+                    (target, nick)
+                ).fetchone()
+                if not row:
+                    await send(nick, {"t": "friend_error", "m": "Não há pedido de amizade deste jogador."})
+                    continue
+                db.execute(
+                    "UPDATE friendships SET status='accepted', updated_at=? "
+                    "WHERE requester=? AND addressee=?",
+                    (time.time(), target, nick)
+                )
+                db.commit()
+                add_activity(nick, "community", f"Ficou amigo de @{target}")
+                add_activity(target, "community", f"Ficou amigo de @{nick}")
+                await notify_friend_change(nick, target, "friends")
+                if target in online:
+                    await send(target, {"t": "friend_notice",
+                                        "m": f"@{nick} aceitou seu pedido de amizade."})
+            elif t == "friend_decline":
+                target = str(m.get("nick", "")).strip().lower()
+                db.execute(
+                    "DELETE FROM friendships "
+                    "WHERE requester=? AND addressee=? AND status='pending'",
+                    (target, nick)
+                )
+                db.commit()
+                await notify_friend_change(nick, target, "none")
+            elif t == "friend_remove":
+                target = str(m.get("nick", "")).strip().lower()
+                db.execute(
+                    "DELETE FROM friendships "
+                    "WHERE (requester=? AND addressee=?) OR (requester=? AND addressee=?)",
+                    (nick, target, target, nick)
+                )
+                db.commit()
+                await notify_friend_change(nick, target, "none")
+
+            # ═══════════════════════════════════════════
+            # RESTO (perfil, DM, torneio, moderação, etc.)
+            # ═══════════════════════════════════════════
             elif t == "profile_view":
                 other = str(m.get("nick", "")).lower()
-                if get_user(other): await send(nick, {"t": "pview", "nick": other, "p": profile(other, nick)})
+                if get_user(other):
+                    await send(nick, {"t": "pview", "nick": other, "p": profile(other, nick)})
+            elif t == "profile_set":
+                f = {k: str(m.get(k, "")).strip()[:(60 if k == "bio" else 20)] for k in ("bio", "rank", "role", "hero", "gid")}
+                stars = _parse_profile_stars(m.get("stars"))
+                if stars is not None and (_is_mythic_plus_rank(f["rank"]) or f["rank"] == ""):
+                    f["rank"] = _rank_from_mythic_stars(stars)
+                if not _is_mythic_plus_rank(f["rank"]):
+                    stars = None
+                current = get_user(nick)
+                data = json.loads(current["profile_data"] or "{}")
+                display_name = str(m.get("display_name", current["display"])).strip()[:28]
+                if not display_name:
+                    await send(nick, {"t": "profile_error", "m": "O nome de exibição não pode ficar vazio."})
+                    continue
+                for field in ("avatar", "banner"):
+                    image = str(m.get(field, data.get(field, "")))
+                    max_length = 120000 if field == "avatar" else 350000
+                    if image and (len(image) > max_length or not re.fullmatch(
+                            r"data:image/jpeg;base64,[A-Za-z0-9+/]+={0,2}", image)):
+                        await send(nick, {"t": "profile_error", "m": "A imagem selecionada não é válida ou ficou grande demais."})
+                        break
+                    data[field] = image
+                else:
+                    accent = str(m.get("accent", data.get("accent", "#8b72ff")))
+                    if not re.fullmatch(r"#[0-9a-fA-F]{6}", accent):
+                        await send(nick, {"t": "profile_error", "m": "Escolha uma cor de destaque válida."})
+                        continue
+
+                    # Visibilidade (compat: aceita is_private antigo)
+                    raw_vis = str(m.get("visibility", "")).strip()
+                    if raw_vis not in VALID_VISIBILITIES:
+                        if "is_private" in m:
+                            raw_vis = "private" if bool(m.get("is_private")) else "public"
+                        else:
+                            raw_vis = _normalize_visibility(data)
+
+                    data.update({
+                        "display_name": display_name,
+                        "accent": accent,
+                        "frame": str(m.get("frame", data.get("frame", "default")))
+                        if m.get("frame", data.get("frame", "default")) in ("default", "elite") else "default",
+                        "theme": str(m.get("theme", data.get("theme", "classic")))
+                        if m.get("theme", data.get("theme", "classic")) in ("classic", "arena", "ocean") else "classic",
+                        "title": str(m.get("title", data.get("title", ""))).strip()[:30],
+                        "visibility": raw_vis,
+                        "is_private": raw_vis == "private",   # compat
+                        "show_stats": bool(m.get("show_stats", data.get("show_stats", True))),
+                        "show_activity": bool(m.get("show_activity", data.get("show_activity", True))),
+                    })
+                    if stars is None:
+                        data.pop("stars", None)
+                    else:
+                        data["stars"] = stars
+                    db.execute("UPDATE users SET display=?, bio=?, rank=?, role=?, hero=?, gid=?, profile_data=? WHERE nick=?",
+                               (display_name, *f.values(), json.dumps(data, ensure_ascii=False), nick))
+                    db.execute("UPDATE lfg SET display=? WHERE nick=?", (display_name, nick))
+                    db.commit()
+                    add_activity(nick, "profile", "Atualizou o perfil")
+                    saved_profile = profile(nick, nick)
+                    await send(nick, {"t": "profile", "p": saved_profile})
+                    await bc_room(nick, {"t": "player_profile", "nick": nick, "p": saved_profile}, skip=nick)
+                    if db.execute("SELECT 1 FROM lfg WHERE nick=?", (nick,)).fetchone():
+                        await broadcast({"t": "lfg", "list": lfg_list()})
+                    continue
+                continue
+            elif t == "settings_set":
+                user = get_user(nick)
+                data = json.loads(user["profile_data"] or "{}")
+                notifications = m.get("notifications", {})
+                if not isinstance(notifications, dict):
+                    await send(nick, {"t": "settings_error", "m": "As preferências de notificação são inválidas."})
+                    continue
+                data["notifications"] = {
+                    key: bool(notifications.get(key, True))
+                    for key in ("messages", "invites", "events", "activity")
+                }
+                for key in ("show_stats", "show_activity"):
+                    value = m.get(key)
+                    if isinstance(value, bool):
+                        data[key] = value
+                # Visibilidade também pode ser alterada aqui
+                vis = m.get("visibility")
+                if vis in VALID_VISIBILITIES:
+                    data["visibility"] = vis
+                    data["is_private"] = (vis == "private")
+                elif isinstance(m.get("is_private"), bool):
+                    data["is_private"] = m["is_private"]
+                    data["visibility"] = "private" if m["is_private"] else "public"
+                db.execute("UPDATE users SET profile_data=? WHERE nick=?",
+                           (json.dumps(data, ensure_ascii=False), nick))
+                db.commit()
+                await send(nick, {"t": "settings", "notifications": data["notifications"],
+                                  "profile": profile(nick, nick)})
+                if db.execute("SELECT 1 FROM lfg WHERE nick=?", (nick,)).fetchone():
+                    await broadcast({"t": "lfg", "list": lfg_list()})
+            elif t == "password_change":
+                current_password = m.get("current", "")
+                new_password = m.get("new", "")
+                user = get_user(nick)
+                if not valid_password(new_password):
+                    await send(nick, {"t": "password_error",
+                                      "m": "A nova senha deve ter entre 10 e 128 caracteres."})
+                    continue
+                if p.get("auth_provider") not in ("google", "session"):
+                    if not isinstance(current_password, str) or not verify_password(user, current_password):
+                        await send(nick, {"t": "password_error", "m": "A senha atual está incorreta."})
+                        continue
+                elif current_password:
+                    if (not isinstance(current_password, str)
+                            or not verify_password(user, current_password)):
+                        await send(nick, {"t": "password_error", "m": "A senha atual está incorreta."})
+                        continue
+                if user["password_hash"] and isinstance(current_password, str) and secrets.compare_digest(
+                        current_password, new_password):
+                    await send(nick, {"t": "password_error",
+                                      "m": "A nova senha deve ser diferente da atual."})
+                    continue
+                set_password(nick, new_password)
+                await send(nick, {"t": "password_changed", "m": "Senha alterada com sucesso."})
             elif t == "report_submit":
                 target = str(m.get("target", "")).strip().lower()
                 category = str(m.get("category", "")).strip()
@@ -1425,7 +1800,6 @@ async def ws_endpoint(ws: WebSocket):
                     continue
                 try:
                     accounts = _local_list_accounts()
-
                     if identity_store.firestore_configured:
                         try:
                             firestore_accounts = identity_store.list_accounts()
@@ -1438,7 +1812,6 @@ async def ws_endpoint(ws: WebSocket):
                                         acc["role_source"] = "firestore"
                         except Exception as exc:
                             print(f"⚠️ [admin_roles_list] Firestore sync falhou (ignorado): {exc}")
-
                     await send(nick, {"t": "admin_roles", "list": accounts})
                 except IdentityError as error:
                     await send(nick, {"t": "admin_roles_error", "m": str(error)})
@@ -1464,17 +1837,13 @@ async def ws_endpoint(ws: WebSocket):
                     await send(nick, {"t": "admin_roles_error", "m": "Este jogador é DEV por variável de ambiente e não pode ser alterado aqui."})
                     continue
                 try:
-                    # Fonte primária: Supabase
                     _local_role_set(target, role, by=nick)
                     new_role = role
-
-                    # Sincroniza com Firestore se estiver configurado (best-effort)
                     if identity_store.firestore_configured:
                         try:
                             identity_store.set_role(target, role)
                         except Exception as exc:
                             print(f"⚠️ [admin_role_set] Firestore sync falhou (ignorado): {exc}")
-
                     if target in online:
                         online[target]["role"] = new_role
                         await send(target, {
@@ -1484,7 +1853,6 @@ async def ws_endpoint(ws: WebSocket):
                         })
                         await send(target, {"t": "moderation_notice",
                                             "m": f"Seu papel na comunidade foi atualizado para {new_role.upper()}."})
-
                     await send(nick, {"t": "admin_roles_saved", "m": f"@{target} agora é {new_role.upper()}."})
                     await broadcast_role_list()
                     await broadcast_moderation()
@@ -1498,106 +1866,6 @@ async def ws_endpoint(ws: WebSocket):
                                   "auth_provider": p.get("auth_provider", "legacy")})
             elif t == "room_list":
                 await send(nick, {"t": "rooms", "list": [{"id": k, "name": v, "count": sum(1 for o in online.values() if o["room"] == k)} for k, v in ROOMS.items()]})
-            elif t == "profile_set":
-                f = {k: str(m.get(k, "")).strip()[:(60 if k == "bio" else 20)] for k in ("bio", "rank", "role", "hero", "gid")}
-                stars = _parse_profile_stars(m.get("stars"))
-                if stars is not None and (_is_mythic_plus_rank(f["rank"]) or f["rank"] == ""):
-                    f["rank"] = _rank_from_mythic_stars(stars)
-                if not _is_mythic_plus_rank(f["rank"]):
-                    stars = None
-                current = get_user(nick)
-                data = json.loads(current["profile_data"] or "{}")
-                display_name = str(m.get("display_name", current["display"])).strip()[:28]
-                if not display_name:
-                    await send(nick, {"t": "profile_error", "m": "O nome de exibição não pode ficar vazio."})
-                    continue
-                for field in ("avatar", "banner"):
-                    image = str(m.get(field, data.get(field, "")))
-                    max_length = 120000 if field == "avatar" else 350000
-                    if image and (len(image) > max_length or not re.fullmatch(
-                            r"data:image/jpeg;base64,[A-Za-z0-9+/]+={0,2}", image)):
-                        await send(nick, {"t": "profile_error", "m": "A imagem selecionada não é válida ou ficou grande demais."})
-                        break
-                    data[field] = image
-                else:
-                    accent = str(m.get("accent", data.get("accent", "#8b72ff")))
-                    if not re.fullmatch(r"#[0-9a-fA-F]{6}", accent):
-                        await send(nick, {"t": "profile_error", "m": "Escolha uma cor de destaque válida."})
-                        continue
-                    data.update({
-                        "display_name": display_name,
-                        "accent": accent,
-                        "frame": str(m.get("frame", data.get("frame", "default")))
-                        if m.get("frame", data.get("frame", "default")) in ("default", "elite") else "default",
-                        "theme": str(m.get("theme", data.get("theme", "classic")))
-                        if m.get("theme", data.get("theme", "classic")) in ("classic", "arena", "ocean") else "classic",
-                        "title": str(m.get("title", data.get("title", ""))).strip()[:30],
-                        "is_private": bool(m.get("is_private", data.get("is_private", False))),
-                        "show_stats": bool(m.get("show_stats", data.get("show_stats", True))),
-                        "show_activity": bool(m.get("show_activity", data.get("show_activity", True))),
-                    })
-                    if stars is None:
-                        data.pop("stars", None)
-                    else:
-                        data["stars"] = stars
-                    db.execute("UPDATE users SET display=?, bio=?, rank=?, role=?, hero=?, gid=?, profile_data=? WHERE nick=?",
-                               (display_name, *f.values(), json.dumps(data, ensure_ascii=False), nick))
-                    db.execute("UPDATE lfg SET display=? WHERE nick=?", (display_name, nick))
-                    db.commit()
-                    add_activity(nick, "profile", "Atualizou o perfil")
-                    saved_profile = profile(nick, nick)
-                    await send(nick, {"t": "profile", "p": saved_profile})
-                    await bc_room(nick, {"t": "player_profile", "nick": nick, "p": saved_profile}, skip=nick)
-                    if db.execute("SELECT 1 FROM lfg WHERE nick=?", (nick,)).fetchone():
-                        await broadcast({"t": "lfg", "list": lfg_list()})
-                    continue
-                continue
-            elif t == "settings_set":
-                user = get_user(nick)
-                data = json.loads(user["profile_data"] or "{}")
-                notifications = m.get("notifications", {})
-                if not isinstance(notifications, dict):
-                    await send(nick, {"t": "settings_error", "m": "As preferências de notificação são inválidas."})
-                    continue
-                data["notifications"] = {
-                    key: bool(notifications.get(key, True))
-                    for key in ("messages", "invites", "events", "activity")
-                }
-                for key in ("is_private", "show_stats", "show_activity"):
-                    value = m.get(key)
-                    if isinstance(value, bool):
-                        data[key] = value
-                db.execute("UPDATE users SET profile_data=? WHERE nick=?",
-                           (json.dumps(data, ensure_ascii=False), nick))
-                db.commit()
-                await send(nick, {"t": "settings", "notifications": data["notifications"],
-                                  "profile": profile(nick, nick)})
-                if db.execute("SELECT 1 FROM lfg WHERE nick=?", (nick,)).fetchone():
-                    await broadcast({"t": "lfg", "list": lfg_list()})
-            elif t == "password_change":
-                current_password = m.get("current", "")
-                new_password = m.get("new", "")
-                user = get_user(nick)
-                if not valid_password(new_password):
-                    await send(nick, {"t": "password_error",
-                                      "m": "A nova senha deve ter entre 10 e 128 caracteres."})
-                    continue
-                if p.get("auth_provider") not in ("google", "session"):
-                    if not isinstance(current_password, str) or not verify_password(user, current_password):
-                        await send(nick, {"t": "password_error", "m": "A senha atual está incorreta."})
-                        continue
-                elif current_password:
-                    if (not isinstance(current_password, str)
-                            or not verify_password(user, current_password)):
-                        await send(nick, {"t": "password_error", "m": "A senha atual está incorreta."})
-                        continue
-                if user["password_hash"] and isinstance(current_password, str) and secrets.compare_digest(
-                        current_password, new_password):
-                    await send(nick, {"t": "password_error",
-                                      "m": "A nova senha deve ser diferente da atual."})
-                    continue
-                set_password(nick, new_password)
-                await send(nick, {"t": "password_changed", "m": "Senha alterada com sucesso."})
             elif t == "community_meta_list":
                 await send(nick, {"t": "community_meta", "list": community_meta_list(nick)})
             elif t == "community_meta_submit":
@@ -2030,7 +2298,7 @@ async def ws_endpoint(ws: WebSocket):
 
 
 # ═══════════════════════════════════════════════════════════
-# Upload de anexo da DM
+# REST (upload, busca, friends API, proxy, estáticos)
 # ═══════════════════════════════════════════════════════════
 @app.post("/api/dm/upload")
 async def dm_upload(file: UploadFile = File(...)):
@@ -2071,12 +2339,10 @@ async def dm_upload(file: UploadFile = File(...)):
     }
 
 
-# ═══════════════════════════════════════════════════════════
-# Busca de usuários
-# ═══════════════════════════════════════════════════════════
 @app.get("/api/users/search")
-def users_search(q: str = ""):
+def users_search(q: str = "", viewer: str = ""):
     q = (q or "").strip()
+    viewer = (viewer or "").strip().lower()
     if len(q) < 2:
         return []
     like = f"%{q.lower()}%"
@@ -2094,25 +2360,34 @@ def users_search(q: str = ""):
     result = []
     for row in rows:
         other = row["nick"]
+        if viewer and other == viewer:
+            continue
         data = json.loads(row["profile_data"] or "{}")
-        if data.get("is_private"):
-            avatar = ""
-        else:
-            avatar = data.get("avatar", "")
+        # Avatar sempre visível agora
+        avatar = data.get("avatar", "")
+        fs = friendship_status(viewer, other) if viewer else "none"
         result.append({
             "id": other,
             "nick": other,
             "username": other,
             "name": data.get("display_name") or row["display"],
             "avatar": avatar,
-            "isFriend": False,
+            "isFriend": fs == "friends",
+            "friendship_status": fs,
         })
     return result
 
 
 @app.get("/api/friends/list")
-def friends_list():
-    return []
+def friends_list_api(viewer: str = ""):
+    viewer = (viewer or "").strip().lower()
+    if not viewer:
+        return {"friends": [], "incoming": [], "outgoing": []}
+    return {
+        "friends": friends_list(viewer),
+        "incoming": incoming_requests(viewer),
+        "outgoing": outgoing_requests(viewer),
+    }
 
 
 # ═══════════════════════════════════════════════════════════
