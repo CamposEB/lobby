@@ -25,6 +25,9 @@
 #      is_streamer / is_beta para o frontend.
 #  20. REDE SOCIAL: seguir/seguidores, posts, curtidas, republicações,
 #      comentários e feed de notificações (módulo social.py).
+#  21. ⭐ FIX: friend_decline agora cancela o pedido nas DUAS direções
+#      (recusar recebido + cancelar enviado). Antes o botão "Cancelar" no
+#      painel de amigos não funcionava.
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -243,7 +246,7 @@ def _user_public_card(nick):
         return None
     data = json.loads(user["profile_data"] or "{}")
     role = role_for(nick)
-    # ⭐ NOVO: vip e streamer também são "verificados" (têm selo)
+    # ⭐ vip e streamer também são "verificados" (têm selo)
     return {
         "nick": nick,
         "username": nick,
@@ -431,7 +434,7 @@ def profile(nick, viewer=None):
     else:
         can_see_details = False
 
-    # ⭐ FIX: todos os 7 cargos agora aparecem corretamente em community_roles
+    # ⭐ todos os 7 cargos agora aparecem corretamente em community_roles
     ROLE_LABELS = {
         "dev": "DEV",
         "admin": "ADMIN",
@@ -1428,7 +1431,7 @@ async def ws_endpoint(ws: WebSocket):
         online[nick] = {"ws": ws, "x": W // 2, "y": H // 2, "last_chat": 0, "last_dm": 0,
                         "room": "lobby", "role": role, "auth_provider": auth_provider,
                         "community_build_filters": None}
-        # ⭐ FIX: envia flags para todos os cargos novos (is_vip, is_streamer, is_beta)
+        # ⭐ envia flags para todos os cargos novos (is_vip, is_streamer, is_beta)
         await ws.send_text(json.dumps({
             "t": "init",
             "quiz": quiz_state(nick),
@@ -1566,11 +1569,14 @@ async def ws_endpoint(ws: WebSocket):
                                         "m": f"@{nick} aceitou seu pedido de amizade."})
                 await social.notify_friend_accepted(nick, target)
             elif t == "friend_decline":
+                # ⭐ FIX: cancela o pedido em AMBAS as direções
+                # (recusar recebido OU cancelar enviado)
                 target = str(m.get("nick", "")).strip().lower()
                 db.execute(
                     "DELETE FROM friendships "
-                    "WHERE requester=? AND addressee=? AND status='pending'",
-                    (target, nick)
+                    "WHERE status='pending' AND "
+                    "((requester=? AND addressee=?) OR (requester=? AND addressee=?))",
+                    (target, nick, nick, target)
                 )
                 db.commit()
                 await notify_friend_change(nick, target, "none")

@@ -1,4 +1,6 @@
-// /static/js/friends.js — Sistema de amigos (modal + lista + pedidos)
+// /static/js/friends.js — Sistema unificado de notificações
+// (amigos + pedidos + social: likes, comentários, follows, posts, reposts)
+// Integra-se com social.js (SocialUI) que roteia "social_*" pra cá.
 (function () {
   'use strict';
   if (window.__friendsUILoaded) return;
@@ -8,10 +10,11 @@
   const el = (tag, props) => {
     const n = document.createElement(tag);
     if (props) for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
       if (k === 'class') n.className = v;
       else if (k === 'textContent') n.textContent = v;
       else if (k === 'dataset') Object.assign(n.dataset, v);
-      else n.setAttribute(k, v);
+      else n.setAttribute(k, v === true ? '' : v);
     }
     return n;
   };
@@ -24,7 +27,15 @@
   let _tab = 'friends';
   let _searchTimer = null;
 
-  // ─── CSS injetado ───
+  // ─── Social notifications (compartilhado com social.js) ───
+  let _notifs = [];          // mais recentes primeiro
+  let _notifCards = {};      // nick → card do ator
+  let _notifUnread = 0;      // total não lidas
+  let _notifyPosts = true;   // preferência "notify_posts"
+
+  // ═══════════════════════════════════════════════════════════
+  // CSS
+  // ═══════════════════════════════════════════════════════════
   let _cssInjected = false;
   function ensureStyles() {
     if (_cssInjected) return;
@@ -142,7 +153,9 @@
     _cssInjected = true;
   }
 
-  // ─── Helpers ───
+  // ═══════════════════════════════════════════════════════════
+  // Helpers
+  // ═══════════════════════════════════════════════════════════
   function avatarCard(nick, name, avatar) {
     const wrap = el('span', { class: 'friends-avatar' });
     const initial = (name || nick || '?').slice(0, 1).toUpperCase();
@@ -185,9 +198,7 @@
     }
     if (secondaryLabel) {
       const b = el('button', {
-        type: 'button',
-        class: 'friends-btn',
-        textContent: secondaryLabel,
+        type: 'button', class: 'friends-btn', textContent: secondaryLabel,
       });
       b.addEventListener('click', () => onSecondary && onSecondary(user));
       actions.append(b);
@@ -204,12 +215,82 @@
     return row;
   }
 
-  // ─── Renders ───
+  function timeAgo(ts) {
+    const s = Math.max(0, (Date.now() / 1000) - Number(ts || 0));
+    if (s < 60) return 'agora';
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + 'min';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + 'h';
+    const d = Math.floor(h / 24);
+    if (d < 7) return d + 'd';
+    return new Date((ts || 0) * 1000).toLocaleDateString('pt-BR');
+  }
+
+  const NOTIF_META = {
+    follow:          { icon: '👥', text: 'te seguiu' },
+    like:            { icon: '❤️', text: 'curtiu sua publicação' },
+    comment:         { icon: '💬', text: 'comentou' },
+    repost:          { icon: '🔁', text: 'repostou sua publicação' },
+    post_friend:     { icon: '📝', text: 'publicou' },
+    post_follow:     { icon: '📝', text: 'publicou' },
+    friend_accepted: { icon: '🤝', text: 'aceitou seu pedido de amizade' },
+  };
+
+  function notifRow(n) {
+    const meta = NOTIF_META[n.kind] || { icon: '🔔', text: n.kind };
+    const card = _notifCards[n.actor] || { nick: n.actor, name: n.actor, avatar: '' };
+
+    const row = el('div', {
+      class: 'notif-row' + (n.read ? '' : ' is-unread'),
+      dataset: { notifId: String(n.id) },
+    });
+
+    row.append(avatarCard(card.nick, card.name || card.display_name, card.avatar));
+
+    const copy = el('div', { class: 'notif-copy' });
+    const line = el('div', { class: 'notif-line' });
+    line.append(el('span', { class: 'notif-icon', textContent: meta.icon }));
+    line.append(el('b', { textContent: card.name || card.display_name || card.nick }));
+    line.append(document.createTextNode(' ' + meta.text));
+    copy.append(line);
+
+    if (n.preview) copy.append(el('small', { class: 'notif-preview', textContent: n.preview }));
+    copy.append(el('small', { class: 'notif-time', textContent: timeAgo(n.ts) }));
+
+    row.append(copy);
+
+    row.addEventListener('click', () => {
+      // marca como lida localmente e no servidor
+      if (!n.read) {
+        n.read = true;
+        row.classList.remove('is-unread');
+        if (_notifUnread > 0) _notifUnread--;
+        refreshBell();
+        context.send && context.send({ t: 'notifs_read', ids: [n.id] });
+      }
+      closeBell();
+      // Delega a navegação para o social.js (sabe ir pro post ou pro perfil)
+      if (window.SocialUI && typeof window.SocialUI.openNotification === 'function') {
+        window.SocialUI.openNotification(n);
+      } else if (n.post_id) {
+        if (window.abrirPerfil) window.abrirPerfil(n.post_owner);
+      } else {
+        openProfile(n.actor);
+      }
+    });
+    row.style.cursor = 'pointer';
+
+    return row;
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Modal (Amigos / Buscar)
+  // ═══════════════════════════════════════════════════════════
   function renderFriendsTab(body) {
     body.replaceChildren();
 
     if (_tab === 'search') {
-      // Busca de usuários
       const searchBox = el('label', { class: 'friends-search' });
       searchBox.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
       const input = el('input', {
@@ -231,12 +312,10 @@
     }
 
     if (!_friends.length && !_incoming.length && !_outgoing.length) {
-      body.append(el('div', { class: 'friends-empty' }, )
-        );
       const empty = el('div', { class: 'friends-empty' });
       empty.append(el('b', { textContent: 'Nenhum amigo ainda' }));
       empty.append(document.createTextNode('Vá na aba "Buscar" e envie um pedido de amizade.'));
-      body.replaceChildren(empty);
+      body.append(empty);
       return;
     }
 
@@ -328,7 +407,6 @@
     else if (window.abrirPerfil) window.abrirPerfil(nick);
   }
 
-  // ─── Modal ───
   function buildDialog() {
     if (_dialog) return _dialog;
     ensureStyles();
@@ -402,7 +480,9 @@
     if (_dialog && _dialog.open) _dialog.close();
   }
 
-  // ─── Eventos do WS (chamados pelo app.js) ───
+  // ═══════════════════════════════════════════════════════════
+  // Eventos do WS — amigos
+  // ═══════════════════════════════════════════════════════════
   function setFriends(payload) {
     _friends = Array.isArray(payload.friends) ? payload.friends : [];
     _incoming = Array.isArray(payload.incoming) ? payload.incoming : [];
@@ -412,20 +492,56 @@
   }
   function onFriendUpdated() {
     context.send({ t: 'friends_list' });
+    context.send({ t: 'notifs_list' });
     if (window.ProfileUI && typeof window.ProfileUI.getCurrentUserId === 'function') {
       const target = window.ProfileUI.getCurrentUserId();
       if (target) context.send({ t: 'profile_view', nick: target });
     }
   }
-  function onRequestReceived(info) {
-    // O toast já vem do evento 'friend_notice' (app.js); aqui só atualizamos o sino.
+  function onRequestReceived() { context.send({ t: 'friends_list' }); }
+  function refresh() {
     context.send({ t: 'friends_list' });
-  }
-  function refresh() { context.send({ t: 'friends_list' }); }
+    context.send({ t: 'notifs_list' });
+}
 
-  // ─── Sino de notificações de amizade ───
+  // ═══════════════════════════════════════════════════════════
+  // Eventos do WS — social notifications
+  // ═══════════════════════════════════════════════════════════
+  // Ponto de entrada único: social.js chama isso.
+  function onSocialMessage(m) {
+    if (!m || !m.t) return;
+    switch (m.t) {
+      case 'social_notifs':    _applySocialNotifs(m); break;
+      case 'social_notif_new': _applySocialNotifNew(m); break;
+      case 'social_unread':    _notifUnread = Number(m.unread) || 0; refreshBell(); break;
+      case 'social_prefs':     _notifyPosts = m.notify_posts !== false; break;
+      default: break;
+    }
+  }
+  function _applySocialNotifs(m) {
+    _notifs = Array.isArray(m.items) ? m.items.slice() : [];
+    _notifCards = m.cards || {};
+    _notifUnread = Number(m.unread) || 0;
+    if (typeof m.notify_posts === 'boolean') _notifyPosts = m.notify_posts;
+    refreshBell();
+    if (_bellPanel && !_bellPanel.hidden) { renderBellPanel(); positionBell(); }
+  }
+  function _applySocialNotifNew(m) {
+    const n = m.n;
+    if (!n) return;
+    _notifs.unshift(n);
+    if (_notifs.length > 100) _notifs.length = 100;
+    if (m.cards) Object.assign(_notifCards, m.cards);
+    _notifUnread = Number(m.unread) || (_notifUnread + 1);
+    refreshBell();
+    if (_bellPanel && !_bellPanel.hidden) { renderBellPanel(); positionBell(); }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // Sino unificado
+  // ═══════════════════════════════════════════════════════════
   let _bellBtn = null, _bellBadge = null, _bellPanel = null;
-  let _prevIncoming = null;
+  let _prevTotal = null;
 
   function ensureBellStyles() {
     ensureStyles();
@@ -461,8 +577,8 @@
       }
       @media (prefers-reduced-motion: reduce) { .friends-bell.is-ringing svg { animation: none; } }
       .friends-bell-panel {
-        position: fixed; z-index: 1200; width: 360px; max-width: calc(100vw - 24px);
-        max-height: min(70dvh, 460px); display: flex; flex-direction: column;
+        position: fixed; z-index: 1200; width: 380px; max-width: calc(100vw - 24px);
+        max-height: min(76dvh, 560px); display: flex; flex-direction: column;
         border: 1px solid var(--line-2, rgba(255,255,255,.12)); border-radius: 16px;
         background: var(--s1, #0e1013); color: var(--fg, #f5f5f5);
         box-shadow: 0 18px 50px rgba(0,0,0,.6); overflow: hidden;
@@ -475,14 +591,53 @@
         background: linear-gradient(180deg, rgba(139,114,255,.12), transparent), var(--s2, #14171c);
       }
       .friends-bell-head small { color: var(--muted, #9298a3); font-weight: 600; }
-      .friends-bell-list { overflow-y: auto; padding: 6px; scrollbar-width: thin; }
+      .friends-bell-list { overflow-y: auto; padding: 6px; scrollbar-width: thin; flex: 1 1 auto; }
+
+      /* linhas de pedido de amizade */
       .friends-bell-list .friends-row { grid-template-columns: 40px minmax(0,1fr); row-gap: 8px; }
       .friends-bell-list .friends-avatar { width: 40px; height: 40px; }
       .friends-bell-list .friends-row-actions { grid-column: 2 / -1; }
       .friends-bell-list .friends-btn { flex: 1 1 0; justify-content: center; }
       .friends-bell-list .friends-btn:disabled { opacity: .55; cursor: default; }
-      .friends-bell-foot { padding: 8px; border-top: 1px solid var(--line, rgba(255,255,255,.07)); }
-      .friends-bell-foot .friends-btn { width: 100%; justify-content: center; }
+
+      /* linhas de notificação social */
+      .notif-section {
+        margin: 6px 0 2px; padding: 6px 8px 4px;
+        color: var(--muted, #9298a3); font-size: .72rem; letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .notif-row {
+        display: grid; grid-template-columns: 40px minmax(0, 1fr);
+        gap: 10px; align-items: flex-start;
+        padding: 10px; border-radius: 12px;
+        transition: background .15s;
+      }
+      .notif-row:hover { background: rgba(255,255,255,.04); }
+      .notif-row.is-unread {
+        background: linear-gradient(90deg, rgba(139,114,255,.10), transparent 50%);
+        box-shadow: inset 3px 0 0 #8b72ff;
+      }
+      .notif-row .friends-avatar { width: 40px; height: 40px; }
+      .notif-copy { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+      .notif-line {
+        font-size: .92rem; color: var(--fg, #f5f5f5); line-height: 1.35;
+        word-break: break-word;
+      }
+      .notif-line b { font-weight: 700; }
+      .notif-icon { margin-right: 4px; }
+      .notif-preview {
+        color: var(--muted, #9298a3); font-size: .82rem; line-height: 1.35;
+        overflow: hidden; text-overflow: ellipsis;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        word-break: break-word;
+      }
+      .notif-time { color: var(--muted, #9298a3); font-size: .74rem; margin-top: 2px; }
+
+      .friends-bell-foot {
+        display: flex; gap: 6px; padding: 8px;
+        border-top: 1px solid var(--line, rgba(255,255,255,.07));
+      }
+      .friends-bell-foot .friends-btn { flex: 1 1 0; justify-content: center; }
     `;
     document.head.appendChild(style);
   }
@@ -495,7 +650,7 @@
 
     _bellBtn = el('button', {
       type: 'button', id: 'friendsBellBtn', class: 'friends-bell',
-      'aria-label': 'Notificações de amizade', 'aria-haspopup': 'dialog', 'aria-expanded': 'false',
+      'aria-label': 'Notificações', 'aria-haspopup': 'dialog', 'aria-expanded': 'false',
     });
     _bellBtn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
     _bellBadge = el('span', { class: 'friends-bell-badge' });
@@ -503,7 +658,7 @@
     _bellBtn.append(_bellBadge);
     account.insertBefore(_bellBtn, $('sideProfile') || null);
 
-    _bellPanel = el('div', { id: 'friendsBellPanel', class: 'friends-bell-panel', role: 'dialog', 'aria-label': 'Pedidos de amizade' });
+    _bellPanel = el('div', { id: 'friendsBellPanel', class: 'friends-bell-panel', role: 'dialog', 'aria-label': 'Notificações' });
     _bellPanel.hidden = true;
     document.body.appendChild(_bellPanel);
 
@@ -522,7 +677,7 @@
 
   function positionBell() {
     const r = _bellBtn.getBoundingClientRect();
-    const w = Math.min(360, window.innerWidth - 24);
+    const w = Math.min(380, window.innerWidth - 24);
     const left = Math.max(12, Math.min(r.right - w, window.innerWidth - w - 12));
     _bellPanel.style.width = w + 'px';
     _bellPanel.style.left = left + 'px';
@@ -537,7 +692,8 @@
     _bellPanel.hidden = false;
     _bellBtn.setAttribute('aria-expanded', 'true');
     positionBell();
-    context.send && context.send({ t: 'friends_list' }); // garante lista atualizada
+    context.send && context.send({ t: 'friends_list' });
+    context.send && context.send({ t: 'notifs_list' });
   }
 
   function closeBell() {
@@ -549,18 +705,17 @@
   function renderBellPanel() {
     _bellPanel.replaceChildren();
 
+    const total = _incoming.length + _notifUnread;
+
     const head = el('div', { class: 'friends-bell-head' });
-    head.append(el('span', { textContent: 'Pedidos de amizade' }));
-    if (_incoming.length) head.append(el('small', { textContent: String(_incoming.length) }));
+    head.append(el('span', { textContent: 'Notificações' }));
+    if (total) head.append(el('small', { textContent: String(total) }));
     _bellPanel.append(head);
 
     const list = el('div', { class: 'friends-bell-list' });
-    if (!_incoming.length) {
-      const empty = el('div', { class: 'friends-empty' });
-      empty.append(el('b', { textContent: 'Tudo em dia' }));
-      empty.append(document.createTextNode('Você não tem pedidos de amizade pendentes.'));
-      list.append(empty);
-    } else {
+
+    if (_incoming.length) {
+      list.append(el('div', { class: 'notif-section', textContent: '📥 Pedidos de amizade (' + _incoming.length + ')' }));
       _incoming.forEach(user => {
         const row = rowCard(user, {
           primaryLabel: 'Aceitar', primaryClass: 'is-success',
@@ -572,12 +727,39 @@
         list.append(row);
       });
     }
+
+    if (_notifs.length) {
+      list.append(el('div', { class: 'notif-section', textContent: '📬 Recentes' }));
+      _notifs.slice(0, 40).forEach(n => list.append(notifRow(n)));
+    }
+
+    if (!_incoming.length && !_notifs.length) {
+      const empty = el('div', { class: 'friends-empty' });
+      empty.append(el('b', { textContent: 'Tudo em dia' }));
+      empty.append(document.createTextNode('Você não tem notificações.'));
+      list.append(empty);
+    }
+
     _bellPanel.append(list);
 
     const foot = el('div', { class: 'friends-bell-foot' });
-    const all = el('button', { type: 'button', class: 'friends-btn', textContent: 'Ver todos os amigos' });
+
+    if (_notifUnread > 0) {
+      const markBtn = el('button', { type: 'button', class: 'friends-btn', textContent: 'Marcar lidas' });
+      markBtn.addEventListener('click', () => {
+        _notifs.forEach(n => { n.read = true; });
+        _notifUnread = 0;
+        context.send && context.send({ t: 'notifs_read' });
+        refreshBell();
+        renderBellPanel();
+      });
+      foot.append(markBtn);
+    }
+
+    const all = el('button', { type: 'button', class: 'friends-btn', textContent: 'Ver amigos' });
     all.addEventListener('click', () => { closeBell(); open(); });
     foot.append(all);
+
     _bellPanel.append(foot);
   }
 
@@ -587,30 +769,29 @@
 
   function refreshBell() {
     if (!_bellBtn) return;
-    const n = _incoming.length;
-    _bellBadge.hidden = n === 0;
-    _bellBadge.textContent = n > 99 ? '99+' : String(n);
-    _bellBtn.classList.toggle('has-pending', n > 0);
-    _bellBtn.setAttribute('aria-label', n > 0
-      ? 'Notificações: ' + n + (n === 1 ? ' pedido de amizade' : ' pedidos de amizade')
-      : 'Notificações de amizade');
+    const total = _incoming.length + _notifUnread;
+    _bellBadge.hidden = total === 0;
+    _bellBadge.textContent = total > 99 ? '99+' : String(total);
+    _bellBtn.classList.toggle('has-pending', total > 0);
+    _bellBtn.setAttribute('aria-label', total > 0 ? 'Notificações: ' + total : 'Notificações');
 
-    // Balança o sino quando chega um pedido novo (não no primeiro carregamento)
-    if (_prevIncoming !== null && n > _prevIncoming) {
+    if (_prevTotal !== null && total > _prevTotal) {
       _bellBtn.classList.remove('is-ringing');
       void _bellBtn.offsetWidth;
       _bellBtn.classList.add('is-ringing');
     }
-    _prevIncoming = n;
+    _prevTotal = total;
 
     if (_bellPanel && !_bellPanel.hidden) { renderBellPanel(); positionBell(); }
   }
 
-  // ─── Init ───
+  // ═══════════════════════════════════════════════════════════
+  // Init
+  // ═══════════════════════════════════════════════════════════
   function mount(opts) {
     context = opts || {};
+    window.__friendsContext = context;
     mountBell();
-    // Substitui o botão "Nova conversa" da DM por "Amigos"
     const oldBtn = $('dmNewConversation');
     if (oldBtn && !oldBtn.dataset.friendsReplaced) {
       const newBtn = oldBtn.cloneNode(true);
@@ -622,48 +803,26 @@
         open();
       });
     }
-    // Expoõe API
-    window.FriendsUI = {
+    window.FriendsUI = buildAPI();
+  }
+
+  function buildAPI() {
+    return {
       open, close, mount,
+      // amigos
       setFriends, onFriendUpdated, onRequestReceived, refresh,
+      // social (chamado por social.js)
+      onSocialMessage,
+      // aliases mantidos por compatibilidade
+      setSocialNotifs: _applySocialNotifs,
+      pushSocialNotif: _applySocialNotifNew,
+      setSocialUnread: (n) => { _notifUnread = Number(n) || 0; refreshBell(); },
+      // utils
       getPendingCount: () => _incoming.length,
+      getUnreadCount: () => _notifUnread + _incoming.length,
     };
   }
 
-  // Auto-init quando o app estiver pronto
-  function boot() {
-    if (!document.getElementById('dmRoot')) return false;
-    if (!context) {
-      // Sem contexto ainda: aguarda app.js chamar mount()
-      return true;
-    }
-    return true;
-  }
-  boot();
-  window.addEventListener('society-app-ready', () => {
-    setTimeout(() => {
-      if (window.__friendsContext) return;
-      // Fallback: se app.js não chamar mount, usa Society global
-      if (window.Society && !context) {
-        mount({
-          send: window.Society.send,
-          getSelf: () => document.querySelector('#sidebarDisplayName')?.textContent || null,
-          toast: window.Society.toast,
-          openProfile: (nick) => window.abrirPerfil && window.abrirPerfil(nick),
-          openDM: () => {},
-        });
-      }
-    }, 400);
-  });
-
-  window.FriendsUI = {
-    open: () => (buildDialog(), _dialog.open || _dialog.showModal(), setTab(_tab), refreshBadge()),
-    close,
-    mount,
-    setFriends,
-    onFriendUpdated,
-    onRequestReceived,
-    refresh,
-    getPendingCount: () => _incoming.length,
-  };
+  // API provisória (antes do mount) — evita "undefined"
+  window.FriendsUI = buildAPI();
 })();

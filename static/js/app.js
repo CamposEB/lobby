@@ -409,7 +409,7 @@ function handle(m){
   if (typeof t === "string" && t.indexOf("social_") === 0) {
     try { window.SocialUI?.onMessage(m); } catch (e) { console.error("[social]", e); }
     return;
-  }
+}
   if (t === "error") {
     $("err").textContent = m.m;
     window.dispatchEvent(new CustomEvent("society-auth-error", {detail:m.m}));
