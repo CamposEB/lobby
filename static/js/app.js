@@ -40,6 +40,10 @@ const send = o => {
   return true;
 };
 
+// ⭐ Expõe send() globalmente para o dm-extras.js e outros módulos
+window.appSend = send;
+window.send = send;
+
 const TITLES = {home:"", meta:"", builds:"", lobby:"", guide:"Guia do jogo", rooms:"Salas", lfg:"", dm:"Mensagens", shop:"Loja", inv:"Inventário", quiz:"Quiz do dia", tools:"", tournaments:"", profile:"", settings:"", admin:"", heroes:"", hero:""};
 
 let ws, SHOP = {}, ME = {coins:0, owned:[], equip:{}}, SELF = null, LFG = [];
