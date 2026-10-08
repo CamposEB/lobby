@@ -1,5 +1,5 @@
 /* Reusable profile presentation and editor interactions. */
-/* v15 — sistema de selos: staff (dev/admin/mod), vip, streamer */
+/* v16 — sistema de selos: staff (dev/admin/mod), vip, streamer, beta (🚧) */
 (() => {
   const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
   const MAX_AVATAR_DATA_LENGTH = 120000;
@@ -167,7 +167,7 @@
   }
 
   // ─────────────────────────────────────────────────────────────
-  // SISTEMA DE SELOS (staff / vip / streamer)
+  // SISTEMA DE SELOS (staff / vip / streamer / beta)
   // ─────────────────────────────────────────────────────────────
   const BADGE_DEFS = {
     staff: {
@@ -198,6 +198,12 @@
         '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5.8 31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/>' +
         "</svg>",
     },
+    beta: {
+      color: "#ff9d2e",
+      label: { beta: "Beta Tester" },
+      defaultLabel: "Beta Tester",
+      emoji: "🚧",
+    },
   };
 
   const ROLE_TO_BADGE = {
@@ -206,6 +212,7 @@
     mod: "staff",
     vip: "vip",
     streamer: "streamer",
+    beta: "beta",
   };
 
   function roleFromProfile(data) {
@@ -244,13 +251,16 @@
   }
   function badgeSvgForRole(rawRole) {
     const def = badgeDefForRole(rawRole);
-    return def ? def.svg : "";
+    return def ? (def.svg || "") : "";
+  }
+  function badgeEmojiForRole(rawRole) {
+    const def = badgeDefForRole(rawRole);
+    return def && def.emoji ? def.emoji : "";
   }
   function hasAnyBadge(data) {
     return Boolean(badgeDefForRole(roleFromProfile(data)));
   }
 
-  // compat: mantém nomes antigos
   function hasVerifiedRole(data) { return hasAnyBadge(data); }
   function verifiedRoleKey(data) { return roleFromProfile(data) || "user"; }
   function verifiedRoleLabel(roleKey) { return badgeLabelForRole(roleKey); }
@@ -272,9 +282,21 @@
     badge.hidden = false;
     badge.dataset.badge = ROLE_TO_BADGE[role] || "";
     badge.dataset.role = role;
-    badge.innerHTML = def.svg;
-    badge.style.color = def.color;
-    badge.style.filter = `drop-shadow(0 0 6px ${def.color}88)`;
+
+    if (def.emoji) {
+      badge.innerHTML = "";
+      badge.textContent = def.emoji;
+      badge.style.color = "";
+      badge.style.fontSize = "22px";
+      badge.style.lineHeight = "1";
+      badge.style.filter = `drop-shadow(0 0 6px ${def.color}aa)`;
+    } else {
+      badge.innerHTML = def.svg;
+      badge.style.fontSize = "";
+      badge.style.lineHeight = "";
+      badge.style.color = def.color;
+      badge.style.filter = `drop-shadow(0 0 6px ${def.color}88)`;
+    }
 
     const label = badgeLabelForRole(role);
     badge.setAttribute("aria-label", label);
@@ -298,6 +320,7 @@
       .profile-verified-badge-inline[data-badge="staff"]    { color:#f2b84b; filter:drop-shadow(0 0 6px rgba(242,184,75,.55)); }
       .profile-verified-badge-inline[data-badge="vip"]      { color:#4c8dff; filter:drop-shadow(0 0 6px rgba(76,141,255,.55)); }
       .profile-verified-badge-inline[data-badge="streamer"] { color:#ff0000; filter:drop-shadow(0 0 6px rgba(255,0,0,.55)); }
+      .profile-verified-badge-inline[data-badge="beta"]     { font-size:18px; line-height:1; filter:drop-shadow(0 0 6px rgba(255,157,46,.65)); }
     `;
     document.head.appendChild(style);
     _inlineBadgeStylesInjected = true;
@@ -326,11 +349,22 @@
     const badge = document.createElement("span");
     badge.className = "profile-verified-badge-inline";
     badge.setAttribute("role", "img");
-    badge.innerHTML = def.svg;
     badge.dataset.badge = ROLE_TO_BADGE[role] || "";
     badge.dataset.role = role;
-    badge.style.color = def.color;
-    badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+
+    if (def.emoji) {
+      badge.textContent = def.emoji;
+      badge.style.color = "";
+      badge.style.fontSize = "18px";
+      badge.style.lineHeight = "1";
+      badge.style.filter = `drop-shadow(0 0 5px ${def.color}aa)`;
+    } else {
+      badge.innerHTML = def.svg;
+      badge.style.fontSize = "";
+      badge.style.lineHeight = "";
+      badge.style.color = def.color;
+      badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+    }
 
     const label = badgeLabelForRole(role);
     badge.setAttribute("aria-label", label);
@@ -563,9 +597,6 @@
     }
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // STATUS DE AMIZADE
-  // ─────────────────────────────────────────────────────────────
   function applyFriendshipStatus(data, options = {}) {
     const btn = safe("profileFriendBtn");
     if (!btn) return;
@@ -629,9 +660,6 @@
     if (!ok) context?.toast?.("A conexão caiu. Reconecte-se antes de continuar.");
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // CARD
-  // ─────────────────────────────────────────────────────────────
   function applyProfileCard(data, username, options = {}) {
     const displayName = data.display_name || username || "Jogador";
     setText("profileDisplayName", displayName);
@@ -1211,14 +1239,14 @@
       .profile-summary-tag-copy b { font-size:.92rem; overflow-wrap:anywhere; }
       .profile-summary-roles { display:flex; flex-wrap:wrap; gap:6px; }
       .profile-summary-role { padding:2px 8px; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.04em; background:rgba(255,255,255,.07); }
-      .profile-summary-role[data-role="dev"]   { color:#f2b84b; }
-      .profile-summary-role[data-role="admin"] { color:#f2b84b; }
-      .profile-summary-role[data-role="mod"]   { color:#f2b84b; }
+      .profile-summary-role[data-role="dev"]       { color:#f2b84b; }
+      .profile-summary-role[data-role="admin"]     { color:#f2b84b; }
+      .profile-summary-role[data-role="mod"]       { color:#f2b84b; }
       .profile-summary-role[data-role="moderador"] { color:#f2b84b; }
-      .profile-summary-role[data-role="vip"]      { color:#4c8dff; }
-      .profile-summary-role[data-role="streamer"] { color:#b46bff; }
-      .profile-summary-role[data-role="beta"]     { color:#9298a3; }
-      .profile-summary-role[data-role="membro"]   { color:#9298a3; }
+      .profile-summary-role[data-role="vip"]       { color:#4c8dff; }
+      .profile-summary-role[data-role="streamer"]  { color:#b46bff; }
+      .profile-summary-role[data-role="beta"]      { color:#ff9d2e; }
+      .profile-summary-role[data-role="membro"]    { color:#9298a3; }
       .profile-summary-joined { color:var(--muted, #9298a3); font-size:.78rem; }
     `;
     document.head.appendChild(style);
@@ -1273,11 +1301,19 @@
     if (def) {
       const badge = node("span", null, "profile-verified-badge-inline");
       badge.setAttribute("role", "img");
-      badge.innerHTML = def.svg;
       badge.dataset.badge = ROLE_TO_BADGE[role] || "";
       badge.dataset.role = role;
-      badge.style.color = def.color;
-      badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+      if (def.emoji) {
+        badge.textContent = def.emoji;
+        badge.style.color = "";
+        badge.style.fontSize = "18px";
+        badge.style.lineHeight = "1";
+        badge.style.filter = `drop-shadow(0 0 5px ${def.color}aa)`;
+      } else {
+        badge.innerHTML = def.svg;
+        badge.style.color = def.color;
+        badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+      }
       const label = badgeLabelForRole(role);
       badge.setAttribute("aria-label", label);
       badge.setAttribute("title", label);
@@ -1361,23 +1397,19 @@
     createAvatar, mount, renderProfile, setProfile, settingsSaved, showError,
     renderOtherProfile, returnToSelf, getMode, getCurrentUserId,
 
-    // selo / roles
     roleFromProfile,
     hasAnyBadge,
     badgeKeyForRole, badgeColorForRole, badgeLabelForRole, badgeSvgForRole,
+    badgeEmojiForRole,
     renderVerifiedBadge, renderSidebarVerifiedBadge,
     renderSidebarUsername, looksLikeSameName,
-    // compat
     hasVerifiedRole, verifiedRoleKey, verifiedRoleLabel,
 
-    // amigos
     applyFriendshipStatus, handleFriendClick,
 
-    // rank/herói
     rankBasesFor, rankImageCandidatesFromBases, rankCandidatesForRank,
     heroImageUrl, RANK_OPTIONS,
 
-    // resumo
     createProfileSummary, profileStars, formatJoined,
   };
 

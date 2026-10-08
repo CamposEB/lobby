@@ -18,9 +18,6 @@
 
   const MAX_AVATAR_DATA_LENGTH = 120000;
 
-  // ═══════════════════════════════════════════════════════════
-  // 0. ESTADO COMPARTILHADO
-  // ═══════════════════════════════════════════════════════════
   let _currentProfile = null;
   let _profileNick = null;
   let _currentNick = null;
@@ -30,7 +27,7 @@
   let _openingProfile = false;
 
   // ═══════════════════════════════════════════════════════════
-  // 0a. SELOS (staff / vip / streamer)
+  // 0a. SELOS (staff / vip / streamer / beta)
   // ═══════════════════════════════════════════════════════════
   const BADGE_DEFS = {
     staff: {
@@ -61,10 +58,17 @@
         '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5.8 31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/>' +
         '</svg>',
     },
+    beta: {
+      color: '#ff9d2e',
+      label: { beta: 'Beta Tester' },
+      defaultLabel: 'Beta Tester',
+      emoji: '🚧',
+    },
   };
   const ROLE_TO_BADGE = {
     dev: 'staff', admin: 'staff', mod: 'staff',
     vip: 'vip', streamer: 'streamer',
+    beta: 'beta',
   };
 
   function roleKeyFromProfile(data) {
@@ -139,11 +143,23 @@
     }
 
     badge.hidden = false;
-    badge.innerHTML = def.svg;
     badge.dataset.badge = badgeKeyForRole(role) || '';
     badge.dataset.role = role;
-    badge.style.color = def.color;
-    badge.style.filter = 'drop-shadow(0 0 6px ' + def.color + '88)';
+
+    if (def.emoji) {
+      badge.innerHTML = '';
+      badge.textContent = def.emoji;
+      badge.style.color = '';
+      badge.style.fontSize = '16px';
+      badge.style.lineHeight = '1';
+      badge.style.filter = 'drop-shadow(0 0 6px ' + def.color + 'aa)';
+    } else {
+      badge.innerHTML = def.svg;
+      badge.style.fontSize = '';
+      badge.style.lineHeight = '';
+      badge.style.color = def.color;
+      badge.style.filter = 'drop-shadow(0 0 6px ' + def.color + '88)';
+    }
     if (badge.dataset.dmCreated === '1') badge.style.display = 'inline-grid';
 
     const label = labelForRole(role);
@@ -258,9 +274,15 @@
     const def = badgeDefForRole(role);
     if (def) {
       const badge = el('span');
-      badge.innerHTML = def.svg;
-      badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;color:' + def.color + ';filter:drop-shadow(0 0 5px ' + def.color + '88);';
+      if (def.emoji) {
+        badge.textContent = def.emoji;
+        badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;font-size:14px;line-height:1;filter:drop-shadow(0 0 5px ' + def.color + 'aa);';
+      } else {
+        badge.innerHTML = def.svg;
+        badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;color:' + def.color + ';filter:drop-shadow(0 0 5px ' + def.color + '88);';
+      }
       badge.title = labelForRole(role);
+      badge.setAttribute('aria-label', labelForRole(role));
       nmRow.appendChild(badge);
     }
 
@@ -365,7 +387,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0d. APLICAR PERFIL (chamado pelo app.js via DmProfileBridge)
+  // 0d. APLICAR PERFIL
   // ═══════════════════════════════════════════════════════════
   function activeNick() {
     try {
@@ -524,9 +546,6 @@
     }, 1200);
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 0g. API PÚBLICA
-  // ═══════════════════════════════════════════════════════════
   window.DmProfileBridge = {
     applyProfile: (profile, nick) => applyDmProfile(profile, nick),
     handleMessage: handleServerMessage,
@@ -886,7 +905,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 4. VER PERFIL — ligações com o DOM
+  // 4. VER PERFIL
   // ═══════════════════════════════════════════════════════════
   function initProfileBridge() {
     const btn = $('dmViewProfile');

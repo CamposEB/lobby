@@ -14,16 +14,15 @@
 #  11. profile() retorna "online"
 #  12. Reações em DM
 #  13. Proxy /api/img para imagens do CDN da Moonton
-#  14. HIERARQUIA DE PAPÉIS: user < admin < mod < dev
+#  14. HIERARQUIA DE PAPÉIS: user < beta < streamer < vip < admin < mod < dev
 #  15. Papéis no Supabase (fonte de verdade) com Firestore como espelho opcional
 #  16. FIX: profile() não sobrescreve mais "role" (papel do sistema) com a função
 #      de jogo — esta agora vem em "game_role"
 #  17. SISTEMA DE AMIGOS + VISIBILIDADE public/friends/private
-#      - tabela friendships (requester, addressee, status)
-#      - friendship_status(a,b) → 'none'|'pending_out'|'pending_in'|'friends'
-#      - profile() sempre devolve avatar/banner/nome; oculta detalhes
-#        conforme visibility + relação de amizade
-#      - WS: friend_request / friend_accept / friend_decline / friend_remove / friends_list
+#  18. ⭐ FIX: ROLE_LABELS agora inclui beta/streamer/vip — antes esses cargos
+#      caíam no "else" e apareciam como "MEMBRO" no perfil.
+#  19. ⭐ FIX: _user_public_card e init do WS agora enviam flags is_vip /
+#      is_streamer / is_beta para o frontend.
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -213,14 +212,7 @@ except Exception:
 # ═══════════════════════════════════════════════════════════
 
 def friendship_status(a, b):
-    """Retorna: 'self' | 'friends' | 'pending_out' | 'pending_in' | 'none'.
-
-    - 'self': a == b
-    - 'friends': amizade aceita
-    - 'pending_out': a enviou pedido, aguardando b
-    - 'pending_in': b enviou pedido, aguardando a
-    - 'none': sem relação
-    """
+    """Retorna: 'self' | 'friends' | 'pending_out' | 'pending_in' | 'none'."""
     if not a or not b:
         return "none"
     if a == b:
@@ -247,6 +239,8 @@ def _user_public_card(nick):
     if not user:
         return None
     data = json.loads(user["profile_data"] or "{}")
+    role = role_for(nick)
+    # ⭐ NOVO: vip e streamer também são "verificados" (têm selo)
     return {
         "nick": nick,
         "username": nick,
@@ -254,13 +248,12 @@ def _user_public_card(nick):
         "display_name": data.get("display_name") or user["display"],
         "avatar": data.get("avatar", ""),
         "online": nick in online,
-        "role": role_for(nick),
-        "verified": role_for(nick) in ("dev", "admin", "mod"),
+        "role": role,
+        "verified": role in ("dev", "admin", "mod", "vip", "streamer"),
     }
 
 
 def friends_list(nick):
-    """Lista de amigos confirmados (ordem: mais recentes primeiro)."""
     rows = db.execute(
         "SELECT CASE WHEN requester=? THEN addressee ELSE requester END AS other, updated_at "
         "FROM friendships "
@@ -278,7 +271,6 @@ def friends_list(nick):
 
 
 def incoming_requests(nick):
-    """Pedidos pendentes recebidos (quem quer ser seu amigo)."""
     rows = db.execute(
         "SELECT requester, created_at FROM friendships "
         "WHERE addressee=? AND status='pending' ORDER BY created_at DESC",
@@ -294,7 +286,6 @@ def incoming_requests(nick):
 
 
 def outgoing_requests(nick):
-    """Pedidos pendentes enviados (você quer ser amigo)."""
     rows = db.execute(
         "SELECT addressee, created_at FROM friendships "
         "WHERE requester=? AND status='pending' ORDER BY created_at DESC",
@@ -310,7 +301,6 @@ def outgoing_requests(nick):
 
 
 def friends_summary(nick):
-    """Payload completo para o WS `friends_list`."""
     return {
         "t": "friends",
         "friends": friends_list(nick),
@@ -322,11 +312,9 @@ def friends_summary(nick):
 
 
 async def notify_friend_change(a, b, status):
-    """Envia friend_updated para ambos se estiverem online."""
     for who, other in ((a, b), (b, a)):
         if who in online:
             await send(who, {"t": "friend_updated", "nick": other, "status": status})
-    # Atualiza a lista completa de amigos para ambos
     for who in (a, b):
         if who in online:
             await send(who, friends_summary(who))
@@ -414,7 +402,6 @@ def _rank_from_mythic_stars(stars):
 
 
 def _normalize_visibility(data, fallback_private=None):
-    """Extrai a visibilidade efetiva do profile_data, com compat para is_private."""
     vis = data.get("visibility")
     if vis in VALID_VISIBILITIES:
         return vis
@@ -429,28 +416,33 @@ def profile(nick, viewer=None):
     own = viewer == nick
     role = role_for(nick)
 
-    # Visibilidade
     visibility = _normalize_visibility(data)
-
-    # Relação de amizade (para decidir o que mostrar)
     friendship = "self" if own else (friendship_status(viewer, nick) if viewer else "none")
 
-    # Quem pode ver os detalhes?
     if own:
         can_see_details = True
     elif visibility == "public":
         can_see_details = True
     elif visibility == "friends":
         can_see_details = (friendship == "friends")
-    else:  # private
+    else:
         can_see_details = False
 
-    ROLE_LABELS = {"dev": "DEV", "admin": "ADMIN", "mod": "MODERADOR"}
+    # ⭐ FIX: todos os 7 cargos agora aparecem corretamente em community_roles
+    ROLE_LABELS = {
+        "dev": "DEV",
+        "admin": "ADMIN",
+        "mod": "MODERADOR",
+        "vip": "VIP",
+        "streamer": "STREAMER",
+        "beta": "BETA",
+    }
     if role in ROLE_LABELS:
         community_roles = [ROLE_LABELS[role]]
     else:
         community_roles = ["MEMBRO"]
 
+    # ⭐ staff + vip + streamer têm selo; beta NÃO tem
     verified = role in ("dev", "admin", "mod", "vip", "streamer")
 
     result = {
@@ -459,14 +451,13 @@ def profile(nick, viewer=None):
         "display_name": data.get("display_name") or u["display"],
         "joined_at": u["joined_at"] or "",
         "visibility": visibility,
-        "is_private": visibility == "private",   # compat legado
+        "is_private": visibility == "private",
         "is_owner": own,
         "community_roles": community_roles,
         "online": nick in online,
         "role": role,
         "verified": verified,
-        "friendship_status": friendship,          # 'self'|'friends'|'pending_out'|'pending_in'|'none'
-        # Identidade visual: sempre visível
+        "friendship_status": friendship,
         "avatar": data.get("avatar", ""),
         "banner": data.get("banner", ""),
         "accent": data.get("accent", "#8b72ff"),
@@ -893,9 +884,7 @@ def get_user(nick): return db.execute("SELECT * FROM users WHERE nick=?", (nick,
 
 
 # ═══════════════════════════════════════════════════════════
-# HIERARQUIA DE PAPÉIS: user < admin < mod < dev
-# Fonte de verdade: Supabase (profile_data._role).
-# Firestore é espelho opcional (best-effort).
+# HIERARQUIA DE PAPÉIS: user < beta < streamer < vip < admin < mod < dev
 # ═══════════════════════════════════════════════════════════
 
 def _local_role_get(nick):
@@ -1423,6 +1412,7 @@ async def ws_endpoint(ws: WebSocket):
         online[nick] = {"ws": ws, "x": W // 2, "y": H // 2, "last_chat": 0, "last_dm": 0,
                         "room": "lobby", "role": role, "auth_provider": auth_provider,
                         "community_build_filters": None}
+        # ⭐ FIX: envia flags para todos os cargos novos (is_vip, is_streamer, is_beta)
         await ws.send_text(json.dumps({
             "t": "init",
             "quiz": quiz_state(nick),
@@ -1434,6 +1424,9 @@ async def ws_endpoint(ws: WebSocket):
             "is_admin": role in ("admin", "mod", "dev"),
             "is_moderator": role in ("mod", "dev"),
             "is_dev": role == "dev",
+            "is_vip": role == "vip",
+            "is_streamer": role == "streamer",
+            "is_beta": role == "beta",
             "role": role,
             "auth_provider": auth_provider,
             "token": create_session_token(nick),
@@ -1603,7 +1596,6 @@ async def ws_endpoint(ws: WebSocket):
                         await send(nick, {"t": "profile_error", "m": "Escolha uma cor de destaque válida."})
                         continue
 
-                    # Visibilidade (compat: aceita is_private antigo)
                     raw_vis = str(m.get("visibility", "")).strip()
                     if raw_vis not in VALID_VISIBILITIES:
                         if "is_private" in m:
@@ -1620,7 +1612,7 @@ async def ws_endpoint(ws: WebSocket):
                         if m.get("theme", data.get("theme", "classic")) in ("classic", "arena", "ocean") else "classic",
                         "title": str(m.get("title", data.get("title", ""))).strip()[:30],
                         "visibility": raw_vis,
-                        "is_private": raw_vis == "private",   # compat
+                        "is_private": raw_vis == "private",
                         "show_stats": bool(m.get("show_stats", data.get("show_stats", True))),
                         "show_activity": bool(m.get("show_activity", data.get("show_activity", True))),
                     })
@@ -1655,7 +1647,6 @@ async def ws_endpoint(ws: WebSocket):
                     value = m.get(key)
                     if isinstance(value, bool):
                         data[key] = value
-                # Visibilidade também pode ser alterada aqui
                 vis = m.get("visibility")
                 if vis in VALID_VISIBILITIES:
                     data["visibility"] = vis
@@ -2363,7 +2354,6 @@ def users_search(q: str = "", viewer: str = ""):
         if viewer and other == viewer:
             continue
         data = json.loads(row["profile_data"] or "{}")
-        # Avatar sempre visível agora
         avatar = data.get("avatar", "")
         fs = friendship_status(viewer, other) if viewer else "none"
         result.append({
