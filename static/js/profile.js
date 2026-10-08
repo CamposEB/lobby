@@ -1,5 +1,5 @@
 /* Reusable profile presentation and editor interactions. */
-/* v11 — header: oculta o @username quando for redundante com o display_name */
+/* v12 — corrige conflito role (system) vs game_role (função de jogo) */
 (() => {
   const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
   const MAX_AVATAR_DATA_LENGTH = 120000;
@@ -278,8 +278,6 @@
 
   // ─────────────────────────────────────────────────────────────
   // UTIL: comparação tolerante de nick vs display_name
-  // Retorna true se forem "a mesma coisa" aos olhos do usuário
-  // (ignora case, acentos, @, espaços e underscores).
   // ─────────────────────────────────────────────────────────────
   function looksLikeSameName(a, b) {
     const clean = (s) =>
@@ -429,9 +427,6 @@
     _inlineBadgeStylesInjected = true;
   }
 
-  /**
-   * Injeta/atualiza o selo ao lado do nome no header superior direito.
-   */
   function renderSidebarVerifiedBadge(data) {
     ensureInlineBadgeStyles();
 
@@ -483,12 +478,6 @@
     return true;
   }
 
-  /**
-   * Mostra/oculta o @username no header.
-   * Regra: se o display_name "parece" o mesmo que o nick, escondemos
-   * o @username para não repetir a informação. Se forem diferentes,
-   * mostramos os dois (nome + @handle), como Twitter/Instagram.
-   */
   function renderSidebarUsername(data, username, displayName) {
     const el = safe("sidebarUsername");
     if (!el) return;
@@ -496,21 +485,18 @@
     const nick = (data?.username || username || data?.nick || "").trim();
     const name = (displayName || data?.display_name || "").trim();
 
-    // Sem nick pra mostrar → esconde
     if (!nick) {
       el.hidden = true;
       el.textContent = "";
       return;
     }
 
-    // Se o nome "parece" o nick → esconde (evita repetição)
     if (name && looksLikeSameName(name, nick)) {
       el.hidden = true;
       el.textContent = "";
       return;
     }
 
-    // Caso contrário, mostra @nick normalmente
     el.hidden = false;
     el.textContent = "@" + nick;
   }
@@ -620,8 +606,9 @@
       box.append(buildGameTag("Rank", rankValue, icon));
     }
 
-    if (profile.role) {
-      box.append(buildGameTag("Função principal", profile.role, null));
+    // ✅ FIX: usa game_role (função de jogo) em vez de role (papel do sistema)
+    if (profile.game_role) {
+      box.append(buildGameTag("Função principal", profile.game_role, null));
     }
 
     if (profile.hero) {
@@ -1215,7 +1202,10 @@
 
     setVal("profileDisplayNameInput", profile.display_name || "");
     setVal("profileUsernameInput", "@" + (profile.username || ""));
-    setVal("pRole", profile.role || "Qualquer");
+
+    // ✅ FIX: usa game_role (função de jogo) em vez de role (papel do sistema)
+    setVal("pRole", profile.game_role || "Qualquer");
+
     setVal("pGid", profile.gid || "");
     setVal("pBio", profile.bio || "");
     setVal("profileTitleInput", profile.title || "");
@@ -1335,6 +1325,8 @@
     }
     const payloadStars = isMythicPlusRank(rank) ? stars : null;
 
+    // ⚠️ O payload continua enviando "role" — o servidor grava isso em users.role
+    // (função de jogo) e o devolve depois como game_role no profile().
     const ok = context?.send?.({
       t: "profile_set",
       display_name: displayName,

@@ -16,6 +16,9 @@
 #  13. Proxy /api/img para imagens do CDN da Moonton
 #  14. HIERARQUIA DE PAPÉIS: user < admin < mod < dev
 #  15. Papéis no Supabase (fonte de verdade) com Firestore como espelho opcional
+#  16. FIX: profile() não sobrescreve mais "role" (papel do sistema) com a função
+#      de jogo — esta agora vem em "game_role". Corrige bug onde perfis privados
+#      de Dev/Admin/Mod exibiam "Função principal: dev" no frontend.
 import asyncio, base64, datetime, hashlib, hmac, json, os, re, secrets, time, unicodedata, uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -283,13 +286,17 @@ def profile(nick, viewer=None):
         "is_owner": own,
         "community_roles": community_roles,   # ← agora sem duplicatas
         "online": nick in online,
-        "role": role,                          # ← papel cru (pra debug/lógica)
+        "role": role,                          # ← papel do SISTEMA (user/admin/mod/dev)
         "verified": verified,                  # ← flag pro frontend
     }
     if private:
         return result
 
-    result.update({k: u[k] or "" for k in ("bio", "rank", "role", "hero", "gid")})
+    # ATENÇÃO: NÃO incluir "role" no update abaixo — isso sobrescreveria
+    # o papel do sistema (dev/admin/mod/user). A função de jogo (Jungle,
+    # Mid, Roam, etc.) vai no campo separado "game_role".
+    result.update({k: u[k] or "" for k in ("bio", "rank", "hero", "gid")})
+    result["game_role"] = u["role"] or ""
     result.update({
         "avatar": data.get("avatar", ""),
         "banner": data.get("banner", ""),
