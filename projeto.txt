@@ -440,3 +440,5 @@ banco de dados nem a lógica das builds.
 
 sobre o perfil: ok, esta funcional agora gostaria de adicionar quantidade de estrelas q a pessoa tem, quando chega no mítico começa a contar estrelas apos terminar a MD10
 mitico vai de 0 a 24 honra mitica de 25 a 49 gloria mitica de 50 a 99 e imortal 100 em diante, faça uma nova caixa de escrever para colocar essa quantidade de estrelas a q aparecera do lado do elo com uma estrela amarela
+mensagem acima feita, ideia para as estatisticas do perfil: no grupo temos partidas personalizadas quero q seja possivel ADMS modificarem essa aba de estatisticas dos players para tornar possivel ver o KDA da pessoa em determinada partida do dia tal 
+e qual heroi ele usou, qual medalha pegou e essas coisas,

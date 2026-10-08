@@ -198,6 +198,48 @@ def add_activity(nick, kind, detail):
     db.commit()
 
 
+def _fold_rank(value):
+    nfd = unicodedata.normalize("NFD", str(value or "").casefold())
+    return "".join(ch for ch in nfd if unicodedata.category(ch) != "Mn").strip()
+
+
+_MYTHIC_PLUS_RANKS = {
+    "mitico",
+    "honra mitica",
+    "gloria mitica",
+    "imortal",
+}
+
+
+def _is_mythic_plus_rank(rank):
+    return _fold_rank(rank) in _MYTHIC_PLUS_RANKS
+
+
+def _parse_profile_stars(raw):
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if text == "":
+        return None
+    try:
+        n = int(text)
+    except (TypeError, ValueError):
+        return None
+    if n < 0:
+        return None
+    return min(n, 9999)
+
+
+def _rank_from_mythic_stars(stars):
+    if stars >= 100:
+        return "Imortal"
+    if stars >= 50:
+        return "Glória Mítica"
+    if stars >= 25:
+        return "Honra Mítica"
+    return "Mítico"
+
+
 def profile(nick, viewer=None):
     u = get_user(nick)
     data = json.loads(u["profile_data"] or "{}")
@@ -236,6 +278,9 @@ def profile(nick, viewer=None):
         "show_stats": bool(data.get("show_stats", True)),
         "show_activity": bool(data.get("show_activity", True)),
     })
+    stars = _parse_profile_stars(data.get("stars"))
+    if stars is not None and _is_mythic_plus_rank(result.get("rank")):
+        result["stars"] = stars
     if own:
         result["notifications"] = data.get("notifications", {
             "messages": True, "invites": True, "events": True, "activity": True
@@ -1225,6 +1270,11 @@ async def ws_endpoint(ws: WebSocket):
                 await send(nick, {"t": "rooms", "list": [{"id": k, "name": v, "count": sum(1 for o in online.values() if o["room"] == k)} for k, v in ROOMS.items()]})
             elif t == "profile_set":
                 f = {k: str(m.get(k, "")).strip()[:(60 if k == "bio" else 20)] for k in ("bio", "rank", "role", "hero", "gid")}
+                stars = _parse_profile_stars(m.get("stars"))
+                if stars is not None and (_is_mythic_plus_rank(f["rank"]) or f["rank"] == ""):
+                    f["rank"] = _rank_from_mythic_stars(stars)
+                if not _is_mythic_plus_rank(f["rank"]):
+                    stars = None
                 current = get_user(nick)
                 data = json.loads(current["profile_data"] or "{}")
                 display_name = str(m.get("display_name", current["display"])).strip()[:28]
@@ -1256,6 +1306,10 @@ async def ws_endpoint(ws: WebSocket):
                         "show_stats": bool(m.get("show_stats", data.get("show_stats", True))),
                         "show_activity": bool(m.get("show_activity", data.get("show_activity", True))),
                     })
+                    if stars is None:
+                        data.pop("stars", None)
+                    else:
+                        data["stars"] = stars
                     db.execute("UPDATE users SET display=?, bio=?, rank=?, role=?, hero=?, gid=?, profile_data=? WHERE nick=?",
                                (display_name, *f.values(), json.dumps(data, ensure_ascii=False), nick))
                     db.execute("UPDATE lfg SET display=? WHERE nick=?", (display_name, nick))

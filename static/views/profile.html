@@ -143,7 +143,13 @@
         >
         <div class="profile-rank-copy">
           <small>ELO ATUAL</small>
-          <b id="profileRankLabel">—</b>
+          <div class="profile-rank-label-row">
+            <b id="profileRankLabel">—</b>
+            <span id="profileRankStars" class="profile-rank-stars" hidden>
+              <span class="profile-rank-star" aria-hidden="true">★</span>
+              <span id="profileRankStarsCount">0</span>
+            </span>
+          </div>
         </div>
       </aside>
     </div>
@@ -307,6 +313,22 @@
           </div>
           <small id="pRankHint">
             Selecione seu elo. A imagem aparece no topo do seu card.
+          </small>
+        </label>
+
+        <label id="pStarsField">Estrelas
+          <input
+            id="pStars"
+            type="number"
+            min="0"
+            max="9999"
+            step="1"
+            inputmode="numeric"
+            placeholder="0"
+            aria-describedby="pStarsHint"
+          >
+          <small id="pStarsHint">
+            Depois do MD10 no Mítico, informe suas estrelas. 0–24 Mítico, 25–49 Honra Mítica, 50–99 Glória Mítica, 100+ Imortal.
           </small>
         </label>
 

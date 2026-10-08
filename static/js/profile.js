@@ -107,6 +107,37 @@
       .trim();
   }
 
+  const MYTHIC_PLUS_KEYS = new Set([
+    "mitico",
+    "honra mitica",
+    "gloria mitica",
+    "imortal",
+  ]);
+
+  function isMythicPlusRank(rank) {
+    return MYTHIC_PLUS_KEYS.has(normalizeRank(rank));
+  }
+
+  function rankFromMythicStars(stars) {
+    if (stars >= 100) return "Imortal";
+    if (stars >= 50) return "Glória Mítica";
+    if (stars >= 25) return "Honra Mítica";
+    return "Mítico";
+  }
+
+  function parseStarsValue(value) {
+    const raw = String(value ?? "").trim();
+    if (raw === "") return null;
+    const n = Number.parseInt(raw, 10);
+    if (!Number.isFinite(n) || n < 0) return null;
+    return Math.min(n, 9999);
+  }
+
+  function profileStars(data) {
+    if (!data || !isMythicPlusRank(data.rank)) return null;
+    return parseStarsValue(data.stars);
+  }
+
   /** Lista de bases candidatas para um rank digitado. */
   function rankBasesFor(rank) {
     const normalized = normalizeRank(rank);
@@ -334,7 +365,10 @@
         wrap.append(img);
         icon = wrap;
       }
-      box.append(buildGameTag("Rank", profile.rank, icon));
+      const stars = profileStars(profile);
+      const rankValue =
+        stars == null ? profile.rank : profile.rank + " · " + stars + " ★";
+      box.append(buildGameTag("Rank", rankValue, icon));
     }
 
     if (profile.role) {
@@ -523,12 +557,31 @@
         image.removeAttribute("src");
         image.onerror = null;
       }
+      const hiddenStars = safe("profileRankStars");
+      if (hiddenStars) hiddenStars.hidden = true;
       return;
     }
 
     badge.hidden = false;
     if (label) label.textContent = rank;
     if (image) loadImageWithFallback(image, candidates);
+
+    const starsWrap = safe("profileRankStars");
+    const starsCount = safe("profileRankStarsCount");
+    const stars = profileStars(data);
+    if (starsWrap) {
+      if (stars == null) {
+        starsWrap.hidden = true;
+        starsWrap.removeAttribute("aria-label");
+      } else {
+        starsWrap.hidden = false;
+        starsWrap.setAttribute(
+          "aria-label",
+          stars === 1 ? "1 estrela" : stars + " estrelas"
+        );
+        if (starsCount) starsCount.textContent = String(stars);
+      }
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -805,6 +858,31 @@
     }
   }
 
+  function syncStarsField() {
+    const select = safe("pRank");
+    const input = safe("pStars");
+    const field = safe("pStarsField");
+    const enabled = isMythicPlusRank(select?.value || "");
+    if (input) {
+      input.disabled = !enabled;
+      if (!enabled) input.value = "";
+    }
+    if (field) field.classList.toggle("is-disabled", !enabled);
+  }
+
+  function applyStarsToRank() {
+    const input = safe("pStars");
+    const select = safe("pRank");
+    if (!input || !select || input.disabled) return;
+    const stars = parseStarsValue(input.value);
+    if (stars == null) return;
+    const next = rankFromMythicStars(stars);
+    if (select.value !== next) {
+      populateRankOptions(next);
+      refreshRankPreview();
+    }
+  }
+
   function refreshRankPreview() {
     const select = safe("pRank");
     const img = safe("pRankPreviewImage");
@@ -877,6 +955,9 @@
 
     populateRankOptions(profile.rank || "");
     populateHeroOptions(profile.hero || "");
+    syncStarsField();
+    const savedStars = profileStars(profile);
+    setVal("pStars", savedStars == null ? "" : String(savedStars));
 
     setVal("profileDisplayNameInput", profile.display_name || "");
     setVal("profileUsernameInput", "@" + (profile.username || ""));
@@ -993,10 +1074,18 @@
       msg.classList.remove("is-error");
     }
 
+    let rank = safe("pRank")?.value || "";
+    const stars = parseStarsValue(safe("pStars")?.value);
+    if (stars != null && (isMythicPlusRank(rank) || rank === "")) {
+      rank = rankFromMythicStars(stars);
+    }
+    const payloadStars = isMythicPlusRank(rank) ? stars : null;
+
     const ok = context?.send?.({
       t: "profile_set",
       display_name: displayName,
-      rank: safe("pRank")?.value || "",
+      rank,
+      stars: payloadStars,
       role: safe("pRole")?.value || "",
       hero: safe("pHero")?.value || "",
       gid: safe("pGid")?.value || "",
@@ -1148,7 +1237,15 @@
     });
 
     const rankSelect = safe("pRank");
-    if (rankSelect) rankSelect.addEventListener("change", refreshRankPreview);
+    if (rankSelect) {
+      rankSelect.addEventListener("change", () => {
+        syncStarsField();
+        refreshRankPreview();
+      });
+    }
+
+    const starsInput = safe("pStars");
+    if (starsInput) starsInput.addEventListener("input", applyStarsToRank);
 
     const heroSelect = safe("pHero");
     if (heroSelect) heroSelect.addEventListener("change", refreshHeroPreview);

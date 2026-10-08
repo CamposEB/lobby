@@ -48,39 +48,87 @@
 
   <div class="tool-panel" id="tool-wr" hidden>
     <button class="tool-back" type="button" data-back-tools>← Voltar para ferramentas</button>
-    <div class="card calc">
-      <div class="tool-heading">
+
+    <div class="wr-shell">
+      <div class="tool-heading wr-shell-heading">
         <span class="tool-panel-icon">📈</span>
         <div>
           <h2>Calcular Win Rate</h2>
-          <p class="hint">Quantas partidas jogar para atingir tal Win Rate?</p>
+          <p class="hint">Pegue os números do seu perfil no jogo. Nada é enviado e não precisa de conta.</p>
         </div>
       </div>
-      <p class="hint">Pega os números do seu perfil no jogo e calcule aqui.</p>
 
-      <div class="grid">
-        <label>Partidas jogadas
-          <input id="wrN" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 200">
-        </label>
-        <label>Winrate atual %
-          <input id="wrW" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 65">
-        </label>
-        <label>Winrate que você quer %
-          <input id="wrT" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 70">
-        </label>
+      <div class="wr-board">
+        <section class="wr-card wr-card-history" aria-labelledby="wrHistoryTitle">
+          <h3 id="wrHistoryTitle">Seu histórico</h3>
+
+          <div class="wr-fields">
+            <label>Partidas jogadas
+              <input id="wrN" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 163">
+            </label>
+            <label>Winrate atual %
+              <input id="wrW" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 69.33">
+            </label>
+          </div>
+
+          <div class="wr-split" id="wrSplit">
+            <div>
+              <small>Vitórias</small>
+              <b id="wrWins">—</b>
+            </div>
+            <div>
+              <small>Derrotas</small>
+              <b id="wrLosses">—</b>
+            </div>
+          </div>
+          <p class="wr-record" id="wrRecord">Preencha partidas e win rate atual para calcular vitórias e derrotas.</p>
+
+          <div class="wr-hero">
+            <span>Seu win rate</span>
+            <strong id="wrHero">—</strong>
+          </div>
+
+          <div class="wr-meter" aria-hidden="true">
+            <div class="wr-meter-fill" id="barNow"></div>
+            <div class="wr-meter-goal" id="barGoal"></div>
+          </div>
+          <div class="wr-meter-labels">
+            <span>Atual: <b id="wrNowLabel">—</b></span>
+            <span>Meta: <b id="wrGoalLabel">—</b></span>
+          </div>
+
+          <button class="wr-reset" id="wrReset" type="button">Redefinir</button>
+        </section>
+
+        <div class="wr-side">
+          <section class="wr-card wr-card-goal" aria-labelledby="wrGoalTitle">
+            <h3 id="wrGoalTitle">Alcance sua meta</h3>
+
+            <div class="wr-fields">
+              <label>Win rate desejado %
+                <input id="wrT" type="number" min="0" max="100" step="0.01" placeholder="Ex.: 70">
+              </label>
+              <label>Win rate daqui em diante %
+                <input id="wrFuture" type="number" min="0" max="100" step="0.01" value="100" placeholder="100">
+              </label>
+            </div>
+            <p class="wr-hint">100% significa uma sequência de vitórias sem interrupção.</p>
+            <div class="wr-callout" id="wrOut" role="status">Preencha partidas, win rate atual e a meta.</div>
+          </section>
+
+          <section class="wr-card wr-card-margin" aria-labelledby="wrMarginTitle">
+            <h3 id="wrMarginTitle">Quanta margem você tem</h3>
+            <div class="wr-margin-row">
+              <label>Ficar acima de %
+                <input id="wrFloor" type="number" min="0" max="99.99" step="0.01" value="50" placeholder="50">
+              </label>
+              <p class="wr-margin-copy" id="wrMarginOut">Informe seu histórico para ver quantas derrotas cabem antes de cair dessa linha.</p>
+            </div>
+          </section>
+        </div>
       </div>
 
-      <div class="wr-meter" aria-hidden="true">
-        <div class="wr-meter-fill" id="barNow"></div>
-        <div class="wr-meter-goal" id="barGoal"></div>
-      </div>
-      <div class="wr-meter-labels">
-        <span>Atual: <b id="wrNowLabel">—</b></span>
-        <span>Meta: <b id="wrGoalLabel">—</b></span>
-      </div>
-
-      <div class="tool-result" id="wrOut" role="status">Preencha os três campos.</div>
-      <p class="tool-note">O cálculo é uma estimativa baseada no Win Rate exibido no seu perfil.</p>
+      <p class="tool-note">Vitórias e derrotas são estimadas a partir do win rate do perfil, que o jogo arredonda.</p>
     </div>
   </div>
 

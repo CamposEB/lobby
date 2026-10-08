@@ -26,58 +26,205 @@
     return Number(value.toFixed(2)).toLocaleString("pt-BR");
   }
 
+  function formatInt(value) {
+    return Number(value).toLocaleString("pt-BR");
+  }
+
   function setResult(element, message, status) {
     element.textContent = message;
     element.classList.toggle("success", status === "success");
     element.classList.toggle("warning", status === "warning");
   }
 
+  function gamesNeededForTarget(games, wins, targetPct, futurePct) {
+    const t = targetPct / 100;
+    const f = futurePct / 100;
+    const current = wins / games;
+    if (Math.abs(current * 100 - targetPct) < 0.005) return { kind: "met" };
+
+    if (t > current) {
+      if (targetPct >= 100 && f >= 1) return { kind: "impossible-100" };
+      if (f <= t) return { kind: "impossible-up" };
+      const raw = (t * games - wins) / (f - t);
+      return {
+        kind: f >= 0.9999 ? "streak-win" : "future-up",
+        n: Math.max(1, Math.ceil(raw - 1e-9)),
+      };
+    }
+
+    if (targetPct <= 0 && f <= 0) return { kind: "impossible-0" };
+    if (f >= t) return { kind: "impossible-down" };
+    const raw = (wins - t * games) / (t - f);
+    return {
+      kind: f <= 1e-12 ? "streak-loss" : "future-down",
+      n: Math.max(1, Math.ceil(raw - 1e-9)),
+    };
+  }
+
+  function lossesUntilBelow(games, wins, floorPct) {
+    const t = floorPct / 100;
+    if (!(t > 0) || t >= 1) return { kind: "invalid" };
+    if (wins / games < t) return { kind: "already" };
+    const n = Math.floor(wins / t - games) + 1;
+    return { kind: "ok", n: Math.max(1, n) };
+  }
+
   function updateWinRate() {
     const games = parseNumber("wrN");
     const current = parseNumber("wrW");
     const target = parseNumber("wrT");
+    const futureRaw = parseNumber("wrFuture");
+    const floorRaw = parseNumber("wrFloor");
+    const future = Number.isFinite(futureRaw) ? futureRaw : 100;
+    const floor = Number.isFinite(floorRaw) ? floorRaw : 50;
     const result = document.getElementById("wrOut");
+    const record = document.getElementById("wrRecord");
+    const margin = document.getElementById("wrMarginOut");
     const currentLabel = document.getElementById("wrNowLabel");
     const targetLabel = document.getElementById("wrGoalLabel");
     const fill = document.getElementById("barNow");
     const marker = document.getElementById("barGoal");
+    const winsEl = document.getElementById("wrWins");
+    const lossesEl = document.getElementById("wrLosses");
+    const hero = document.getElementById("wrHero");
 
-    fill.style.width = Number.isFinite(current) && current >= 0 && current <= 100 ? current + "%" : "0%";
-    marker.style.left = Number.isFinite(target) && target >= 0 && target <= 100 ? target + "%" : "0%";
-    currentLabel.textContent = Number.isFinite(current) && current >= 0 && current <= 100 ? formatPercent(current) + "%" : "—";
-    targetLabel.textContent = Number.isFinite(target) && target >= 0 && target <= 100 ? formatPercent(target) + "%" : "—";
+    const currentOk = Number.isFinite(current) && current >= 0 && current <= 100;
+    const targetOk = Number.isFinite(target) && target >= 0 && target <= 100;
+    const futureOk = Number.isFinite(future) && future >= 0 && future <= 100;
+    const floorOk = Number.isFinite(floor) && floor >= 0 && floor < 100;
+    const gamesOk = Number.isInteger(games) && games > 0;
 
-    if (!Number.isInteger(games) || games <= 0 || !Number.isFinite(current) || current < 0 || current > 100 ||
-        !Number.isFinite(target) || target < 0 || target > 100) {
-      setResult(result, "Preencha os três campos com valores válidos. As partidas devem ser um número inteiro maior que zero e os Win Rates devem estar entre 0% e 100%.", "");
+    fill.style.width = currentOk ? Math.min(100, current) + "%" : "0%";
+    marker.style.left = targetOk ? Math.min(100, target) + "%" : "0%";
+    currentLabel.textContent = currentOk ? formatPercent(current) + "%" : "—";
+    targetLabel.textContent = targetOk ? formatPercent(target) + "%" : "—";
+
+    if (!gamesOk || !currentOk) {
+      winsEl.textContent = "—";
+      lossesEl.textContent = "—";
+      hero.textContent = "—";
+      record.textContent = "Preencha partidas e win rate atual para calcular vitórias e derrotas.";
+      margin.textContent = "Informe seu histórico para ver quantas derrotas cabem antes de cair dessa linha.";
+      setResult(result, "Preencha partidas, win rate atual e a meta.", "");
       return;
     }
 
-    if (target === current) {
-      setResult(result, "Seu Win Rate atual já está na meta de " + formatPercent(target) + "%.", "success");
-      return;
-    }
+    const wins = Math.round(games * current / 100);
+    const losses = games - wins;
+    const actual = (wins / games) * 100;
+    winsEl.textContent = formatInt(wins);
+    lossesEl.textContent = formatInt(losses);
+    hero.textContent = formatPercent(actual) + "%";
+    record.replaceChildren();
+    record.append(
+      "Você venceu ",
+      Object.assign(document.createElement("b"), {
+        textContent: formatInt(wins) + (wins === 1 ? " partida" : " partidas"),
+      }),
+      " e perdeu "
+    );
+    const lossLabel = document.createElement("b");
+    lossLabel.className = "wr-loss";
+    lossLabel.textContent = formatInt(losses) + (losses === 1 ? " partida" : " partidas");
+    record.append(lossLabel, ". Calculamos isso a partir do win rate informado.");
 
-    if (target > current) {
-      if (target === 100) {
-        setResult(result, "Não é possível atingir 100% em um número finito de partidas. Seria necessário vencer todas as partidas futuras para se aproximar dessa meta.", "warning");
-        return;
+    if (floorOk) {
+      const drop = lossesUntilBelow(games, wins, floor);
+      if (drop.kind === "already") {
+        margin.textContent = "Seu win rate já está abaixo de " + formatPercent(floor) + "%.";
+      } else if (drop.kind === "ok") {
+        margin.textContent =
+          formatInt(drop.n) +
+          (drop.n === 1 ? " derrota seguida deixaria" : " derrotas seguidas deixariam") +
+          " você abaixo de " + formatPercent(floor) + "%.";
+      } else {
+        margin.textContent = "Informe um valor entre 0% e 100% para a linha de margem.";
       }
-      const wins = Math.ceil(games * (target - current) / (100 - target));
-      setResult(result, "Você precisa vencer " + wins.toLocaleString("pt-BR") +
-        (wins === 1 ? " partida seguida" : " partidas seguidas") +
-        " para alcançar aproximadamente " + formatPercent(target) + "%.", "success");
+    } else {
+      margin.textContent = "Informe um valor entre 0% e 100% para a linha de margem.";
+    }
+
+    if (!targetOk) {
+      setResult(result, "Informe o win rate que você quer alcançar.", "");
+      return;
+    }
+    if (!futureOk) {
+      setResult(result, "O win rate daqui em diante precisa estar entre 0% e 100%.", "warning");
       return;
     }
 
-    if (target === 0) {
-      setResult(result, "Não é possível chegar a 0% com um número finito de derrotas se você já tem vitórias registradas.", "warning");
+    const needed = gamesNeededForTarget(games, wins, target, future);
+    const targetText = formatPercent(target) + "%";
+    if (needed.kind === "met") {
+      setResult(result, "Seu win rate já está na meta de " + targetText + ".", "success");
       return;
     }
-    const losses = Math.ceil(games * (current - target) / target);
-    setResult(result, "Se perder " + losses.toLocaleString("pt-BR") +
-      (losses === 1 ? " partida seguida" : " partidas seguidas") +
-      ", seu Win Rate cairá para aproximadamente " + formatPercent(target) + "%.", "warning");
+    if (needed.kind === "impossible-100") {
+      setResult(result, "Não é possível atingir 100% em um número finito de partidas se você já tem derrotas.", "warning");
+      return;
+    }
+    if (needed.kind === "impossible-0") {
+      setResult(result, "Não é possível chegar a 0% com um número finito de derrotas se você já tem vitórias.", "warning");
+      return;
+    }
+    if (needed.kind === "impossible-up") {
+      setResult(result, "Com " + formatPercent(future) + "% daqui em diante não é possível subir até " + targetText + ".", "warning");
+      return;
+    }
+    if (needed.kind === "impossible-down") {
+      setResult(result, "Com " + formatPercent(future) + "% daqui em diante o win rate não cai até " + targetText + ".", "warning");
+      return;
+    }
+    if (needed.kind === "streak-win") {
+      setResult(
+        result,
+        "Vença mais " + formatInt(needed.n) +
+          (needed.n === 1 ? " partida seguida" : " partidas seguidas") +
+          " para chegar a " + targetText + ".",
+        "success"
+      );
+      return;
+    }
+    if (needed.kind === "future-up") {
+      setResult(
+        result,
+        "Com " + formatPercent(future) + "% daqui em diante, você precisa de cerca de " +
+          formatInt(needed.n) + (needed.n === 1 ? " partida" : " partidas") +
+          " para chegar a " + targetText + ".",
+        "success"
+      );
+      return;
+    }
+    if (needed.kind === "streak-loss") {
+      setResult(
+        result,
+        "Se perder " + formatInt(needed.n) +
+          (needed.n === 1 ? " partida seguida" : " partidas seguidas") +
+          ", seu win rate cai para cerca de " + targetText + ".",
+        "warning"
+      );
+      return;
+    }
+    setResult(
+      result,
+      "Com " + formatPercent(future) + "% daqui em diante, cerca de " +
+        formatInt(needed.n) + (needed.n === 1 ? " partida" : " partidas") +
+        " levariam o win rate a " + targetText + ".",
+      "warning"
+    );
+  }
+
+  function resetWinRate() {
+    ["wrN", "wrW", "wrT"].forEach((id) => {
+      const input = document.getElementById(id);
+      if (input) input.value = "";
+    });
+    const future = document.getElementById("wrFuture");
+    const floor = document.getElementById("wrFloor");
+    if (future) future.value = "100";
+    if (floor) floor.value = "50";
+    updateWinRate();
+    document.getElementById("wrN")?.focus();
   }
 
   function updateStars() {
@@ -521,9 +668,11 @@
         button.addEventListener("click", showMenu);
       });
 
-      ["wrN", "wrW", "wrT"].forEach(id => {
+      ["wrN", "wrW", "wrT", "wrFuture", "wrFloor"].forEach(id => {
         document.getElementById(id).addEventListener("input", updateWinRate);
       });
+      document.getElementById("wrReset").addEventListener("click", resetWinRate);
+      updateWinRate();
       ["stN", "stW", "stD", "stUp", "stDown"].forEach(id => {
         document.getElementById(id).addEventListener("input", updateStars);
       });
