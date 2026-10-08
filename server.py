@@ -58,7 +58,7 @@ DEV_NICKS = {
 if not DEV_NICKS:
     DEV_NICKS = set(ADMIN_NICKS)
 
-VALID_ROLES = ("user", "admin", "mod", "dev")
+VALID_ROLES = ("user", "beta", "streamer", "vip", "admin", "mod", "dev")
 VALID_VISIBILITIES = ("public", "friends", "private")
 
 MUTE_ACTIONS = {"mute_10m", "mute_1h", "mute_24h"}
@@ -451,7 +451,7 @@ def profile(nick, viewer=None):
     else:
         community_roles = ["MEMBRO"]
 
-    verified = role in ("dev", "admin", "mod")
+    verified = role in ("dev", "admin", "mod", "vip", "streamer")
 
     result = {
         "nick": nick,

@@ -21,55 +21,85 @@
   // ═══════════════════════════════════════════════════════════
   // 0. ESTADO COMPARTILHADO
   // ═══════════════════════════════════════════════════════════
-  let _currentProfile = null;   // último perfil aplicado
-  let _profileNick = null;      // nick ao qual _currentProfile pertence
-  let _currentNick = null;      // nick da conversa atual (melhor palpite)
-  let currentUserId = null;     // fallback: capturado por clique na lista
+  let _currentProfile = null;
+  let _profileNick = null;
+  let _currentNick = null;
+  let currentUserId = null;
   let currentUserName = null;
   let _loadingTimer = null;
-  let _openingProfile = false;  // evita render/pedido duplicado ao abrir o dialog
-
-  const ROLE_COLORS = { dev: '#ff5f5f', admin: '#f2b84b', mod: '#4c8dff' };
-  const BADGE_SVG =
-    '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
-    '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
-    '</svg>';
-
-  const normNick = (v) => String(v == null ? '' : v).trim().toLocaleLowerCase('pt-BR');
+  let _openingProfile = false;
 
   // ═══════════════════════════════════════════════════════════
-  // 0a. SELO DE VERIFICADO (Dev / Admin / Mod)
+  // 0a. SELOS (staff / vip / streamer)
   // ═══════════════════════════════════════════════════════════
+  const BADGE_DEFS = {
+    staff: {
+      color: '#f2b84b',
+      label: { dev: 'DEV verificado', admin: 'Administrador verificado', mod: 'Moderador verificado' },
+      defaultLabel: 'Equipe verificada',
+      svg:
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M21.71 20.29l-6.88-6.88a6.5 6.5 0 0 0-7.9-7.9l3.19 3.19-2.83 2.83-3.19-3.19a6.5 6.5 0 0 0 7.9 7.9l6.88 6.88a1 1 0 0 0 1.41 0l1.42-1.42a1 1 0 0 0 0-1.41z"/>' +
+        '<circle cx="6.5" cy="17.5" r="1.5"/>' +
+        '</svg>',
+    },
+    vip: {
+      color: '#4c8dff',
+      label: { vip: 'VIP verificado' },
+      defaultLabel: 'Conta verificada',
+      svg:
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
+        '</svg>',
+    },
+    streamer: {
+      color: '#ff0000',
+      label: { streamer: 'Streamer' },
+      defaultLabel: 'Streamer',
+      svg:
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5.8 31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/>' +
+        '</svg>',
+    },
+  };
+  const ROLE_TO_BADGE = {
+    dev: 'staff', admin: 'staff', mod: 'staff',
+    vip: 'vip', streamer: 'streamer',
+  };
+
   function roleKeyFromProfile(data) {
     if (!data) return 'user';
     const raw = String(data.role || '').toLocaleLowerCase('pt-BR').trim();
-    if (raw === 'dev' || raw === 'admin' || raw === 'mod') return raw;
-
+    if (raw) return raw;
     const roles = Array.isArray(data.community_roles) ? data.community_roles : [];
     for (const role of roles) {
       const key = String(role || '').toLocaleUpperCase('pt-BR').trim();
       if (key === 'DEV') return 'dev';
       if (key === 'ADMIN') return 'admin';
       if (key === 'MOD' || key === 'MODERADOR' || key === 'MODERATOR') return 'mod';
+      if (key === 'VIP') return 'vip';
+      if (key === 'STREAMER') return 'streamer';
+      if (key === 'BETA') return 'beta';
     }
     return 'user';
   }
-
-  function isVerifiedProfile(data) {
-    if (!data) return false;
-    if (typeof data.verified === 'boolean' && data.verified) return true;
-    const key = roleKeyFromProfile(data);
-    return key === 'dev' || key === 'admin' || key === 'mod';
+  function badgeKeyForRole(rawRole) {
+    const key = String(rawRole || '').toLocaleLowerCase('pt-BR').trim();
+    return ROLE_TO_BADGE[key] || null;
   }
-
+  function badgeDefForRole(rawRole) {
+    const k = badgeKeyForRole(rawRole);
+    return k ? BADGE_DEFS[k] : null;
+  }
+  function isVerifiedProfile(data) { return Boolean(badgeDefForRole(roleKeyFromProfile(data))); }
   function labelForRole(roleKey) {
-    if (roleKey === 'dev')   return 'DEV verificado';
-    if (roleKey === 'admin') return 'Administrador verificado';
-    if (roleKey === 'mod')   return 'Moderador verificado';
-    return 'Conta verificada';
+    const def = badgeDefForRole(roleKey);
+    if (!def) return 'Conta verificada';
+    return def.label[roleKey] || def.defaultLabel;
   }
 
-  // Usa o #dmWithVerified do HTML; se não existir, cria ao lado do nome.
+  const normNick = (v) => String(v == null ? '' : v).trim().toLocaleLowerCase('pt-BR');
+
   function ensureHeaderBadge() {
     let badge = $('dmWithVerified');
     if (!badge) {
@@ -84,7 +114,6 @@
         'display:none;place-items:center;width:16px;height:16px;margin-left:6px;vertical-align:middle;flex:0 0 auto;';
       nameEl.insertAdjacentElement('afterend', badge);
     }
-    if (!badge.firstElementChild) badge.innerHTML = BADGE_SVG;
     return badge;
   }
 
@@ -92,43 +121,38 @@
     const badge = ensureHeaderBadge();
     if (!badge) return;
 
-    let roleKey = 'user';
-    let verified = Boolean(isVerifiedFlag);
+    let role = 'user';
+    if (roleOrProfile && typeof roleOrProfile === 'object') role = roleKeyFromProfile(roleOrProfile);
+    else if (typeof roleOrProfile === 'string') role = roleOrProfile.toLocaleLowerCase('pt-BR').trim();
 
-    if (roleOrProfile && typeof roleOrProfile === 'object') {
-      roleKey = roleKeyFromProfile(roleOrProfile);
-      verified = isVerifiedProfile(roleOrProfile);
-    } else if (typeof roleOrProfile === 'string') {
-      const key = String(roleOrProfile).toLocaleLowerCase('pt-BR').trim();
-      if (key === 'dev' || key === 'admin' || key === 'mod') {
-        roleKey = key;
-        verified = true;
-      }
-    }
+    const def = badgeDefForRole(role);
+    const forceHide = isVerifiedFlag === false;
 
-    if (isVerifiedFlag === false) verified = false;
-
-    badge.hidden = !verified;
-    if (badge.dataset.dmCreated === '1') {
-      badge.style.display = verified ? 'inline-grid' : 'none';
-      badge.style.color = ROLE_COLORS[roleKey] || '#4c8dff';
-      badge.style.filter = verified
-        ? 'drop-shadow(0 0 5px ' + (ROLE_COLORS[roleKey] || '#4c8dff') + '88)' : '';
-    }
-
-    if (verified) {
-      const label = labelForRole(roleKey);
-      badge.dataset.role = roleKey;
-      badge.setAttribute('aria-label', label);
-      badge.setAttribute('title', label);
-      badge.style.animation = 'none';
-      void badge.offsetWidth;
-      badge.style.animation = '';
-    } else {
+    if (!def || forceHide) {
+      badge.hidden = true;
+      badge.removeAttribute('data-badge');
       badge.removeAttribute('data-role');
       badge.setAttribute('aria-label', 'Conta verificada');
       badge.setAttribute('title', 'Conta verificada');
+      if (badge.dataset.dmCreated === '1') badge.style.display = 'none';
+      return;
     }
+
+    badge.hidden = false;
+    badge.innerHTML = def.svg;
+    badge.dataset.badge = badgeKeyForRole(role) || '';
+    badge.dataset.role = role;
+    badge.style.color = def.color;
+    badge.style.filter = 'drop-shadow(0 0 6px ' + def.color + '88)';
+    if (badge.dataset.dmCreated === '1') badge.style.display = 'inline-grid';
+
+    const label = labelForRole(role);
+    badge.setAttribute('aria-label', label);
+    badge.setAttribute('title', label);
+
+    badge.style.animation = 'none';
+    void badge.offsetWidth;
+    badge.style.animation = '';
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -138,7 +162,6 @@
     const s = String(name || '?').trim();
     return s.slice(0, 1).toLocaleUpperCase('pt-BR') || '?';
   }
-
   function isDataAvatar(image) {
     return (
       typeof image === 'string' &&
@@ -149,11 +172,9 @@
 
   function applyProfileToHeader(profile) {
     if (!profile) return;
-
     const nameEl = $('dmWith');
     const avatarEl = $('dmWithAvatar');
     const statusEl = $('dmWithStatus');
-
     const displayName = profile.display_name || profile.username || _currentNick || 'Jogador';
 
     if (nameEl) nameEl.textContent = displayName;
@@ -162,9 +183,7 @@
       avatarEl.replaceChildren();
       if (isDataAvatar(profile.avatar)) {
         const img = document.createElement('img');
-        img.src = profile.avatar;
-        img.alt = '';
-        img.loading = 'lazy';
+        img.src = profile.avatar; img.alt = ''; img.loading = 'lazy';
         avatarEl.appendChild(img);
       } else {
         avatarEl.textContent = initialLetter(displayName);
@@ -202,57 +221,46 @@
   function buildProfileDialogRow(icon, label, value) {
     const row = el('div', { class: 'dm-profile-row' });
     row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--dm-line,rgba(255,255,255,.07));';
-    const ic = el('span');
-    ic.textContent = icon;
+    const ic = el('span'); ic.textContent = icon;
     ic.style.cssText = 'width:22px;text-align:center;font-size:1.05rem;';
     const copy = el('div');
     copy.style.cssText = 'display:flex;flex-direction:column;min-width:0;flex:1 1 auto;';
-    const lb = el('span');
-    lb.textContent = label;
+    const lb = el('span'); lb.textContent = label;
     lb.style.cssText = 'color:var(--dm-muted,#9298a3);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;';
-    const vl = el('b');
-    vl.textContent = value;
+    const vl = el('b'); vl.textContent = value;
     vl.style.cssText = 'font-size:.95rem;';
-    copy.append(lb, vl);
-    row.append(ic, copy);
+    copy.append(lb, vl); row.append(ic, copy);
     return row;
   }
 
-  // Fallback usado só se window.ProfileUI.createProfileSummary não existir.
   function buildFallbackSummary(profile, displayName) {
     const wrap = el('div');
-
     const head = el('div');
     head.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:14px;';
-
     const avatar = el('div');
     avatar.style.cssText = 'width:64px;height:64px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:linear-gradient(145deg,#262b34,#171a20);color:var(--dm-accent,#d4b45a);font-weight:700;font-size:1.4rem;text-transform:uppercase;flex:0 0 auto;';
     if (isDataAvatar(profile.avatar)) {
       const img = document.createElement('img');
-      img.src = profile.avatar;
-      img.alt = '';
+      img.src = profile.avatar; img.alt = '';
       img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
       avatar.appendChild(img);
-    } else {
-      avatar.textContent = initialLetter(displayName);
-    }
+    } else avatar.textContent = initialLetter(displayName);
 
     const info = el('div');
     info.style.cssText = 'display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 auto;';
     const nmRow = el('div');
     nmRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
-    const nm = el('b');
-    nm.textContent = displayName;
+    const nm = el('b'); nm.textContent = displayName;
     nm.style.cssText = 'font-size:1.15rem;';
     nmRow.appendChild(nm);
 
-    if (isVerifiedProfile(profile)) {
-      const roleKey = roleKeyFromProfile(profile);
-      const color = ROLE_COLORS[roleKey] || '#4c8dff';
+    const role = roleKeyFromProfile(profile);
+    const def = badgeDefForRole(role);
+    if (def) {
       const badge = el('span');
-      badge.innerHTML = BADGE_SVG;
-      badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;color:' + color + ';filter:drop-shadow(0 0 5px ' + color + '88);';
-      badge.title = labelForRole(roleKey);
+      badge.innerHTML = def.svg;
+      badge.style.cssText = 'display:inline-grid;place-items:center;width:16px;height:16px;color:' + def.color + ';filter:drop-shadow(0 0 5px ' + def.color + '88);';
+      badge.title = labelForRole(role);
       nmRow.appendChild(badge);
     }
 
@@ -317,7 +325,6 @@
 
     if (!profile) {
       content.replaceChildren(dialogMessage('Carregando perfil…'));
-      // Se o servidor não responder, avisa em vez de ficar carregando para sempre.
       _loadingTimer = setTimeout(() => {
         const dlg = $('dmProfileDialog');
         if (dlg && dlg.open && !_currentProfile) {
@@ -332,7 +339,6 @@
 
     content.replaceChildren();
 
-    // Mesmo renderer do card do perfil (profile.js)
     let summary = null;
     if (window.ProfileUI && typeof window.ProfileUI.createProfileSummary === 'function') {
       try {
@@ -343,7 +349,6 @@
     }
     content.appendChild(summary || buildFallbackSummary(profile, displayName));
 
-    // Ação: abrir a página completa do perfil
     const target = _profileNick || profile.username || _currentNick;
     if (target && typeof window.abrirPerfil === 'function') {
       const btn = document.createElement('button');
@@ -369,8 +374,6 @@
     } catch (e) {}
     return currentUserId || _currentNick || null;
   }
-
-  // Descarta respostas atrasadas de outra conversa.
   function matchesActive(nick, profile) {
     const active = normNick(activeNick());
     if (!active) return true;
@@ -379,7 +382,6 @@
     if (!candidates.length) return true;
     return candidates.includes(active);
   }
-
   function cachedFor(nick) {
     if (!_currentProfile) return null;
     const want = normNick(nick);
@@ -387,14 +389,12 @@
     const have = [_profileNick, _currentProfile.username].map(normNick);
     return have.includes(want) ? _currentProfile : null;
   }
-
   function applyDmProfile(profile, nick) {
     if (!profile || typeof profile !== 'object') return false;
     if (!matchesActive(nick, profile)) {
       console.log('[dm-extras] perfil ignorado (outra conversa):', nick || profile.username);
       return false;
     }
-
     _currentProfile = profile;
     _profileNick = nick || profile.username || profile.nick || activeNick();
     _currentNick = _profileNick || _currentNick;
@@ -406,8 +406,6 @@
     if (dlg && dlg.open) renderProfileDialog(profile);
     return true;
   }
-
-  // Aceita mensagens cruas do servidor (dm_history / pview)
   function handleServerMessage(msg) {
     if (!msg || typeof msg !== 'object') return false;
     if (msg.t === 'dm_history' && msg.profile) return applyDmProfile(msg.profile, msg.nick);
@@ -416,14 +414,13 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0e. REQUEST DE PERFIL via WS (profile_view → pview)
+  // 0e. REQUEST DE PERFIL via WS
   // ═══════════════════════════════════════════════════════════
   function getSendFn() {
     return (typeof window.appSend === 'function' && window.appSend) ||
            (typeof window.send === 'function' && window.send) ||
            null;
   }
-
   function requestProfile(nick) {
     if (!nick) return false;
     const sendFn = getSendFn();
@@ -432,12 +429,8 @@
       return false;
     }
     try {
-      // O server espera {t:"profile_view", nick}. O nick já é o canônico (vem do app.js).
       const ok = sendFn({ t: 'profile_view', nick: String(nick) });
-      if (ok === false) {
-        console.warn('[dm-extras] profile_view não enviado (WebSocket fechado)');
-        return false;
-      }
+      if (ok === false) { console.warn('[dm-extras] profile_view não enviado (WS fechado)'); return false; }
       console.log('[dm-extras] 📡 profile_view enviado para:', nick);
       return true;
     } catch (err) {
@@ -447,7 +440,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0f. RESOLUÇÃO DO USUÁRIO DA CONVERSA + ABRIR PERFIL
+  // 0f. RESOLUÇÃO DO USUÁRIO + ABRIR PERFIL
   // ═══════════════════════════════════════════════════════════
   function extractIdFromEl(node) {
     if (!node) return null;
@@ -457,24 +450,18 @@
       d.jid, d.contact, d.contactId, d.peer, d.peerId,
       d.target, d.targetId, d.who, d.whoId,
     ];
-    for (const c of candidates) {
-      if (c && String(c).length > 0) return String(c);
-    }
+    for (const c of candidates) if (c && String(c).length > 0) return String(c);
     return null;
   }
-
   function extractIdFromTree(node) {
-    let cur = node;
-    let depth = 0;
+    let cur = node, depth = 0;
     while (cur && depth < 8) {
       const id = extractIdFromEl(cur);
       if (id) return id;
-      cur = cur.parentElement;
-      depth++;
+      cur = cur.parentElement; depth++;
     }
     return null;
   }
-
   function readName() {
     const b = $('dmWith');
     if (b && b.textContent.trim()) return b.textContent.trim();
@@ -482,22 +469,15 @@
     if (t && t.textContent.trim()) return t.textContent.trim();
     return null;
   }
-
-  // Ordem: 1) app.js (fonte da verdade)  2) #dmChat[data-user-id]  3) último clique na lista
   function resolveUserId() {
     try {
       const n = window.Society && window.Society.getCurrentDmNick && window.Society.getCurrentDmNick();
       if (n) return n;
     } catch (e) {}
-
     const chat = $('dmChat');
-    if (chat) {
-      const id = extractIdFromTree(chat);
-      if (id) return id;
-    }
+    if (chat) { const id = extractIdFromTree(chat); if (id) return id; }
     return currentUserId || null;
   }
-
   function dumpDiagnostic() {
     console.group('[dm-extras] 🔍 DIAGNÓSTICO');
     console.log('Society.getCurrentDmNick():', window.Society?.getCurrentDmNick?.());
@@ -512,7 +492,6 @@
     console.groupEnd();
   }
 
-  // Retorna true se tratou o pedido (usado pelo menu ⋯)
   function openCurrentProfile() {
     const userId = resolveUserId();
     if (!userId) {
@@ -520,7 +499,6 @@
       dumpDiagnostic();
       return false;
     }
-
     const cached = cachedFor(userId);
     const dlg = $('dmProfileDialog');
     if (dlg && typeof dlg.showModal === 'function') {
@@ -529,13 +507,10 @@
       if (!dlg.open) dlg.showModal();
       setTimeout(() => { _openingProfile = false; }, 0);
     }
-
-    // Sempre pede perfil atualizado; a resposta chega via app.js → applyProfile
     requestProfile(userId);
     return true;
   }
 
-  // Quando a conversa muda: descarta o perfil antigo (sem apagar o nome que o app.js já pôs)
   function onThreadChanged(nick) {
     if (!nick) return;
     if (normNick(nick) !== normNick(_profileNick)) {
@@ -544,22 +519,17 @@
     }
     _currentNick = nick;
     setVerifiedBadge(false);
-
-    // O dm_history já traz o perfil; este é só um plano B se ele não chegar.
     setTimeout(() => {
       if (!_currentProfile && normNick(activeNick()) === normNick(nick)) requestProfile(nick);
     }, 1200);
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 0g. API PÚBLICA — definida já no carregamento do script
-  //     (o app.js pode chamar antes mesmo do DOM da DM existir)
+  // 0g. API PÚBLICA
   // ═══════════════════════════════════════════════════════════
   window.DmProfileBridge = {
-    // ⭐ usado pelo app.js (pview / dm_history)
     applyProfile: (profile, nick) => applyDmProfile(profile, nick),
     handleMessage: handleServerMessage,
-
     setCurrentUser(userId, userName) {
       currentUserId = userId || null;
       if (userName) currentUserName = userName;
@@ -579,7 +549,6 @@
     getCurrentProfile: () => _currentProfile,
     requestProfile,
   };
-
 
   // ═══════════════════════════════════════════════════════════
   // 1. EMOJI
@@ -654,13 +623,8 @@
       btn.classList.remove('is-on');
       if (focusBack) btn.focus();
     }
-    btn.addEventListener('click', (e) => {
-      e.preventDefault(); e.stopPropagation();
-      panel.hidden ? open() : close(true);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !panel.hidden) { e.preventDefault(); close(true); }
-    }, true);
+    btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); panel.hidden ? open() : close(true); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { e.preventDefault(); close(true); } }, true);
     document.addEventListener('pointerdown', (e) => {
       if (panel.hidden) return;
       if (panel.contains(e.target) || btn.contains(e.target)) return;
@@ -673,8 +637,7 @@
   // ═══════════════════════════════════════════════════════════
   const MAX_SIZE = 25 * 1024 * 1024;
   const ALLOWED = [
-    'image/', 'video/',
-    'application/pdf', 'text/plain',
+    'image/', 'video/', 'application/pdf', 'text/plain',
     'application/zip', 'application/x-zip-compressed',
   ];
 
@@ -689,9 +652,7 @@
 
     try {
       const cur = file.getAttribute('accept') || '';
-      if (!cur.includes('video/')) {
-        file.setAttribute('accept', 'image/*,video/*,.pdf,.txt,.zip');
-      }
+      if (!cur.includes('video/')) file.setAttribute('accept', 'image/*,video/*,.pdf,.txt,.zip');
     } catch (e) {}
 
     let fileRef = null, previewUrl = null;
@@ -735,9 +696,7 @@
         previewUrl = URL.createObjectURL(f);
         const img = el('img', { alt: '' }); img.src = previewUrl;
         thumb.appendChild(img);
-      } else {
-        thumb.textContent = iconOf(f);
-      }
+      } else thumb.textContent = iconOf(f);
       preview.hidden = false;
       try { window.dispatchEvent(new CustomEvent('dm:attach', { detail: { file: f } })); } catch (e) {}
     });
@@ -745,8 +704,7 @@
     rm.addEventListener('click', () => { reset(); input?.focus(); });
 
     async function upload(f) {
-      const fd = new FormData();
-      fd.append('file', f);
+      const fd = new FormData(); fd.append('file', f);
       const r = await fetch('/api/dm/upload', { method: 'POST', body: fd, credentials: 'same-origin' });
       if (!r.ok) {
         let msg = 'HTTP ' + r.status;
@@ -764,29 +722,25 @@
       send.dataset.dmUploading = '1';
       metaEl.textContent = 'Enviando anexo…';
       const snapshot = fileRef;
-      upload(snapshot)
-        .then((info) => {
-          const max = parseInt(input.getAttribute('maxlength'), 10) || 200;
-          const userText = (input.value || '').trim();
-          const marker = '\u200B[dm-attach:' + info.url + '|' + info.type + '|' + encodeURIComponent(info.name) + ']';
-          let combined;
-          if (!userText) {
-            combined = marker;
-          } else {
-            const available = Math.max(0, max - marker.length - 1);
-            combined = userText.slice(0, available) + ' ' + marker;
-          }
-          input.value = combined;
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          reset();
-          send.click();
-        })
-        .catch((err) => {
-          console.error('[dm-extras] upload falhou:', err);
-          metaEl.textContent = err.message || 'Falha ao enviar anexo';
-          metaEl.classList.add('is-error');
-        })
-        .finally(() => { send.dataset.dmUploading = ''; });
+      upload(snapshot).then((info) => {
+        const max = parseInt(input.getAttribute('maxlength'), 10) || 200;
+        const userText = (input.value || '').trim();
+        const marker = '\u200B[dm-attach:' + info.url + '|' + info.type + '|' + encodeURIComponent(info.name) + ']';
+        let combined;
+        if (!userText) combined = marker;
+        else {
+          const available = Math.max(0, max - marker.length - 1);
+          combined = userText.slice(0, available) + ' ' + marker;
+        }
+        input.value = combined;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        reset();
+        send.click();
+      }).catch((err) => {
+        console.error('[dm-extras] upload falhou:', err);
+        metaEl.textContent = err.message || 'Falha ao enviar anexo';
+        metaEl.classList.add('is-error');
+      }).finally(() => { send.dataset.dmUploading = ''; });
     }, true);
   }
 
@@ -798,18 +752,15 @@
   function enhanceBubble(bub) {
     if (!bub || bub.dataset.dmEnhanced === '1') return;
     bub.dataset.dmEnhanced = '1';
-
     const textEl = bub.querySelector('.bub-text');
     if (!textEl) return;
     const raw = textEl.textContent || '';
     const match = raw.match(ATTACH_RE);
     if (!match) return;
 
-    const url = match[1];
-    const type = match[2];
+    const url = match[1], type = match[2];
     let name = '';
     try { name = decodeURIComponent(match[3]); } catch (e) { name = match[3]; }
-
     const clean = raw.replace(ATTACH_RE, '').trim();
     textEl.textContent = clean;
 
@@ -818,45 +769,32 @@
 
     if (type.startsWith('image/')) {
       const img = document.createElement('img');
-      img.src = url;
-      img.alt = name || 'Imagem';
-      img.loading = 'lazy';
+      img.src = url; img.alt = name || 'Imagem'; img.loading = 'lazy';
       img.className = 'bub-attach-img';
       img.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
       wrap.appendChild(img);
     } else if (type.startsWith('video/')) {
       const video = document.createElement('video');
-      video.src = url;
-      video.controls = true;
-      video.preload = 'metadata';
+      video.src = url; video.controls = true; video.preload = 'metadata';
       video.className = 'bub-attach-video';
       wrap.appendChild(video);
     } else {
       const icon = type === 'application/pdf' ? '📄'
                  : type === 'text/plain' ? '📝'
-                 : type.includes('zip') ? '🗜️'
-                 : '📎';
+                 : type.includes('zip') ? '🗜️' : '📎';
       const a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.rel = 'noopener';
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
       a.className = 'bub-attach-file';
       const ic = document.createElement('span');
-      ic.className = 'bub-attach-file-icon';
-      ic.textContent = icon;
+      ic.className = 'bub-attach-file-icon'; ic.textContent = icon;
       const nm = document.createElement('span');
       nm.className = 'bub-attach-file-name';
       nm.textContent = name || url.split('/').pop();
-      a.append(ic, nm);
-      wrap.appendChild(a);
+      a.append(ic, nm); wrap.appendChild(a);
     }
 
-    if (clean) {
-      bub.insertBefore(wrap, textEl);
-    } else {
-      textEl.remove();
-      bub.appendChild(wrap);
-    }
+    if (clean) bub.insertBefore(wrap, textEl);
+    else { textEl.remove(); bub.appendChild(wrap); }
   }
 
   function scanAllBubbles(root) {
@@ -923,8 +861,7 @@
       else if (e.key === 'Tab') close(false);
     }
     function position() {
-      const r = btn.getBoundingClientRect();
-      const w = 180;
+      const r = btn.getBoundingClientRect(); const w = 180;
       menu.style.top = (r.bottom + 6) + 'px';
       menu.style.left = Math.min(window.innerWidth - w - 8, Math.max(8, r.right - w)) + 'px';
     }
@@ -948,11 +885,8 @@
     window.addEventListener('scroll', () => { if (menu && !menu.hidden) position(); }, true);
   }
 
-
   // ═══════════════════════════════════════════════════════════
-  // 4. VER PERFIL — ligações com o DOM (a lógica está na seção 0)
-  //    O perfil chega pelo app.js (pview / dm_history →
-  //    DmProfileBridge.applyProfile). Sem interceptar WebSocket.
+  // 4. VER PERFIL — ligações com o DOM
   // ═══════════════════════════════════════════════════════════
   function initProfileBridge() {
     const btn = $('dmViewProfile');
@@ -961,7 +895,6 @@
     btn.dataset.dmBridge = '1';
     console.log('[dm-extras] ✅ profile bridge bound');
 
-    // Fonte 1: clique na thread da lista (fallback; o app.js é a fonte principal)
     const list = $('dmListBody');
     if (list) {
       list.addEventListener('click', (e) => {
@@ -976,7 +909,6 @@
       }, true);
     }
 
-    // Fonte 2: nova conversa pelo diálogo do dm-extras
     window.addEventListener('dm:new-conversation', (e) => {
       const u = e.detail?.user;
       if (!u) return;
@@ -988,7 +920,6 @@
       }
     });
 
-    // Eventos custom (fallback para outros scripts)
     if (!window.__dmProfileEventsBound) {
       window.__dmProfileEventsBound = true;
       const handleProfileEvent = (ev) => {
@@ -997,25 +928,20 @@
         if (!profileData) return;
         applyDmProfile(profileData, d.nick || d.userId || d.username);
       };
-      ['dm:profile', 'dm:history', 'dm:open', 'profile:loaded']
-        .forEach((evt) => {
-          window.addEventListener(evt, handleProfileEvent);
-          document.addEventListener(evt, handleProfileEvent);
-        });
+      ['dm:profile', 'dm:history', 'dm:open', 'profile:loaded'].forEach((evt) => {
+        window.addEventListener(evt, handleProfileEvent);
+        document.addEventListener(evt, handleProfileEvent);
+      });
     }
 
-    // Intercepta o clique em "Ver perfil" (captura no #dmChat)
     const interceptor = $('dmChat') || document;
     interceptor.addEventListener('click', (e) => {
       const t = e.target;
       if (t !== btn && !btn.contains(t)) return;
-      e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault();
       openCurrentProfile();
     }, true);
 
-    // Se o dialog for aberto por outra via, preenche com o perfil guardado
     const dmDialog = $('dmProfileDialog');
     if (dmDialog) {
       const obsDialog = new MutationObserver(() => {
@@ -1028,10 +954,8 @@
       obsDialog.observe(dmDialog, { attributes: true, attributeFilter: ['open'] });
     }
 
-    // Se um perfil já chegou antes do DOM estar pronto, aplica agora
     if (_currentProfile && cachedFor(resolveUserId())) applyProfileToHeader(_currentProfile);
   }
-
 
   // ═══════════════════════════════════════════════════════════
   // 5. NOVA CONVERSA
@@ -1143,7 +1067,6 @@
     }
 
     btn.addEventListener('click', (e) => {
-      // Se o FriendsUI estiver montado, ele é dono deste botão — não intercepta.
       if (window.FriendsUI && typeof window.FriendsUI.mount === 'function') return;
       e.preventDefault(); e.stopImmediatePropagation();
       if (!dialog) build();
@@ -1179,7 +1102,6 @@
 
   boot();
 
-  // Debounce: o observer dispara a cada mudança de DOM (inclusive mensagens do chat).
   let bootQueued = false;
   const observer = new MutationObserver(() => {
     if (bootQueued) return;

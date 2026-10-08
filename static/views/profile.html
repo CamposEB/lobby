@@ -20,9 +20,18 @@
 }
 .profile-verified-badge svg { display: block; width: 100%; height: 100%; }
 .profile-verified-badge[hidden] { display: none !important; }
-.profile-verified-badge[data-role="dev"]   { color: #ff5f5f; filter: drop-shadow(0 0 7px rgba(255, 95, 95, .55)); }
-.profile-verified-badge[data-role="admin"] { color: #f2b84b; filter: drop-shadow(0 0 7px rgba(242, 184, 75, .55)); }
-.profile-verified-badge[data-role="mod"]   { color: #4c8dff; filter: drop-shadow(0 0 7px rgba(76, 141, 255, .55)); }
+
+/* Cores por TIPO de selo */
+.profile-verified-badge[data-badge="staff"]    { color: #f2b84b; filter: drop-shadow(0 0 7px rgba(242, 184, 75, .55)); }
+.profile-verified-badge[data-badge="vip"]      { color: #4c8dff; filter: drop-shadow(0 0 7px rgba(76, 141, 255, .55)); }
+.profile-verified-badge[data-badge="streamer"] { color: #ff0000; filter: drop-shadow(0 0 7px rgba(255, 0, 0, .55)); }
+
+/* Compat: data-role antigo */
+.profile-verified-badge[data-role="dev"],
+.profile-verified-badge[data-role="admin"],
+.profile-verified-badge[data-role="mod"] { color: #f2b84b; filter: drop-shadow(0 0 7px rgba(242, 184, 75, .55)); }
+.profile-verified-badge[data-role="vip"]      { color: #4c8dff; filter: drop-shadow(0 0 7px rgba(76, 141, 255, .55)); }
+.profile-verified-badge[data-role="streamer"] { color: #ff0000; filter: drop-shadow(0 0 7px rgba(255, 0, 0, .55)); }
 
 @keyframes profile-verified-pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -69,11 +78,7 @@
 
 <section class="profile-page" data-profile-mode="self" id="profileRoot">
 
-  <!-- ═══════════════════════════════════════════════════════════
-       HEADER DA PÁGINA
-       ═══════════════════════════════════════════════════════════ -->
   <header class="profile-page-heading">
-
     <div class="profile-page-heading-copy">
       <p class="profile-eyebrow" id="profileEyebrow">SOCIETY · PLAYER CARD</p>
       <h2 id="profilePageTitle">Meu perfil</h2>
@@ -83,8 +88,6 @@
     </div>
 
     <div class="profile-page-heading-actions">
-
-      <!-- Voltar (só aparece em modo "other") -->
       <button id="profileBack" class="profile-back-button" type="button"
               aria-label="Voltar" title="Voltar" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -95,14 +98,10 @@
         <span>Voltar</span>
       </button>
 
-      <!-- Editar (self) -->
       <button id="profileEditButton" class="profile-primary" type="button">Editar perfil</button>
 
-      <!-- Ações de terceiro (other) -->
       <div id="profileActions" class="profile-other-actions"
            role="group" aria-label="Ações do perfil" hidden>
-
-        <!-- ⭐ NOVO: botão de amizade -->
         <button id="profileFriendBtn" type="button"
                 class="profile-friend-btn"
                 aria-label="Adicionar amigo">
@@ -137,16 +136,10 @@
           <span>Denunciar</span>
         </button>
       </div>
-
     </div>
   </header>
 
-
-  <!-- ═══════════════════════════════════════════════════════════
-       CARD DO PERFIL
-       ═══════════════════════════════════════════════════════════ -->
   <article id="profileCard" class="profile-card">
-
     <div id="profileBanner" class="profile-banner" role="img" aria-label="Banner do perfil">
       <span id="profileBannerHint">SUA JORNADA, SEU ESTILO</span>
     </div>
@@ -159,11 +152,7 @@
           <h1 id="profileDisplayName">Jogador</h1>
 
           <span id="profileVerifiedBadge" class="profile-verified-badge"
-                role="img" aria-label="Conta verificada" title="Conta verificada" hidden>
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-              <path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>
-            </svg>
-          </span>
+                role="img" aria-label="Conta verificada" title="Conta verificada" hidden></span>
 
           <span id="profileStatus" class="profile-status"><i></i> Online</span>
         </div>
@@ -221,16 +210,10 @@
       </div>
       <div id="profileActivity" class="profile-activity"></div>
     </section>
-
   </article>
 
-
-  <!-- ═══════════════════════════════════════════════════════════
-       DIALOG DE EDIÇÃO
-       ═══════════════════════════════════════════════════════════ -->
   <dialog id="profileEditor" class="profile-dialog" aria-labelledby="profileEditorTitle">
     <form id="profileForm" method="dialog">
-
       <header class="profile-dialog-heading">
         <div>
           <p class="profile-eyebrow">PERSONALIZAÇÃO</p>
@@ -245,7 +228,6 @@
       </div>
 
       <div class="profile-form-grid">
-
         <label>Foto de perfil
           <input id="profileAvatarFile" type="file" accept="image/*">
           <small>Imagem até 8 MB. Será otimizada antes de salvar.</small>
@@ -340,13 +322,10 @@
             <option value="ocean">Oceano</option>
           </select>
         </label>
-
       </div>
 
-      <!-- ⭐ NOVO: visibilidade com 3 opções -->
       <fieldset class="profile-privacy-fieldset">
         <legend>Quem pode ver seu perfil</legend>
-
         <label>
           Visibilidade
           <select id="profileVisibilityInput" class="profile-visibility-select">
@@ -374,7 +353,6 @@
         <button id="profileCancelButton" class="profile-subtle-button" type="button">Cancelar</button>
         <button id="pSave" class="profile-primary" type="submit">Salvar alterações</button>
       </footer>
-
     </form>
   </dialog>
 

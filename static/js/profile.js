@@ -1,5 +1,5 @@
 /* Reusable profile presentation and editor interactions. */
-/* v14 — sistema de amigos + visibilidade public/friends/private + createProfileSummary() */
+/* v15 — sistema de selos: staff (dev/admin/mod), vip, streamer */
 (() => {
   const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
   const MAX_AVATAR_DATA_LENGTH = 120000;
@@ -48,7 +48,6 @@
     return String(value || "").toLocaleLowerCase("pt-BR").normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "").trim();
   }
-
   const MYTHIC_PLUS_KEYS = new Set(["mitico","honra mitica","gloria mitica","imortal"]);
   function isMythicPlusRank(rank) { return MYTHIC_PLUS_KEYS.has(normalizeRank(rank)); }
   function rankFromMythicStars(stars) {
@@ -167,53 +166,120 @@
     return ca === cb;
   }
 
-  const VERIFIED_ROLE_KEYS = new Set(["DEV","ADMIN","MOD","MODERADOR","MODERATOR"]);
-  const VERIFIED_BADGE_SVG =
-    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
-    '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
-    "</svg>";
+  // ─────────────────────────────────────────────────────────────
+  // SISTEMA DE SELOS (staff / vip / streamer)
+  // ─────────────────────────────────────────────────────────────
+  const BADGE_DEFS = {
+    staff: {
+      color: "#f2b84b",
+      label: { dev: "DEV verificado", admin: "Administrador verificado", mod: "Moderador verificado" },
+      defaultLabel: "Equipe verificada",
+      svg:
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M21.71 20.29l-6.88-6.88a6.5 6.5 0 0 0-7.9-7.9l3.19 3.19-2.83 2.83-3.19-3.19a6.5 6.5 0 0 0 7.9 7.9l6.88 6.88a1 1 0 0 0 1.41 0l1.42-1.42a1 1 0 0 0 0-1.41z"/>' +
+        '<circle cx="6.5" cy="17.5" r="1.5"/>' +
+        "</svg>",
+    },
+    vip: {
+      color: "#4c8dff",
+      label: { vip: "VIP verificado" },
+      defaultLabel: "Conta verificada",
+      svg:
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M12 1.5l2.85 2.28 3.57-.33 1.07 3.43 3.18 1.62-1.13 3.4 1.13 3.4-3.18 1.62-1.07 3.43-3.57-.33L12 22.5l-2.85-2.28-3.57.33-1.07-3.43-3.18-1.62 1.13-3.4-1.13-3.4 3.18-1.62 1.07-3.43 3.57.33L12 1.5zm-1.4 14.3l6.1-6.1-1.5-1.5-4.6 4.6-2.1-2.1-1.5 1.5 3.6 3.6z"/>' +
+        "</svg>",
+    },
+    streamer: {
+      color: "#ff0000",
+      label: { streamer: "Streamer" },
+      defaultLabel: "Streamer",
+      svg:
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5.8 31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/>' +
+        "</svg>",
+    },
+  };
 
-  function hasVerifiedRole(data) {
-    if (!data) return false;
-    if (typeof data.verified === "boolean" && data.verified) return true;
-    const rawRole = String(data.role || "").toLocaleLowerCase("pt-BR").trim();
-    if (rawRole === "dev" || rawRole === "admin" || rawRole === "mod") return true;
+  const ROLE_TO_BADGE = {
+    dev: "staff",
+    admin: "staff",
+    mod: "staff",
+    vip: "vip",
+    streamer: "streamer",
+  };
+
+  function roleFromProfile(data) {
+    if (!data) return "";
+    const raw = String(data.role || "").toLocaleLowerCase("pt-BR").trim();
+    if (raw) return raw;
     const roles = Array.isArray(data.community_roles) ? data.community_roles : [];
-    return roles.some(r => VERIFIED_ROLE_KEYS.has(String(r || "").toLocaleUpperCase("pt-BR").trim()));
-  }
-  function verifiedRoleKey(data) {
-    const rawRole = String(data?.role || "").toLocaleLowerCase("pt-BR").trim();
-    if (rawRole === "dev" || rawRole === "admin" || rawRole === "mod") return rawRole;
-    const roles = Array.isArray(data?.community_roles) ? data.community_roles : [];
-    for (const role of roles) {
-      const key = String(role || "").toLocaleUpperCase("pt-BR").trim();
+    for (const r of roles) {
+      const key = String(r || "").toLocaleUpperCase("pt-BR").trim();
       if (key === "DEV") return "dev";
       if (key === "ADMIN") return "admin";
       if (key === "MOD" || key === "MODERADOR" || key === "MODERATOR") return "mod";
+      if (key === "VIP") return "vip";
+      if (key === "STREAMER") return "streamer";
+      if (key === "BETA") return "beta";
     }
-    return "user";
+    return "";
   }
-  function verifiedRoleLabel(roleKey) {
-    if (roleKey === "dev") return "DEV verificado";
-    if (roleKey === "admin") return "Administrador verificado";
-    if (roleKey === "mod") return "Moderador verificado";
-    return "Conta verificada";
+  function badgeKeyForRole(rawRole) {
+    const key = String(rawRole || "").toLocaleLowerCase("pt-BR").trim();
+    return ROLE_TO_BADGE[key] || null;
   }
+  function badgeDefForRole(rawRole) {
+    const k = badgeKeyForRole(rawRole);
+    return k ? BADGE_DEFS[k] : null;
+  }
+  function badgeColorForRole(rawRole) {
+    const def = badgeDefForRole(rawRole);
+    return def ? def.color : "#4c8dff";
+  }
+  function badgeLabelForRole(rawRole) {
+    const def = badgeDefForRole(rawRole);
+    if (!def) return "Conta verificada";
+    const key = String(rawRole || "").toLocaleLowerCase("pt-BR").trim();
+    return def.label[key] || def.defaultLabel;
+  }
+  function badgeSvgForRole(rawRole) {
+    const def = badgeDefForRole(rawRole);
+    return def ? def.svg : "";
+  }
+  function hasAnyBadge(data) {
+    return Boolean(badgeDefForRole(roleFromProfile(data)));
+  }
+
+  // compat: mantém nomes antigos
+  function hasVerifiedRole(data) { return hasAnyBadge(data); }
+  function verifiedRoleKey(data) { return roleFromProfile(data) || "user"; }
+  function verifiedRoleLabel(roleKey) { return badgeLabelForRole(roleKey); }
+
   function renderVerifiedBadge(data) {
     const badge = safe("profileVerifiedBadge");
     if (!badge) return;
-    const isVerified = hasVerifiedRole(data);
-    badge.hidden = !isVerified;
-    if (!isVerified) {
-      badge.removeAttribute("data-role"); badge.removeAttribute("title");
-      badge.setAttribute("aria-label", "Conta verificada");
+
+    const role = roleFromProfile(data);
+    const def = badgeDefForRole(role);
+
+    if (!def) {
+      badge.hidden = true;
+      badge.removeAttribute("data-badge");
+      badge.removeAttribute("data-role");
       return;
     }
-    const roleKey = verifiedRoleKey(data);
-    const label = verifiedRoleLabel(roleKey);
-    badge.dataset.role = roleKey;
+
+    badge.hidden = false;
+    badge.dataset.badge = ROLE_TO_BADGE[role] || "";
+    badge.dataset.role = role;
+    badge.innerHTML = def.svg;
+    badge.style.color = def.color;
+    badge.style.filter = `drop-shadow(0 0 6px ${def.color}88)`;
+
+    const label = badgeLabelForRole(role);
     badge.setAttribute("aria-label", label);
     badge.setAttribute("title", label);
+
     badge.style.animation = "none"; void badge.offsetWidth; badge.style.animation = "";
   }
 
@@ -229,9 +295,9 @@
       .profile-verified-badge-inline { display:inline-grid; place-items:center; width:18px; height:18px; flex:0 0 auto; color:#4c8dff; filter:drop-shadow(0 0 5px rgba(76,141,255,.55)); animation:profile-verified-pop 320ms cubic-bezier(.34,1.56,.64,1); pointer-events:auto; vertical-align:middle; }
       .profile-verified-badge-inline svg { display:block; width:100%; height:100%; }
       .profile-verified-badge-inline[hidden] { display:none !important; }
-      .profile-verified-badge-inline[data-role="dev"]   { color:#ff5f5f; filter:drop-shadow(0 0 6px rgba(255,95,95,.55)); }
-      .profile-verified-badge-inline[data-role="admin"] { color:#f2b84b; filter:drop-shadow(0 0 6px rgba(242,184,75,.55)); }
-      .profile-verified-badge-inline[data-role="mod"]   { color:#4c8dff; filter:drop-shadow(0 0 6px rgba(76,141,255,.55)); }
+      .profile-verified-badge-inline[data-badge="staff"]    { color:#f2b84b; filter:drop-shadow(0 0 6px rgba(242,184,75,.55)); }
+      .profile-verified-badge-inline[data-badge="vip"]      { color:#4c8dff; filter:drop-shadow(0 0 6px rgba(76,141,255,.55)); }
+      .profile-verified-badge-inline[data-badge="streamer"] { color:#ff0000; filter:drop-shadow(0 0 6px rgba(255,0,0,.55)); }
     `;
     document.head.appendChild(style);
     _inlineBadgeStylesInjected = true;
@@ -251,17 +317,25 @@
     }
     textSpan.textContent = name;
     nameEl.querySelectorAll(":scope > .profile-verified-badge-inline").forEach(b => b.remove());
-    const isVerified = hasVerifiedRole(data);
-    if (!isVerified) { nameEl.classList.remove("has-verified-badge-support"); return true; }
+
+    const role = roleFromProfile(data);
+    const def = badgeDefForRole(role);
+
+    if (!def) { nameEl.classList.remove("has-verified-badge-support"); return true; }
+
     const badge = document.createElement("span");
     badge.className = "profile-verified-badge-inline";
     badge.setAttribute("role", "img");
-    badge.innerHTML = VERIFIED_BADGE_SVG;
-    const roleKey = verifiedRoleKey(data);
-    const label = verifiedRoleLabel(roleKey);
-    badge.dataset.role = roleKey;
+    badge.innerHTML = def.svg;
+    badge.dataset.badge = ROLE_TO_BADGE[role] || "";
+    badge.dataset.role = role;
+    badge.style.color = def.color;
+    badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+
+    const label = badgeLabelForRole(role);
     badge.setAttribute("aria-label", label);
     badge.setAttribute("title", label);
+
     nameEl.classList.add("has-verified-badge-support");
     nameEl.append(badge);
     badge.style.animation = "none"; void badge.offsetWidth; badge.style.animation = "";
@@ -289,7 +363,7 @@
       const nameEl = safe("sidebarDisplayName");
       if (!nameEl) return;
       const hasBadge = nameEl.querySelector(":scope > .profile-verified-badge-inline");
-      const needsBadge = hasVerifiedRole(selfProfile);
+      const needsBadge = hasAnyBadge(selfProfile);
       if (needsBadge !== Boolean(hasBadge)) renderSidebarVerifiedBadge(selfProfile);
     });
     obs.observe(document.body, { childList: true, subtree: true });
@@ -479,7 +553,7 @@
     if (isOther) {
       const name = (data && (data.display_name || data.username)) || "Jogador";
       setText("profilePageTitle", "Perfil de " + name);
-      setText("profilePageSubtitle", "Conheça a jornada de " + name + " na comunidade Society.");
+      setText("profilePageSubtitle", "Conheça a jornada de " + name + " na Society.");
       setText("profileEyebrow", "PLAYER CARD");
     } else {
       setText("profilePageTitle", "Meu perfil");
@@ -490,12 +564,11 @@
   }
 
   // ─────────────────────────────────────────────────────────────
-  // ⭐ NOVO: STATUS DE AMIZADE
+  // STATUS DE AMIZADE
   // ─────────────────────────────────────────────────────────────
   function applyFriendshipStatus(data, options = {}) {
     const btn = safe("profileFriendBtn");
     if (!btn) return;
-
     const isOther = currentMode === "other";
     if (!isOther) { btn.hidden = true; return; }
     btn.hidden = false;
@@ -540,7 +613,6 @@
       btn.dataset.action = "friend_request";
       if (svg) svg.innerHTML = ICONS.add;
     }
-
     btn.dataset.nick = String(nick);
   }
 
@@ -550,14 +622,11 @@
     const action = btn.dataset.action;
     const nick = btn.dataset.nick;
     if (!action || !nick) return;
-
     if (action === "friend_remove") {
       if (!confirm("Remover @" + nick + " da sua lista de amigos?")) return;
     }
     const ok = context?.send?.({ t: action, nick });
-    if (!ok) {
-      context?.toast?.("A conexão caiu. Reconecte-se antes de continuar.");
-    }
+    if (!ok) context?.toast?.("A conexão caiu. Reconecte-se antes de continuar.");
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -569,7 +638,6 @@
     renderVerifiedBadge(data);
     setText("profileUsername", "@" + (data.username || username || "jogador"));
 
-    // Bio + aviso de perfil restrito
     if (data.details_hidden) {
       setText("profileBio",
         "🔒 Este perfil é " +
@@ -836,7 +904,6 @@
     setVal("profileFrameInput", profile.frame || "default");
     setVal("profileThemeInput", profile.theme || "classic");
 
-    // ⭐ NOVO: visibilidade
     const visibility = profile.visibility ||
       (profile.is_private ? "private" : "public");
     setVal("profileVisibilityInput", visibility);
@@ -907,7 +974,6 @@
     if (stars != null && (isMythicPlusRank(rank) || rank === "")) rank = rankFromMythicStars(stars);
     const payloadStars = isMythicPlusRank(rank) ? stars : null;
 
-    // ⭐ NOVO: envia visibility
     const visibility = safe("profileVisibilityInput")?.value || "public";
     const isPrivate = visibility === "private";
 
@@ -926,8 +992,8 @@
       theme: safe("profileThemeInput")?.value || "classic",
       avatar: draftAvatar,
       banner: draftBanner,
-      visibility,                    // ⭐ NOVO
-      is_private: isPrivate,         // mantém compat
+      visibility,
+      is_private: isPrivate,
       show_stats: Boolean(safe("profileShowStatsInput")?.checked),
       show_activity: Boolean(safe("profileShowActivityInput")?.checked),
     });
@@ -1008,25 +1074,14 @@
 
     const editBtn = safe("profileEditButton");
     if (editBtn) editBtn.addEventListener("click", openEditor);
-
     const settingsEdit = safe("settingsEditProfile");
-    if (settingsEdit) {
-      settingsEdit.addEventListener("click", () => {
-        context?.openProfile?.();
-        openEditor();
-      });
-    }
-
+    if (settingsEdit) settingsEdit.addEventListener("click", () => { context?.openProfile?.(); openEditor(); });
     const backBtn = safe("profileBack");
     if (backBtn) backBtn.addEventListener("click", handleBack);
-
     const msgBtn = safe("profileMessageBtn");
     if (msgBtn) msgBtn.addEventListener("click", handleMessage);
-
     const repBtn = safe("profileReportBtn");
     if (repBtn) repBtn.addEventListener("click", handleReport);
-
-    // ⭐ NOVO: botão de amigo
     const friendBtn = safe("profileFriendBtn");
     if (friendBtn) friendBtn.addEventListener("click", handleFriendClick);
 
@@ -1037,7 +1092,6 @@
 
     const form = safe("profileForm");
     if (form) form.addEventListener("submit", saveProfile);
-
     const nameInput = safe("profileDisplayNameInput");
     if (nameInput) nameInput.addEventListener("input", syncDraftPreviews);
 
@@ -1066,10 +1120,7 @@
           const msg = safe("profileFormMessage");
           if (msg) msg.textContent = "";
           syncDraftPreviews();
-        } catch (error) {
-          showImageError(error.message);
-          event.target.value = "";
-        }
+        } catch (error) { showImageError(error.message); event.target.value = ""; }
       });
     }
     const bannerFile = safe("profileBannerFile");
@@ -1080,10 +1131,7 @@
           const msg = safe("profileFormMessage");
           if (msg) msg.textContent = "";
           syncDraftPreviews();
-        } catch (error) {
-          showImageError(error.message);
-          event.target.value = "";
-        }
+        } catch (error) { showImageError(error.message); event.target.value = ""; }
       });
     }
     const removeAvatar = safe("profileRemoveAvatar");
@@ -1131,10 +1179,7 @@
   }
 
   // ─────────────────────────────────────────────────────────────
-  // ⭐ RESUMO DE PERFIL REUTILIZÁVEL (DM, LFG, cards em dialog)
-  // Mostra: avatar, nome, selo de verificado, @nick, título, bio,
-  // rank (com ícone e estrelas), função, herói (com ícone), ID, cargos
-  // e data de entrada — igual ao card do perfil.
+  // RESUMO DE PERFIL REUTILIZÁVEL (DM, LFG, dialogs)
   // ─────────────────────────────────────────────────────────────
   let _summaryStylesInjected = false;
   function ensureSummaryStyles() {
@@ -1166,9 +1211,14 @@
       .profile-summary-tag-copy b { font-size:.92rem; overflow-wrap:anywhere; }
       .profile-summary-roles { display:flex; flex-wrap:wrap; gap:6px; }
       .profile-summary-role { padding:2px 8px; border-radius:999px; font-size:.7rem; font-weight:700; letter-spacing:.04em; background:rgba(255,255,255,.07); }
-      .profile-summary-role[data-role="dev"]   { color:#ff5f5f; }
+      .profile-summary-role[data-role="dev"]   { color:#f2b84b; }
       .profile-summary-role[data-role="admin"] { color:#f2b84b; }
-      .profile-summary-role[data-role="mod"]   { color:#4c8dff; }
+      .profile-summary-role[data-role="mod"]   { color:#f2b84b; }
+      .profile-summary-role[data-role="moderador"] { color:#f2b84b; }
+      .profile-summary-role[data-role="vip"]      { color:#4c8dff; }
+      .profile-summary-role[data-role="streamer"] { color:#b46bff; }
+      .profile-summary-role[data-role="beta"]     { color:#9298a3; }
+      .profile-summary-role[data-role="membro"]   { color:#9298a3; }
       .profile-summary-joined { color:var(--muted, #9298a3); font-size:.78rem; }
     `;
     document.head.appendChild(style);
@@ -1212,23 +1262,28 @@
 
     const root = node("div", null, "profile-summary");
 
-    // Cabeçalho: avatar + nome + selo + @nick
     const head = node("div", null, "profile-summary-head");
     head.append(createAvatar({ ...d, display_name: displayName, username: nick }, "profile-summary-avatar"));
     const identity = node("div", null, "profile-summary-id");
     const nameRow = node("div", null, "profile-summary-name");
     nameRow.append(node("b", displayName));
-    if (hasVerifiedRole(d)) {
-      const roleKey = verifiedRoleKey(d);
-      const label = verifiedRoleLabel(roleKey);
+
+    const role = roleFromProfile(d);
+    const def = badgeDefForRole(role);
+    if (def) {
       const badge = node("span", null, "profile-verified-badge-inline");
       badge.setAttribute("role", "img");
-      badge.innerHTML = VERIFIED_BADGE_SVG;
-      badge.dataset.role = roleKey;
+      badge.innerHTML = def.svg;
+      badge.dataset.badge = ROLE_TO_BADGE[role] || "";
+      badge.dataset.role = role;
+      badge.style.color = def.color;
+      badge.style.filter = `drop-shadow(0 0 5px ${def.color}88)`;
+      const label = badgeLabelForRole(role);
       badge.setAttribute("aria-label", label);
       badge.setAttribute("title", label);
       nameRow.append(badge);
     }
+
     identity.append(nameRow, node("small", "@" + (nick || "jogador"), "profile-summary-nick"));
     if (!d.details_hidden && d.title) identity.append(node("span", d.title, "profile-summary-title"));
     const onlineFlag = typeof d.online === "boolean" ? d.online
@@ -1241,7 +1296,6 @@
     head.append(identity);
     root.append(head);
 
-    // Perfis restritos
     if (d.details_hidden) {
       root.append(node("p", "🔒 Este perfil é " +
         (d.visibility === "friends" ? "visível apenas para amigos." : "privado."), "profile-summary-note"));
@@ -1254,7 +1308,6 @@
 
     if (d.bio) root.append(node("p", d.bio, "profile-summary-bio"));
 
-    // Dados de jogo
     const tags = node("div", null, "profile-summary-tags");
     if (d.rank) {
       const stars = profileStars(d);
@@ -1267,13 +1320,12 @@
     if (tags.childElementCount) root.append(tags);
     else root.append(node("p", "Este jogador ainda não preencheu os dados de jogo.", "profile-summary-note"));
 
-    // Cargos da comunidade
     const roles = Array.isArray(d.community_roles) ? d.community_roles : [];
     if (roles.length) {
       const box = node("div", null, "profile-summary-roles");
-      roles.forEach(role => {
-        const chip = node("span", String(role), "profile-summary-role");
-        chip.dataset.role = String(role).toLocaleLowerCase("pt-BR");
+      roles.forEach(roleName => {
+        const chip = node("span", String(roleName), "profile-summary-role");
+        chip.dataset.role = String(roleName).toLocaleLowerCase("pt-BR");
         box.append(chip);
       });
       root.append(box);
@@ -1308,15 +1360,24 @@
   window.ProfileUI = {
     createAvatar, mount, renderProfile, setProfile, settingsSaved, showError,
     renderOtherProfile, returnToSelf, getMode, getCurrentUserId,
-    hasVerifiedRole, verifiedRoleKey, verifiedRoleLabel,
+
+    // selo / roles
+    roleFromProfile,
+    hasAnyBadge,
+    badgeKeyForRole, badgeColorForRole, badgeLabelForRole, badgeSvgForRole,
     renderVerifiedBadge, renderSidebarVerifiedBadge,
     renderSidebarUsername, looksLikeSameName,
-    // ⭐ NOVO
-    applyFriendshipStatus,
-    handleFriendClick,
+    // compat
+    hasVerifiedRole, verifiedRoleKey, verifiedRoleLabel,
+
+    // amigos
+    applyFriendshipStatus, handleFriendClick,
+
+    // rank/herói
     rankBasesFor, rankImageCandidatesFromBases, rankCandidatesForRank,
     heroImageUrl, RANK_OPTIONS,
-    // ⭐ NOVO: resumo reutilizável (DM / LFG / dialogs)
+
+    // resumo
     createProfileSummary, profileStars, formatJoined,
   };
 
