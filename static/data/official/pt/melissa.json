@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11440": {
+      "description": "\"Minha loja de costura é especializada em consertar e 'consertar' bonecas. Estou certa, Muddles?\"\n\n(Melissa causa 125% de dano a Minions, Criaturas e Unidades Invocadas.)"
+    },
+    "11410": {
+      "description": "\"Me assista deslizar para frente e aumentar a Velocidade de Ataque por 2,5 segundos— Ah, isso foi só chato…\"\n\n\"Muddles, vá por aquele caminho!\"\n\"Cuddles, venha aqui!\""
+    },
+    "11420": {
+      "description": "O plano é assim: Atire o Muddles para segurar os vilões, e então… Eu entro em cena!\n\"Eu perfuro os vilões, enquanto Giggles bate no Muddles para puni-los também! Hee, fantástico!\"\n\n(Muddles causa 175 (+50% de Ataque Físico Total) de Dano Físico no primeiro golpe e conecta inimigos próximos por até 6s. Inimigos conectados são reduzidos em 60% de velocidade, o que diminui ao longo de 1,5s, e podem quebrar a conexão se saírem do alcance. Muddles volta para Melissa mais cedo quando não há inimigos por perto e imediatamente se ela estiver muito longe. Quando Muddles está presente, você pode tocar no botão de Ataque a Minions para atacar diretamente Muddles, embora isso não possa acionar o dano de múltiplos golpes. Giggles só atinge Muddles quando Melissa tem um alvo para seu Ataque Básico.)"
+    },
+    "11430": {
+      "description": "\"Cuddles, me proteja! Por 4 segundos, não deixe que nenhum vilão se aproxime. A menos que eu diga o contrário!\"\n\n(Ao ser ativado, Melissa ganha um escudo de 300 (+200% de Ataque Físico Extra) e repele inimigos na área, causando 500 (+100% de Poder Mágico Total) de Dano Mágico. Inimigos que tentarem entrar no campo são repelidos, sofrendo 50 (+10% de Poder Mágico Total) de Dano Mágico e sendo reduzidos brevemente em velocidade. Habilidades de movimento são interrompidas, a menos que o alvo tenha Imunidade a Controle.\nO campo se moverá com Melissa uma vez, quando ela estiver prestes a sair do limite.)"
+    }
+  },
+  "counters": {
+    "assist": "Tanques que podem encadear controle, como Tigreal e Minotauro,\npermitindo que ela mantenha os inimigos conectados.",
+    "strong": "Lutadores como Sun e Zilong que não conseguem passar por sua Ultimate.",
+    "weak": "Magos de longo alcance, como Xavier e Nana."
+  },
+  "lore": {
+    "short": "Uma garota com agulhas amaldiçoadas que administra uma loja de costura e resolve problemas para clientes."
+  }
+}

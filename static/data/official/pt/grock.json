@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4440": {
+      "description": "Grock ganha um escudo equivalente a 14% e aumenta o poder do próximo Ataque Básico para causar 4 (+2% de Defesa Física Total)% do dano físico do alvo (limitado a 300 (+20*Nível do Herói) contra unidades não heroicas). Recarga: 18s - 12s (diminui com o nível). Este tempo de recarga é reduzido em 200% quando próximo a terrenos.\nAs habilidades de Grock não podem ser interrompidas, e ele ganha 30 (+6*Nível do Herói)% extra enquanto o escudo está ativo."
+    },
+    "4410": {
+      "description": "Grock ataca para frente com grande força, causando 240 (+100% de Ataque Físico Extra) de Dano Físico. Inimigos com obstáculos atrás deles são arremessados contra o obstáculo, lançados ao ar e sofrem 4 (+2% de Defesa Física Total)% de Dano Físico extra (limitado a 300 (+20*Nível do Herói) contra unidades não heroicas). Se não houver obstáculos atrás, os inimigos são apenas levemente arremessados para trás."
+    },
+    "4420": {
+      "description": "Após um breve atraso, Grock invoca uma parede de pedra na área alvo, causando 100 (+60% de Ataque Físico Extra) de Dano Físico e arremessando os inimigos em sua direção.\nUsar Novamente: Cancela a parede antecipadamente."
+    },
+    "4430": {
+      "description": "Grock avança para frente e ganha Imunidade a Controle, causando 100 (+50% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho. Ao atingir um terreno, ele para imediatamente e desencadeia uma explosão massiva que arremessa os inimigos próximos ao ar por 1s e causa 650 (+300% de Ataque Físico Total) de Dano Físico. Se esta habilidade não atingir um terreno, 50% do seu tempo de recarga é restituído."
+    }
+  },
+  "counters": {
+    "assist": "O Ultimate de Grock é um controle poderoso que cobre uma ampla área, então ele combina bem com Magos como Odette e Pharsa para maximizar seu dano em área.",
+    "strong": "Grock é eficaz contra heróis que não podem usar Blink para ultrapassar sua parede e escapar de seu controle, como Gord e Layla.",
+    "weak": "Grock é contrariado por heróis de dano mágico com Blink que podem kiteá-lo com relativa facilidade, como Kimmy e Harley."
+  },
+  "lore": {
+    "short": "Homem de pedra despertado do sono."
+  }
+}

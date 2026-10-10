@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11640": {
+      "description": "Depois de lançar duas habilidades diferentes, Julian aprimora sua terceira habilidade. Lançar a habilidade aprimorada faz com que todas as suas habilidades tenham um tempo de recarga de 9 a 6s (diminui com o seu nível).\nDepois de lançar qualquer habilidade, seus Ataques Básicos pelos próximos 2s causarão 100 (+100% de Ataque Físico Total) (+100% de Poder Mágico Total) de Dano Mágico e puxarão o alvo em sua direção (causa 85% de dano a Creeps). Lançar outra habilidade estende a duração.\nJulian ganha 15% de Dreno de Vida Híbrido extra por 5s cada vez que acerta um herói inimigo com suas habilidades (até 3 acúmulos)."
+    },
+    "11610": {
+      "description": "Julian arremessa uma foice voadora na direção alvo, causando 420 (+140% de Poder Mágico Total) de Dano Mágico aos inimigos ao longo do caminho e reduzindo sua velocidade em 30% por 1s.\nA foice desaparece ao acertar um inimigo que não seja um minion."
+    },
+    "11620": {
+      "description": "Julian invoca uma espada voadora e avança na direção alvo, causando 400 (+80% de Poder Mágico Total) de Dano Mágico aos inimigos ao longo do caminho."
+    },
+    "11630": {
+      "description": "Julian lança correntes no local alvo, causando 300 (+100% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos após um curto atraso e imobilizando-os por 1.2s."
+    }
+  },
+  "counters": {
+    "assist": "Julian funciona melhor com heróis de suporte poderosos que podem fortalecê-lo, como Angela e Diggie.",
+    "strong": "Julian é um herói que pode constantemente aumentar sua própria vantagem, então ele é forte contra heróis que são fracos no início do jogo, como Cecilion e Aldous.",
+    "weak": "Julian precisa acertar heróis inimigos com suas habilidades para revelar seu potencial, então ele é neutralizado por heróis com boa Mobilidade, como Joy e Harith."
+  },
+  "lore": {
+    "short": "Um assassino corvo da Igreja da Luz, um jovem que está em busca de seu lar…"
+  }
+}

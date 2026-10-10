@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11240": {
+      "description": "A Lanterna de Orvalho aumentará permanentemente os atributos de Floryn em uma pequena quantidade.\n\nApós sair de combate por 5s, Floryn pode compartilhar a Flor da Esperança com um herói aliado (tempo de recarga de 30s), o que concederá a eles um escudo de 100 (+70% de Poder Mágico Total) cada vez que forem curados por Floryn.\n\nFloryn nunca venderá a Lanterna."
+    },
+    "11225": {
+      "description": "Floryn lança uma Semente de Energia no inimigo alvo, causando 180 (+100% de Poder Mágico Total) de Dano Mágico. Frutas Curativas então surgem e ricocheteiam nos heróis aliados próximos, restaurando seu HP em 175 (+90% de Poder Mágico Total)."
+    },
+    "11215": {
+      "description": "Floryn lança uma bola de energia à frente que explode ao atingir um inimigo, causando 175 (+90% de Poder Mágico Total) de Dano Mágico aos inimigos próximos e atordoando-os por 0.5s (e revelando brevemente suas posições)."
+    },
+    "11235": {
+      "description": "Floryn ressoa com o poder do Orvalho, recuperando 250 (+100% de Poder Mágico Total) de HP para todos os heróis aliados 2 vez(es), não importa onde estejam. Este efeito também aumenta seus efeitos de Escudo e Regeneração de HP em 12% por 2s."
+    }
+  },
+  "counters": {
+    "assist": "Floryn funciona bem com lutadores tanque, como Terizla e Thamuz, porque é mais fácil mantê-los vivos com curas e eles podem afastar os inimigos dela.",
+    "strong": "Floryn é excelente em cura sustentada e neutraliza tanques com baixo dano, como Uranus e Lolita.",
+    "weak": "Floryn é neutralizada por assassinos de alta mobilidade e dano burst, como Karina e Saber."
+  },
+  "lore": {
+    "short": "Uma garota de bom coração que está determinada a espalhar a vegetação por todo o mundo."
+  }
+}

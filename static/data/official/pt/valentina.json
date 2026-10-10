@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11040": {
+      "description": "Valentina ganha 8-50 EXP extra (escala com o nível) cada vez que causa dano a um herói inimigo. Recarga: 2s.\nSe o nível do herói inimigo não for maior que o dela, 30% do dano causado é convertido em HP dela."
+    },
+    "11010": {
+      "description": "Valentina lança o Golpe das Sombras na direção alvo, causando 475 (+145% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e os desacelerando em 40% por 1s.\nOs heróis inimigos atingidos são marcados com um Símbolo das Sombras por 4s. Inimigos marcados atingidos pelo Golpe das Sombras novamente ficam aterrorizados por 1s (um alvo só pode ser aterrorizado uma vez a cada 4s)."
+    },
+    "11020": {
+      "description": "Valentina avança na direção alvo, disparando 3 Projéteis das Sombras contra inimigos próximos, que causam 90 (+30% de Poder Mágico Total) de Dano Mágico cada. Ela pode lançar essa habilidade novamente em até 6s (custa Mana).\n\nCada vez que um Projétil das Sombras acerta um inimigo, o tempo de recarga do Golpe das Sombras é reduzido em 1s."
+    },
+    "11030": {
+      "description": "Valentina desacelera o herói inimigo alvo em 70% por 0,5s e ganha a habilidade de lançar o Ultimate dele. Lançar o Ultimate do inimigo a transforma na forma do herói inimigo e herda o tipo de ataque básico dele por até 12s (suas habilidades regulares permanecem inalteradas, a menos que o Ultimate do inimigo tenha um efeito de metamorfose).\nO nível do Ultimate roubado é igual ao nível do Ultimate de Valentina, e seu tempo de recarga é 120% do alvo (mas não inferior a 10s).\nSe o alvo for um herói de dano físico, Valentina ganha (+100% de Poder Mágico Total) durante a duração. Isso não pode ser usado em uma Valentina inimiga."
+    }
+  },
+  "counters": {
+    "assist": "Heróis que podem buffar ou aplicar controle, como Carmilla e Atlas, para dar a ela mais oportunidades de causar dano.",
+    "strong": "Heróis que carecem de mobilidade ou burst, como Hanabi e Faramis, são suscetíveis às habilidades de baixo tempo de recarga de Valentina, que proporcionam controle suave e dano sustentado.",
+    "weak": "Heróis com habilidades de aproximação ou alto burst, como Hayabusa, Natalia e Hanzo."
+  },
+  "lore": {
+    "short": "Ex-chefe da Casa Paxley, que não mediria esforços para reviver seu amante."
+  }
+}

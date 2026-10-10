@@ -60,11 +60,37 @@
 
   function loadHero(slug, force) {
     if (!force && heroCache.has(slug)) return Promise.resolve(heroCache.get(slug));
+    // tradução: sempre revalida (no-cache) para não ficar presa a um 404 antigo no cache do navegador
+    var ptReq = fetch(BASE + 'pt/' + slug + '.json', { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
     return fetchJson(BASE + slug + '.json').then(function (d) {
-      heroCache.set(slug, d);
-      return d;
+      return ptReq.then(function (pt) {
+        d._pt = pt || null;          // tradução pt-BR opcional (gerada por traduzir_herois.py)
+        heroCache.set(slug, d);
+        return d;
+      });
     });
   }
+
+  // ─── tradução pt-BR (textos que vêm em inglês dos dados da Moonton) ───
+  var TAG_PT = {
+    'buff': 'Buff', 'debuff': 'Debuff', 'mobility': 'Mobilidade', 'aoe': 'Área', 'cc': 'Controle',
+    'control': 'Controle', 'damage': 'Dano', 'burst': 'Burst', 'heal': 'Cura', 'healing': 'Cura',
+    'shield': 'Escudo', 'dash': 'Investida', 'stun': 'Atordoamento', 'slow': 'Lentidão',
+    'silence': 'Silêncio', 'knockup': 'Arremesso', 'knock up': 'Arremesso', 'invisible': 'Invisibilidade',
+    'poke': 'Poke', 'sustain': 'Sustentação', 'push': 'Push', 'support': 'Suporte', 'blink': 'Teletransporte'
+  };
+  var TERM_PT = {
+    'chase': 'Perseguição', 'finisher': 'Finalizador', 'burst': 'Burst', 'poke': 'Poke', 'crowd control': 'Controle',
+    'initiator': 'Iniciador', 'regen': 'Regeneração', 'damage': 'Dano', 'push': 'Push', 'guard': 'Proteção',
+    'support': 'Suporte', 'charge': 'Investida', 'reap': 'Colheita', 'magic damage': 'Dano mágico',
+    'jungling': 'Selva', 'exp lane': 'EXP', 'gold lane': 'Ouro', 'mid lane': 'Meio', 'roaming': 'Roam',
+    'assassin': 'Assassino', 'fighter': 'Lutador', 'mage': 'Mago', 'marksman': 'Atirador', 'tank': 'Tanque'
+  };
+  function trTag(name) { var k = String(name || '').toLowerCase().trim(); return TAG_PT[k] || name; }
+  function trTerm(name) { var k = String(name || '').toLowerCase().trim(); return TERM_PT[k] || name; }
+  function ptOf(d) { return (d && d._pt) || {}; }
 
   function loadHeroByName(name) {
     if (!name) return Promise.reject(new Error('nome vazio'));
@@ -205,10 +231,10 @@
     info.appendChild(el('h2', hero.name || '?', 'hh-hero-name'));
 
     if (meta.roadsort && meta.roadsort.length) {
-      info.appendChild(el('p', meta.roadsort.join(' · '), 'hh-hero-lanes'));
+      info.appendChild(el('p', meta.roadsort.map(trTerm).join(' · '), 'hh-hero-lanes'));
     }
     if (meta.sort && meta.sort.length) {
-      info.appendChild(el('p', meta.sort.join(' · '), 'hh-hero-roles'));
+      info.appendChild(el('p', meta.sort.map(trTerm).join(' · '), 'hh-hero-roles'));
     }
 
     var statsRow = el('div', null, 'hh-hero-stats');
@@ -293,13 +319,15 @@
       if (s.cd != null)   mm.appendChild(el('span', 'CD ' + s.cd + 's', 'hh-tag'));
       if (s.cost != null) mm.appendChild(el('span', 'Custo ' + s.cost, 'hh-tag'));
       (s.tags || []).forEach(function (t) {
-        var tag = el('span', t.name, 'hh-tag hh-tag-color');
+        var tag = el('span', trTag(t.name), 'hh-tag hh-tag-color');
         if (t.rgb) tag.style.color = 'rgb(' + t.rgb + ')';
         mm.appendChild(tag);
       });
       if (mm.children.length) card.appendChild(mm);
 
-      if (s.description) card.appendChild(el('p', s.description, 'hh-skill-desc'));
+      var ptSk = ((ptOf(d).skills || {})[String(s.id)]) || {};
+      var descSk = ptSk.description || s.description;
+      if (descSk) card.appendChild(el('p', descSk, 'hh-skill-desc'));
 
       grid.appendChild(card);
     });
@@ -327,7 +355,8 @@
 
       var card = el('article', null, 'hh-counter hh-counter-' + kind);
       card.appendChild(el('h4', titulo, 'hh-counter-title'));
-      if (bloco.desc) card.appendChild(el('p', bloco.desc, 'hh-counter-desc'));
+      var descCt = ((ptOf(d).counters || {})[kind]) || bloco.desc;
+      if (descCt) card.appendChild(el('p', descCt, 'hh-counter-desc'));
 
       var col = el('div', null, 'hh-counter-heroes');
       bloco.heroes.forEach(function (h) {
@@ -375,7 +404,8 @@
     frame.appendChild(div);
 
     var body = el('div', null, 'ho-lore-body');
-    body.textContent = d.lore.long || d.lore.short || '';
+    var ptLore = ptOf(d).lore || {};
+    body.textContent = ptLore.long || ptLore.short || d.lore.long || d.lore.short || '';
     frame.appendChild(body);
 
     if (d.official_url) {
@@ -492,5 +522,7 @@
     img: img,
     cdnUrl: cdnUrl,
     slugify: slugify,
+    trTerm: trTerm,
+    trTag: trTag,
   };
 })();

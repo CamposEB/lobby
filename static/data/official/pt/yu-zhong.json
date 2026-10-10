@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "9550": {
+      "description": "Yu Zhong aplica Resíduo Sha aos heróis inimigos toda vez que os danifica.\n\nO Resíduo Sha explode ao atingir 5 acúmulos em um alvo. Então, ele começa a consumir 1 acúmulo a cada 0,4s para causar dano físico igual a 20 (+20% de Ataque Físico Extra) (+ 2,5% da Vida do alvo) ao alvo. Cada acúmulo consumido recupera 6% da Vida de Yu Zhong. Yu Zhong também ganha 30% de velocidade de movimento por 3s."
+    },
+    "9510": {
+      "description": "Yu Zhong infunde seu poder em sua capa e a transforma em uma arma, que começa a atacar os inimigos próximos após um curto atraso. A área interna da capa causa 220 (+100% de Ataque Físico Extra) de dano físico, enquanto a borda afiada causa 275% de dano e aplica 2 acúmulos de Resíduo Sha."
+    },
+    "9520": {
+      "description": "Yu Zhong libera a Alma do Dragão, causando 150 (+120% de Ataque Físico Extra) de dano físico a todos os inimigos à frente e os desacelerando em 60% por 1s.\n\nAo acertar um inimigo, o próximo ataque básico de Yu Zhong será aprimorado, causando 108 (+100% de Ataque Físico Total) de dano físico. Ao acertar vários inimigos, o ataque básico aprimorado aplicará vários acúmulos de Resíduo Sha e causará até 200% de dano."
+    },
+    "9530": {
+      "description": "Yu Zhong salta em direção à área designada com toda a sua força, causando 180 (+90% de Ataque Físico Extra) de dano físico. Ele pode dar mais um dash na direção do movimento.\nApós um curto atraso, os inimigos dentro da área de efeito serão arremessados para o ar por 0,6s e sofrerão 180 (+90% de Ataque Físico Extra) de dano físico adicional."
+    },
+    "9540": {
+      "description": "Após canalizar por 0,6s, Yu Zhong se transforma em sua Forma de Dragão Negro. Por até 7s, ele não pode usar outras habilidades, mas pode se mover livremente e empurrará os heróis inimigos em seu caminho para trás, causando 180 (+80% de Ataque Físico Total) de dano físico. Ele também ganha 1000 (+200% de Ataque Físico Extra) , torna-se imune a efeitos de controle e ignora obstáculos nessa forma.\nAo sair da Forma de Dragão Negro, Yu Zhong entra na Forma Dragonoid, ganhando alcance aumentado em todas as suas habilidades por 10s."
+    }
+  },
+  "counters": {
+    "assist": "Yu Zhong funciona bem com Magos que podem iniciar com controle, como Vexana e Xavier. Seus efeitos de controle permitem que Yu Zhong acerte suas habilidades com mais facilidade.",
+    "strong": "Yu Zhong é eficaz contra heróis Lutadores frágeis, como Aulus e Zilong, porque eles não conseguem desviar facilmente das habilidades de Yu Zhong e têm dificuldade contra ele no início do jogo.",
+    "weak": "Yu Zhong é neutralizado por heróis Atiradores ágeis, como Lesley e Karrie, pois é difícil para ele acertar suas habilidades, tornando-o um alvo vulnerável e fácil."
+  },
+  "lore": {
+    "short": "Yu Zhong, a reencarnação do Dragão Negro, pretende unificar as Terras Fluviais de Cadia através da conquista e iniciar uma era de prosperidade."
+  }
+}

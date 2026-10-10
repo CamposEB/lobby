@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7840": {
+      "description": "Khufra ativa a Maldição do Feitiço deixada por Esmeralda a cada 8s, melhorando seu próximo ataque básico. O ataque básico melhorado ganha alcance de ataque extra e causa 100 (+120% do Ataque Físico Total) (+ 6% do HP do alvo) de dano mágico. Ele também reduz a velocidade do alvo em 30% por 1,5s e recupera 8% do seu HP ao acertar.\n\nCada vez que Khufra aplica um efeito de controle a um herói inimigo com sua habilidade, o tempo de recarga da Maldição do Feitiço é reduzido em 4s."
+    },
+    "7810": {
+      "description": "Khufra puxa as bandagens em seus braços para se lançar na direção especificada, causando 50 (+ 7 (+1,5% de Ataque Físico Extra)% do seu HP) de dano físico a todos os inimigos no caminho. Ao se teletransportar para a distância máxima ou encontrar o primeiro herói inimigo, Khufra para imediatamente, causando 50 (+ 7 (+1,5% de Ataque Físico Extra)% do seu HP) de dano físico aos inimigos próximos e derrubando-os ao ar por até 1s."
+    },
+    "7820": {
+      "description": "Khufra usa bandagens para se envolver em uma Bola Saltitante, aumentando seu HP em 30%. Inimigos que tentam usar habilidades de mobilidade para se mover através de Khufra serão derrubados ao ar.\n\nCada vez que a Bola Saltitante atinge o chão, ela causa 50 (+ 3 (+2% de Ataque Físico Extra)% do seu HP) de dano mágico aos inimigos próximos e reduz sua velocidade em 80% por 0,2s."
+    },
+    "7830": {
+      "description": "Khufra empurra todos os alvos inimigos ao seu redor em direção à sua frente (esta habilidade só pode ser interrompida por Supressão), causando 300 (+100% do Ataque Físico Total) de dano físico e reduzindo sua velocidade por 1,25s. Se os inimigos forem derrubados contra paredes, sofrerão dano físico extra equivalente a 150% do dano desta habilidade e serão atordoados, em vez de reduzidos."
+    }
+  },
+  "counters": {
+    "assist": "Khufra funciona melhor com heróis que têm habilidades de controle fortes, o que facilita que sua primeira habilidade acerte, como Eudora e Pharsa.",
+    "strong": "A segunda habilidade de Khufra pode ser usada para interromper habilidades de movimento, tornando-o forte contra heróis que lutam com habilidades de movimento, como Joy e Lancelot.",
+    "weak": "Khufra é contrariado por heróis tanques resistentes, pois suas habilidades de controle não representam ameaça para esses heróis. Heróis como Fredrinn e Gloo são bons exemplos disso."
+  },
+  "lore": {
+    "short": "Antigo tirano selado."
+  }
+}

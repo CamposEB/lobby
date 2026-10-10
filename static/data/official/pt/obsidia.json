@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "13040": {
+      "description": "Obsidia ganha Energia Óssea sempre que causa dano. Ataques básicos concedem 1 de Energia contra unidades não heroicas e 2 contra unidades heroicas ou Torres. Habilidades concedem Energia igual a 3 vezes a quantidade concedida por ataques básicos contra o mesmo tipo de unidade. Nenhuma energia é ganha ao atingir criaturas.\nQuando a Energia Óssea atinge 30, ela forma um Fragmento Ósseo, até 25 fragmentos. Quando Obsidia usa ataques básicos, todos os Fragmentos Ósseos atingem o alvo, cada um causando (+6% de Ataque Físico Total) de Dano Físico e herdando 6% dos Efeitos de Ataque.\nMatar um herói inimigo diretamente concede 1 Fragmento(s) Ósseo(s).\nOs ataques básicos de Obsidia causam 70 (+70% de Ataque Físico Total) de Dano Físico, herdando 100% dos Efeitos de Ataque."
+    },
+    "13010": {
+      "description": "Obsidia lança uma Agulha Óssea Abissal, causando 325 (+80% de Ataque Físico Total) de Dano Físico aos inimigos atingidos e ativando o Retorno ao Osso no primeiro herói inimigo atingido."
+    },
+    "13020": {
+      "description": "Obsidia desce ao Abismo e entra na Forma Sombria, ganhando 500% de velocidade de movimento por 0,3s."
+    },
+    "13030": {
+      "description": "Obsidia atira Ossos da Ira na direção alvo, causando 125 (+60% de Ataque Físico Extra) de Dano Físico e atordoando brevemente o primeiro herói inimigo atingido antes de se puxar em direção ao alvo. Os Ossos da Ira prendem Obsidia ao inimigo, impedindo-a de se mover a mais de 4 unidades de distância. Enquanto estiver preso, o inimigo não poderá usar habilidades de mobilidade e seu movimento arrastará Obsidia junto. Obsidia também ganha 5 acúmulos temporários de Fragmentos Ósseos e um escudo igual a 200 (+ 25 por acúmulo de Fragmento Ósseo). Este efeito dura 3s.\n\nEnquanto estiver presa, Obsidia pode se mover através de obstáculos e usar ataques básicos enquanto se move. O Sombras Fantasma também é aprimorado: sua duração aumenta para 1s e seu tempo de recarga é reduzido para 33%."
+    }
+  },
+  "counters": {
+    "assist": "Obsidia geralmente atinge seu potencial de dano no meio ou final do jogo, então ela precisa de heróis de suporte que possam ajudá-la no início do jogo, como Angela e Estes.",
+    "strong": "A ultimate de Obsidia desativa habilidades de dash e blink, tornando-a excelente para contra-atacar heróis que dependem delas, como Hayabusa, Freya e Lancelot.",
+    "weak": "Obsidia tem dificuldades durante a fase inicial de lane, o que a torna vulnerável a outros atiradores com um início de jogo forte, como Bruno e Layla."
+  },
+  "lore": {
+    "short": "A antiga Soberana do Abismo, ressurgida das ruínas, agora busca matar o Deus das Trevas e caçar suas Criaturas da Decadência."
+  }
+}

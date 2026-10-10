@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12940": {
+      "description": "Coroa Fênix: Quando Zetian acerta heróis inimigos com Golpe da Fênix ou Descida da Fênix, ela ganha 1% de Vampiro Mágico por 5s (até 10 acúmulos).\n\nManto Celestial: O poder da Fênix protege Zetian periodicamente, empurrando para trás e atordoando qualquer herói inimigo que se aproxime dela, causando 90 (+10*Nível do Herói) (+50% de Poder Mágico Total) de dano mágico. Ela também ganha um escudo de 300 (+20*Nível do Herói) (+50% de Poder Mágico Total) por 3s. Tempo de recarga: 120s."
+    },
+    "12910": {
+      "description": "Zetian libera uma Onda da Fênix na direção alvo. Se acertar um inimigo, ela lança automaticamente outra onda (até 3 vezes). Zetian pode lançar outras habilidades durante esse tempo.\n\nAs ondas causam 150 (+50% de Poder Mágico Total), 150 (+50% de Poder Mágico Total) e 360 (+120% de Poder Mágico Total) de dano mágico, respectivamente. A 3ª onda tem uma área maior e puxa os inimigos em direção à direção do lançamento (não é considerado um efeito de controle).\n\nA proporção de Vampiro Mágico contra minions é de apenas 65%."
+    },
+    "12920": {
+      "description": "Zetian invoca um Espírito da Fênix no local alvo, causando 150 (+45% de Poder Mágico Total) de dano mágico e aplicando um breve efeito de desaceleração de 50% aos inimigos na área. O Espírito da Fênix paira no local por 3s, causando 20 (+10% de Poder Mágico Total) de dano mágico a cada 0,5s e reduzindo a Vida dos inimigos em 10%, ao mesmo tempo que revela a área ao seu redor.\nEnquanto o Espírito da Fênix estiver ativo, Zetian pode usar essa habilidade novamente para ordenar que ele avance em direção a um local designado, causando 150 (+45% de Poder Mágico Total) de dano mágico e aplicando um breve efeito de desaceleração de 50% ao chegar."
+    },
+    "12930": {
+      "description": "Zetian invoca seu mandato divino e os corações de seu povo, concedendo a todos os heróis aliados 40% de velocidade de movimento que diminui gradualmente ao longo de 3s, ao mesmo tempo que traz retribuição divina sobre todos os heróis inimigos, causando 400 (+100% de Poder Mágico Total) de dano mágico e os atordoando por 0,8s. Zetian ganha visão de todos os heróis inimigos durante esse tempo.\nZetian pode lançar outras habilidades enquanto canaliza essa habilidade."
+    }
+  },
+  "counters": {
+    "assist": "Embora Zetian já tenha uma boa capacidade de sobrevivência, quando combinada com suportes que podem proteger aliados, como Floryn e Rafaela, os Lutadores com alcance limitado terão ainda mais dificuldade para se aproximar de Zetian. E com a cura desses suportes, Zetian pode vencer qualquer batalha de atrito à distância.",
+    "strong": "O Passivo de Zetian é eficaz contra heróis corpo a corpo com habilidades limitadas de aproximação, como Balmond e Zilong, permitindo que ela continue a atacar o inimigo de uma distância segura.",
+    "weak": "O Ultimate de Zetian pode atingir qualquer lugar do mapa, mas ter um Ultimate tão poderoso significa que um herói como Valentina também pode usá-lo contra a equipe de Zetian."
+  },
+  "lore": {
+    "short": "Reconhecida pelos Céus e amada por seu povo, a Imperatriz Celestial das Terras Fluviais de Cadia ascende para trazer paz ao reino mortal."
+  }
+}

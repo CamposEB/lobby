@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1840": {
+      "description": "Layla causa mais dano a alvos que estão mais distantes dela (começando em 100% e aumentando para 115% a 6 unidades de distância). Isso não se aplica a Torres."
+    },
+    "1810": {
+      "description": "Layla dispara uma Bomba Maléfica na direção do alvo, causando 200 (+80% de Ataque Físico Total) de Dano Físico ao primeiro inimigo atingido (pode ser crítico).\n\nAo atingir um inimigo, os Ataques Básicos e o Projétil do Vazio de Layla ganham alcance extra por 3s, e ela ganha 60% de Velocidade de Movimento extra que diminui ao longo de 1,2s. A duração do aumento de Velocidade de Movimento é dobrada se um herói inimigo for atingido."
+    },
+    "1820": {
+      "description": "Layla dispara uma esfera de Energia Maléfica no alvo, causando 170 (+65% de Ataque Físico Total) de Dano Físico ao alvo e a inimigos próximos e aplicando uma Marca Mágica no alvo por 3s.\nQuando Layla acerta um inimigo com uma Marca Mágica, ela causa 100 (+35% de Ataque Físico Total) de Dano Físico ao alvo e a inimigos próximos, atordoando-os por 0,25s."
+    },
+    "1830": {
+      "description": "Passiva: O alcance do Projétil do Vazio e dos Ataques Básicos é aumentado em 0,6 unidades. O alcance de visão de Layla aumenta ligeiramente cada vez que esta habilidade é aprimorada.\nAtiva: Layla dispara uma explosão de Energia Maléfica na direção do alvo, causando 500 (+150% de Ataque Físico Total) de Dano Físico aos inimigos em uma linha."
+    }
+  },
+  "counters": {
+    "assist": "Layla funciona melhor com tanques que podem proteger heróis da linha de trás, como Minsitthar e Belerick, pois sua proteção dá a Layla mais oportunidades de causar dano.",
+    "strong": "O alcance de ataque relativamente maior de Layla permite que ela neutralize tanques lentos como Tigreal e Belerick.",
+    "weak": "Layla é neutralizada por assassinos com alto dano de burst, como Karina e Ling, pois eles podem surpreender Layla e derrotá-la facilmente."
+  },
+  "lore": {
+    "short": "A espinha dorsal dos Eruditio Rangers, também conhecida como a Estrela Brilhante."
+  }
+}

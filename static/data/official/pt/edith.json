@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11140": {
+      "description": "Após cada habilidade lançada, Edith e Phylax ficam sobrecarregados por 3s, período durante o qual todos os ataques básicos desencadeiam uma corrente de raios, causando (+20% de Ataque Físico Total) (+ 3 (+0.2*Nível do Herói)% da vida do alvo) de dano mágico extra a até 4 inimigos.\nO dano da corrente de raios contra tropas é aumentado para 150%."
+    },
+    "11110": {
+      "description": "Após um atraso de 0.75s, Edith controla Phylax para lançar um golpe devastador em uma direção designada, causando 225 (+10% da Vida Máxima) de dano físico aos inimigos atingidos (causa 120% de dano às tropas) e os arremessando para o ar por 0.8s.\nEsta habilidade só pode ser interrompida por Supressão."
+    },
+    "11120": {
+      "description": "Edith controla Phylax para investir na direção do alvo, causando 90 (+3% da Vida Máxima) de dano físico aos inimigos ao longo do caminho.\n\nSe Phylax atingir um herói inimigo durante a investida, ele parará imediatamente e o jogará sobre o ombro, causando 108 (+5% da Vida Máxima) de dano físico."
+    },
+    "11130": {
+      "description": "Passiva: Quando está dentro de Phylax, Edith acumula Ira ao causar dano com habilidades aos inimigos e ao receber dano (calculado antes da redução de dano).\nAtiva: Edith se ejeta para frente de Phylax, empurrando os inimigos próximos para trás e ganhando voo por até 8s (ganhando 30 de Velocidade de Movimento). Durante esse tempo, ela ganha novas habilidades e pode realizar ataques básicos à distância, cada um causando 35 (+75% de Ataque Físico Total) (+25% de Poder Mágico Total) de dano mágico. Ela também ganha 350 (+5% da Vida Máxima) - 350 (+20% da Vida Máxima) de escudo extra, 50% - 150% de velocidade de ataque extra e 5% - 20% de roubo de vida híbrido com base na Ira acumulada, e converte cada ponto de Ataque Extra e Poder Extra em 3.5."
+    }
+  },
+  "counters": {
+    "assist": "Edith funciona melhor com heróis como Minotaur e Atlas, que podem aplicar controle de grupo de forma mais confiável em um alvo primeiro, permitindo que ela siga com o seu próprio controle.",
+    "strong": "Edith é forte contra heróis que não são muito ágeis e são mais frágeis, como Zilong e Aulus, porque suas habilidades causam dano burst suficiente para eliminá-los após conectar sua segunda habilidade.",
+    "weak": "Edith é neutralizada por atiradores que podem anular o controle de grupo, como Hanabi e Wanwan, pois ela terá dificuldade em mantê-los imobilizados."
+  },
+  "lore": {
+    "short": "Guardiã abandonada com memórias seladas."
+  }
+}

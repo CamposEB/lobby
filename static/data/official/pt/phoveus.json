@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10640": {
+      "description": "O próximo Ataque Básico de Phoveus é uma carga contra o inimigo, derrubando-o para trás, causando dano mágico extra equivalente a 4% - 6% do HP do inimigo (escala com o nível) e ganhando um escudo de 8% - 12% de . Recarga: 26s-14s (baseado no nível de Perseguição Infernal).\n\nOlhar de Astaros: Sempre que um herói inimigo usa um teleporte, um dash ou é deslocado dentro de 8 unidades, o tempo de recarga de Força Demoníaca é reduzido em 20% e o de outras habilidades em 0,5s."
+    },
+    "10610": {
+      "description": "Phoveus bate seu monólito no chão, causando 200 (+120% de Ataque Físico Total) de Dano Físico aos inimigos na área e reduzindo sua velocidade em 70% por 0,5s. Se essa habilidade acertar um inimigo, o próximo Impacto Demoníaco de Phoveus deixará para trás um Olho de Astaros.\n\nOlho de Astaros: Implode após um curto atraso, causando 100 (+60% de Ataque Físico Total) de Dano Mágico aos inimigos."
+    },
+    "10620": {
+      "description": "Phoveus abaixa seu monólito e libera seu poder demoníaco na direção alvo, arremessando os inimigos para o ar, arrastando-os consigo e causando 250 (+100% de Ataque Físico Extra) de Dano Mágico."
+    },
+    "10630": {
+      "description": "Passiva: Força Demoníaca, Olho de Astaros e Onda Sombria aplicam a Marca do Pecador aos heróis inimigos atingidos.\n\nAtiva: Phoveus salta para o ar e esmaga com seu monólito o herói inimigo marcado com a Marca do Pecador, causando 250 (+100% de Ataque Físico Total) (+ 5% do HP do alvo) de Dano Físico aos inimigos na área e recuperando 50 (+ 6% do seu ).\n\nPerseguição Infernal só pode ser usada quando há inimigos com a Marca do Pecador por perto. O HP recuperado é reduzido em 80% quando múltiplos inimigos são atingidos."
+    }
+  },
+  "counters": {
+    "assist": "Tanks com boa iniciação, como Gatotkaca, Minotauro e Tigreal, podem criar oportunidades para Phoveus maximizar seu dano enquanto eles absorvem parte do dano recebido.",
+    "strong": "Inimigos com múltiplas habilidades de mobilidade podem reduzir significativamente os tempos de recarga de Phoveus, permitindo que ele use seus Ataques Básicos aprimorados e habilidades com mais frequência ao enfrentar heróis como Wanwan, Arlott e Chou.",
+    "weak": "Phoveus terá dificuldades contra heróis à distância com forte controle, como Aurora, Valir e Vexana."
+  },
+  "lore": {
+    "short": "Um ex-soldado da fronteira do Império que assumiu as correntes do pecado para defender seu povo."
+  }
+}

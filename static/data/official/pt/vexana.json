@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3840": {
+      "description": "Vexana e sua Guarda Eterna infligem Toque do Abismo aos inimigos atingidos. A marca dura 5s e faz com que o inimigo afetado exploda ao morrer, causando 108-500 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos próximos (o dano base escala com o nível)."
+    },
+    "3810": {
+      "description": "Vexana libera um Agarrão Mortal na direção alvo, causando 200 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho. Ele para ao atingir um herói inimigo, aterrorizando-o e arremessando-o para trás. Após um curto atraso, ele explode, causando 200 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos próximos e aterrorizando-os por 1s."
+    },
+    "3820": {
+      "description": "Vexana marca a área alvo com o poder dos mortos-vivos, atacando-a após um atraso de 0,8s e causando 580 (+165% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos."
+    },
+    "3830": {
+      "description": "Vexana invoca uma Guarda Eterna no local alvo, causando 480 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e arremessando-os para o ar por 0,8s. A Guarda Eterna então se junta a Vexana na batalha por 15s. Seus ataques causam 200 (+40% de Poder Mágico Total) (+ 5% do HP do alvo) de Dano Mágico e Dano de Área em uma grande área."
+    }
+  },
+  "counters": {
+    "assist": "Heróis com controle poderoso, como Atlas, ou alto dano, como Beatrix, para eliminar inimigos rapidamente.",
+    "strong": "Heróis DPS de retaguarda, como Layla, Irithel e Xavier.",
+    "weak": "Assassinos móveis, como Saber, Aamon e Karina."
+  },
+  "lore": {
+    "short": "A jovem duquesa que guarda Necrokeep."
+  }
+}

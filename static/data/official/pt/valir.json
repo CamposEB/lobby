@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5740": {
+      "description": "As habilidades de Valir aplicam um acúmulo de Ablaze aos inimigos atingidos, causando a eles Dano Mágico igual a 1 (+0,2% do Poder Mágico Total)% de seu HP por segundo durante 3s.\n\nAo atingir 3 acúmulos, o fogo detona, causando Dano Mágico igual a 5 (+1% do Poder Mágico Total)% do HP do alvo e atordoando-o por 1s.\nUm alvo só pode ser atordoado pelas habilidades de Valir uma vez a cada 7s."
+    },
+    "5710": {
+      "description": "Valir lança uma bola de fogo que explode ao atingir o primeiro alvo, causando 235 (+80% de Poder Mágico Total) de Dano Mágico e desacelerando-o em 30% por 1s. A chama no chão explode após 1s, causando 118 (+40% de Poder Mágico Total) de Dano Mágico.\n\nValir recarrega 1 bola de fogo a cada 9s (até 2 cargas). Acertar um herói inimigo ou um creep lendário com essa habilidade restaura imediatamente 1 carga, enquanto acertar um minion restaura 4s do tempo de recarga.\n\nChama da Vingança: Aumenta o alcance de lançamento da Bola de Fogo Explosiva em 30%."
+    },
+    "5720": {
+      "description": "Valir libera um torrente de chamas na direção alvo, causando 200 (+60% de Poder Mágico Total) de Dano Mágico e arremessando-os para o final de seu trajeto.\n\nChama da Vingança: O torrente forma uma parede de fogo no final de seu trajeto, que dura 4s e causa 100 (+30% de Poder Mágico Total) de Dano Mágico aos inimigos próximos a cada 1s.\n\nInimigos atingidos pelo torrente ou pela parede de fogo são desacelerados em 25% por 1s."
+    },
+    "5730": {
+      "description": "Valir remove todos os debuffs de si mesmo e ganha 40% de velocidade de movimento, que diminui ao longo de 3s. Enquanto isso, ele invoca 4 Chamas da Vingança que melhoram a Bola de Fogo Explosiva e o Torrente Ardente por 9s."
+    }
+  },
+  "counters": {
+    "assist": "Unir-se a lutadores com forte iniciação, como Khaleed e Yu Zhong, pode melhorar simultaneamente o potencial de combate de toda a equipe.",
+    "strong": "Valir se destaca tanto em dano sustentado quanto em controle de grupo. Ele é eficaz contra heróis com pouca mobilidade, como Balmond e Fredrinn.",
+    "weak": "Valir é contrariado por assassinos ágeis, como Lancelot e Fanny, porque eles podem facilmente evitar sua primeira habilidade."
+  },
+  "lore": {
+    "short": "Herdeiro de Fire Throat, mago de fogo."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "2740": {
+      "description": "Inimigos atingidos por Sun ou por seus Doppelgangers terão sua  reduzida em 5% (acúmula até 6 vezes). Sun recupera HP igual a 75 mais 15% do Ataque Físico do Doppelganger cada vez que um Doppelganger causa dano.\nOs ataques básicos de Sun ou de seus Doppelgangers causam 65 de dano extra a criaturas."
+    },
+    "2710": {
+      "description": "Sun arremessa seu Cajado Dourado na direção do alvo, causando 280 (+40% de Ataque Físico Total) de dano físico aos inimigos em seu caminho. Ao atingir um herói inimigo ou criatura ou ao atingir o alcance máximo, o Cajado Dourado se transforma em um Doppelganger que persegue os inimigos. O Doppelganger herda os atributos de Sun, causa 60% de dano e recebe 150% de dano por 5s.\n\nEsta habilidade compartilha seu nível e tempo de recarga com Troca Rápida."
+    },
+    "2750": {
+      "description": "Sun arremessa seu Cajado Dourado na direção do alvo, causando 280 (+40% de Ataque Físico Total) de dano físico aos inimigos em seu caminho.\n\nEle invoca um Doppelganger em sua localização que herda seus atributos, causa 60% de dano e recebe 150% de dano por 5s.\nSun se transforma no Cajado Dourado e fica oculto, reaparecendo em seu alcance máximo."
+    },
+    "2720": {
+      "description": "Sun ordena que seus Doppelgangers ataquem o inimigo alvo junto com ele, causando 270 (+40% de Ataque Físico Total) de dano físico e reduzindo a velocidade do alvo e dos inimigos atrás dele em 25% (pode ser acumulado) por 1.5s. Isso conta como dano de ataque básico e pode ativar efeitos de ataque, mas não pode causar dano crítico."
+    },
+    "2730": {
+      "description": "Sun invoca um Doppelganger que herda seus atributos, causa 80% de dano e recebe 120% de dano por 8s."
+    }
+  },
+  "counters": {
+    "assist": "Combine Sun com tanques que tenham habilidades fortes de controle, como Belerick ou Tigreal, para criar oportunidades para que Sun cause dano.",
+    "strong": "Sun pode causar grande dano sustentado e tem capacidades de quebrar armaduras, tornando-o um bom contra-ataque a tanques com baixo dano, como Franco e Gatotkaca.",
+    "weak": "No entanto, heróis lutadores com roubo de vida podem contra-atacar Sun. Por exemplo, heróis como Ruby podem roubar muito HP ao atingir Sun e seus Doppelgangers."
+  },
+  "lore": {
+    "short": "O imortal Rei Macaco, resoluto e inabalável como a montanha que o gerou."
+  }
+}

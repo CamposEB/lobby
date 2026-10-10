@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10740": {
+      "description": "Natan ganha uma carga de Enredamento cada vez que ele ou seu Clone Reverso acerta um inimigo com uma habilidade (até 6 cargas). Cada carga dura 2.5s e concede 7.5% de Velocidade de Ataque e 5% de Velocidade de Movimento.\nOs projéteis do Ataque Básico de Natan retornam a ele após atingir o alcance máximo, causando um dano mágico extra de 30 (+50% de Ataque Físico Total) (+60% de Poder Mágico Total) aos inimigos no caminho (herdando uma parte dos Efeitos de Ataque). Acertar um inimigo renova a duração do Enredamento."
+    },
+    "10710": {
+      "description": "Natan atira uma massa densa de energia na direção alvo, causando 225 (+100% de Ataque Físico Total) (+120% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho."
+    },
+    "10720": {
+      "description": "Natan lança um Atraente Gravitacional na direção alvo, causando 150 (+50% de Ataque Físico Total) (+60% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho e os empurrando para trás.\nO Atraente detona ao atingir o alcance máximo, causando 30 (+10% de Ataque Físico Total) (+12% de Poder Mágico Total) de Dano Mágico aos inimigos próximos e os empurrando para trás."
+    },
+    "10730": {
+      "description": "Natan invoca um Clone Reverso que dura 10s a 6 unidades de distância. O Clone Reverso copia seus movimentos e ataques em sentido inverso e herda 35% do seu Dano de Ataque Básico e de habilidades.\nUsar Novamente: Natan troca de lugar com o Clone Reverso.\n\nCada uso reduz o tempo de recarga restante das outras habilidades em 50%. O Clone Reverso desaparecerá se Natan estiver muito longe."
+    }
+  },
+  "counters": {
+    "assist": "A Ultimate de Natan permite que ele se teletransporte por uma grande distância, então ele funciona melhor com heróis iniciadores como Johnson e Alpha, porque ele pode mergulhar com eles e causar muito dano.",
+    "strong": "Natan é forte contra Tanques com baixa mobilidade, como Tigreal e Gatotkaca, porque ele pode facilmente evitar suas habilidades de controle com sua Ultimate e acertar mais golpes com seus Ataques Básicos em alvos mais lentos.",
+    "weak": "Natan é neutralizado por heróis com controle direcionado e alto burst, como Saber e Eudora, que podem imobilizá-lo e finalizá-lo."
+  },
+  "lore": {
+    "short": "O salvador que viaja pelo tempo e pelo espaço."
+  }
+}

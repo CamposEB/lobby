@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8640": {
+      "description": "Lylia ganha poder da Escuridão, aumentando sua Velocidade de Movimento em 15%. Cada melhoria na Escuridão aumenta ainda mais esse bônus em 5%.\nA Escuridão ganha uma melhoria a cada vez que devora Energia das Sombras, até 5 vezes. Níveis mais altos aumentam o dano de detonação da Energia das Sombras."
+    },
+    "8610": {
+      "description": "Lylia envia Gloom com uma onda de choque, causando 250 (+100% do Poder Mágico Total) de Dano Mágico aos inimigos em uma linha e reduzindo sua velocidade em 30% por 1,5s.\nSe Gloom tocar na Energia das Sombras, ele a devorará e a detonará."
+    },
+    "8620": {
+      "description": "Lylia condensa a Energia das Sombras na área alvo, causando 90 (+50% do Poder Mágico Total) de Dano Mágico aos inimigos atingidos e os reduzindo brevemente a velocidade em 80%.\nA Energia das Sombras detona quando é devorada por Gloom, causando 220 (+115% do Poder Mágico Total) de Dano Mágico aos inimigos próximos. Cada melhoria de Gloom aumenta o dano de detonação em 20% (até 80%).\nGloom restaura 20% do tempo de recarga da Energia das Sombras ao acertar um herói inimigo.\nLylia começa com a habilidade Energia das Sombras, armazenando uma carga a cada 6s."
+    },
+    "8630": {
+      "description": "Lylia retorna ao local dos Sapatos Negros 4s atrás, restaurando seu HP e Mana ao estado anterior e recuperando mais 10%.\nEla também ganha 20% de Velocidade de Movimento por 2s."
+    }
+  },
+  "counters": {
+    "assist": "Lylia se destaca em batalhas prolongadas e funciona bem com heróis que possuem controle forte, como Franco e Minotaur.",
+    "strong": "Lylia é eficaz contra heróis Tanque sem habilidades de Blink, como Carmilla e Hylos, que não podem escapar facilmente do alcance da AOE de Gloom e são mais suscetíveis ao alto dano sustentado de Lylia.",
+    "weak": "Como a maior parte do dano de Lylia vem da detonação de sua segunda habilidade, mas configurar Gloom pode ser bastante lento, Assassinos ágeis como Nolan e Ling contra-atacam Lylia, pois ela terá dificuldade em acertá-los."
+  },
+  "lore": {
+    "short": "Uma pequena bruxa engraçada e inteligente."
+  }
+}

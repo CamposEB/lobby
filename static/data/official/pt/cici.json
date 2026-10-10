@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12340": {
+      "description": "Cici gera um acúmulo de Alegria após causar dano, aumentando sua Velocidade de Movimento em 0,75% e seu Vampiro de Feitiço em 1,25% por acúmulo, até 10 vezes, dobrando os efeitos quando os acúmulos estão cheios."
+    },
+    "12310": {
+      "description": "Cici usa o Yoyo para atacar continuamente o inimigo mais próximo dentro do alcance (priorizando heróis) por 3,5s, acertando-o até 10 vezes e causando Dano Físico igual a 65 mais 3,5 (+1,2% de Ataque Físico Extra)% do HP do alvo por golpe. Cici pode se mover e usar outras habilidades durante este ataque.\n\nSe não houver inimigos no alcance, o Yoyo atacará Torres ou a Base em vez disso.\n\nEsta habilidade causa 20% de dano extra a Minions."
+    },
+    "12320": {
+      "description": "Cici salta para um local alvo. Se ela pousar em qualquer unidade (exceto Torres e Base), ela pode saltar novamente na direção do Joystick. Se ela pousar em um inimigo com o primeiro salto, ela causa 200 (+40% de Ataque Físico Total) de Dano Físico a ele."
+    },
+    "12330": {
+      "description": "Cici lança o Yoyo no herói inimigo alvo e o conecta a outro herói inimigo próximo, causando 100 (+10% de Ataque Físico Total) de Dano Físico, reduzindo sua velocidade em 30% e puxando-os juntos por 4s.\n\nDurante este tempo, Cici pode usar Yo-Yo Blitz para atacar ambos os alvos conectados ao mesmo tempo. Se apenas um alvo estiver dentro do alcance do Yo-Yo Blitz, Cici atacará o alvo duas vezes, mas o dano do segundo ataque será reduzido para 25%."
+    }
+  },
+  "counters": {
+    "assist": "Cici funciona bem com heróis que têm buffs e podem aumentar a sobrevivência. Suportes como Angela e Floryn podem ajudar Cici a obter uma vantagem inicial ao amplificar muito suas capacidades de combate para terminar o jogo antes que ele se prolongue demais.",
+    "strong": "Devido à grande capacidade de kiting de Cici e ao fato de sua 1ª Habilidade causar dano ao HP máximo, Cici é eficaz contra certos Tanques como Fredrinn e Minotaur.",
+    "weak": "Cici é contrariado por heróis com habilidades de controle direcionadas que podem pará-la completamente, como Saber e Kaja."
+  },
+  "lore": {
+    "short": "Uma artista alegre que espalha diversão e maravilha por onde passa."
+  }
+}

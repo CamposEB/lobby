@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7440": {
+      "description": "Os ataques básicos e as habilidades de Minsitthar aplicam uma carga da Marca do Rei, até um máximo de 5 cargas. Ao atingir o máximo de cargas, o próximo ataque detona todas as cargas da Marca do Rei, causando Dano Físico igual a 400 (+6% do HP Máximo) do HP Máximo de Minsitthar e atordoando o alvo por 0,8s, enquanto cura Minsitthar em 400 (+6% do HP Máximo) de HP. Só pode ser ativado uma vez a cada 6s no mesmo alvo."
+    },
+    "7410": {
+      "description": "Minsitthar empurra a Lança da Glória para frente, causando 175 (+40% de Ataque Físico Total) de Dano Físico e lentificando os inimigos atingidos em 30%. Heróis inimigos atingidos pela ponta da lança são atordoados por 0,3s.\n\nApós um curto atraso, Minsitthar puxa a lança de volta, causando 175 (+40% de Ataque Físico Total) de Dano Físico a todos os inimigos em seu caminho e puxando os heróis inimigos em sua direção. Heróis puxados são atordoados por até 0,8s, dependendo da distância percorrida."
+    },
+    "7420": {
+      "description": "Minsitthar desperta o poder em seu escudo e o libera, causando 100 (+45% de Ataque Físico Total) de Dano Físico a todos os inimigos em uma área retangular e os lentificando em 80% (com decaimento rápido ao longo de 2s). Enquanto isso, ele entra no estado Falange por 3s, reduzindo o dano recebido pela frente em 25% e aprimorando seu Ataque Básico para atacar rapidamente uma área à sua frente, causando 100 (+45% de Ataque Físico Total) de Dano Físico por golpe."
+    },
+    "7430": {
+      "description": "Minsitthar avança e chama 4 Guardas Reais para formar um campo ao seu redor. Os Guardas Reais não podem se mover, mas atacarão os inimigos no campo e causarão (+30% de Ataque Físico Total) de Dano Físico a eles.\nInimigos no campo são lentificados em 30% e não podem usar habilidades de movimento."
+    }
+  },
+  "counters": {
+    "assist": "Minsitthar funciona melhor com atiradores que causam muito dano, como Melissa e Hanabi, porque ele pode criar mais oportunidades para que eles causem dano.",
+    "strong": "Minsitthar é forte contra heróis que dependem de habilidades de mobilidade, já que sua Ultimate as desativa. Minsitthar pode anular instantaneamente as vantagens de heróis como Lancelot, Benedetta e Arlott.",
+    "weak": "Minsitthar é contrariado por heróis com alta Velocidade de Movimento, como Zilong e Aulus, que podem facilmente desviar de sua 1ª Habilidade e fugir de sua Ultimate."
+  },
+  "lore": {
+    "short": "Um jovem rei que liderou o povo de Mahar Pura à vitória contra os invasores."
+  }
+}

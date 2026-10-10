@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12740": {
+      "description": "Lukas ganha 0,5 de Determinação por segundo e 3,5 de Determinação ao causar dano a heróis.\nAo atingir 100 de Determinação, ele pode usar Liberar a Besta para se transformar em Besta Sagrada.\n\nBesta Sagrada: Aumenta muito os atributos de combate. Ele consome continuamente Determinação e o efeito termina quando a Determinação é esgotada."
+    },
+    "12710": {
+      "description": "Passivo: Ataques Básicos concedem Vigor (até 2 acúmulos), cada acúmulo dura 4s. O Vigor aprimora o Flash Combo.\nLukas consome todo o Vigor para liberar o Pulverize, causando 280 (+120% de Ataque Físico Total) de Dano Físico e recuperando 6% do seu HP ao acertar um herói ou minion.\n1 Acúmulo: Lukas atordoa brevemente o alvo e gira seus martelos tonfa para causar 80 (+45% de Ataque Físico Total) de Dano Físico 3 vezes, puxando o inimigo em sua direção.\n2 Acúmulos: Lukas atordoa brevemente o alvo e, em seguida, realiza 2 ataques que causam 50 (+20% de Ataque Físico Total) de Dano Físico cada. Depois, ele gira seus martelos tonfa, causando 80 (+45% de Ataque Físico Total) de Dano Físico 3 vezes e ganhando Imunidade a Controle durante a duração."
+    },
+    "12720": {
+      "description": "Lukas avança na direção do alvo, fortalecendo seu próximo Ataque Básico em 4s em Flash Strike.\n\nFlash Strike: Lukas avança para trás do inimigo, causando 60 (+125% de Ataque Físico Total) de Dano Físico. Em seguida, ele ganha 20% de Velocidade de Movimento e Velocidade de Ataque por 4s. Durante esse tempo, seu próximo Ataque Básico ganha alcance de ataque aumentado e aciona um raio sagrado que causa 110 (+50% de Ataque Físico Total) de Dano Físico extra."
+    },
+    "12730": {
+      "description": "Primeiro Lançamento: Lukas se transforma em sua forma de Besta Sagrada (ganha brevemente Imunidade a Controle). Sua Velocidade de Movimento base é aumentada em 30, todos os atributos são aumentados em 15% e suas habilidades ganham novos efeitos.\n\nUsar Novamente: Dispara uma Explosão de Onda de Choque na direção do alvo que explode ao atingir um herói inimigo ou ao alcançar seu alcance máximo, causando 450 (+155% de Ataque Físico Total) de Dano Físico.\n\nTodos os atributos: HP, Defesa Física, Defesa Mágica, Poder Mágico, Velocidade de Ataque e Alcance de Ataque."
+    }
+  },
+  "counters": {
+    "assist": "A forma de Besta Sagrada de Lukas tem alcance de ataque estendido e mobilidade aprimorada, o que se combina bem com heróis que possuem controle de área (AOE CC), como Atlas, Tigreal e Gatotkaca.",
+    "strong": "Lukas se destaca em combates corpo a corpo e é um bom contra-ataque a heróis com baixa mobilidade e controle, como Hanabi e Ixia.",
+    "weak": "Lukas precisa ficar perto dos inimigos para causar dano, o que o torna vulnerável a heróis com alto burst e controle, como Fanny, Valir e Julian."
+  },
+  "lore": {
+    "short": "Uma lendária Besta Sagrada que pode assumir a forma de um jovem agitado."
+  }
+}

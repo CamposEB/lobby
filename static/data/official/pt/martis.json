@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5840": {
+      "description": "Toda vez que Martis usa uma habilidade, sua Velocidade de Ataque aumenta em 30%, até um máximo de 120%. Dura 4s. Ele ganha (+8*Nível do Herói) de Ataque extra ao atingir a quantidade máxima de acúmulos."
+    },
+    "5810": {
+      "description": "Martis atrai os inimigos para uma área em forma de leque à sua frente e causa 350 (+130% de Ataque Físico Extra) de Dano Físico, reduzindo a velocidade deles em 40% por 2s."
+    },
+    "5820": {
+      "description": "Martis ataca na direção do alvo três vezes, causando 225 (+120% de Ataque Físico Extra) de Dano Físico aos inimigos atingidos a cada vez. Inimigos atingidos pelo primeiro e pelo terceiro ataque também são repelidos. A direção do ataque pode ser alterada uma vez usando o Joystick.\n\nUsar Novamente: Martis avança na direção do alvo, causando 300 (+150% de Ataque Físico Extra) de Dano Físico aos inimigos em seu caminho e os arremessando para o ar.\nMartis ganha Imunidade a Controle e 60% de Redução de Dano ao lançar esta habilidade."
+    },
+    "5830": {
+      "description": "Martis avança em direção a um herói inimigo designado, causando 700 (+120% de Ataque Físico Total) de Dano Físico (causa Dano Verdadeiro se a vida do inimigo estiver abaixo de 50%).\nSe o inimigo for morto por esta habilidade, Martis pode lançá-la novamente em 10s e ganha 100% de Velocidade de Movimento extra, que diminui gradualmente ao longo de 5s. Cada lançamento subsequente também aumenta o dano da habilidade em 15% (até 30%)."
+    }
+  },
+  "counters": {
+    "assist": "Martis funciona melhor com lutadores que iniciam lutas em equipe, como Alpha e Khaleed, que ele pode seguir para garantir uma eliminação e encadear mais eliminações com sua Ultimate.",
+    "strong": "Martis é eficaz contra heróis frágeis sem habilidades de mobilidade, como Layla e Odette, que têm dificuldade em evitar o combo de sua 1ª Habilidade - 2ª Habilidade. Sua vida relativamente baixa também facilita que Martis os coloque no alcance de execução de sua Ultimate.",
+    "weak": "Martis é contrariado por lutadores com alta sustentação em combate, como Thamuz e Fredrinn, porque eles podem sobreviver ao dano de burst de Martis e derrotá-lo em batalhas prolongadas."
+  },
+  "lore": {
+    "short": "Rei Asura persistente e vitorioso."
+  }
+}

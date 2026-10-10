@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4840": {
+      "description": "Ao morrer, Diggie reverte o tempo e volta à forma de ovo, na qual ele pode continuar a se mover e ganha um novo conjunto de habilidades. Ele não pode ser alvo na forma de ovo e revive após um período de tempo."
+    },
+    "4810": {
+      "description": "Diggie lança um alarme de coruja no local alvo, que permanece estacionário por 25s ou até reagir ao primeiro inimigo no alcance, perseguindo-o e explodindo ao colidir. A explosão causa 350 (+100% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e os reduz a velocidade em 30%.\n\nDiggie ganha 2 acúmulos de Faíscas Perigosas cada vez que um herói inimigo é atingido pela explosão (até 60 acúmulos), cada acúmulo aumenta o dano da habilidade em 1%. Ele perde metade dos acúmulos ao morrer, mas pode ganhar 1 acúmulo de Faíscas Perigosas cada vez que sua habilidade acerta um herói inimigo quando está na forma de ovo.\n\nAté 5 alarmes de coruja podem existir ao mesmo tempo."
+    },
+    "4820": {
+      "description": "Diggie marca o herói inimigo alvo por 4s e o puxa de volta para sua localização anterior após o término da duração, causando 150 (+100% de Poder Mágico Total) de Dano Mágico e reduzindo brevemente sua velocidade em 80%.\n\nSe o inimigo sair do círculo, o puxão será acionado antecipadamente."
+    },
+    "4830": {
+      "description": "Diggie remove todos os debuffs dos heróis aliados próximos (incluindo ele mesmo) e concede a eles um escudo de 650 (+300% de Poder Mágico Total) e Imunidade a Controle por 2s. Ele também ganha 50% de Velocidade de Movimento por 0,5s."
+    }
+  },
+  "counters": {
+    "assist": "Diggie funciona melhor com Atiradores que carecem de mobilidade ou sobrevivência, como Layla e Miya, porque suas habilidades podem protegê-los muito bem.",
+    "strong": "Diggie é eficaz contra heróis de curto alcance e focados em controle, como Atlas e Lolita, pois pode afastá-los e remover seus controles com sua Ultimate.",
+    "weak": "Diggie é vulnerável a Assassinos ágeis e com burst, como Ling e Aamon, porque sua falta de defesa o torna um alvo fácil."
+  },
+  "lore": {
+    "short": "O estudioso coruja que pode controlar o tempo."
+  }
+}

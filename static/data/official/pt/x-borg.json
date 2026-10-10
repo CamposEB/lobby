@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8340": {
+      "description": "A armadura Firaga herda 160% das características de X.Borg e absorve todo o dano recebido enquanto está ativa. Quando destruída, X.Borg rola na direção do joystick (ele é invencível durante este processo). A energia da armadura se regenera gradualmente enquanto X.Borg está no estado sem armadura. Quando a energia está cheia, X.Borg reequipa a armadura e a restaura para 30% de HP.\nOs ataques de X.Borg fazem com que os inimigos entrem no estado de superaquecimento. Inimigos no estado de superaquecimento soltam suprimentos Firaga quando recebem dano de X.Borg. Coletar suprimentos restaura 10% do HP da armadura (ou 10 de energia enquanto estiver no estado sem armadura).\nAs habilidades de X.Borg causam dano verdadeiro a inimigos no estado de superaquecimento."
+    },
+    "8310": {
+      "description": "X.Borg borrifa fogo, causando 25 (+60% de Ataque Físico Total) (+40% de Poder Mágico Total) de dano físico 7 vezes em 2s aos inimigos na sua frente (75% de dano aos minions).\n\nEstado sem armadura: A área de ataque fica mais estreita, mas mais longa, enquanto o dano é reduzido para 60%."
+    },
+    "8320": {
+      "description": "X.Borg dispara 5 estacas de fogo para frente e as recolhe após 1.7s. Cada estaca causa 50 (+20% de Ataque Físico Total) de dano físico e puxa inimigos e suprimentos Firaga ao longo de seu caminho de volta para ele.\n\nEstado sem armadura: X.Borg ajusta o lançador de estacas de fogo, fazendo com que as estacas viagem mais longe e fiquem mais próximas umas das outras."
+    },
+    "8330": {
+      "description": "X.Borg avança na direção alvo enquanto gira e borrifa fogo (não pode coletar suprimentos Firaga durante este tempo), causando 90 (+60% de Ataque Físico Extra) (+45% de Poder Mágico Total) de dano físico 12 vezes e reduzindo a velocidade dos inimigos atingidos em 25%. Ele para ao tocar um herói inimigo e reduzirá sua velocidade em mais 40%.\nApós 3s, sua armadura mecha detona, causando 300 (+15% do alvo) de dano verdadeiro. Se sua armadura for destruída, ela explodirá imediatamente, mas o dano cairá para 50%. A detonação destrói sua armadura, remove todos os efeitos de controle e coleta todos os suprimentos Firaga próximos. Não pode ser usado no estado sem armadura.\n\nUse Novamente: Pare imediatamente de borrifar fogo e detonar antecipadamente."
+    }
+  },
+  "counters": {
+    "assist": "X.Borg combina bem com heróis que se destacam em dano em burst, como Karina e Martis. O dano em área de X.Borg deixará os inimigos fracos o suficiente para que seu companheiro de equipe os finalize.",
+    "strong": "X.Borg é eficaz contra lutadores que carecem de mobilidade, como Terizla e Aulus. Sua primeira habilidade tem um grande alcance e pode ser lançada enquanto se move, tornando fácil para ele kitar.",
+    "weak": "X.Borg é contrariado por lutadores com dano em burst, como Martis e Dyrroth. Eles podem rapidamente derrubar X.Borg quando ele está sem armadura."
+  },
+  "lore": {
+    "short": "Uma chama incontrolável que está determinada a se vingar de Eruditio."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12540": {
+      "description": "Toda vez que Zhuxin canaliza Lantern Flare, ela converte a Mana gasta em até 15 Borboletas Carmesim para seguir sua Lanterna Espiritual. Após Zhuxin parar de canalizar Lantern Flare, as Borboletas Carmesim desaparecem gradualmente, cada uma restaurando 5% da sua Mana Máxima.\nZhuxin tem uma Mana Máxima base naturalmente alta, mas ela não aumenta com o seu nível."
+    },
+    "12550": {
+      "description": "Zhuxin causa 150 (+30% de Poder Mágico Total) de Dano Mágico a todos os inimigos em uma área em forma de leque e aplica 1 acúmulo(s) de Armadilha de Almas. Zhuxin também reduz a velocidade de todos os heróis inimigos atingidos em 20% e ganha 20% de Velocidade de Movimento extra para si mesma por 1,5s."
+    },
+    "12510": {
+      "description": "Segurar: Segure o botão da habilidade para mover a Lanterna Espiritual. Ela causa 35 (+30% de Poder Mágico Total) de Dano Mágico a todos os inimigos no alcance a cada 0,33s (Bônus Mágico aumenta para 60% contra minions) e aplica Armadilha de Almas aos heróis inimigos atingidos. Quando um herói inimigo atinge 10 acúmulos de Armadilha de Almas, as Borboletas Carmesim o capturam, puxando-o para o ar por 1s.\n\nLiberar: Jogue todos os inimigos capturados no local alvo, causando 200 (+150% de Poder Mágico Total) (+ 10% do ) do alvo capturado de Dano Mágico a todos os inimigos na área. Se um inimigo for atingido várias vezes, o dano subsequente decai em 80%.\n\nApós um alvo ser capturado, a Armadilha de Almas não pode se acumular nele novamente por 4s. Durante esse tempo, essa habilidade causa 15% de dano extra a esse alvo."
+    },
+    "12530": {
+      "description": "Zhuxin se teletransporta para o local alvo, ganhando um escudo de 400 (+100% de Poder Mágico Total) e criando um campo por 6s. O campo causa 30 (+10% de Poder Mágico Total) de Dano Mágico e aplica 1 acúmulo de Armadilha de Almas aos inimigos próximos a cada 0,5s."
+    }
+  },
+  "counters": {
+    "assist": "Zhuxin pode causar grande dano e controle, mas ela não consegue realizar seu potencial até mais tarde no jogo, então heróis com controle podem ajudar Zhuxin a superar o período inicial. Zhuxin também funciona bem com heróis de dano contínuo, como Belerick, Kimmy e Cici, para causar uma quantidade surpreendente de dano.",
+    "strong": "Zhuxin é uma boa contra para inimigos com menos alcance e baixa mobilidade, como Popol e Kupa e Cyclops, onde ela tem uma grande vantagem.",
+    "weak": "Como a maioria dos Magos, Zhuxin é neutralizada por heróis com alta mobilidade e burst, como Fanny e Saber, que podem eliminá-la rapidamente."
+  },
+  "lore": {
+    "short": "Uma jovem misteriosa que guia as borboletas de brasas usando sua Lanterna de Espíritos."
+  }
+}

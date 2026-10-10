@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3740": {
+      "description": "Lapu-Lapu acumula 10 Bênçãos de Coragem cada vez que causa dano (o dano causado a unidades não heroicas é reduzido pela metade). Quando a Bênção de Coragem está cheia, o próximo Ataque Básico de Lapu-Lapu o fará avançar em direção ao alvo, causando (+150% de Ataque Físico Total) de Dano Físico (não pode ser crítico) e concedendo a ele um escudo que absorve 250 (+65*Nível do Herói) de dano por 2,5s."
+    },
+    "3710": {
+      "description": "Lapu-Lapu lança dois bumerangues na direção do alvo, cada um causando 140 (+50% de Ataque Físico Total) de Dano Físico aos inimigos atingidos no caminho de ida e volta.\n\nInimigos atingidos por ambos os bumerangues recebem 50% de dano do segundo golpe."
+    },
+    "3720": {
+      "description": "Lapu-Lapu avança na direção do alvo, causando 100 (+50% de Ataque Físico Total) de Dano Físico aos inimigos no caminho."
+    },
+    "3730": {
+      "description": "Lapu-Lapu salta para o local alvo enquanto combina suas espadas gêmeas em uma só, causando 300 (+80% de Ataque Físico Total) de Dano Físico aos inimigos próximos ao pousar e os lentificando em 60% por 1s. (Esta habilidade não pode ser interrompida.)\nLapu-Lapu ganha 3 vezes a Bênção de Coragem com esta habilidade e com habilidades no estado transformado.\nPelos próximos 10s, Lapu-Lapu entra na postura da Grande Espada e ganha habilidades aprimoradas, 30 , e seu dano de Ataque Básico aumenta para 120%."
+    }
+  },
+  "counters": {
+    "assist": "Lapu-Lapu funciona bem com heróis que podem puxar inimigos juntos, como Tigreal e Atlas, para permitir que suas habilidades de área atinjam mais alvos e obtenham mais Redução de Dano com sua segunda habilidade na postura da Grande Espada ao atingir mais heróis.",
+    "strong": "Lapu-Lapu é forte contra heróis frágeis que carecem de habilidades de movimento, como Layla e Eudora, porque ele tem alto dano de burst e pode usar sua mobilidade para se posicionar acima deles.",
+    "weak": "Lapu-Lapu é neutralizado por atiradores ágeis que podem afastá-lo, como Lesley e Moskov. Eles podem acelerar ou se teletransportar para evitar a ultimate de Lapu-Lapu e usar efeitos de knockback para interromper sua primeira habilidade na postura da Grande Espada ou para mantê-lo afastado."
+  },
+  "lore": {
+    "short": "Herói que defende as Ilhas Vonetis de forasteiros."
+  }
+}

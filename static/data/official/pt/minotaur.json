@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1940": {
+      "description": "Após usar uma habilidade, Minotauro ganha Motivação, recuperando HP igual a 5 (+1*Nível do Herói)% do dano recebido de heróis inimigos por 3s.\n\nEstado Enfurecido: A recuperação de HP da Motivação aumenta para 200%."
+    },
+    "1910": {
+      "description": "Minotauro salta para o local alvo, causando 325 (+60% de Ataque Físico Total) de Dano Físico aos inimigos na área e os arremessando brevemente para o ar. Inimigos atingidos também serão lentificados em 40%, enquanto Minotauro aprimora seus Ataques Básicos para causar 25 (+5% de HP Máximo) de Dano Físico extra por 2s.\n\nEnfurecido: Aumenta o alcance da área de efeito e o dano causado em 25 (+5% de HP Máximo) de Dano Físico."
+    },
+    "1920": {
+      "description": "Minotauro cura a si mesmo e ao aliado próximo com menos HP, recuperando 220 (+60% de Poder Mágico Total) de HP para ambos. Ele também recupera mais 8% do HP perdido.\n\nEnfurecido: Minotauro cura a si mesmo e a todos os heróis aliados próximos."
+    },
+    "1930": {
+      "description": "Minotauro entra no estado Enfurecido e esmaga o chão 3 vezes. Os dois primeiros golpes causam 180 (+85% de Ataque Físico Total) de Dano Físico aos inimigos próximos e os lentificam em 60%, enquanto o golpe final causa 200 (+85% de Ataque Físico Total) de Dano Verdadeiro e arremessa os alvos para o ar por 0,8s. Minotauro é imune a efeitos de controle durante este ataque.\n\nO estado Enfurecido dura 12s e aprimora as habilidades de Minotauro durante esse período."
+    }
+  },
+  "counters": {
+    "assist": "Minotauro funciona melhor com atiradores que causam dano em rajada, como Granger e Melissa, já que seus efeitos de controle dão a eles mais oportunidades para causar dano.",
+    "strong": "Minotauro é forte contra heróis que dependem de habilidades ou ataques em sequência, como Paquito e Julian, porque ele pode interromper suas combos com seu controle.",
+    "weak": "Minotauro é contrariado por atiradores de longo alcance, como Layla e Lesley, já que sua falta de velocidade o torna um alvo fácil."
+  },
+  "lore": {
+    "short": "Príncipe minoano determinado a restaurar sua terra natal."
+  }
+}

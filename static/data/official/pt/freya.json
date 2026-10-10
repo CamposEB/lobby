@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2260": {
+      "description": "Freya ganha 1 Orbe Sagrado a cada Ataque Básico (até 6 Orbes Sagrados). Consumir 1 Orbe Sagrado concede a Freya 100% de Velocidade de Ataque para seu próximo Ataque Básico (até 6 acúmulos).\n\nFora de combate, os Orbes Sagrados se regeneram gradualmente."
+    },
+    "2299": {
+      "description": "Freya salta para a área alvo e golpeia o chão com seu escudo, ganhando 500 (+100% Total Physical Attack) de escudo e causando 200 (+80% Extra Physical Attack) de Dano Físico aos inimigos dentro da área, ao mesmo tempo que os atira para o ar por 0.4s."
+    },
+    "2298": {
+      "description": "Freya avança e golpeia, causando 150 (+50% Total Physical Attack) de Dano Físico e reduzindo a velocidade dos inimigos em 30% por 0.5s.\nEsta habilidade não tem tempo de recarga base, mas consome 2 Orbes Sagrados por uso.\nCausa 50% de dano a criaturas."
+    },
+    "2250": {
+      "description": "Freya seleciona uma área alvo e mergulha como um Orbe Sagrado (ganhando Imunidade a Controle), causando 300 (+75% Total Physical Attack) de Dano Físico e 40% de redução de velocidade aos inimigos em seu caminho e no ponto de pouso por 2s. Ao pousar, Freya entra no estado de Valquíria por 10s, durante os quais seus Ataques Básicos causam 30 de dano extra (o dano extra não pode ser crítico), ela recupera 40 (+40% Total Physical Attack) de HP por Ataque Básico e seus Ataques Básicos causam dano em área."
+    }
+  },
+  "counters": {
+    "assist": "Para que Freya maximize seu dano, ela prefere heróis com controle de grupo, como Belerick e Gatotkaca, para imobilizar o inimigo para ela.",
+    "strong": "Freya não só tem mobilidade excepcional, como também se destaca em combates prolongados, tornando-a altamente eficaz contra atiradores frágeis e com pouco HP, como Lesley e Ixia. Seu excelente dano sustentado e mobilidade também lhe permitem neutralizar tanques com pouco dano, como Uranus e Baxia.",
+    "weak": "No entanto, todas as habilidades de Freya têm componentes de movimento, tornando-a vulnerável ao contra-ataque único de Phoveus. Usar suas habilidades perto de Phoveus permitirá que ele ganhe energia rapidamente para seus Ataques Básicos aprimorados. Freya é vulnerável a efeitos de controle de grupo e de desativação de movimento, portanto, os Ultimates de Minsitthar e Obsidia podem imobilizá-la completamente."
+  },
+  "lore": {
+    "short": "A Valquíria que guarda o Vale do Norte."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3040": {
+      "description": "Yi Sun-shin ataca com seu arco longo ou glaive, dependendo da distância do alvo.\nDomínio de Armas: Após cada troca de arma, seus próximos 2 ataques básicos ganham velocidade de ataque extra e causam 70% e 55% de dano crítico, respectivamente. Ele também ganha 15% de velocidade de movimento por 1s."
+    },
+    "3010": {
+      "description": "Yi Sun-shin avança para frente e golpeia com seu glaive, causando 150 (+40% de Ataque Físico Total) de dano físico e ganhando imunidade a controle por 0.4s.\nCada Domínio de Armas acionado reduz o tempo de recarga de Traceless em 1s."
+    },
+    "3020": {
+      "description": "Toque: Yi Sun-shin golpeia rapidamente com seu glaive, causando 240 (+80% de Ataque Físico Total) de dano físico.\nSegurar: Yi Sun-shin atira uma flecha poderosa para frente, causando 240 (+80% de Ataque Físico Total) de dano físico ao alvo (o dano aumenta conforme o tempo de segurar, até 200%).\nLançar esta habilidade ativa imediatamente o Domínio de Armas."
+    },
+    "3030": {
+      "description": "Yi Sun-shin invoca um navio tartaruga e revela todo o mapa por 2s. O navio tartaruga dura até 10s, durante os quais ele ganha 70% de velocidade de movimento em burst (diminui para 20% em 2s).\n\nUse Novamente: Yi Sun-shin ordena que o navio tartaruga ataque a área alvo, causando 160 (+50% de Ataque Físico Total) de dano físico aos inimigos no centro e os atordoando por 0.8s. Enquanto isso, ele ordena que a frota naval lance 3 ondas de ataques de canhão em uma área maior. Cada onda causa 160 (+50% de Ataque Físico Total) de dano físico e reduz a velocidade dos inimigos em 30%.\nLançar esta habilidade ativa imediatamente o Domínio de Armas."
+    }
+  },
+  "counters": {
+    "assist": "Yi Sun-shin funciona melhor com lutadores que podem iniciar, como Alpha e Khaleed, para que ele possa seguir e liberar todo o seu dano após eles terem aplicado CC no inimigo.",
+    "strong": "Yi Sun-shin é eficaz contra heróis que carecem de CC, como Uranus e Terizla, que estão à mercê de sua capacidade de entrar e sair do alcance de combate usando suas 2 armas.",
+    "weak": "Yi Sun-shin é contrariado por heróis com habilidades de CC, como Franco e Kaja, que podem imobilizá-lo e impedi-lo de trocar livremente de armas."
+  },
+  "lore": {
+    "short": "Líder da Cidade da Frota do Dragão."
+  }
+}

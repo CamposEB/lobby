@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "11740": {
+      "description": "Fredrinn ganha 1 Ponto de Combo que dura 5s cada vez que sua habilidade acerta um inimigo que não seja um minion, até um máximo de 4 Pontos de Combo. Suas habilidades supremas custam diferentes quantidades de Pontos de Combo.\n\nFredrinn armazena 100% do dano que recebe como Energia Cristalina, que se deteriora após 5s a uma taxa de 10% por segundo.\nFredrinn pode converter a Energia Cristalina armazenada em HP em 20% do dano causado (10% para dano causado a minions). Ganhar um Ponto de Combo reinicia o temporizador de deterioração."
+    },
+    "11710": {
+      "description": "Fredrinn empurra sua espada na direção do alvo, causando 125 (+7% Max HP) (+120% Extra Physical Attack) de Dano Físico aos inimigos atingidos e reduzindo sua velocidade em 30% por 2s. Seu próximo Ataque Básico ganha alcance de ataque extra e causa 85 (+100% Total Physical Attack) de Dano Físico.\nEsta habilidade causa 170% de dano a inimigos que não sejam heróis."
+    },
+    "11720": {
+      "description": "Fredrinn avança na direção do alvo, causando 140 (+80% Extra Physical Attack) de Dano Físico ao primeiro inimigo que não seja um minion atingido. Seu próximo Ataque Básico atira o alvo para o ar por 0.3s."
+    },
+    "11730": {
+      "description": "Fredrinn causa 210 (+100% Extra Physical Attack) de Dano Físico aos inimigos próximos e os provoca por 1s. Acertar um inimigo que não seja um minion concede a Fredrinn 25 por 3s e reduz o tempo de recarga de Piercing Strike e Brave Assault em 75%.\nEsta habilidade custa 1 Ponto de Combo."
+    },
+    "11750": {
+      "description": "Fredrinn golpeia sua espada na direção do alvo (esta habilidade só pode ser interrompida por Supressão), causando 600 mais 21% de sua Energia Cristalina como Dano Físico aos inimigos em uma área em forma de leque após um pequeno atraso. Inimigos no centro da área recebem 175% de dano. Esta habilidade dobra a taxa de conversão baseada no dano causado a heróis inimigos de Energia Cristalina armazenada para HP.\nEsta habilidade custa 3 Pontos de Combo."
+    }
+  },
+  "counters": {
+    "assist": "Fredrinn funciona melhor com heróis de suporte, que podem melhorar ainda mais sua sobrevivência, como Angela e Floryn.",
+    "strong": "Fredrinn é forte contra heróis magos que dependem de rajadas de habilidades, pois é difícil para eles derrotá-lo com um único golpe. Em vez disso, uma vez que Fredrinn tem Pontos de Combo suficientes, ele pode usar seu segundo Ultimate para derrotá-los facilmente. Como Vale e Eudora.",
+    "weak": "Fredrinn é neutralizado por heróis atiradores que podem causar Dano Verdadeiro, pois eles podem derrotá-lo muito facilmente. Heróis como Kerrie e Lesley são bons exemplos disso."
+  },
+  "lore": {
+    "short": "Um mestre avaliador de tesouros em Los Pecados que acumula riqueza e procura seu amigo perdido."
+  }
+}

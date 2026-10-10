@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7740": {
+      "description": "Toda vez que o Ataque Básico de Badang atinge um alvo, ele ganha um acúmulo de Chivalry Fist. Ao juntar 4 acúmulos, seu próximo Ataque Básico causa 50 (+30% Total Physical Attack) de Dano Físico extra aos inimigos atingidos e os empurra para trás. Inimigos empurrados contra obstáculos ficam atordoados por 0.6s (Minions e Creeps são atordoados diretamente).\nO Fist Wind gerado pelas skills de Badang ativa esse efeito diretamente, e o Fist Wind da sua Ultimate aumenta a duração do atordoamento para 1s."
+    },
+    "7710": {
+      "description": "Badang lança uma rajada de Fist Wind na direção do alvo, causando 125 (+90% Total Physical Attack) de Dano Físico aos inimigos atingidos, reduzindo a velocidade deles em 30% por 1.5s e empurrando-os para trás. O Fist Wind explode ao atingir um obstáculo, causando 100 (+60% Total Physical Attack) de Dano Físico a inimigos próximos. O Fist Wind pode ativar efeitos de ataque e concede a Badang 1 acúmulo de Chivalry Fist ao ser conjurado.\nBadang armazena até 2 cargas de Fist Wind e recupera 1 carga a cada 10.4s."
+    },
+    "7720": {
+      "description": "Badang avança na direção do alvo, causando 230 (+50% Total Physical Attack) de Dano Físico aos inimigos no caminho e ganhando um escudo de 350 (+150% Total Physical Attack) por 5s. Ele para imediatamente ao atingir um herói inimigo, empurrando-o levemente para trás e criando uma parede por 4s atrás dele. Inimigos atingidos pelo obstáculo sofrem 130 (+30% Total Physical Attack) de Dano Físico.\n\nUsar Novamente: Badang remove a parede criada."
+    },
+    "7730": {
+      "description": "Badang desfere uma sequência de socos na direção do alvo, causando 60 (+54% Total Physical Attack) de Dano Físico várias vezes aos inimigos atingidos (pode ativar efeitos de ataque). O Fist Wind gerado pelos socos explode ao atingir um obstáculo, causando 30 (+27% Total Physical Attack) de Dano Físico a inimigos próximos.\nBadang fica imune a efeitos de controle durante a execução."
+    }
+  },
+  "counters": {
+    "assist": "Badang joga muito bem com heróis que juntam os inimigos, facilitando acertar o combo de 2nd Skill com Ultimate, como Tigreal e Luo Yi.",
+    "strong": "Badang countera heróis de papel e com pouca mobilidade, como Layla e Odette, que quase não têm como escapar do combo da sua 2nd Skill com Ultimate.",
+    "weak": "Badang toma counter de heróis ágeis como Wanwan e Ling, que conseguem desviar ou escapar facilmente da sua 2nd Skill, reduzindo drasticamente seu dano e controle."
+  },
+  "lore": {
+    "short": "O guardião da Ilha Solari que empunha o imenso poder de uma fera marinha."
+  }
+}

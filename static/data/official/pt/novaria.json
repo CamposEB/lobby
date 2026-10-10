@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11940": {
+      "description": "A Esfera Astral reduz continuamente a velocidade dos inimigos próximos em 20% e revela a posição deles."
+    },
+    "11910": {
+      "description": "Novaria invoca uma Esfera Astral no local alvo, causando 75 (+25% de Poder Mágico Total) de Dano Mágico a cada 0,33s e reduzindo continuamente a velocidade dos inimigos (até 2,5 vezes). Após 2s, a Esfera Astral explode, causando 260 (+50% de Poder Mágico Total) (+ 4% do alvo) de Dano Mágico e reduzindo a velocidade dos inimigos em 2,5 vezes."
+    },
+    "11920": {
+      "description": "Primeiro lançamento: Novaria invoca uma Esfera Astral a distância e a atrai em sua direção. Ela ganha 80% de velocidade de movimento (que decai para 30%) e pode atravessar obstáculos.\n\nUse novamente: Ao capturar a Esfera Astral, ela pode lançar o Estilhaço Estelar para lançá-la na direção alvo dentro de 5s. Ao atingir um herói inimigo, ele causa 260 (+95% de Poder Mágico Total) (+ 5% do alvo) de Dano Mágico a ele e aos heróis próximos. O dano aumenta com base na distância percorrida pela Esfera Astral (atração + lançamento), até 2,2 vezes o dano original."
+    },
+    "11930": {
+      "description": "Novaria espalha o Eco Astral na direção alvo, reduzindo brevemente a velocidade dos heróis inimigos atingidos em 50% e aplicando o Anel Astral neles. Isso aumenta o hitbox deles em 2,5 vezes e revela a posição deles por 5s."
+    }
+  },
+  "counters": {
+    "assist": "Novaria funciona bem com outros heróis de longo alcance, como Beatrix e Layla, porque sua ultimate transforma qualquer alvo em um pato sentado para que sua equipe o elimine.",
+    "strong": "Novaria é eficaz contra magos com menor alcance e baixa mobilidade, como Eudora e Odette, porque esses heróis não conseguem alcançar Novaria enquanto ela pode atingi-los com sua segunda habilidade.",
+    "weak": "Novaria é contra-atacada por assassinos com dano de burst forte e direcionado, como Saber e Hayabusa, porque eles podem se aproximar facilmente de Novaria e derrotá-la rapidamente."
+  },
+  "lore": {
+    "short": "A jovem que busca reconstruir o Atlas Estelar para desvendar os segredos das Estrelas."
+  }
+}

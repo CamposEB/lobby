@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9940": {
+      "description": "Detona ganha uma carga de Grande Cara por 12s cada vez que ela ou Barats causa dano a um inimigo com suas habilidades (até 10 cargas). Cada carga de Grande Cara aumenta o tamanho de Detona e concede 4 - 10  (escala com o nível de Boas-Vindas de Detona). No máximo de cargas, Detona ganha 20% de Resistência extra e seus Ataques Básicos são substituídos por Pisoteio, que causa  (+140% de Ataque Físico Total) (+3,5% de HP Máximo) de Dano Físico aos inimigos em uma área circular, reduzindo sua velocidade em 40% por 0,2s e renovando a duração de Grande Cara com cada acerto."
+    },
+    "9910": {
+      "description": "Detona cospe óleo contaminado na direção alvo, causando 60 (+7% de HP Máximo) de Dano Físico aos inimigos em uma área em forma de leque. Barats então incendeia o óleo com um foguete, causando 120 (+180% de Ataque Físico Total) de Dano Físico aos inimigos na área (apenas 50% de dano aos Creeps).\n\nA área de efeito do chamado Trabalho em Equipe aumenta com o número de cargas de Grande Cara."
+    },
+    "9920": {
+      "description": "Barats dispara dois mísseis no local alvo, causando 100 (+75% de Ataque Físico Total) de Dano Físico e reduzindo a velocidade dos inimigos em 40% por 1s. Os mísseis expulsam fumaça de seus escapamentos ao aterrissar, causando 100 (+75% de Ataque Físico Total) de Dano Físico aos inimigos em uma área retangular e empurrando-os em direção a Barats."
+    },
+    "309930": {
+      "description": "Após um curto atraso, Detona avança na direção alvo, causando 120 (+70% de Ataque Físico Total) (+1,2% de HP Máximo) de Dano Físico ao primeiro inimigo atingido, devorando-o e suprimindo-o por 1,2s, depois cuspindo-o para fora. Se o alvo cuspido atingir um herói inimigo ou uma parede, isso desencadeia uma explosão. O alvo e os inimigos próximos sofrem mais 180 (+105% de Ataque Físico Total) (+5% de HP Máximo) de Dano Físico e ficam atordoados por 1s.\n\nDurante a habilidade, Barats fica imune a efeitos de controle. Se o lançamento for cancelado ou a habilidade errar, 50% do tempo de recarga da habilidade é reembolsado.\nSe Detona devorar com sucesso um inimigo, ele ganha imediatamente o máximo de cargas de Grande Cara."
+    }
+  },
+  "counters": {
+    "assist": "Barats funciona melhor com Suportes que podem lhe dar Velocidade de Movimento para compensar sua falta de mobilidade, como Mathilda e Angela.",
+    "strong": "Barats contraria heróis Tanque que dependem de habilidades de controle, como Belerick e Lolita, já que a Resistência extra fornecida por seu Passivo reduzirá muito a duração de seu controle.",
+    "weak": "Barats é contrariado por Atiradores ágeis que podem causar alto dano a Tanques, como Karrie e Moskov, porque Barats carece de mobilidade e suas habilidades podem ser evitadas, tornando esses heróis muito difíceis de matar."
+  },
+  "lore": {
+    "short": "Aventureiro que monta um dragão lagarto."
+  }
+}

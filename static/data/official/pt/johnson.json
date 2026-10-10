@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3240": {
+      "description": "Quando o HP de Johnson cai abaixo de 30%, ele ganha um escudo de 300 (+700% de Defesa Física Total) por 10s. Recarga: 100s."
+    },
+    "3210": {
+      "description": "Johnson arremessa sua chave inglesa em direção ao local alvo, causando 120 (+220% de Defesa Física Total) de Dano Mágico aos inimigos em seu caminho. Inimigos ao redor do ponto de impacto são atordoados por 0.8s."
+    },
+    "3220": {
+      "description": "Johnson levanta seu escudo, causando continuamente 120 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos em uma área em forma de leque na direção alvo, reduzindo a Velocidade de Movimento deles em 10% (acumulável até 3 vezes) por 2s.\n\nEnquanto seu escudo está levantado, Johnson pode realizar Ataques Básicos e lançar habilidades."
+    },
+    "3230": {
+      "description": "Passiva: A  de Johnson é aumentada em 10%.\nAtiva: Johnson se transforma em um carro. Heróis aliados próximos podem usar Hop In para andar com ele (apenas 1 por vez). Quando o carro atinge um herói inimigo, ele explode e causa 300 (+240% de Defesa Física Total)–450 (+360% de Defesa Física Total) de Dano Mágico aos inimigos próximos, atordoando-os por 0.5–1s (escala com o tempo de direção). Isso também cria uma zona eletrificada no local que causa continuamente 60 (+20% de Poder Mágico Total) de Dano Mágico e reduz a velocidade dos inimigos dentro dela.\nA localização de Johnson é revelada aos inimigos por 3s quando ele lança essa habilidade."
+    }
+  },
+  "counters": {
+    "assist": "Johnson funciona bem com heróis que precisam de ajuda para iniciar, como Odette e Kadita, já que eles podem simplesmente pular na ultimate de Johnson para dar uma volta.",
+    "strong": "Johnson é eficaz contra heróis corpo a corpo com alto burst, como Alucard e Zilong,\npor causa da alta Defesa Física e da habilidade de controle de Johnson.",
+    "weak": "Johnson é neutralizado por heróis ágeis que causam Dano Mágico, como Harith e Kagura, porque eles podem facilmente desviar das habilidades de Johnson, enquanto seu dano não é afetado pela Defesa Física dele."
+  },
+  "lore": {
+    "short": "Um super ciborgue que pode se transformar em um carro e liderar seus companheiros de equipe na batalha."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9740": {
+      "description": "Segure o botão de ataque básico para entrar no estado Swordout e carregar a Intenção da Espada. Quando estiver totalmente carregado, libere-o para realizar um golpe Swordout na direção em que ela está olhando e avançar para frente, causando (+215% de Ataque Físico Total) de dano físico aos inimigos no caminho (considerado como dano de ataque básico e reduzido para 50% contra minions e tropas).\n\nBenedetta só pode lançar o golpe Swordout quando sua Intenção da Espada estiver cheia e ela estiver no estado Swordout.\n\nBenedetta também ganha Intenção da Espada ao causar dano com seus ataques básicos e habilidades."
+    },
+    "9710": {
+      "description": "Benedetta recua rapidamente e deixa uma sombra na frente. Após um curto atraso, sua sombra avança em uma área em forma de leque, causando 200 (+75% de Ataque Físico Total) de dano físico e desacelerando os inimigos em 60% por 0,5 segundos.\n\nEnquanto isso, Benedetta avança para frente para atacar, causando 75 (+100% de Ataque Físico Total) de dano físico. (Se o alvo for atingido por sua sombra, o dano causado por Benedetta aumentará para 200%.)"
+    },
+    "9720": {
+      "description": "Benedetta levanta sua arma para se defender, ganhando imunidade a controle e bloqueando dano de qualquer fonte por 0,8 segundos. Depois disso, ela ataca na direção designada, causando 300 (+80% de Ataque Físico Total) de dano físico.\n\nSe Benedetta conseguir repelir qualquer dano enquanto se defende, ela ganhará Intenção da Espada completa. Se ela repelir qualquer efeito de controle, seu ataque subsequente atordoará o alvo por 1,5 segundos."
+    },
+    "9730": {
+      "description": "Benedetta aperta Alecto, avança para frente (Benedetta é intocável durante o avanço) e realiza um golpe após um curto atraso, detonando a Intenção da Espada ao longo do caminho. Por 2,5 segundos, a Intenção da Espada causa até um total de 1560 (+1105% de Ataque Físico Extra) de dano físico aos inimigos dentro da área e os desacelera em 50%."
+    }
+  },
+  "counters": {
+    "assist": "Benedetta funciona bem com iniciadores de controle fortes, como Johnson e Gatotkaca, porque eles permitem que ela maximize os efeitos de sua Ultimate.",
+    "strong": "A segunda habilidade de Benedetta pode bloquear efetivamente o controle inimigo, tornando-a uma ótima contra-ataque contra heróis com habilidades de controle previsíveis, como Jawhead e Guinevere.",
+    "weak": "Benedetta é neutralizada por heróis com habilidades que desativam habilidades de mobilidade, como Minsitthar e Phoveus, já que todas as habilidades de Benedetta são consideradas de mobilidade."
+  },
+  "lore": {
+    "short": "Guerreira que defende as Terras Áridas contra a invasão demoníaca."
+  }
+}

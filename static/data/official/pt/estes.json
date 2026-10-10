@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3440": {
+      "description": "O Livro Sagrado do Elfo da Lua carrega lentamente energia para Estes. Ao atingir 100 acúmulos, ele aprimora seu próximo ataque básico, causando 250 (+100% de Ataque Físico Total) (+150% de Poder Mágico Total) de dano mágico ao alvo. O ataque ricocheteará nos inimigos próximos, causando 125 (+50% de Ataque Físico Total) (+75% de Poder Mágico Total) de dano mágico e os ralentando em 60% por 1.5s."
+    },
+    "3410": {
+      "description": "Estes recupera 200 (+110% de Poder Mágico Total) de HP para o herói aliado alvo imediatamente e se conecta a ele por 5s.\nEnquanto conectados, ambos os heróis ganham 15 (+10% de Poder Mágico Total) de defesa, e o alvo recupera lentamente 360 (+90% de Poder Mágico Total) de HP. Conectar-se a um herói aliado aumenta a Velocidade de Movimento de Estes em 15%, bem como a velocidade de carregamento de energia do Livro Sagrado do Elfo da Lua.\nEstar muito longe do alvo quebrará a conexão."
+    },
+    "3420": {
+      "description": "Estes lança uma inundação de luz da lua na área alvo, causando 350 (+70% de Poder Mágico Total) de dano mágico às unidades inimigas dentro dela. Em seguida, ela se transforma em um domínio da Deusa da Lua e revela os inimigos dentro dele. Os inimigos serão ralentados em 90% por 1.5s se tocarem a borda da área do domínio. (O efeito de lentidão diminuirá com o tempo.)"
+    },
+    "3430": {
+      "description": "Estes lança uma Imersão na Luz da Lua aprimorada sobre si mesmo e sobre todos os heróis aliados próximos, renovando a Imersão na Luz da Lua neles e aprimorando-a por 8s.\nImersão na Luz da Lua Aprimorada: Dobra a Cura Básica Instantânea e o Aumento, e cura o alvo em 1020 (+225% de Poder Mágico Total) de HP ao longo do tempo."
+    }
+  },
+  "counters": {
+    "assist": "Estes funciona melhor com heróis atiradores típicos, sua cura permitirá que eles causem mais dano. Heróis como Lesley e Hanabi são bons exemplos disso.",
+    "strong": "Estes neutraliza heróis sem dano burst, ele pode curar facilmente danos menores causados por heróis como Faramis e Alice.",
+    "weak": "Estes é neutralizado por heróis com alto dano burst. Heróis como Saber e Eudora podem facilmente derrotar Estes ou o herói que ele protege em poucos segundos."
+  },
+  "lore": {
+    "short": "Rei élfico que governa os Elfos da Lua."
+  }
+}

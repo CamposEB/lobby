@@ -1,0 +1,21 @@
+{
+  "skills": {
+    "13380": {
+      "description": "Hirara possui apenas duas skills, que representam suas duas armas: Meisen-e e Kaerazu. Arraste uma skill sobre a outra para conjurar uma Skill Combo.\n\nHirara possui 2 de Energia Crimson / Death. Conjurar uma Skill Combo consome 1 de Energia Crimson / Death. O tempo de recuperação de Energia é igual ao tempo de recarga de Meisen-e. Consumir Energia interrompe o processo de recuperação.\n\nHirara causa apenas 30 (+4*Nível do Herói)% de dano a minions."
+    },
+    "13320": {
+      "description": "Hirara desliza nas ondas usando Meisen-e, realizando até dois dashes com o direcional (o primeiro dash segue na direção em que ela estiver virada). Ela causa 150 (+50% Ataque Físico Extra) de Dano Físico aos inimigos atingidos."
+    },
+    "13310": {
+      "description": "Hirara usa Kaerazu para liberar o Crimson Maple, causando 150 (+65% Ataque Físico Extra) de Dano Físico a inimigos em uma área em leque.\n\nApós um curto intervalo, ela causa dano novamente no local alvo, causando 2 vezes o dano inicial do Crimson Maple."
+    }
+  },
+  "counters": {
+    "assist": "Hirara tem um dano absurdo no early e mid game, mas o atraso de suas skills dificulta acertá-las com consistência. Hirara funciona muito bem com heróis fortes no early game que possuem controle, como Angela e Minotaur, permitindo que ela crie uma vantagem logo no início com mais facilidade.",
+    "strong": "A alta mobilidade de Hirara permite que ela mergulhe na backline inimiga com facilidade, tornando-a excelente contra heróis frágeis e sem recursos de defesa própria, como Ixia e Pharsa. O efeito inalvejável da sua Skill Combo 2 + 1 é ótimo contra skills de dano alto atrasadas, dando a ela uma enorme vantagem contra heróis como Yin e Gusion.",
+    "weak": "Por outro lado, embora Hirara seja rápida e ágil, ela também é bastante de papel. Contra Assassins de burst com habilidades de alvo travado, como Saber e Natalia, fica difícil prever o ataque e usar a Skill Combo 2 + 1 a tempo. Se ela for pega, é eliminada na hora."
+  },
+  "lore": {
+    "short": "Uma ninja gueixa da Scarlet Shadow, armada com leques duplos e adornada em folhas de bordo carmesim e meisen. Em sua mente deturpada, a morte é a salvação suprema."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "940": {
+      "description": "Akai ganha um escudo de 25 (+5% de HP Máximo) por 4s a cada skill conjurada.\n\nSuas skills aplicam uma Marca aos alvos. Seu próximo Ataque Básico contra um alvo marcado causa 35 (+6% de HP Máximo) de Dano Físico extra."
+    },
+    "910": {
+      "description": "Akai avança na direção selecionada, causando 300 (+50% de Ataque Físico Total) de Dano Físico aos inimigos no caminho.\n\nAo acertar um herói inimigo, ele o lança ao ar por 0.5s e pode rolar uma vez na direção do analógico.\n\nAkai pode conjurar Headbutt durante Heavy Spin para se reposicionar rapidamente."
+    },
+    "920": {
+      "description": "Akai bate com o corpo no chão, causando 270 (+6% de HP Máximo) de Dano Físico aos inimigos próximos e reduzindo a velocidade deles em 45% por 2s."
+    },
+    "930": {
+      "description": "Akai gira por 4s, causando continuamente 100 (+50% de Ataque Físico Total) de Dano Físico aos inimigos próximos e empurrando-os para trás. Heróis inimigos empurrados também empurram outros heróis inimigos com quem colidirem.\n\nAo conjurar, Akai remove todos os debuffs e ganha imunidade a lentidão. Enquanto gira, sua Velocidade de Movimento aumenta gradualmente em até 70%.\n\nEsta skill só pode ser interrompida por Supressão."
+    }
+  },
+  "counters": {
+    "assist": "Akai funciona melhor com heróis de alto dano de burst, pois eles conseguem finalizar os inimigos presos em sua Ultimate, como Saber e Eudora.",
+    "strong": "Akai é forte contra heróis com pouca mobilidade, já que ele consegue facilmente pegá-los e eliminá-los com sua Ultimate, como Eudora e Odette.",
+    "weak": "Akai sofre counter de heróis com remoção de controle ou habilidades de transformação que permitem escapar ou anular sua Ultimate, como Nana e Diggie."
+  },
+  "lore": {
+    "short": "O todo-poderoso herói panda do Vale das Correntes."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8240": {
+      "description": "Terizla ganha 1% de redução extra de dano (até 20 (+1*Nível do Herói)%) para cada 2,5% de HP perdido.\nEle não pode ganhar velocidade de ataque extra e converterá cada 1% de velocidade de ataque extra em 1 ."
+    },
+    "8210": {
+      "description": "Terizla golpeia o chão com seu martelo, criando uma fissura que avança para frente e causa 300 (+80% de Ataque Físico Extra) de Dano Físico. Ao atingir o primeiro alvo, a fissura se enterra nele, reduzindo sua velocidade em 15%. Terizla também ganha 15% de Velocidade de Movimento por 3,5s.\n\nA fissura então explode, causando 300 (+80% de Ataque Físico Extra) (+ 20% do HP perdido do alvo) de Dano Físico."
+    },
+    "8220": {
+      "description": "Terizla balança seu martelo em uma área em forma de leque à sua frente. Esta habilidade pode ser lançada até 3 vezes. Os dois primeiros ataques causam 90 (+135% de Ataque Físico Total) de Dano Físico cada, enquanto o terceiro causa 225 (+220% de Ataque Físico Total) de Dano Físico. Inimigos atingidos também serão lentificados em 20% por 1,25s (o efeito de lentificação pode se acumular).\nCausa apenas 80% de dano aos Minions."
+    },
+    "8230": {
+      "description": "Terizla salta para a área designada, causando 300 (+100% de Ataque Físico Total) de Dano Físico e arremessando os inimigos para o ar por 0,6s. Ele então invoca um Andaime e reduz a velocidade dos inimigos em 25%. O Andaime lançará um gancho nos heróis inimigos próximos e os puxará várias vezes, causando 150 (+30% de Ataque Físico Total) de Dano Físico a cada vez."
+    }
+  },
+  "counters": {
+    "assist": "Terizla funciona melhor com heróis que possuem habilidades de iniciação fortes, que lhe permitem causar mais dano com suas habilidades. Heróis como Gatotkaca e Atlas são bons exemplos disso.",
+    "strong": "Terizla é forte contra lutadores corpo a corpo leves, pois eles terão dificuldade em sobreviver ao dano pesado de suas habilidades, como Zilong e Sun.",
+    "weak": "Terizla é neutralizado por heróis com boa mobilidade ou longo alcance de ataque, pois será difícil atingi-los com suas habilidades. Como Arlott e Lesley."
+  },
+  "lore": {
+    "short": "Antigamente um mestre ferreiro excêntrico, agora é um vingador aliado ao Abismo."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11540": {
+      "description": "Quando as habilidades de Xavier atingem heróis inimigos, ele ganha 50% de velocidade de movimento por 1.2s (diminui com o tempo) e 1 carga de energia. Ao atingir 3 cargas, sua próxima habilidade ativa o estado de Transcendência.\n\nTranscendência: Neste estado, as habilidades 1 e 2 de Xavier têm seus tempos de recarga reduzidos em 4s, e sua ultimate em 36s. A Transcendência dura 5s e pode ser estendida em 1s cada vez que suas habilidades atingem inimigos."
+    },
+    "11510": {
+      "description": "Xavier dispara uma Bala Mística que causa 480 (+100% de Poder Mágico Total) de dano mágico aos inimigos que ela atravessa.\n\nA distância de voo da bala aumenta cada vez que ela atinge um inimigo ou a Barreira Mística (até 5 vezes)."
+    },
+    "11520": {
+      "description": "Xavier invoca uma Barreira Mística que dura 5s. Inimigos que tocam a Barreira recebem 220 (+65% de Poder Mágico Total) de dano mágico e são reduzidos em 50% de velocidade, enquanto aliados ganham 50% de velocidade de movimento extra (diminui em 1.2s).\n\nQuando atingida pelas outras habilidades de Xavier, a Barreira se expande em um Campo Místico por 3s, causando 220 (+65% de Poder Mágico Total) de dano mágico aos inimigos dentro dele e os imobilizando por 0.8s."
+    },
+    "11530": {
+      "description": "Xavier libera um feixe de magia mística na direção alvo, causando 600 (+180% de Poder Mágico Total) de dano mágico a todos os inimigos ao longo de seu caminho.\n\nAo lançar a habilidade, ele também entra diretamente no estado de Transcendência e reinicia a duração do estado."
+    }
+  },
+  "counters": {
+    "assist": "Ele funciona bem ao lado de heróis que podem buffar ou fornecer controle de grupo para lhe dar mais oportunidades de causar dano, como Carmilla e Atlas.",
+    "strong": "Xavier possui tempos de recarga curtos, um controle suave, boa sustentabilidade e se sai bem contra heróis sem Blink ou dano em burst, como Hanabi e Faramis.",
+    "weak": "Xavier é contrariado por heróis com alta mobilidade que podem fechar rapidamente a distância, como Benedetta, Hayabusa e Natalia."
+  },
+  "lore": {
+    "short": "Ex-membro dos Cavaleiros da Luz que está determinado a forjar seu próprio caminho."
+  }
+}

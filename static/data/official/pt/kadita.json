@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7540": {
+      "description": "Kadita recebe a Bênção do Oceano a cada 30s. Receber dano de um herói inimigo ativa a Bênção por 4s.\n\nQuando a Bênção termina, ela recupera 65% do HP perdido durante esse período (dano causado por minions e creeps não ativa esse efeito).\n\nEnquanto está no Rio, Kadita ganha 10% de Velocidade de Movimento extra."
+    },
+    "7510": {
+      "description": "Kadita invoca uma onda do oceano para se transportar na direção alvo e voltar, causando 250 (+90% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e reduzindo sua velocidade em 30%. Enquanto está dentro da onda, ela ganha Imunidade a Controle e 50% de Redução de Dano. Essa habilidade pode atravessar obstáculos e terrenos.\n\nUsar Novamente: Kadita sai da onda sem interromper o movimento da onda."
+    },
+    "7520": {
+      "description": "Após um curto atraso, Kadita invoca uma onda do oceano para explodir no local alvo, causando 350 (+140% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e arremessando-os para o ar por 1s.\n\nKadita pode lançar essa habilidade durante o Ocean Ode para invocar uma onda do oceano abaixo dela com um atraso de explosão mais curto."
+    },
+    "7530": {
+      "description": "Kadita mergulha no chão e envia ondas do oceano em todas as direções, cada uma causando 270 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e reduzindo sua velocidade em 30%. Inimigos atingidos por múltiplas ondas sofrem dano aumentado. Após um atraso, as ondas retornam a Kadita, cada uma causando 180 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos.\n\nEnquanto está subterrânea, Kadita se torna intargetável e ganha 60% de Velocidade de Movimento.\nEssa habilidade só pode ser interrompida por Supressão."
+    }
+  },
+  "counters": {
+    "assist": "Kadita funciona bem com heróis que possuem habilidades de controle fortes, como Atlas e Tigreal, pois seu controle tornará mais fácil para Kadita acertar mais inimigos com sua ultimate.",
+    "strong": "Kadita é excelente em neutralizar heróis que carecem de mobilidade, como Aurora e Eudora, porque é difícil para eles escaparem da segunda habilidade de Kadita, e arremessá-los para o ar os prepara para sua ultimate.",
+    "weak": "Kadita é neutralizada por heróis com longo alcance e alta mobilidade, como Clint e Beatrix, pois é difícil para Kadita se aproximar deles ou acertá-los com sua segunda habilidade."
+  },
+  "lore": {
+    "short": "A Deusa do Oceano que empunha o Tridente dos Mares para purificar os oceanos."
+  }
+}

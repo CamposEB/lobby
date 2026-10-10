@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2040": {
+      "description": "A cada 6s a 3s (escala com o nível de Noumenon Blast), o Núcleo de Energia Noumenon concede a Lolita um escudo de 20 (+2,5% do HP máximo) (+20% do Poder Mágico Total). Quando Lolita lança uma habilidade, o Núcleo de Energia Noumenon concede a ela e aos heróis aliados próximos um escudo extra. Esse escudo pode se acumular até 3 vezes e dura 30s."
+    },
+    "2010": {
+      "description": "Lolita avança na direção do alvo. Seu próximo Ataque Básico em 4s fará um curto avanço em direção ao alvo, causando 400 (+100% de Ataque Físico Total) de Dano Físico e atordoando-o por 0,5s. Esse dano é dobrado contra Minions."
+    },
+    "2020": {
+      "description": "Lolita levanta seu escudo e reflete todos os Ataques Básicos à distância e Projéteis recebidos na direção do escudo por 3s. O escudo se quebra após receber 1000 (+15% do HP máximo) de dano.\n\nO dano e os efeitos dos Passivos Únicos do equipamento de um atacante não se aplicam ao escudo e não são refletidos. Essa habilidade pode ser interrompida por efeitos de controle de alto nível."
+    },
+    "2030": {
+      "description": "Passivo: Reduz o intervalo do Núcleo de Energia Noumenon em 1s cada vez que essa habilidade é atualizada.\n\nAtivo: Lolita começa a carregar por 2s enquanto deixa os inimigos em uma área em forma de leque 60% mais lentos. Quando a carga é concluída ou é interrompida, Lolita bate seu martelo no chão, causando até 600 (+100% de Ataque Físico Total) de Dano Físico aos inimigos na área e os atordoando por até 2s (o dano e a duração do atordoamento escalam com o tempo de carga).\n\nUsar Novamente: Lolita para imediatamente de carregar e bate seu martelo no chão."
+    }
+  },
+  "counters": {
+    "assist": "Devido às suas poderosas habilidades defensivas e de controle, Lolita é ótima para proteger Atiradores como Hanabi e Layla.",
+    "strong": "O escudo de Lolita a torna forte contra heróis que dependem de projéteis e habilidades à distância, como Kimmy e Cyclops.",
+    "weak": "Lolita é neutralizada por heróis de combate corpo a corpo com alto dano de burst, como Ling e Paquito."
+  },
+  "lore": {
+    "short": "Membro dos Eruditio Rangers e protetora da oficina Leviathan."
+  }
+}

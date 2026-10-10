@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5940": {
+      "description": "Cada vez que Uranus recebe dano, ele ganha um acúmulo de Radiação. Cada acúmulo recupera 1,2-11,2 HP (aumenta com o nível) a cada 0,8s por 10s, até um máximo de 20 acúmulos.\nOs ataques básicos de Uranus causam  (+80% de Ataque Físico Total) (+ 4-8 × acúmulos de Radiação) de Dano Mágico (aumenta com o nível)."
+    },
+    "5910": {
+      "description": "Uranus libera 2 lâminas de energia que orbitam ao seu redor, causando 155 (+30% de Poder Mágico Total) (+6 × acúmulos de Radiação) de Dano Mágico aos inimigos atingidos e reduzindo sua velocidade em 30% por 2s.\nCada lâmina só pode causar dano ao mesmo alvo uma vez."
+    },
+    "5920": {
+      "description": "Uranus avança até o local alvo, causando 80 (+20% de Poder Mágico Total) de Dano Mágico aos inimigos ao longo do caminho e 160 (+80% de Poder Mágico Total) de Dano Mágico aos inimigos no local alvo, reduzindo sua velocidade em 25%. Uranus também gera um escudo de 300 (+200% de Poder Mágico Total) por 4s.\n\nO escudo explode ao final de sua duração ou quando destruído, causando 300 (+150% de Poder Mágico Total) de Dano Mágico aos inimigos próximos."
+    },
+    "5930": {
+      "description": "Uranus libera a energia armazenada em seu corpo, removendo efeitos de lentidão sobre si mesmo, recuperando 200 HP e ganhando 60% de Velocidade de Movimento por 8s (diminui com o tempo).\n\nUranus ganha diretamente 5 acúmulos de Radiação, aumentando os escudos recebidos e a regeneração de HP em 20% por 8s."
+    }
+  },
+  "counters": {
+    "assist": "Uranus se torna muito mais poderoso ao trabalhar com heróis que causam alto dano, como Beatrix e Hanabi.",
+    "strong": "Uranus possui grande sustentabilidade, tornando-o forte contra heróis com habilidades de baixo dano, como Tigreal e Franco.",
+    "weak": "Uranus carece de mobilidade e habilidades de controle, o que o torna um alvo fácil para heróis de longo alcance, como Layla e Lesley."
+  },
+  "lore": {
+    "short": "Guardião feito de relâmpagos e ar, protege o Palácio Celestial."
+  }
+}

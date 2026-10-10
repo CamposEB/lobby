@@ -138,3 +138,12 @@
 .ho-wall img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .2s; }
 .ho-wall:hover img{ transform:scale(1.03); }
 @media (max-width:560px){ .ho-stats{ grid-template-columns:1fr; } }
+/* ───── v2: acabamento ───── */
+.ht-group{ border-radius:10px; transition:border-color .16s ease; }
+.ht-group:hover,.ht-group[open]{ border-color:var(--hh-line-gold); }
+.hc-entry{ border-radius:10px; }
+.hc-step{ font-family:var(--hh-display); letter-spacing:.06em; }
+.ht-section-title{ font-family:var(--hh-display); font-size:1rem; letter-spacing:.16em; }
+.ht-verdict,.ht-spec,.ht-pro{ border-radius:4px; font-family:var(--hh-display); font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+.ho-stat b{ font-family:var(--hh-display); }
+@media (prefers-reduced-motion:reduce){ .ht-group{ transition:none; } }

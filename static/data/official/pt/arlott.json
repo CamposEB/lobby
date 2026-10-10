@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12040": {
+      "description": "Arlott possui um olho demoníaco que marca unidades inimigas próximas a ele que forem afetadas por efeitos de controle por 7s.\nO olho também marca automaticamente um herói inimigo próximo dentro da sua visão a cada 7s."
+    },
+    "12010": {
+      "description": "Arlott golpeia com sua lança para a frente, causando 200 (+60% Total Physical Attack) de Dano Físico e atordoando brevemente os alvos na área. Inimigos atingidos pela parte mais distante da área serão atordoados por 1s."
+    },
+    "12020": {
+      "description": "Arlott avança contra um inimigo, causando 135 (+60% Total Physical Attack) de Dano Físico (esta skill não pode ser interrompida durante o movimento).\nSe o alvo estiver marcado, ele ganha um breve aumento de Velocidade de Movimento, esta skill causa o dobro de dano, reseta imediatamente sua recarga e recupera 70 (+60% Total Physical Attack) de HP para Arlott (restaura apenas 50% desse valor ao atingir unidades que não sejam heróis)."
+    },
+    "12030": {
+      "description": "Passiva: Cada nível reduz o intervalo de Demon Gaze em 1s.\nAtiva: Arlott desfere um golpe cortante para a frente, causando 400 (+80% Total Physical Attack) de Dano Físico aos inimigos na área, empurrando-os para a borda do alcance do corte e revelando brevemente sua posição (só pode ser interrompido por Supressão)."
+    }
+  },
+  "counters": {
+    "assist": "Arlott funciona muito bem ao lado de Tanks com boa iniciação de controle, como Gatotkaca e Atlas. O controle deles ativa a marca do Arlott, permitindo que ele spamme sua 2ª Skill e cause toneladas de dano.",
+    "strong": "Arlott leva muita vantagem contra Fighters com menos HP, como Sun e Zilong. Ele tem um dano de burst alto, excelente capacidade de perseguição e controle, conseguindo derreter Fighters mais frágeis com facilidade.",
+    "weak": "Arlott tem dificuldades contra Fighters mais tankudos e que aguentam muito dano, como Thamuz e Fredrinn, já que não tem burst suficiente para finalizá-los rápido e acaba levando a pior em trocas longas."
+  },
+  "lore": {
+    "short": "Um híbrido de humano e demônio que empunha duas lanças, movido por uma sede de vingança contra a Igreja e os demônios."
+  }
+}

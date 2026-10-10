@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12140": {
+      "description": "Os Ataques Básicos e habilidades de Ixia aplicam um acúmulo de Carga de Starlium aos inimigos ao acertá-los. Quando Ixia realiza um Ataque Básico em um inimigo com dois acúmulos de Carga de Starlium, o ataque consome os acúmulos e é substituído por Siphon Starlium, causando (+150% de Ataque Físico Total) + (+10*Nível do Herói) de Dano Físico ao alvo. Ixia recupera HP igual ao dano causado (apenas 10% contra unidades não heroicas) e desacelera o alvo em 25% por 1s.\nSiphon Starlium pode atingir todos os inimigos na frente de Ixia dentro do alcance de seu Ataque Básico, mas não pode causar dano crítico.\nOs Ataques Básicos de Ixia não podem ativar Roubo de Vida."
+    },
+    "12110": {
+      "description": "Ixia dispara 2 feixes de energia carregados com Starlium ao longo do chão na direção do alvo, causando 100 (+70% de Ataque Físico Total) de Dano Físico aos inimigos em uma área retangular. Ao acertar heróis inimigos, Ixia ganha 50% de Velocidade de Movimento por 2s.\nInimigos atingidos por ambos os feixes sofrerão o dobro do dano."
+    },
+    "12120": {
+      "description": "Ixia libera um recipiente de energia Starlium na direção do alvo, empurrando os inimigos próximos para trás. Após um curto atraso, ele puxa os inimigos no alcance para a linha central e causa 200 (+60% de Ataque Físico Total) de Dano Físico."
+    },
+    "12130": {
+      "description": "Ixia reorganiza sua arma em 6 armas menores e entra no estado de Tiroteio Total por 4s. Nesse estado, os Ataques Básicos e habilidades de Ixia podem atingir inimigos em uma grande área em forma de leque na frente dela, mas não fora dela. Os Ataques Básicos de Ixia podem atingir até 6 unidades inimigas (priorizando heróis) e Siphon Starlium será disparado simultaneamente com seus Ataques Básicos normais."
+    }
+  },
+  "counters": {
+    "assist": "Com sua Ultimate, Ixia é capaz de causar um dano sustentado impressionante. Por isso, ela funciona melhor com heróis que possuem habilidades de controle em área, como Atlas e Vexana.",
+    "strong": "As habilidades de Ixia a tornam uma ótima kiteadora. Ela funciona bem contra heróis com alcance curto ou habilidades de lentidão fracas, como Fredrinn e Bane.",
+    "weak": "Ixia carece de sobrevivência, por isso pode ser neutralizada por heróis com alto dano de burst ou habilidades de controle fortes, como Saber e Aamon."
+  },
+  "lore": {
+    "short": "Líder do Bad Soul e inventora autoproclamada, ela empunha uma arma caseira alimentada por um reator Starlium roubado."
+  }
+}

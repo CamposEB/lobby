@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12240": {
+      "description": "As habilidades de Nolan deixam um Rift. Quando um rift entra em contato com outro rift, eles se ativam e puxam os inimigos para o centro, causando 240 (+140% de Ataque Físico Extra) de Dano Físico após um curto atraso. Cada vez que a ativação de um rift acerta um inimigo, Nolan ganha 25 de Energia. Se um inimigo for atingido por múltiplas ativações de rift, o dano após o primeiro acerto será reduzido em 40%.\nSalto Cósmico: Se Nolan não causar ou receber dano por 5s, ele aprimora seu próximo Ataque Básico para avançar até o alvo, causando (+120% de Ataque Físico Total) de Dano Físico e deixando um Rift. (Dano causado a ou recebido de Minions ou Creeps não impedirá Nolan de obter esse efeito)."
+    },
+    "12210": {
+      "description": "Nolan corta uma área retangular à sua frente com sua régua cósmica, causando 230 (+40% de Ataque Físico Total) de Dano Físico e deixando um Rift no primeiro inimigo atingido."
+    },
+    "12220": {
+      "description": "Nolan avança na direção alvo e corta com sua régua cósmica, causando 70 (+13% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho e deixando um Rift."
+    },
+    "12230": {
+      "description": "Nolan corta o local alvo 3 vezes, causando 120 (+50% de Ataque Físico Extra) de Dano Físico em cada corte, deixando 3 rifts e reduzindo a velocidade do alvo atingido em 30% por 0.5s. Os rifts serão ativados automaticamente enquanto Nolan recua."
+    }
+  },
+  "counters": {
+    "assist": "Nolan funciona bem com Tanques que podem iniciar e controlar o inimigo, permitindo que Nolan se concentre em causar o máximo de dano possível, como Tigreal e Gatotkaca.",
+    "strong": "Nolan neutraliza heróis frágeis que carecem de habilidades de mobilidade, como Hanabi e Eudora, porque eles têm dificuldade em evitar seus rifts, enquanto a própria mobilidade de Nolan os torna alvos fáceis.",
+    "weak": "Nolan é neutralizado por heróis tanque com alto dano sustentado, como Thamuz e Fredrinn, que podem sobreviver ao burst de Nolan e matá-lo em seguida."
+  },
+  "lore": {
+    "short": "Um estudioso que vaga pelo universo com almas divididas para salvar sua filha."
+  }
+}

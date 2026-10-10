@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6340": {
+      "description": "Selena pode alternar livremente entre suas duas formas.\nForma Élfica: Selena aplica a Marca Abissal quando suas habilidades causam dano. As marcas duram 8s e podem acumular até 2 vezes.\nForma Abissal: Os Ataques Básicos de Selena se tornam corpo a corpo e causam (+25% de Poder Mágico Total) de dano mágico adicional. Suas habilidades causam 240-450 (+40% de Poder Mágico Total) de dano mágico adicional a inimigos com Marca Abissal e consomem suas pilhas de marca em 1. Esse dano é aumentado para 250% contra tropas e lacaios."
+    },
+    "6310": {
+      "description": "Selena invoca um Demônio Abissal para se esconder no subsolo. O Demônio Abissal se prende a qualquer inimigo que se aproxime, infligindo uma pilha de Marca Abissal e reduzindo sua Velocidade de Movimento em 50% por 1s. O Demônio Abissal então explode, causando 350 (+150% de Poder Mágico Total) de Dano Mágico aos inimigos na área e reduzindo sua Velocidade de Movimento em 50% por 1s.\n\nCada Demônio Abissal adicional em um inimigo aumenta o dano final em 50%.\n\nCada Demônio Abissal pode se esconder por até 60s e até 3 Demônios Abissais podem existir ao mesmo tempo."
+    },
+    "6320": {
+      "description": "Selena dispara um espectro abissal na direção do alvo, que para ao atingir um herói inimigo, uma tropa ou um invocador, causando 250 (+20% de Poder Mágico Total) a 500 (+40% de Poder Mágico Total) de Dano Mágico ao alvo atingido e atordoando-o por 0,5s a 2,5s, revelando sua localização (o dano e a duração do atordoamento aumentam com a distância percorrida pelo espectro).\n\nO espectro coleta a Armadilha Abissal ao passar sobre ela e aplica a armadilha ao alvo inimigo ao atordoá-lo.\n\nSe o espectro atordoar um inimigo por 0,9s ou mais, Selena ganhará 60% de Velocidade de Movimento por 2s."
+    },
+    "6330": {
+      "description": "Passiva: Selena ganha 5 de defesa.\nAtiva: Selena entra na Forma Abissal e ganha 20% de Velocidade de Movimento por 0,8s. Isso também reinicia imediatamente o tempo de recarga de Soul Eater e Garotte."
+    }
+  },
+  "counters": {
+    "assist": "Selena funciona bem com heróis à distância que podem causar muito dano em um curto período de tempo, como Xavier e Beatrix.",
+    "strong": "Selena é forte contra heróis frágeis com pouca mobilidade, simplesmente porque é difícil para eles desviar de sua 2ª habilidade. Como Gord e Layla.",
+    "weak": "Mas Selena é fraca contra heróis que podem resistir ou remover suas habilidades de controle, como Hanabi e Wanwan."
+  },
+  "lore": {
+    "short": "Uma garota elfa das trevas que caiu no Abismo."
+  }
+}

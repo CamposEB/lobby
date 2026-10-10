@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1440": {
+      "description": "Rafaela pode usar uma habilidade especial a cada 10s. Após canalizar por 2,5s, ela ressuscita instantaneamente um aliado e aumenta sua Velocidade de Movimento em 30% por 5s (receber dano de heróis e de Creeps Lendários interrompe a canalização e coloca a habilidade em recarga base).\nO tempo de recarga dessa habilidade é aumentado em 600% do tempo de renascimento restante do alvo, limitado a 240s. Essa habilidade não é afetada pela Redução de Recarga."
+    },
+    "1410": {
+      "description": "Rafaela atinge os três inimigos mais próximos com a Luz da Retribuição, causando 350 (+120% de Poder Mágico Total) de Dano Mágico, revelando brevemente suas posições e reduzindo sua velocidade em 40% por 1,5s. Inimigos atingidos pela Luz da Retribuição novamente dentro de 6s receberão 20% de dano extra (esse efeito acumula até 3 vezes)."
+    },
+    "1420": {
+      "description": "Rafaela invoca a Luz Sagrada, recuperando 100 (+35% de Poder Mágico Total) de HP para os heróis aliados próximos, mais 150 (+65% de Poder Mágico Total) de HP para si mesma e para o herói aliado mais ferido na área. Ela também aumenta a Velocidade de Movimento dos heróis aliados próximos em 30% e concede Imunidade a Lentidão por 1s.\nA cada 10 de , o bônus de Velocidade de Movimento aumenta em 1%."
+    },
+    "1430": {
+      "description": "Rafaela libera o verdadeiro poder da Luz Sagrada na direção alvo, causando 460 (+120% de Poder Mágico Total) de Dano Mágico aos inimigos em linha e atordoando-os por 1,2s."
+    }
+  },
+  "counters": {
+    "assist": "Quando em equipe com Lutadores como Freya e Lapu-Lapu, Rafaela pode aumentar seu poder ofensivo e sua sobrevivência.",
+    "strong": "Rafaela tem ótima cura e mobilidade decente, e se sai bem contra heróis que carecem de dano em rajada ou mobilidade, como Masha e Barats.",
+    "weak": "Rafaela tem dificuldades contra Assassinos ágeis e com burst, como Ling e Hayabusa."
+  },
+  "lore": {
+    "short": "Um anjo amado e respeitado pelo povo deste mundo."
+  }
+}

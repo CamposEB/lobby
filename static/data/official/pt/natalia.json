@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2440": {
+      "description": "Se Natalia permanecer em um arbusto sem receber dano por 1s, ela entrará no estado de Camuflagem e ganhará 15% de Velocidade de Movimento. Nesse estado, o próximo Ataque Básico de Natalia a teleportará para trás do alvo, causando 200 (+110% de Ataque Físico Total) de Dano Físico e silenciando o alvo por 0.25s.\n\nCausar dano, receber dano ou usar habilidades encerrará imediatamente o estado de Camuflagem, mas seu próximo Ataque Básico permanecerá aprimorado por mais 1s.\n\nO dano crítico base de Natalia é reduzido para 150%, mas seu dano contra Creeps é aumentado para 150%."
+    },
+    "2410": {
+      "description": "Natalia avança na direção alvo, causando 250 (+50% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho.\n\nApós atingir um inimigo, ela pode usar essa habilidade novamente em até 5s."
+    },
+    "2420": {
+      "description": "Natalia lança uma Bomba de Fumaça em sua localização, reduzindo a velocidade dos inimigos na área em 25%, enquanto Natalia se torna imune a Ataques Básicos inimigos por 4s."
+    },
+    "2430": {
+      "description": "Passiva: Natalia ganha 15% de Chance de Acerto Crítico.\n\nAtiva: Natalia entra imediatamente no estado Instinto de Assassina. Ela pode armazenar até 2 cargas da Ultimate, e cada carga tem um tempo de recarga de 30s. Matar creeps reduz o tempo de recarga restante em 50% do tempo total de recarga."
+    }
+  },
+  "counters": {
+    "assist": "Natalia funciona melhor com heróis que causam muito dano em área, como Yi Sun-shin e Vexana. Ela pode ficar escondida enquanto eles atacam o inimigo, e depois atacar os alvos que estiverem com pouco HP.",
+    "strong": "Natalia neutraliza heróis frágeis que carecem de controle e burst, como Novaria e Irithel, pois eles não conseguem impedir o dano burst de Natalia.",
+    "weak": "Natalia é neutralizada por heróis que podem restringir sua mobilidade, como Minsitthar e Kaja, pois eles podem facilmente anular sua principal vantagem."
+  },
+  "lore": {
+    "short": "Uma assassina exilada pelo Império."
+  }
+}

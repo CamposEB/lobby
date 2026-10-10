@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "13240": {
+      "description": "Clemar, a alma dividida de Marcel, entra na câmera para congelar o momento. Seus Ataques Básicos causam 50 (+40% do Ataque Físico Total)(+40% da Defesa Mágica Total)(+40% da Defesa Física Total) de Dano Físico. Seu Extra é convertido em 1,5% de .\n\nClemar tira fotos automaticamente de heróis inimigos próximos a Marcel, causando um breve Momento Congelado e causando 20 (+ 5% de ) de Dano Verdadeiro (aciona Efeitos de Ataque). Isso também concede um escudo do mesmo valor a Marcel e a um herói aliado próximo. Recarga: 12s por alvo."
+    },
+    "13210": {
+      "description": "Clemar se concentra em uma área ao redor de Marcel, reduzindo a velocidade dos heróis inimigos dentro dela em 60%.\nApós 2,5s, ele completa o disparo, causando 300 (+50% do Ataque Físico Total)(+120% da Defesa Mágica Total)(+120% da Defesa Física Total) de Dano Físico aos inimigos dentro da área."
+    },
+    "13220": {
+      "description": "Hora da inspiração artística! Marcel entra no estado de Velocidade de Rastreamento por 3s, ganhando 15% de Velocidade de Movimento. Esse bônus aumenta para 75% ao se mover em direção a um herói inimigo.\n\nUse Novamente: Marcel avança na direção alvo, deixando um fantasma de enquadramento para trás, enquanto a área do Momento Enquadrado permanece no local original."
+    },
+    "13230": {
+      "description": "Marcel e Clemar realizam uma fotografia conjunta. Após um breve atraso, Clemar tira uma foto em ângulo amplo da área alvo por 2s. Durante esse tempo, Marcel entra no estado de Velocidade de Rastreamento enquanto está dentro da área. Todas as outras unidades na área são colocadas em um Momento Congelado e são imunes a todos os efeitos, exceto os de Marcel. Todos os projéteis também são congelados e continuarão após um atraso (projéteis direcionados causarão 50% de dano).\n\nGolden Hour reinicia o tempo de recarga de Platinum Snap para cada herói inimigo.\nHeróis aliados com o escudo Platinum Snap podem se mover livremente dentro da área."
+    }
+  },
+  "counters": {
+    "assist": "Devido ao excelente controle de área de Marcel, ele funciona bem com aliados que possuem alto dano de área, como Hanabi e Ixia, para maximizar seu potencial de dano.",
+    "strong": "Marcel é mais eficaz contra heróis com baixa mobilidade, como Layla e Vexana, pois eles são facilmente capturados por sua Ultimate, permitindo que ele e seus aliados garantam mortes fáceis.",
+    "weak": "Heróis que possuem efeitos de Invencibilidade ou Intangibilidade que podem contornar o controle de Marcel, como Ling e X.Borg, reduzirão seu impacto no campo de batalha."
+  },
+  "lore": {
+    "short": "Originário da Casa Paxley, ele é um artista elegante, misterioso e bizarro cuja alma dividida se fundiu com sua câmera."
+  }
+}

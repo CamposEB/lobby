@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4940": {
+      "description": "Hylos ganha 1 ponto extra de Mana máxima para cada 2,5 pontos extras de Mana obtidos.\nQuando está sem Mana, ele pode consumir HP para lançar habilidades."
+    },
+    "4910": {
+      "description": "Hylos ganha 50% de Velocidade de Movimento e faz com que seu próximo Ataque Básico em 3s cause 300 (+80% de Poder Mágico Total) de Dano Mágico ao alvo, empurrando-o e atordoando-o por 1s.\n\nA Velocidade de Movimento extra diminui rapidamente ao longo do tempo e desaparece após o próximo Ataque Básico."
+    },
+    "4920": {
+      "description": "Hylos libera o Anel da Punição, causando 100 (+20% de Poder Mágico Total) de Dano Mágico aos inimigos próximos por segundo, enquanto os desacelera em 4% e reduz sua Velocidade de Ataque em 7,5% por 2,5s (até 8 acúmulos). Cada acúmulo também aumenta o dano sofrido pelo inimigo causado pelo Anel da Punição em 5%. O Anel da Punição consome 30 de Mana por segundo enquanto está ativo.\n\nUsar Novamente: Hylos cancela o Anel da Punição."
+    },
+    "4930": {
+      "description": "Hylos cria um enorme caminho na direção do alvo, reduzindo a Velocidade de Movimento dos inimigos em 75% por 1s. O caminho dura 6s.\nQuando está no caminho, Hylos ganha imunidade a lentidão e recupera 3% de HP por segundo. Heróis aliados que se movem ao longo do caminho ganham 60% de Velocidade de Movimento extra, enquanto heróis inimigos no caminho são desacelerados em 25%."
+    }
+  },
+  "counters": {
+    "assist": "Hylos funciona melhor com heróis que precisam de Velocidade de Movimento mais rápida para atacar,\ncomo Terizla e Minsitthar.",
+    "strong": "Hylos é forte contra heróis sem habilidades de mobilidade que não conseguem escapar facilmente de sua segunda habilidade, como Layla e Gord.",
+    "weak": "Hylos é neutralizado por heróis com alta mobilidade, como Karrie e Lesley, pois é difícil para ele imobilizá-los e eles também podem derrotá-lo."
+  },
+  "lore": {
+    "short": "Centauro que guarda as Montanhas Nebulosas."
+  }
+}

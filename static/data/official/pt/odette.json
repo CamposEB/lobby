@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4640": {
+      "description": "Por 8s após lançar uma habilidade, o próximo ataque básico de Odette ganha alcance extra e ricocheteia entre os inimigos (ou entre um inimigo e ela mesma), causando 144-200 (+50% de Poder Mágico Total) de Dano Mágico por acerto.\n\nAs habilidades de Odette também ativam esse efeito ao acertar (até 3 acúmulos)."
+    },
+    "4610": {
+      "description": "Odette libera um cisne mágico na direção alvo, causando 300 (+150% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e reduzindo a velocidade deles em 30% por 2s."
+    },
+    "4620": {
+      "description": "Odette libera bolas de energia mágica na direção alvo, causando 250 (+50% de Poder Mágico Total) de Dano Mágico ao primeiro inimigo atingido e imobilizando-o por 1,5s. Ao acertar, uma bola de energia se divide para atacar um inimigo próximo (prioriza heróis inimigos), causando 250 (+50% de Poder Mágico Total) de Dano Mágico e imobilizando-o por 1,5s."
+    },
+    "4630": {
+      "description": "Odette canaliza uma dança, ganhando um escudo de 1200 (+150% de Poder Mágico Total) e causando até 2000 (+750% de Poder Mágico Total) de Dano Mágico aos inimigos próximos em uma grande área por 5s. Durante esse tempo, sua velocidade de movimento é reduzida em 40%, mas ela pode se mover livremente.\n\nUse novamente para cancelar. Apenas efeitos de controle de alto nível podem interromper essa habilidade."
+    }
+  },
+  "counters": {
+    "assist": "Combine Odette com heróis que possam reposicionar seus aliados, como Johnson e Jawhead, para facilitar que ela encontre a posição perfeita para sua ultimate.",
+    "strong": "A ultimate de Odette é capaz de causar danos massivos e é eficaz contra heróis que carecem de habilidades de interrupção, como Layla e Irithel.",
+    "weak": "Odette é contra-atacada por heróis com habilidades de controle de grupo, como Minotauro e Edith, porque eles podem interromper facilmente sua ultimate."
+  },
+  "lore": {
+    "short": "Princesa inocente que cresceu no Castelo do Cisne e gênio mago que se destaca na espada e no cetro."
+  }
+}

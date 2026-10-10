@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6540": {
+      "description": "Dexter auxilia Claude em cada um de seus Ataques Básicos, causando 25 (+25% de Ataque Físico Total) de Dano Físico ao mesmo alvo (herdando uma parte dos Efeitos de Ataque)."
+    },
+    "6510": {
+      "description": "Claude emite uma onda de perturbação na direção do alvo, causando 250 (+40% de Ataque Físico Total) de Dano Físico aos inimigos em uma área em forma de leque, reduzindo sua Velocidade de Movimento em 20% e sua Velocidade de Ataque em 10%.\nPor cada inimigo atingido, ele ganha 4% de Velocidade de Movimento e Ataque (dobrado se acertar heróis inimigos) por 6s (até 5 acúmulos)."
+    },
+    "6520": {
+      "description": "Claude conjura uma imagem espelhada de Dexter no local alvo, que ataca automaticamente os inimigos próximos por 5,5s. Os Ataques Básicos da imagem espelhada causam 25 (+25% de Ataque Físico Total) de Dano Físico e ativam os Efeitos de Ataque de Claude.\nUse Novamente: Claude troca de lugar com a imagem espelhada."
+    },
+    "6530": {
+      "description": "Claude e Dexter disparam rapidamente contra inimigos próximos por 3s, causando 40 (+40% de Ataque Físico Total) de Dano Físico a até dois inimigos com cada tiro (contado como Dano de Ataque Básico). Claude também ganha um escudo de 20 (+3% de Ataque Físico Total) cada vez que o Ultimate causa dano a um inimigo."
+    }
+  },
+  "counters": {
+    "assist": "Claude funciona melhor com heróis que podem buffá-lo, como Angela e Faramis.",
+    "strong": "Claude é forte contra heróis com habilidades de controle fracas e mobilidade ruim, então ele pode facilmente esquivar-se de seus ataques com sua 2ª Habilidade, como Vexana e Luo Yi.",
+    "weak": "Claude é contrariado por heróis com habilidades de controle poderosas. Suas habilidades de controle farão com que Claude perca sua vantagem de mobilidade. Como Eudora e Franco."
+  },
+  "lore": {
+    "short": "Um excelente ladrão que vem e vai sem deixar rastros."
+  }
+}

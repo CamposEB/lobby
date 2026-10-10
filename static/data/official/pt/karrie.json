@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4040": {
+      "description": "Os ataques básicos e as habilidades da Karrie aplicam uma marca de Lightwheel ao acertar o alvo.\nQuando um alvo acumula 5 marcas de Lightwheel, elas se transformam em um disco de luz, causando dano verdadeiro equivalente a 5 (+1% de Ataque Físico Extra)% do HP do alvo a ele (até 300 de dano contra tropas)."
+    },
+    "4010": {
+      "description": "Karrie libera uma esfera de energia pulsante na direção alvo, causando 250 (+90% do Ataque Físico Total) de dano físico aos inimigos em seu caminho. A esfera para ao atingir um herói inimigo ou ao alcançar sua distância máxima de deslocamento, causando continuamente 150 (+20% do Ataque Físico Total) de dano físico aos inimigos próximos e reduzindo sua velocidade em 80% por 1s."
+    },
+    "4020": {
+      "description": "Karrie avança na direção alvo enquanto lança um disco de luz no inimigo mais próximo, causando 150 (+70% do Ataque Físico Total) de dano físico e aplicando uma marca de Lightwheel nele.\n\nQuando está no estado Dual Wield, Karrie lança dois discos de luz em vez de um."
+    },
+    "4030": {
+      "description": "Karrie entra no estado Dual Wield por 10s, ganhando 20% de velocidade de movimento. Cada ataque básico causa 40 (+50% do Ataque Físico Total) de dano físico e lança 2 discos de luz que herdam uma parte dos efeitos de ataque."
+    }
+  },
+  "counters": {
+    "assist": "Assassinos como Saber e Aamon, que podem eliminar ameaças à distância, permitindo que Karrie se concentre na linha de frente.",
+    "strong": "Tanks como Tigreal e Fredrinn, que sofrem mais dano devido aos ataques percentuais de HP dela.",
+    "weak": "Heróis de longo alcance como Xavier, Layla e Nana, devido ao alcance médio da Karrie."
+  },
+  "lore": {
+    "short": "Yasson, indiferente e poderosa."
+  }
+}

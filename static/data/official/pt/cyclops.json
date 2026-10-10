@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3340": {
+      "description": "Toda vez que Cyclops acerta um inimigo com suas habilidades, todos os tempos de recarga de suas habilidades são reduzidos em 0,5s."
+    },
+    "3310": {
+      "description": "Cyclops lança dois Discos de Poeira Estelar na direção alvo, cada um causando 240 (+60% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho."
+    },
+    "3320": {
+      "description": "Cyclops conjura Esferas Estreladas ao seu redor, ganhando 50% de Velocidade de Movimento que diminui ao longo de 2s.\n\nAs Esferas Estreladas buscam e atacam automaticamente inimigos próximos (priorizando heróis inimigos) e explodem ao contato, causando 200 (+65% de Poder Mágico Total) de Dano Mágico.\nAcertos subsequentes no mesmo alvo causam menos dano."
+    },
+    "3330": {
+      "description": "Cyclops cria uma Esfera Planetária que rastreia o herói ou creep inimigo alvo, causando 500 (+120% de Poder Mágico Total) de Dano Mágico e imobilizando-os por 0,75-1,5s (escala com a distância percorrida pela Esfera Planetária)."
+    }
+  },
+  "counters": {
+    "assist": "Cyclops funciona melhor com heróis resistentes que possuem habilidades de controle fortes, como Belerick e Minsitthar.",
+    "strong": "O curto tempo de recarga das habilidades de Cyclops o torna forte contra heróis de médio alcance com baixa mobilidade, como Terizla e Alpha.",
+    "weak": "Cyclops não possui habilidades de Dash ou Blink, o que o torna um alvo preferido para heróis com habilidades de aproximação e controle. Como Lancelot, Alucard e Kagura."
+  },
+  "lore": {
+    "short": "Um viajante celestial no universo."
+  }
+}

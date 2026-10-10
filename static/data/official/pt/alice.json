@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "440": {
+      "description": "Alice ganha 1 acúmulo de Crimson cada vez que sua skill atinge um inimigo, durando 4s (até 2 acúmulos). Blood Banquet é ativado com o máximo de acúmulos.\n\nBlood Banquet: A cada 0.5s, Alice causa 25 (+30% Total Magic Power) (+ 0.5% - 2.5% target's , scaling with level) de Dano Mágico aos inimigos próximos. Ela também regenera 10 (+3% Extra Max HP) de HP e ganha 8% de Velocidade de Movimento. A duração é renovada sempre que suas skills acertam um herói inimigo.\nO dano contra creeps é limitado a 70 (+10*Hero Level) de Dano Mágico."
+    },
+    "410": {
+      "description": "Alice dispara Blood Energy para frente, causando 100 (+50% Total Magic Power) de Dano Mágico aos inimigos.\n\nUse Novamente: Antes de Blood Energy se dissipar, Alice pode reconjurar esta skill como Scarlet Shadow para dar um blink até a posição dela."
+    },
+    "420": {
+      "description": "Alice realiza uma dança mortal, causando 350 (+130% Total Magic Power) de Dano Mágico aos inimigos próximos e reduzindo a velocidade de movimento deles em 70% por 1s.\n\nSe Blood Banquet estiver ativo, a skill também queima os inimigos, causando 300% do dano de Blood Banquet e curando a mesma quantidade de HP."
+    },
+    "430": {
+      "description": "Alice se envolve em sangue, ganhando Imunidade a Controle e 50% de Redução de Dano, enquanto reduz a própria velocidade de movimento em 50%.\n\nApós 1.5s, ela cai dos céus, causando 500 (+200% Total Magic Power) (+20% Extra Max HP) de Dano Mágico a todos os inimigos na área e imobilizando-os por 1s.\n\nEnquanto canaliza sua Ultimate, Alice não pode usar nenhuma skill de herói além de Scarlet Shadow."
+    }
+  },
+  "counters": {
+    "assist": "Para compensar a fraqueza de Alice no early game e montar um time equilibrado, jogue com ela ao lado de heróis fortes no início do jogo, como Balmond ou Dyrroth.",
+    "strong": "Com sua enorme sustentação em combate, além de mobilidade e controle, Alice é ótima contra heróis que não têm burst e não conseguem escapar de inimigos corpo a corpo, como Cecilion e Chang'e.",
+    "weak": "Alice sofre contra heróis com Execute ou Corta-Cura, que conseguem impedir que ela se cure durante a Ultimate. Heróis como Baxia ou Martis podem diminuir a cura dela ou eliminá-la antes que consiga se regenerar."
+  },
+  "lore": {
+    "short": "Rainha dos Demônios de Sangue e uma das duas forças dominantes do Abismo."
+  }
+}

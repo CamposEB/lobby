@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3540": {
+      "description": "Hilda recupera 2% de HP por segundo enquanto está no mato. Entrar no mato melhora seu próximo ataque básico, que causa 110 (+130% de Ataque Físico Total)(+12*Nível do Herói) de dano físico ao alvo, reduz a velocidade de movimento do alvo em 40% e causa 40 (+100% de Ataque Físico Total)(+10*Nível do Herói) de dano físico aos inimigos atrás do alvo. Após usar o ataque básico melhorado, este efeito entra em recarga por 6s.\n\nO ataque básico e as habilidades de Hilda aplicam uma Marca da Selva ao acertar, que dura até 4s e acumula até 6 vezes. Cada acúmulo reduz a defesa do herói inimigo em 3%."
+    },
+    "3510": {
+      "description": "Hilda ganha 60% de velocidade de movimento por 3s e recebe um escudo que absorve dano igual a 10% da sua vida, durando 3s."
+    },
+    "3520": {
+      "description": "Hilda trava em um alvo inimigo, causando 200 (+90% de Ataque Físico Total) de dano físico por acerto. Esta habilidade pode ser lançada até 3 vezes. O segundo ataque causa dano extra aos inimigos próximos. O terceiro ataque causa dano ao alvo e aos inimigos próximos, derrubando-os brevemente."
+    },
+    "3530": {
+      "description": "Hilda lança um golpe poderoso no alvo inimigo, causando 600 (+250% de Ataque Físico Extra) de dano físico e atordoando-o por 0,2s. Inimigos próximos sofrem 60% do dano.\n\nCada acúmulo de Marca da Selva aumenta o dano do Poder da Selva em 2,5% da defesa do alvo. No máximo de acúmulos, o dano extra aumenta para 20% da defesa do alvo."
+    }
+  },
+  "counters": {
+    "assist": "Hilda funciona bem com heróis tanque, que podem criar espaço para ela causar mais dano. Como Atlas e Tigreal.",
+    "strong": "Hilda se destaca em batalhas prolongadas. Ela funciona bem contra heróis com dano burst mais baixo. Como Zilong e Layla.",
+    "weak": "Hilda é neutralizada por heróis com alta sustentação. Como Thamuz e Uranus. Isso ocorre porque eles podem utilizar suas habilidades de cura para evitar serem executados."
+  },
+  "lore": {
+    "short": "Herdeira do Poder do Megalito."
+  }
+}

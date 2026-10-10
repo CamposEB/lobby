@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1340": {
+      "description": "Após usar cada habilidade, o próximo Ataque Básico de Clint em até 4s penetra uma linha de inimigos, causando 150 (+100% de Ataque Físico Total) de Dano Físico. Esse dano pode ativar Efeitos de Ataque e a parte afetada pode causar dano crítico."
+    },
+    "1310": {
+      "description": "Clint dispara 5 balas em rápida sucessão na direção alvo, cada uma causando 250 (+85% de Ataque Físico Total) de Dano Físico ao inimigo atingido.\n\nAs balas se espalham uniformemente pelos inimigos em uma área em forma de leque. Inimigos atingidos por várias balas recebem menos dano após a primeira bala."
+    },
+    "1320": {
+      "description": "Clint atira uma rede de armadilha na direção alvo, recuando ligeiramente enquanto causa 140 (+30% de Ataque Físico Total) (+150% de Poder Mágico Total) de Dano Físico ao primeiro inimigo atingido e o imobiliza por 1,2s.\n\nAcertar um inimigo com sucesso reduz o tempo de recarga desta habilidade em 40%."
+    },
+    "1330": {
+      "description": "Clint lança uma granada na direção alvo que explode no primeiro inimigo atingido, causando 280 (+100% de Ataque Físico Total) de Dano Físico e reduzindo sua velocidade em 50% por 0,5s.\n\nClint ganha uma carga de granada a cada 10s (até 3)."
+    }
+  },
+  "counters": {
+    "assist": "Clint funciona melhor com Suportes que podem melhorar sua capacidade de kiting, como Rafaela e Angela.",
+    "strong": "Clint é eficaz contra heróis com alcance relativamente menor, como Moskov e Miya, graças ao alcance superior de suas habilidades e Ataques Básicos.",
+    "weak": "Clint é vulnerável a Atiradores com dano em rajada, como Melissa e Karrie, pois ele carece de burst no início e no meio do jogo para trocar golpes com eles."
+  },
+  "lore": {
+    "short": "Um pistoleiro e xerife destemido, que esculpe sua própria justiça nas areias com coragem e determinação inabalável."
+  }
+}

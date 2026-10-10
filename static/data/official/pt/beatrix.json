@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "10580": {
+      "description": "O talento de Beatrix para mecânica permitiu que ela produzisse 4 armas com um poder de fogo realmente impressionante.\n\nAtaque básico de Renner - Tiro longo: Atira um tiro poderoso na direção do alvo, causando dano físico de (+365% de Ataque Físico Total) - (+400% de Ataque Físico Total) ao primeiro alvo atingido (75% de dano contra tropas). Este tiro pode ser desviado ou bloqueado por outros.\n\nBeatrix não pode causar dano crítico. Ela converte cada 1% de chance de crítico em 2 .\nEla ganha Vampiro Mágico igual a 100% do seu Roubo de Vida."
+    },
+    "2010510": {
+      "description": "Passiva: Beatrix pode carregar 2 armas ao mesmo tempo, aumentando seu  em 5.\nAtiva: Beatrix leva 0,5s para trocar sua arma primária pela arma secundária, ganhando um novo Ataque Básico e uma Ultimate."
+    },
+    "2010520": {
+      "description": "Beatrix avança para frente enquanto recarrega completamente sua arma atual."
+    },
+    "2010530": {
+      "description": "Beatrix posiciona calmamente o Renner no campo de batalha e mira. Ao soltar a habilidade, ela causa 700 (+280% de Ataque Físico Total) de dano físico ao primeiro inimigo atingido.\n\nBeatrix pode mirar por até 8 segundos e pode cancelar a habilidade antecipadamente para reduzir o tempo de recarga em 50%.\n\nEste tiro pode penetrar em minions e causa apenas 75% de dano a unidades que não são heróis."
+    },
+    "2010580": {
+      "description": "Depois de escapar da batalha por 3 segundos, Beatrix pode chamar seu mordomo Morgan para fornecer a ela uma caixa de armas reserva.\nBeatrix deve então escolher duas armas da caixa para servir como suas armas primárias e secundárias.\nSua seleção de armas é interrompida se ela realizar qualquer ação ou for controlada durante este período."
+    }
+  },
+  "counters": {
+    "assist": "Beatrix funciona melhor com heróis tanque que possuem boas habilidades de controle, pois eles podem ajudar a melhorar a precisão das habilidades de Beatrix. Como Khufra e Atlas.",
+    "strong": "Beatrix é forte contra heróis sem habilidades de movimento, pois eles podem ser facilmente atingidos por suas habilidades, como Hylos e Belerick.",
+    "weak": "Beatrix é neutralizada por heróis com alto dano em rajada e controle forte em um único alvo, pois eles podem pegá-la com um controle e derrotá-la rapidamente. Como Eudora e Ling."
+  },
+  "lore": {
+    "short": "Uma garota inventora confiante."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9240": {
+      "description": "Toda vez que Carmilla causa dano a um herói inimigo, ela rouba 6-13 (escala com o nível) dele. O  roubado pode se acumular até 5 vezes e dura 5s. No entanto, Carmilla só pode roubar defesa do mesmo herói inimigo uma vez a cada 3s."
+    },
+    "9210": {
+      "description": "Carmilla invoca três Flores Carmesim que giram ao seu redor por 5s, causando 85 (+30% de Poder Mágico Total) de Dano Mágico cada vez que atingem um inimigo e reduzindo sua velocidade em 6% por 0.8s (o efeito de lentidão se acumula até 30%).\n\nCarmilla recupera 45 (+21% de Poder Mágico Total) de HP cada vez que uma Flor Carmesim causa dano (recupera apenas 30% desse valor ao atingir minions)."
+    },
+    "9220": {
+      "description": "Carmilla acumula Energia de Banho de Sangue, ganhando 70% de Velocidade de Movimento que decai ao longo de 4.5s.\n\nUse Novamente: Carmilla libera a Energia de Banho de Sangue acumulada no herói ou Creep inimigo alvo, causando 150 (+120% de Poder Mágico Total) de Dano Mágico e atordoando-o por 0.6s. O dano e a duração do atordoamento escalam com o tempo de acumulação (até 100%)."
+    },
+    "9230": {
+      "description": "Carmilla lança a Maldição do Sangue no local alvo, reduzindo a velocidade dos inimigos atingidos em 50%. Após 0.8s, os inimigos que ainda estiverem na área sofrerão 450 (+130% de Poder Mágico Total) de Dano Mágico e ficarão imobilizados por 1s, com a velocidade reduzida em 30% e ligados por 5s.\n\nQuando um inimigo ligado sofre dano ou é controlado, todos os outros alvos ligados sofrem 50% do dano e são controlados por 100% da duração. Os inimigos podem se afastar uns dos outros para quebrar o vínculo."
+    }
+  },
+  "counters": {
+    "assist": "Carmilla funciona melhor com Magos de dano contínuo que possuem habilidades de controle, como Cecilion e Aurora, pois seu Ultimate pode amplificar muito suas forças.",
+    "strong": "Carmilla neutraliza lutadores corpo a corpo com baixa durabilidade, como Dyrroth e Lapu-Lapu, porque ela pode roubar rapidamente suas Defesas com sua 1ª Habilidade e seu Passivo, ao mesmo tempo que se cura.",
+    "weak": "Carmilla é neutralizada por heróis que podem ignorar ou remover seu controle, como Hanabi e Wanwan, já que eles não podem ser imobilizados pela 2ª Habilidade ou pelo Ultimate de Carmilla."
+  },
+  "lore": {
+    "short": "A garota que se tornou uma Demônio de Sangue por amor."
+  }
+}

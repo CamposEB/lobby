@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6940": {
+      "description": "O dano causado pelos ataques básicos e habilidades de Hanzo inflige uma carga de Ninjutsu das Trevas no alvo, até um máximo de 5 cargas. Ninjutsu: Demon Feast só pode ser lançado em alvos com cargas completas de Ninjutsu das Trevas."
+    },
+    "6910": {
+      "description": "A habilidade só pode ser usada em alvos com cargas máximas de Ninjutsu das Trevas. Ao mirar em um creep, Hanzo o devora imediatamente e o digere ao longo de um período de tempo para recuperar 20% de HP.\nAo mirar na Tartaruga, no Lorde ou em heróis inimigos, ele causa 600 (+120% de Ataque Físico Extra) de Dano Físico, recupera 150 (+80% de Ataque Físico Total) de HP e reduz o tempo de recarga desta habilidade em 60%."
+    },
+    "6920": {
+      "description": "Hanzo avança na direção alvo, deixando uma névoa escura na frente que causa 90 (+45% de Ataque Físico Extra) de Dano Físico aos inimigos na área a cada 0,5s, até 5 vezes (este dano conta como dano de Ataque Básico, mas não pode ser crítico).\nA névoa escura reduz a velocidade dos inimigos na área em 40% e concede a Hanzo 20% de Velocidade de Movimento."
+    },
+    "6930": {
+      "description": "Hanzo entra na batalha como Hanekage, consumindo 170 de Energia por segundo. Ele ganha 20 de Energia quando uma unidade não heroica morre perto dele e 200 de Energia quando é um herói. Ele ganha 15 de Energia ao atacar um herói e 45 de Energia ao atacar a Tartaruga ou o Lorde. Quando a Energia acaba, o corpo de Hanzo será lentamente atraído para a posição de Hanekage.\n\nEnquanto está na forma de Hanekage, o corpo de Hanzo é invencível, enquanto Hanekage ignora obstáculos e ganha 50% de Velocidade de Movimento e 30% de Velocidade de Ataque.\n\nUsar Novamente ou Ao Morrer: Hanekage retorna ao corpo de Hanzo, recuperando 360 (+100% de Ataque Físico Extra) de HP e se tornando invulnerável durante o retorno. Se Hanekage for morto, Hanzo será reduzido em 50% de sua velocidade e revelado por 6s, e o tempo de recarga da habilidade será dobrado."
+    }
+  },
+  "counters": {
+    "assist": "Hanzo tem um alto potencial de burst, mas precisa de tempo para acumular seu passivo, então ele funciona melhor com heróis que podem manter o inimigo sob controle, como Aurora, Belerick e Tigreal.",
+    "strong": "O ultimate de Hanzo permite que ele ataque ou mergulhe com relativa segurança, tornando-o uma séria ameaça para heróis frágeis sem mobilidade, como Layla, Ixia e Zhuxin, além de perturbar o inimigo em lutas em equipe.",
+    "weak": "Hanzo se sai menos favoravelmente contra heróis com muita mobilidade, como Fanny, Lancelot e Arlott, pois é difícil acumular cargas neles, limitando assim o dano de Hanzo."
+  },
+  "lore": {
+    "short": "Gênio ninja do Setor das Sombras que está em uma encruzilhada."
+  }
+}

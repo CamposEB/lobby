@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10140": {
+      "description": "Quando Yve causa dano a heróis inimigos com suas habilidades, ela ganha Poder Galáctico (tempo de recarga: 0,5s), até 3 acúmulos. Cada acúmulo fornece a Yve um escudo de 120 (+10*Nível do Herói) (+50% de Poder Mágico Total) por 3s."
+    },
+    "10110": {
+      "description": "Yve detona Energia Galáctica no local alvo, causando 290 (+150% de Poder Mágico Total) de dano mágico aos inimigos na área.\nAcertar um inimigo com sucesso concede a Yve 55% de velocidade de movimento extra (reduzida pela metade se o inimigo atingido não for um herói), que diminui ao longo de 1s."
+    },
+    "10120": {
+      "description": "Yve invoca um Cristal do Vazio no local alvo, causando 220 (+40% de Poder Mágico Total) de dano mágico aos inimigos próximos.\n\nUse Novamente: Yve ordena que o Cristal dispare energia materializada na direção alvo por 2,7s, causando 75 (+10% de Poder Mágico Total) de dano mágico a cada 0,45s aos inimigos atingidos e os desacelerando em 20%. Inimigos atingidos várias vezes são desacelerados em mais 4% para cada acerto após o primeiro (até 40%)."
+    },
+    "10130": {
+      "description": "Yve cria um Campo Estelar que dura 15s. Durante esse período, você pode tocar ou deslizar a tela para atacar até 20 vezes.\nToque: Causa 340 (+150% de Poder Mágico Total) de dano mágico aos inimigos na área alvo.\nDeslize: Causa 85 (+10% de Poder Mágico Total) de dano mágico a cada 0,45s aos inimigos na área alvo por 2,7s e os desacelera em 40%.\nInimigos que saem ou entram no Campo Estelar são imobilizados por 0,8s (apenas uma vez contra o mesmo alvo).\nYve não pode ser deslocada enquanto o Campo Estelar estiver ativo, e o Campo Estelar permanecerá mesmo que Yve seja controlada (exceto por Supressão)."
+    }
+  },
+  "counters": {
+    "assist": "Yve funciona melhor com Tanques e Suportes com controle forte para imobilizar inimigos para seu Ultimate, como Minotauro, Gatotkaca e Atlas.",
+    "strong": "Yve é eficaz contra Tanques e Lutadores com baixa mobilidade, como Fredrinn, Barats e Aulus, devido ao longo alcance de suas habilidades.",
+    "weak": "A baixa capacidade de sobrevivência de Yve a torna um alvo para heróis que mergulham e causam dano em rajada, como Yin, Saber e Karina."
+  },
+  "lore": {
+    "short": "Guardião do equilíbrio do universo."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "840": {
+      "description": "O terceiro ataque consecutivo de Karina contra o mesmo inimigo causa 100 (+ 5 (+2,5% do Poder Mágico Total)% do HP perdido pelo alvo) de Dano Verdadeiro extra.\n\nSe o alvo for um herói inimigo, este ataque também reduz o tempo de recarga de suas habilidades não-Ultimate em 1,5s.\nO dano causado a criaturas é limitado a 2000 de Dano Verdadeiro."
+    },
+    "810": {
+      "description": "Karina entra no estado Dança das Lâminas por até 3,5s, ganhando 45% de Velocidade de Movimento e bloqueando todos os Ataques Básicos. Ataques bloqueados desencadeiam um contra-ataque que causa 100 (+30% de Poder Mágico Total) de Dano Mágico ao atacante (disparando uma Shadowblade contra atacantes à distância ou desencadeando a Dança das Lâminas contra atacantes corpo a corpo).\nEste efeito tem um tempo de recarga de 0,4s.\n\nLançar um Ataque Básico ou Shadow Assault encerra o estado Dança das Lâminas, aumentando o poder do próximo Ataque Básico de Karina para causar 160 (+60% de Poder Mágico Total) de dano mágico crítico e reduzir a velocidade do alvo em 45% por 1s."
+    },
+    "820": {
+      "description": "Karina lança um golpe giratório, causando 375 (+125% de Poder Mágico Total) de Dano Mágico aos inimigos próximos."
+    },
+    "830": {
+      "description": "Karina avança até o herói inimigo, causando 350 (+160% de Poder Mágico Total) de Dano Mágico, aplicando um Símbolo das Sombras ao alvo e deixando uma Forma das Sombras atrás dele.\n\nO Símbolo das Sombras e a Forma das Sombras duram 5s. Se o alvo morrer durante esse tempo, o tempo de recarga desta habilidade é reiniciado imediatamente.\n\nUse Novamente: Karina retorna ao local da Forma das Sombras, causando 150 (+50% de Poder Mágico Total) de Dano Mágico aos inimigos no caminho."
+    }
+  },
+  "counters": {
+    "assist": "Karina funciona bem com heróis que podem agrupar inimigos, como Tigreal e Faramis, já que sua Ultimate e sua segunda habilidade também atingem qualquer um perto de seu alvo principal, preparando-os para serem mortos em sequência por sua Ultimate.",
+    "strong": "Karina neutraliza atiradores que carecem de mobilidade, como Layla e Hanabi, já que sua primeira habilidade pode neutralizar seus Ataques Básicos e eles não podem escapar de sua alta mobilidade e dano em rajada.",
+    "weak": "Karina é neutralizada por heróis tanque com habilidades de controle, como Akai e Khufra, porque eles podem absorver seu dano e proteger seus aliados dela."
+  },
+  "lore": {
+    "short": "Assassina da tribo dos Elfos Negros que luta para resgatar sua irmã Selena."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "740": {
+      "description": "Após usar uma skill, o próximo Ataque Básico de Alucard permite que ele avance até o alvo e cause (+125% Ataque Físico Total) de Dano Físico.\n\nDemon Hunter: Alucard causa 110% de dano a creeps."
+    },
+    "710": {
+      "description": "Alucard salta na área-alvo e desfere um golpe, causando 270 (+85% Ataque Físico Extra) de Dano Físico aos inimigos na área e reduzindo a Velocidade de Movimento deles em 40% por 2s."
+    },
+    "720": {
+      "description": "Alucard desfere um golpe giratório, causando 345 (+120% Ataque Físico Extra) de Dano Físico aos inimigos próximos."
+    },
+    "730": {
+      "description": "Passiva: Alucard ganha permanentemente 10% de Roubo de Vida Híbrido.\n\nAtiva: Alucard absorve a energia dos inimigos na área-alvo, reduzindo a Velocidade de Movimento deles em 30% e  em 10. Ele ganha 10  para cada herói inimigo atingido e reduz a recarga das suas outras skills para 50% por 6s.\n\nUsar Novamente: Alucard lança uma poderosa onda de choque para a frente, causando 400 (+200% Ataque Físico Extra) de Dano Físico."
+    }
+  },
+  "counters": {
+    "assist": "Ele funciona melhor ao lado de heróis com controle de grupo, como Gatotkaca e Xavier, o que compensa sua falta de habilidades fortes de controle.",
+    "strong": "Alucard tem ótima capacidade de perseguição e resistência a dano, sendo excelente contra Assassinos frágeis como Harley e Aamon.",
+    "weak": "Porém, ele pode levar counter de heróis com forte controle de grupo, como Franco e Johnson. Se for controlado, Alucard não conseguirá roubar vida\ne será facilmente eliminado."
+  },
+  "lore": {
+    "short": "Caçador de demônios que detesta a escuridão."
+  }
+}

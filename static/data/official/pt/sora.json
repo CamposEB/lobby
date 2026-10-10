@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "13140": {
+      "description": "Sora pode se transformar em Trovão ou Torrente usando sua Ultimate. Após a transformação, causar dano a heróis ou unidades invocadas concede 1 acúmulo de Cloudstep. Ao atingir 5 acúmulos, ele desbloqueia sua Arte Verdadeira.\n\nTrovão: Adota um estilo assassino, convertendo 30% de  em  (Igual a 10% de ).\nTorrente: Adota um estilo de tanque, convertendo 30% de  em  (Ganha 10 de HP para cada 1 de Ataque)."
+    },
+    "13110": {
+      "description": "Sora ataca duas vezes, causando 140 (+50% de Ataque Físico Total) de dano físico, depois avança para frente, causando 240 (+5% de HP Máximo) de dano físico. Ele pode avançar após atacar."
+    },
+    "13120": {
+      "description": "Sora avança para frente, causando 140 (+55% de Ataque Físico Total) de dano físico. Se ele acertar um herói inimigo ou atingir o alcance máximo, ele bate no chão, causando 140 (+8% de HP Máximo) de dano físico adicional e reduzindo a velocidade deles em 40% por 0.5s. Acertos bem-sucedidos reduzem o tempo de recarga em 2s."
+    },
+    "13130": {
+      "description": "Deslize para a esquerda para se transformar em Trovão por 10s. Sora ganha um bônus temporário de velocidade de movimento e se torna intargetável. Ele então invoca raios para atingir inimigos próximos 3 vezes, cada um causando 140 (+50% de Ataque Físico Total) de dano físico.\n\nDeslize para a direita para se transformar em Torrente por 10s. Sora ganha imunidade a controle. Após um curto atraso, ele puxa inimigos próximos e causa 250 (+8% de HP Máximo) de dano físico."
+    }
+  },
+  "counters": {
+    "assist": "A Ultimate transformada de Sora causa danos consideráveis, e combiná-lo com Tigreal, Minotauro, Gatotkaca e outros heróis com forte controle maximizará o potencial de dano de Sora.",
+    "strong": "Sora é excelente em mergulhar com dano explosivo e controle de área, então heróis frágeis sem habilidades de fuga—como Layla, Miya e Hanabi—se sentirão impotentes contra o ataque implacável de Sora.",
+    "weak": "Sora depende de acertar sua primeira habilidade para obter acúmulos de Cloudstep. Heróis com alta mobilidade ou knockbacks, como Fanny, Arlott e Valir, podem impedir que Sora obtenha este recurso precioso."
+  },
+  "lore": {
+    "short": "Um garoto puro e de espírito livre com uma determinação inabalável, vagando pelas areias douradas."
+  }
+}

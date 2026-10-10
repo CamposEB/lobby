@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2540": {
+      "description": "Ao recuperar o Guarda-chuva Seimei, Kagura ganha um escudo de 450 (+80% de Poder Mágico Total) e atordoa os inimigos próximos por 0,5s, reduzindo sua velocidade em 60% por 1s. Recarga: 4,5s."
+    },
+    "2510": {
+      "description": "Kagura envia o Guarda-chuva Seimei ao local alvo, causando 365 (+105% de Poder Mágico Total) de Dano Mágico aos inimigos no caminho e reduzindo sua velocidade em 60% por 0,5s. O guarda-chuva volta automaticamente para Kagura quando ela está muito longe.\nEsta habilidade causa 130% de dano a inimigos não-heróis."
+    },
+    "2520": {
+      "description": "Kagura remove todos os efeitos negativos sobre ela e avança na direção alvo, deixando o Guarda-chuva Seimei para trás."
+    },
+    "2530": {
+      "description": "Kagura invoca o poder do Guarda-chuva Seimei, causando 250 (+95% de Poder Mágico Total) de Dano Mágico aos inimigos próximos, derrubando-os e reduzindo sua velocidade em 60% por 0,5s."
+    }
+  },
+  "counters": {
+    "assist": "Kagura funciona bem com heróis tanque que possuem habilidades de controle fortes, permitindo que ela cause mais dano com sua Ultimate, como Atlas e Tigreal.",
+    "strong": "A Ultimate de Kagura pode causar alto dano em rajada, tornando-a forte contra heróis da linha de trás sem dash ou blink, como Layla e Eudora.",
+    "weak": "Kagura é neutralizada por heróis com mais de uma habilidade de imunidade a controle, que lhes permite escapar de suas diversas habilidades de controle. Heróis como Joy e Martis são bons exemplos."
+  },
+  "lore": {
+    "short": "Uma jovem espírito nascida dos profundos desejos armazenados no Guarda-chuva Seimei, ela finalmente saiu de seu sonho, como uma flor radiante, desafiando a noite escura."
+  }
+}

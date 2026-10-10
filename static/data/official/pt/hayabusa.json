@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2140": {
+      "description": "Os ataques de Hayabusa aplicam uma marca de sombra ao acertar (até 4 acúmulos). Cada acúmulo dura 6s e aumenta o dano de Hayabusa ao inimigo em 5%."
+    },
+    "2110": {
+      "description": "Passiva: Hayabusa ganha permanentemente 3% de Vampiro Mágico.\nAtiva: Hayabusa lança três shurikens que voltam na direção do alvo, cada uma causando 220 (+75% de Ataque Físico Extra) de dano físico aos inimigos atingidos e reduzindo sua velocidade em 35% por 2s. Acertos subsequentes no mesmo inimigo causam 70% menos dano (apenas 50% menos aos minions). Ele também recupera 10 de energia ao acertar inimigos que não sejam minions."
+    },
+    "2120": {
+      "description": "Hayabusa avança na direção do alvo e libera quatro fantasmas que se movem em direções separadas. Os fantasmas permanecerão no final de seus caminhos ou se anexarão ao primeiro herói inimigo atingido, causando 130 (+30% de Ataque Físico Extra) de dano físico e reduzindo sua velocidade em 40% por 2s. Hayabusa para imediatamente se acertar um herói inimigo durante o avanço.\n\nUsar Novamente: Hayabusa se teletransporta para a localização de um fantasma e reduz o tempo de recarga de Ninjutsu: Shuriken Fantasma em 1s. Se o fantasma estiver anexado a um herói inimigo, ele também causa 130 (+30% de Ataque Físico Extra) de dano físico ao inimigo."
+    },
+    "2130": {
+      "description": "Hayabusa se funde às sombras e lança 6 ataques de alvo único contra inimigos na área, cada um causando 130 (+30% de Ataque Físico Extra) de dano físico.\n\nOs ataques priorizam inimigos com Marca de Sombra e cada um consome uma marca para causar 90 (+40% de Ataque Físico Extra) de dano físico extra. Shadow Kill não aplica a Marca de Sombra."
+    }
+  },
+  "counters": {
+    "assist": "Hayabusa funciona melhor com lutadores como Lapu-Lapu e Alpha, que podem iniciar com ele para focar rapidamente em alvos importantes.",
+    "strong": "Hayabusa é eficaz contra heróis frágeis que não possuem controle para impedir os piscares de sua segunda habilidade e que também são alvos fáceis para seu Ultimate, como Chang'e e Cecilion.",
+    "weak": "Hayabusa é neutralizado por heróis com controle direcionado, como Franco e Kaja, que podem imobilizá-lo antes que ele possa se afastar com um pulo."
+  },
+  "lore": {
+    "short": "O jovem líder do Setor das Sombras que empunha sua espada nas noites sem lua, caminhando pelo caminho do nindo sem medo."
+  }
+}

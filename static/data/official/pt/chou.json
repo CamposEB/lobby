@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2640": {
+      "description": "Após percorrer 5 unidades, Chou causa 180% de dano em seu próximo Ataque Básico (não pode ser crítico), reduzindo brevemente a velocidade do alvo em 90% e reduzindo seu HP em 10 (+1*Nível do Herói) por 3s (até 2 acúmulos)."
+    },
+    "2610": {
+      "description": "Chou ataca na direção do alvo, causando 180 (+70% de Ataque Físico Total) de Dano Físico aos inimigos atingidos. Esta habilidade pode ser lançada 3 vezes antes de entrar em recarga. No 3º lançamento, Chou também derruba os inimigos atingidos no ar.\n\nAcertar um herói inimigo com o 3º lançamento reinicia o tempo de recarga de Shunpo."
+    },
+    "2620": {
+      "description": "Chou avança na direção do alvo, ganhando Imunidade a Controle e um escudo de 200 (+200% de Ataque Físico Extra)."
+    },
+    "2630": {
+      "description": "Chou desferra um chute giratório no herói inimigo alvo, causando 400 (+200% de Ataque Físico Extra) de Dano Físico e empurrando-o para trás.\n\nLance a habilidade novamente para perseguir o alvo, causando um total de 480 (+240% de Ataque Físico Extra) de Dano Físico."
+    }
+  },
+  "counters": {
+    "assist": "Chou funciona melhor com Curandeiros que podem aumentar sua sobrevivência e velocidade, como Angela e Rafaela.",
+    "strong": "Chou é eficaz contra lutadores mais lentos como Terizla e Alpha, que têm dificuldade em lidar com suas táticas rápidas de ataque e fuga.",
+    "weak": "Chou é contrariado por heróis com alcance muito longo, como Lesley e Pharsa, que podem reduzir uma grande parte de seu HP antes que ele consiga se aproximar."
+  },
+  "lore": {
+    "short": "Um lutador talentoso com um coração de cavalaria."
+  }
+}

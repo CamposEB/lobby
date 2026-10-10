@@ -1,9 +1,8 @@
 <main class="home-page">
 
-  <!-- ============ TICKER DE WIN RATE (preenchido via JS em #homeTickerTrack) ============ -->
+  <!-- TICKER (preenchido via JS em #homeTickerTrack) -->
   <div class="home-ticker" aria-label="Heróis em alta no meta">
     <span class="home-ticker-badge"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-flame"/></svg> Bombando</span>
-
     <div class="home-ticker-viewport">
       <div id="homeTickerTrack" class="home-ticker-track is-static" aria-live="off">
         <span class="home-ticker-item">Carregando meta da comunidade...</span>
@@ -11,621 +10,275 @@
     </div>
   </div>
 
-
-  <!-- ============ HERO COM IMAGEM DE FUNDO ============ -->
+  <!-- HERO -->
   <section class="home-hero home-hero-banner">
-
     <div class="home-hero-copy">
-
-      <h2>
-        MLBB SOCIETY<br>
-        <span>WIN RATE &amp; META</span>
-      </h2>
-
-      <p class="home-hero-tagline">
-        Jogue com estratégia, não no escuro.
-      </p>
-
+      <p class="home-eyebrow">Comunidade de Mobile Legends</p>
+      <h2>MLBB SOCIETY<br><span>WIN RATE &amp; META</span></h2>
+      <p class="home-hero-tagline">Jogue com estratégia, não no escuro.</p>
       <p class="home-hero-text">
-        Calculadora de win rate, meta por rota, builds testadas e parceiros
-        de jogo. Tudo feito pela comunidade para você chegar preparado
-        à próxima partida.
+        Calculadora de win rate, meta por rota, builds testadas e parceiros de jogo.
+        Tudo feito pela comunidade para você chegar preparado à próxima partida.
       </p>
-
       <div class="home-hero-actions">
-
         <button type="button" data-shortcut="winrate">
           <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg> Calcular win rate
         </button>
-
         <button type="button" data-shortcut="meta" class="home-button-secondary">
           <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg> Meta ao vivo
         </button>
-
       </div>
-
-</div>
-
+    </div>
   </section>
 
-
-  <!-- ============ FERRAMENTAS DO SITE ============ -->
-  <section
-    class="home-section home-tools"
-    aria-labelledby="homeToolsTitle"
-  >
-
+  <!-- FERRAMENTAS -->
+  <section class="home-section home-tools" aria-labelledby="homeToolsTitle">
     <header class="home-section-heading">
-
       <div>
-        <h3 id="homeToolsTitle">
-          Ferramentas para jogar melhor
-        </h3>
+        <h3 id="homeToolsTitle">Ferramentas para <span class="home-accent-gold">jogar melhor</span></h3>
+        <p class="home-section-sub">Escolha o que você precisa agora e vá direto ao ponto.</p>
       </div>
-
-      <p>
-        Escolha o que você precisa agora e vá direto ao ponto.
-      </p>
-
     </header>
 
     <div class="home-tools-grid">
-
-      <button type="button" data-shortcut="winrate">
+      <button type="button" data-shortcut="winrate" class="home-tool-featured tool-gold">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg></span>
+        <span class="home-tool-open" aria-hidden="true">Abrir ↗</span>
         <span>
           <b>Calculadora de win rate</b>
           <small>Descubra quantas vitórias faltam para chegar à sua meta.</small>
         </span>
+        <svg class="ico home-tool-mark" aria-hidden="true" focusable="false"><use href="#i-percent"/></svg>
       </button>
 
-      <button type="button" data-shortcut="meta">
+      <button type="button" data-shortcut="meta" class="home-tool-featured tool-red">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg></span>
+        <span class="home-tool-open" aria-hidden="true">Abrir ↗</span>
         <span>
           <b>Meta por rota</b>
           <small>Heróis e opiniões da comunidade por lane.</small>
         </span>
+        <svg class="ico home-tool-mark" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg>
       </button>
 
-      <button type="button" data-shortcut="builds">
+      <button type="button" data-shortcut="builds" class="home-tool-featured tool-green">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-build"/></svg></span>
+        <span class="home-tool-open" aria-hidden="true">Abrir ↗</span>
         <span>
           <b>Builds testadas</b>
           <small>Itens, emblemas e feitiços de batalha compartilhados.</small>
         </span>
+        <svg class="ico home-tool-mark" aria-hidden="true" focusable="false"><use href="#i-build"/></svg>
       </button>
 
-      <button type="button" data-shortcut="lfg">
+      <button type="button" data-shortcut="lfg" class="tool-blue">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-duo"/></svg></span>
         <span>
           <b>Encontrar duo</b>
-          <small>Ache parceiros no seu rank e horário.</small>
+          <small>Parceiros no seu rank e horário.</small>
         </span>
       </button>
 
-      <button type="button" data-shortcut="lobby">
+      <button type="button" data-shortcut="lobby" class="tool-purple">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-gamepad"/></svg></span>
         <span>
           <b>Lobby</b>
-          <small>Converse e organize partidas com a comunidade.</small>
+          <small>Converse e organize partidas.</small>
         </span>
       </button>
 
-      <button type="button" data-shortcut="quiz">
+      <button type="button" data-shortcut="quiz" class="tool-orange">
         <span class="home-tool-icon" aria-hidden="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-help"/></svg></span>
         <span>
           <b>Quiz</b>
           <small>Teste o que você sabe sobre o jogo.</small>
         </span>
       </button>
-
     </div>
-
   </section>
 
-
-  <!-- ============ TIER LIST / META AO VIVO ============ -->
-  <section
-    class="home-section home-tier-preview"
-    aria-labelledby="homeTierTitle"
-  >
-
+  <!-- TIER LIST / META AO VIVO -->
+  <section class="home-section home-tier-preview" aria-labelledby="homeTierTitle">
     <header class="home-section-heading">
-
       <div>
-        <h3 id="homeTierTitle">
-          Tier list e <span class="home-accent-live">meta ao vivo</span>
-        </h3>
-
-        <p>
-          Heróis mais bem avaliados pela comunidade, ordenados por tier
-          e atualizados em tempo real.
-        </p>
+        <h3 id="homeTierTitle">Tier list e <span class="home-accent-live">meta ao vivo</span></h3>
+        <p class="home-section-sub">Heróis mais bem avaliados pela comunidade, ordenados por tier.</p>
       </div>
-
-      <button
-        type="button"
-        data-shortcut="meta"
-        class="home-text-button"
-      >
-        Tier list completa
-        <span aria-hidden="true">→</span>
+      <button type="button" data-shortcut="meta" class="home-text-button">
+        Tier list completa <span aria-hidden="true">→</span>
       </button>
-
     </header>
-
-    <div
-      id="homeTierPreview"
-      class="home-tier-grid"
-      aria-live="polite"
-    >
-      <p class="home-preview-empty">
-        Carregando tier list...
-      </p>
+    <div id="homeTierPreview" class="home-tier-grid" aria-live="polite">
+      <p class="home-preview-empty">Carregando tier list...</p>
     </div>
-
   </section>
 
-
-  <!-- ============ CONTRIBUIÇÕES DA COMUNIDADE ============ -->
-  <section
-    class="home-section home-community-data"
-    aria-label="Contribuições da comunidade"
-  >
-
+  <!-- BUILDS DA COMUNIDADE -->
+  <section class="home-section home-community-data" aria-label="Contribuições da comunidade">
     <header class="home-section-heading">
-
       <div>
-        <p class="home-eyebrow">
-          CONTRIBUIÇÕES DA COMUNIDADE
-        </p>
-
-        <h3>
-          Ideias de quem joga
-        </h3>
+        <p class="home-eyebrow">CONTRIBUIÇÕES DA COMUNIDADE</p>
+        <h3>Ideias de quem joga</h3>
       </div>
-
-      <button
-        type="button"
-        data-shortcut="builds"
-        class="home-text-button"
-      >
-        Ver todas as builds
-        <span aria-hidden="true">→</span>
+      <button type="button" data-shortcut="builds" class="home-text-button">
+        Ver todas as builds <span aria-hidden="true">→</span>
       </button>
-
     </header>
-
 
     <div class="home-community-columns">
-
-      <section
-        class="home-preview-group"
-        aria-labelledby="homeTrendingTitle"
-      >
-
+      <section class="home-preview-group" aria-labelledby="homeTrendingTitle">
         <header>
-          <h4 id="homeTrendingTitle">
-            Builds em destaque
-          </h4>
-
-          <small>
-            Melhor saldo de avaliações
-          </small>
+          <h4 id="homeTrendingTitle">Builds em destaque</h4>
+          <small>Melhor saldo de avaliações</small>
         </header>
-
-        <div
-          id="homeBuildTrending"
-          class="home-preview-list"
-          aria-live="polite"
-        >
-          <p class="home-preview-empty">
-            Carregando builds da comunidade...
-          </p>
+        <div id="homeBuildTrending" class="home-preview-list" aria-live="polite">
+          <p class="home-preview-empty">Carregando builds da comunidade...</p>
         </div>
-
       </section>
 
-
-      <section
-        class="home-preview-group"
-        aria-labelledby="homeRecentTitle"
-      >
-
+      <section class="home-preview-group" aria-labelledby="homeRecentTitle">
         <header>
-          <h4 id="homeRecentTitle">
-            Builds recentes
-          </h4>
-
-          <small>
-            Publicações mais novas
-          </small>
+          <h4 id="homeRecentTitle">Builds recentes</h4>
+          <small>Publicações mais novas</small>
         </header>
-
-        <div
-          id="homeBuildRecent"
-          class="home-preview-list"
-          aria-live="polite"
-        >
-          <p class="home-preview-empty">
-            Carregando builds da comunidade...
-          </p>
+        <div id="homeBuildRecent" class="home-preview-list" aria-live="polite">
+          <p class="home-preview-empty">Carregando builds da comunidade...</p>
         </div>
-
       </section>
-
     </div>
-
   </section>
 
-
-  <!-- ============ META POR ROTA ============ -->
-  <section
-    class="home-section home-meta-preview"
-    aria-labelledby="homeMetaTitle"
-  >
-
+  <!-- META POR ROTA -->
+  <section class="home-section home-meta-preview" aria-labelledby="homeMetaTitle">
     <header class="home-section-heading">
-
       <div>
-
-        <p class="home-eyebrow">
-          META POR ROTA
-        </p>
-
-        <h3 id="homeMetaTitle">
-          Contribuições para cada função
-        </h3>
-
+        <p class="home-eyebrow">META POR ROTA</p>
+        <h3 id="homeMetaTitle">Contribuições para cada função</h3>
       </div>
-
-      <button
-        type="button"
-        data-shortcut="meta"
-        class="home-text-button"
-      >
-        Abrir meta
-        <span aria-hidden="true">→</span>
+      <button type="button" data-shortcut="meta" class="home-text-button">
+        Abrir meta <span aria-hidden="true">→</span>
       </button>
-
     </header>
-
-
-    <div
-      id="homeMetaLanes"
-      class="home-meta-lanes"
-      aria-live="polite"
-    >
-      <p class="home-preview-empty">
-        Carregando meta da comunidade...
-      </p>
+    <div id="homeMetaLanes" class="home-meta-lanes" aria-live="polite">
+      <p class="home-preview-empty">Carregando meta da comunidade...</p>
     </div>
-
   </section>
 
-
-  <!-- ============ TORNEIOS ============ -->
+  <!-- TORNEIOS -->
   <section class="home-section home-event-section">
-
     <div>
-
-      <p class="home-eyebrow">
-        PRÓXIMA DISPUTA
-      </p>
-
-      <h3>
-        Tem lugar para o seu time.
-      </h3>
-
-      <p>
-        Acompanhe campeonatos da comunidade, monte sua equipe e veja os resultados.
-      </p>
-
-      <button
-        type="button"
-        data-shortcut="tournaments"
-        class="home-text-button"
-      >
-        Explorar torneios
-        <span aria-hidden="true">→</span>
+      <p class="home-eyebrow">PRÓXIMA DISPUTA</p>
+      <h3>Tem lugar para o seu time.</h3>
+      <p>Acompanhe campeonatos da comunidade, monte sua equipe e veja os resultados.</p>
+      <button type="button" data-shortcut="tournaments" class="home-text-button">
+        Explorar torneios <span aria-hidden="true">→</span>
       </button>
-
     </div>
-
-
-    <div
-      id="lobbyTournamentPreview"
-      class="home-tournament-preview"
-      aria-live="polite"
-    >
-
+    <div id="lobbyTournamentPreview" class="home-tournament-preview" aria-live="polite">
       <span>🏆</span>
-
       <div class="home-preview-copy">
         <b>Carregando campeonatos...</b>
         <small>Buscando a próxima disputa</small>
       </div>
-
     </div>
-
   </section>
 
-
-  <!-- ============ GUIA RÁPIDO ============ -->
-  <section
-    class="home-section home-learning"
-    aria-labelledby="homeLearnTitle"
-  >
-
+  <!-- GUIA RÁPIDO -->
+  <section class="home-section home-learning" aria-labelledby="homeLearnTitle">
     <header class="home-section-heading">
-
       <div>
-
-        <p class="home-eyebrow">
-          GUIA RÁPIDO · DO MAPA À VITÓRIA
-        </p>
-
-        <h3 id="homeLearnTitle">
-          Termos que fazem diferença na partida
-        </h3>
-
+        <p class="home-eyebrow">GUIA RÁPIDO · DO MAPA À VITÓRIA</p>
+        <h3 id="homeLearnTitle">Termos que fazem diferença na partida</h3>
       </div>
-
-      <p>
-        Sem enrolação: entenda o que fazer e quando usar cada jogada.
-      </p>
-
     </header>
-
 
     <div class="home-tip-grid">
-
       <article class="home-tip-card home-tip-featured">
-
         <span class="home-tip-icon">🛣️</span>
-
-        <div>
-          <span class="home-tip-label">CONTROLE DE ROTA</span>
-          <h4>O que é “wave”?</h4>
-        </div>
-
-        <p>
-          <b>Wave</b> é a leva de minions que avança por uma rota.
-          Limpar a wave antes de sair dá prioridade: você pode rotacionar
-          sem perder tanta torre e ouro.
-        </p>
-
-        <small>
-          <b>Dica:</b> olhe a próxima leva antes de começar um objetivo
-          longe da sua rota.
-        </small>
-
+        <div><span class="home-tip-label">CONTROLE DE ROTA</span><h4>O que é “wave”?</h4></div>
+        <p><b>Wave</b> é a leva de minions que avança por uma rota. Limpar a wave antes de sair dá prioridade: você rotaciona sem perder tanta torre e ouro.</p>
+        <small><b>Dica:</b> olhe a próxima leva antes de ir a um objetivo longe da sua rota.</small>
       </article>
 
-
       <article class="home-tip-card">
-
         <span class="home-tip-icon">🧭</span>
-
-        <div>
-          <span class="home-tip-label">PRESSÃO NO MAPA</span>
-          <h4>Split push</h4>
-        </div>
-
-        <p>
-          É pressionar uma rota lateral enquanto seu time ocupa ou disputa
-          outra área. O adversário precisa escolher: defender sua torre
-          ou enfrentar seu time.
-        </p>
-
-        <small>
-          <b>Funciona melhor:</b> com rota de fuga e aliados prontos para
-          não iniciar luta em desvantagem.
-        </small>
-
+        <div><span class="home-tip-label">PRESSÃO NO MAPA</span><h4>Split push</h4></div>
+        <p>Pressionar uma rota lateral enquanto seu time ocupa outra área. O adversário precisa escolher: defender a torre ou enfrentar seu time.</p>
+        <small><b>Funciona melhor:</b> com rota de fuga e aliados prontos.</small>
       </article>
 
-
       <article class="home-tip-card">
-
         <span class="home-tip-icon">🏰</span>
-
-        <div>
-          <span class="home-tip-label">AVANÇO DE ROTA</span>
-          <h4>Dar o push na wave</h4>
-        </div>
-
-        <p>
-          <b>Pushar</b> é eliminar os minions adversários e fazer sua wave
-          avançar. Isso pressiona a torre, abre espaço para visão e obriga
-          alguém a defender.
-        </p>
-
-        <small>
-          <b>Dica:</b> não avance sozinho sem saber onde estão os inimigos.
-        </small>
-
+        <div><span class="home-tip-label">AVANÇO DE ROTA</span><h4>Dar o push na wave</h4></div>
+        <p><b>Pushar</b> é eliminar os minions adversários e fazer sua wave avançar, pressionando a torre e obrigando alguém a defender.</p>
+        <small><b>Dica:</b> não avance sozinho sem saber onde estão os inimigos.</small>
       </article>
 
-
       <article class="home-tip-card">
-
         <span class="home-tip-icon">⏱️</span>
-
-        <div>
-          <span class="home-tip-label">JOGADA AVANÇADA</span>
-          <h4>Proxy</h4>
-        </div>
-
-        <p>
-          É limpar a wave adversária antes que ela chegue à própria rota,
-          geralmente atrás da torre inimiga. Faz os minions se encontrarem
-          mais longe e pode criar pressão extra.
-        </p>
-
-        <small>
-          <b>Cuidado:</b> exige mapa aberto, rota de fuga e saber quem pode
-          te alcançar.
-        </small>
-
+        <div><span class="home-tip-label">JOGADA AVANÇADA</span><h4>Proxy</h4></div>
+        <p>Limpar a wave adversária antes que chegue à própria rota, geralmente atrás da torre inimiga. Cria pressão extra.</p>
+        <small><b>Cuidado:</b> exige mapa aberto e rota de fuga.</small>
       </article>
 
-
       <article class="home-tip-card">
-
         <span class="home-tip-icon">👁️</span>
-
-        <div>
-          <span class="home-tip-label">INFORMAÇÃO</span>
-          <h4>Rotacionar</h4>
-        </div>
-
-        <p>
-          Sair da sua rota para ajudar outra área, proteger um aliado ou
-          chegar a um objetivo. Primeiro confira a wave: chegar cedo sem
-          perder recursos faz diferença.
-        </p>
-
-        <small>
-          <b>Combine:</b> avise seu time antes de sair e acompanhe o minimapa.
-        </small>
-
+        <div><span class="home-tip-label">INFORMAÇÃO</span><h4>Rotacionar</h4></div>
+        <p>Sair da sua rota para ajudar outra área, proteger um aliado ou chegar a um objetivo. Confira a wave antes de sair.</p>
+        <small><b>Combine:</b> avise o time e acompanhe o minimapa.</small>
       </article>
-
 
       <article class="home-tip-card">
-
         <span class="home-tip-icon">🧊</span>
-
-        <div>
-          <span class="home-tip-label">RITMO DA ROTA</span>
-          <h4>Congelar a wave</h4>
-        </div>
-
-        <p>
-          É manter os minions perto da sua torre, sem deixá-la atacá-los.
-          A rota fica mais segura e o adversário precisa se expor para farmar.
-        </p>
-
-        <small>
-          <b>Dica:</b> controle o dano nos minions; limpar rápido demais
-          desfaz o congelamento.
-        </small>
-
+        <div><span class="home-tip-label">RITMO DA ROTA</span><h4>Congelar a wave</h4></div>
+        <p>Manter os minions perto da sua torre, sem deixá-la atacá-los. A rota fica segura e o adversário precisa se expor.</p>
+        <small><b>Dica:</b> limpar rápido demais desfaz o congelamento.</small>
       </article>
-
     </div>
-
   </section>
 
-
-  <!-- ============ HÁBITOS ============ -->
+  <!-- HÁBITOS -->
   <section class="home-section home-playbook">
-
     <header class="home-section-heading">
-
       <div>
-
-        <p class="home-eyebrow">
-          HÁBITOS DE QUEM EVOLUI
-        </p>
-
-        <h3>
-          Três passos para sua próxima partida
-        </h3>
-
+        <p class="home-eyebrow">HÁBITOS DE QUEM EVOLUI</p>
+        <h3>Três passos para sua próxima partida</h3>
       </div>
-
     </header>
-
-
     <div class="home-playbook-grid">
-
       <article>
         <span>01</span>
-        <div>
-          <h4>Olhe o minimapa</h4>
-          <p>
-            Confira as posições dos adversários. Se eles sumiram,
-            jogue mais recuado e avise seu time.
-          </p>
-        </div>
+        <div><h4>Olhe o minimapa</h4><p>Confira os adversários. Se sumiram, jogue mais recuado e avise o time.</p></div>
       </article>
-
       <article>
         <span>02</span>
-        <div>
-          <h4>Jogue pelo objetivo</h4>
-          <p>
-            Uma luta vencida vale mais quando vira torre, Turtle ou Lord.
-            Antes de perseguir, pense no que o time pode conquistar.
-          </p>
-        </div>
+        <div><h4>Jogue pelo objetivo</h4><p>Uma luta vencida vale mais quando vira torre, Turtle ou Lord.</p></div>
       </article>
-
       <article>
         <span>03</span>
-        <div>
-          <h4>Converse e combine</h4>
-          <p>
-            Uma chamada simples — “vou rotacionar”, “defende” ou
-            “vamos Lord” — ajuda o time a agir junto.
-          </p>
-        </div>
+        <div><h4>Converse e combine</h4><p>Um simples “vou rotacionar” ou “vamos Lord” ajuda o time a agir junto.</p></div>
       </article>
-
     </div>
-
   </section>
 
-
-  <!-- ============ PRÓXIMO PASSO ============ -->
+  <!-- PRÓXIMO PASSO -->
   <footer class="home-next-step">
-
     <div>
-
-      <p class="home-eyebrow">
-        PRONTO PARA A PRÓXIMA?
-      </p>
-
-      <h3>
-        Boa partida começa com boas pessoas.
-      </h3>
-
+      <p class="home-eyebrow">PRONTO PARA A PRÓXIMA?</p>
+      <h3>Boa partida começa com boas pessoas.</h3>
     </div>
-
-
     <div>
-
-      <button type="button" data-shortcut="lfg">
-        Encontrar duo
-      </button>
-
-      <button
-        type="button"
-        data-shortcut="quiz"
-        class="home-button-secondary"
-      >
-        Responder o quiz
-      </button>
-
+      <button type="button" data-shortcut="lfg">Encontrar duo</button>
+      <button type="button" data-shortcut="quiz" class="home-button-secondary">Responder o quiz</button>
     </div>
-
   </footer>
-
 
   <p class="home-unofficial-note">
     Society MLBB é um projeto independente, não oficial e sem vínculo com a Moonton.
     Mobile Legends: Bang Bang e seus nomes são marcas de seus respectivos titulares.
     Meta e builds são contribuições da comunidade, não dados oficiais nem recomendações
     garantidas. Consulte também os
-    <a
-      href="https://www.mobilelegends.com/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      comunicados oficiais
-    </a>.
+    <a href="https://www.mobilelegends.com/" target="_blank" rel="noopener noreferrer">comunicados oficiais</a>.
   </p>
 
 </main>

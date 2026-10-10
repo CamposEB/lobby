@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4540": {
+      "description": "Malice Energy concede a Argus uma Chance de Crítico inicial de 30%. Os acertos críticos de Argus são convertidos em Demonic Slash, que ignora 30% da Defesa Física do alvo, causa 90 (+25% de Ataque Físico Total) de Dano Físico e recupera 140 de HP.\n\nDemonic Slash não pode causar dano crítico, mas ainda pode ativar efeitos relacionados a crítico."
+    },
+    "4510": {
+      "description": "Primeira Ativação: Argus estende uma mão demoníaca na direção selecionada, causando 125 (+60% de Ataque Físico Extra) de Dano Físico ao primeiro herói inimigo ou creep atingido e atordoando-o por 0.7s. Tanto Argus quanto o alvo são puxados um em direção ao outro, e o alvo sofre 40% de lentidão por 2s.\nSe nenhum inimigo for atingido, Argus apenas se puxa até o ponto final da mão.\n\nUsar Novamente: Argus dá um dash e desfere um corte amplo, causando 175 (+100% de Ataque Físico Extra) de Dano Físico."
+    },
+    "4520": {
+      "description": "Após uma breve preparação, Argus golpeia com sua Meteoric Sword na direção selecionada, causando 120 (+100% de Ataque Físico Total) de Dano Físico. Se atingir um herói inimigo, Argus o atordoa brevemente e ganha 30% de Velocidade de Ataque por 3s. O dano de Meteoric Sword também recebe um bônus de 40% de Chance de Crítico e Dano Crítico.\n\nMeteoric Sword conta como Ataque Básico e pode acionar Efeitos de Ataque. Velocidade de Ataque reduz o tempo de preparação."
+    },
+    "4530": {
+      "description": "Argus remove todos os efeitos de controle, ganha Imunidade à Morte por 4s e causa 300 (+180% de Ataque Físico Extra) de Dano Físico a inimigos próximos. Esse dano aumenta com base na vida perdida de Argus, causando até 50% de dano extra quando seu HP estiver abaixo de 30%.\nQuando a Imunidade à Morte termina, Argus regenera HP equivalente a todo o dano causado a heróis inimigos enquanto o efeito esteve ativo.\n\nPassiva: Se Argus sofrer dano fatal enquanto Eternal Evil não estiver em recarga, ele ativa automaticamente a Imunidade à Morte."
+    }
+  },
+  "counters": {
+    "assist": "Argus funciona muito bem com Suportes de utilidade como Angela e Rafaela, que oferecem Velocidade de Movimento extra e controle, permitindo que ele grude nos alvos e cause o máximo de dano possível.",
+    "strong": "Argus é forte contra heróis de baixa mobilidade que não conseguem escapar dos seus ataques após ele colar neles, como Gord e Aurora.",
+    "weak": "Argus sofre contra Tanks de muita Defesa Física, como Gatotkaca e Tigreal, já que grande parte do seu dano vem de Ataques Básicos."
+  },
+  "lore": {
+    "short": "O anjo que caiu da luz direto para a escuridão."
+  }
+}

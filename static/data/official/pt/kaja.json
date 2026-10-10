@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6240": {
+      "description": "O dano causado pela habilidade de Kaja aplica o efeito Paralisia às unidades inimigas, reduzindo temporariamente a velocidade dos heróis ou unidades invocadas e diminuindo seu dano em 8% por 5s."
+    },
+    "6210": {
+      "description": "Kaja invoca um anel de Raio Primordial que se expande e retorna a ele.\nInimigos atingidos sofrem 160 (+70% de Poder Mágico Total) de Dano Mágico e Kaja recupera 78 (+45% de Poder Mágico Total) de HP. A cura de acertos subsequentes é reduzida para 33%."
+    },
+    "6220": {
+      "description": "Kaja avança até a área alvo, ganhando imunidade a controle durante o avanço. Ao chegar, ele causa 250 (+120% de Poder Mágico Total) de Dano Mágico, derrubando e atordoando inimigos próximos por 0,5s, e então entra no estado Voador.\n\nO estado Voador dura 6,6s. Durante esse tempo, ele ignora obstáculos e ganha 15% de Velocidade de Movimento, mas seu raio de giro é restrito. Ele pode usar Ataques Básicos enquanto se move, causando 100 (+25% de Poder Mágico Total) (+ 2% do HP do alvo) de Dano Mágico aos inimigos ao redor.\n\nAo entrar no estado Voador, o tempo de recarga de Asas Voadoras é reduzido para 4s (não afetado pela Redução de Recarga). Acertar um herói ou creep estende o estado Voador por 2,6s."
+    },
+    "6230": {
+      "description": "Kaja lança um Laço de Raio Primordial na área alvo. Após um atraso de 0,5s, todos os heróis inimigos que permanecerem na área sofrem 360 (+80% de Poder Mágico Total) de Dano Mágico e ficam presos por 2,5s.\n\nEnquanto ativo, Kaja pode arrastar o laço, reduzindo seu raio e puxando inimigos na fronteira junto com ele (não interrompe suas habilidades)."
+    }
+  },
+  "counters": {
+    "assist": "Ele também combina bem com aliados que possuem habilidades de área, como Odette, Pharsa e Ixia. Kaja pode segurar os inimigos no lugar enquanto eles acumulam dano. O conjunto perfeito!",
+    "strong": "Kaja se sai bem contra carregadores sem habilidades de mobilidade, como Layla, Ixia e Vexana. Uma vez que ele voa e os laça, não há esperança de fuga.",
+    "weak": "Agora, se você estiver enfrentando Kaja, lembre-se de que, embora sua Ultimate não possa ser Purificada, heróis com mobilidade como Kagura, Yi Sun-shin e Suyou ainda podem evitá-la com um dash."
+  },
+  "lore": {
+    "short": "Líder de Nazar que guarda o Palácio Celestial."
+  }
+}

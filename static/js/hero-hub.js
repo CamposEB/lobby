@@ -261,6 +261,16 @@
     });
     var latest = [].concat(meta, builds).sort(newest)[0];
 
+    if (info && info.wallpaper) {
+      var bg = new Image();
+      bg.className = 'hh-banner-bg';
+      bg.alt = '';
+      bg.decoding = 'async';
+      bg.referrerPolicy = 'no-referrer';
+      bg.src = HC.routeImg(info.wallpaper);
+      bg.addEventListener('error', function () { bg.remove(); }, { once: true });
+      box.appendChild(bg);
+    }
     box.appendChild(portrait(cur.name, 'hh-portrait-lg'));
 
     var main = el('div', null, 'hh-banner-main');
@@ -295,11 +305,25 @@
     box.appendChild(stat);
   }
 
-  function tabLabel(t) { return typeof t.label === 'function' ? t.label() : t.label; }
-  function sortedTabs() { return TABS.slice().sort(function (x, y) { return (x.order || 50) - (y.order || 50); }); }
+  function rawLabel(t) { return typeof t.label === 'function' ? t.label() : t.label; }
+  // a aba "Oficial" (hero-official-tabs.js) vira a "Visão geral" e substitui a visão geral antiga
+  function isOfficial(t) { return t.id === 'official' || /^oficial$/i.test(String(rawLabel(t))); }
+  function hasOfficial() { return TABS.some(isOfficial); }
+  function tabLabel(t) { return isOfficial(t) ? 'Visão geral' : rawLabel(t); }
+  function tabOrder(t) { return isOfficial(t) ? -1 : (t.order || 50); }
+  function sortedTabs() {
+    var off = hasOfficial();
+    return TABS.filter(function (t) { return !(off && t.id === 'overview'); })
+      .sort(function (x, y) { return tabOrder(x) - tabOrder(y); });
+  }
+  function resolveTab() {
+    var list = sortedTabs();
+    return list.some(function (t) { return t.id === cur.tab; }) ? cur.tab : (list[0] ? list[0].id : cur.tab);
+  }
 
   function renderTabs() {
     var tabs = $('heroTabs');
+    cur.tab = resolveTab();
     tabs.replaceChildren();
     sortedTabs().forEach(function (t) {
       var b = el('button', tabLabel(t), 'hh-tab' + (cur.tab === t.id ? ' is-active' : ''));

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7640": {
+      "description": "Quando as habilidades de Faramis causam dano a heróis inimigos e unidades invocadas, elas deixam para trás Fragmentos de Alma. Absorver um Fragmento de Alma recupera 100 (+50% de Poder Mágico Total) de HP e concede 2 (até 40 acúmulos).\nAo morrer, ele consome os Fragmentos de Alma absorvidos para reduzir o tempo de respawn, cada um reduzindo o tempo em 3% (até 90%).\nEle pode ganhar até 1 Fragmento de Alma do mesmo herói inimigo usando habilidades a cada 4s. Inimigos que morrem perto de Faramis também têm chance de soltar Fragmentos de Alma."
+    },
+    "7610": {
+      "description": "Faramis entra no estado de Sombra por 3s, ganhando 70% de Velocidade de Movimento, 25 , e 20% de Redução de Recarga desta habilidade. Ele também ganha a capacidade de se mover através do terreno. Heróis inimigos que ele toca sofrem 250 (+60% de Poder Mágico Total) de Dano Mágico e são marcados com uma Marca do Abismo. Ao sair do estado de Sombra, Faramis puxa todos os heróis inimigos marcados em sua direção, causando 250 (+60% de Poder Mágico Total) de Dano Mágico.\nUsar Novamente: Encerra o estado de Sombra mais cedo para puxar os heróis inimigos marcados em sua direção.\nO alcance de absorção de Fragmentos de Alma é aumentado enquanto esta habilidade está ativa."
+    },
+    "7620": {
+      "description": "Faramis reúne energia do Abismo em uma área em forma de leque à sua frente, causando 330 (+144% de Poder Mágico Total) de Dano Mágico aos inimigos dentro dela. A energia então se divide e ricocheteia nos inimigos próximos, causando 200 (+86% de Poder Mágico Total) de Dano Mágico (se divide até 2 vez(es) em acertos em heróis inimigos e 1 vez(es) em acertos em não heróis inimigos)."
+    },
+    "7630": {
+      "description": "Faramis transforma seu entorno no Reino do Abismo por 6s. Heróis aliados dentro dele (incluindo ele mesmo) entram no estado de Espectro, ganhando 400 (+ 10 (+5% de Poder Mágico Total)%) de HP extra e 50% de Velocidade de Movimento extra por 1s. Quando o estado de Espectro é quebrado, os heróis dentro dele removem todos os debuffs e entram em um breve estado de Ressurreição por 1.3s. O estado de Espectro termina imediatamente se o herói aliado sair do Reino do Abismo."
+    }
+  },
+  "counters": {
+    "assist": "Faramis funciona bem com heróis projetados para mergulhar no inimigo, como Leomord e Martis, pois ele poderá maximizar o efeito de salvamento de vida de sua Ultimate.",
+    "strong": "A capacidade de Faramis de impedir temporariamente que os aliados sejam mortos o torna uma boa escolha contra heróis que se dedicam a derrubar um alvo com burst, como Saber e Eudora.",
+    "weak": "Faramis é neutralizado por heróis de alta mobilidade que são difíceis de serem pegos por sua 1ª Habilidade, como Novaria e Pharsa."
+  },
+  "lore": {
+    "short": "Um necromante em Necrokeep que está determinado a encontrar uma cura para a Névoa."
+  }
+}

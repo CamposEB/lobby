@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6040": {
+      "description": "Os ataques básicos e habilidades de Hanabi lançam Lâminas de Pétalas ao atingir um alvo, causando 30% de dano e ricocheteando até 4 vezes em inimigos próximos. As Lâminas de Pétalas lançadas por ataques básicos herdam os efeitos de ataque.\nSe os ricochetes do mesmo ataque básico ou habilidade atingirem o mesmo alvo várias vezes, os ricochetes subsequentes causam 30% menos dano."
+    },
+    "6010": {
+      "description": "Passivo: Sempre que Hanabi tem um escudo de qualquer fonte, ela é imune a efeitos de controle.\nAtivo: Hanabi ganha um escudo de 300 (+40% de Ataque Físico Total) por 5s. Quando o escudo está ativo, ela ganha 20% de Velocidade de Movimento e 25% de Velocidade de Ataque, e 20% do dano que ela causa a heróis inimigos é adicionado a este escudo (apenas 10% do dano causado a unidades não heroicas é adicionado). Este escudo não pode exceder 50% da sua vida."
+    },
+    "6020": {
+      "description": "Hanabi dispara a energia Kunai na direção alvo, causando 350 (+80% de Ataque Físico Total) de Dano Físico aos inimigos ao longo do caminho e reduzindo sua Velocidade de Movimento em 60% por 1s. As unidades inimigas atingidas também serão marcadas, permitindo que o próximo Dano de Ricochete de Ataques Básicos de Hanabi cause 30 (+100% de Ataque Físico Total) de Dano Físico nelas sem decaimento de dano."
+    },
+    "6030": {
+      "description": "Hanabi lança Higanbana na direção alvo, causando 300 (+50% de Ataque Físico Total) de Dano Físico ao primeiro herói inimigo atingido e imobilizando-o por 0,8s. Após 1s, Higanbana florescerá no local do primeiro acerto, causando 300 (+50% de Ataque Físico Total) de Dano Físico aos inimigos próximos. Acertos subsequentes no mesmo alvo decaem para 30% de dano."
+    }
+  },
+  "counters": {
+    "assist": "Hanabi funciona bem com heróis que podem iniciar com controle, como Carmilla e Atlas, para que ela possa se concentrar em maximizar seu dano de ricochete e ultimate.",
+    "strong": "Hanabi neutraliza heróis que dependem muito de habilidades de controle, como Tigreal e Belerick, já que Hanabi pode usar sua 1ª habilidade para ignorar o controle.",
+    "weak": "Hanabi é fraca contra heróis com alto dano de burst, como Lancelot e Zilong, porque eles podem derrubar seu escudo rapidamente."
+  },
+  "lore": {
+    "short": "Líder do Setor Escarlate, na Sombra Escarlate das Terras Fluviais de Cadia."
+  }
+}

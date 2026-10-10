@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8140": {
+      "description": "Esmeralda manipula Poeira Estelar e Lua Gélida: Poeira Estelar causa dano físico, enquanto Lua Gélida causa dano mágico e concede ao alvo um escudo igual a 135% do dano causado por Lua Gélida. Cada ataque básico causa (+100% de Ataque Físico Total) de dano físico e 100 (+75% de Poder Mágico Total) de dano mágico.\nO dano causado por Esmeralda ignora todos os efeitos de escudo e converte gradualmente seu escudo em HP."
+    },
+    "8110": {
+      "description": "Esmeralda ganha um escudo de 500 (+150% de Poder Mágico Total) e 40% de Velocidade de Movimento, que decai rapidamente ao longo de 4s. Enquanto isso, ela transforma gradualmente os escudos dos inimigos próximos no seu próprio escudo, limitado a 50% do seu HP máximo."
+    },
+    "8120": {
+      "description": "Esmeralda agita Poeira Estelar e Lua Gélida, causando 240 (+60% de Ataque Físico Total) de dano físico e 300 (+120% de Poder Mágico Total) de dano mágico aos inimigos próximos. Cada vez que ela causa dano a um herói, o tempo de recarga de Escudo de Lua Gélida é reduzido em 1.5s (causar dano a unidades não heroicas concede uma redução de 0.5s) e a Velocidade de Movimento do inimigo é reduzida em 20% por 1.5s."
+    },
+    "8130": {
+      "description": "Esmeralda concentra o poder do espaço astral em suas duas armas - Poeira Estelar e Lua Gélida. Quanto mais tempo esta habilidade é canalizada, maior é o alcance do lançamento.\n\nUsar Novamente: Esmeralda lança Poeira Estelar no local alvo, causando 350 (+90% de Ataque Físico Total) de dano físico, e então se teletransporta para o local alvo e lança Lua Gélida, causando 350 (+140% de Poder Mágico Total) de dano mágico e imobilizando os inimigos na área por 1s."
+    }
+  },
+  "counters": {
+    "assist": "Esmeralda funciona melhor com heróis que podem agrupar inimigos, como Atlas e Tigreal, para que ela possa atingir mais alvos com sua ultimate.",
+    "strong": "Esmeralda é eficaz contra heróis com escudos, como Akai e Lolita, porque suas habilidades não apenas ignoram seus escudos, mas também os convertem em seus próprios escudos.",
+    "weak": "Esmeralda é neutralizada por atiradores altamente móveis, como Karrie e Lesley, porque ela não possui dano burst suficiente para finalizá-los rapidamente e não consegue acompanhar sua mobilidade."
+  },
+  "lore": {
+    "short": "Uma astróloga misteriosa."
+  }
+}

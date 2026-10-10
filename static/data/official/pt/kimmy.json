@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7180": {
+      "description": "Kimmy pode se mover e mirar em diferentes direções enquanto usa sua Metralhadora, mas não pode travar em um alvo específico. Cada Projétil Químico causa (+18% do Ataque Físico Total) (+24% do Poder Mágico Total) de dano mágico. Acertar heróis inimigos ou unidades não heroicas restaura 6 / 3 de Starlium, respectivamente. Ao atingir o máximo de Starlium, ela consome continuamente essa energia para melhorar seus ataques básicos, fazendo com que causem (+22,5% do Ataque Físico Total) (+30% do Poder Mágico Total) de dano e perfurem os alvos (ataques básicos melhorados só se beneficiam de 50% de Spell Vamp).\nKimmy pode continuar se movendo enquanto atira e não se beneficia de bônus de velocidade de ataque. Cada 1% de velocidade de ataque ganho é convertido em 1 de Poder Mágico.\nOs ataques básicos de Kimmy causam apenas 60% de dano às torres."
+    },
+    "7110": {
+      "description": "Kimmy usa seu jato para decolar, removendo e tornando-se imune a efeitos de lentidão. Ela pode atravessar terrenos e ganha 120% de velocidade de movimento extra, que diminui ao longo de 1s. Durante o voo, ela dispara continuamente 4 Projéteis Químicos nos inimigos próximos, cada um causando 20 (+25% do Ataque Físico Total) (+30% do Poder Mágico Total) de dano mágico e reduzindo sua velocidade em 50% por 0,5s.\nKimmy não consome Starlium durante o voo."
+    },
+    "7120": {
+      "description": "Kimmy dispara um Feixe de Starlium na direção alvo, imobilizando os inimigos em seu caminho e causando 300 (+50% do Ataque Físico Total) (+60% do Poder Mágico Total) de dano mágico por 1s.\nCada herói inimigo atingido concede 20 de Starlium."
+    },
+    "7130": {
+      "description": "Kimmy carrega e dispara um Pulso de Tração na direção alvo. Ao atingir um inimigo ou alcançar seu alcance máximo, ele explode, causando 150 (+45% do Ataque Físico Total) (+54% do Poder Mágico Total) de dano mágico aos inimigos próximos e criando um campo de força que reduz a velocidade dos inimigos dentro dele em 50%.\n\nApós 1s, o campo se contrai, puxando os heróis inimigos dentro dele para o centro e causando 15% do seu HP atual como dano mágico. Também reduz sua velocidade em 50% por 2s. Cada herói inimigo atingido concede a Kimmy 40 de Starlium."
+    }
+  },
+  "counters": {
+    "assist": "Kimmy é excelente em controlar e agrupar inimigos enquanto causa dano significativo, então ela funciona bem com heróis que têm controle em área, como Badang e Ruby.",
+    "strong": "A capacidade de Kimmy de atacar enquanto se move a torna eficaz contra heróis que dependem de skillshots, como Granger e Cecilion.",
+    "weak": "Como uma atiradora que não pode travar em alvos com ataques básicos, Kimmy pode ser contrariado por heróis com alto dano de burst e mobilidade, como Saber e Lancelot."
+  },
+  "lore": {
+    "short": "Nascida em uma família militar, ela conquistou reconhecimento por mérito próprio como a corajosa, mas descontraída \"garota durona\" da Guarda de Fronteira."
+  }
+}

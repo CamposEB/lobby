@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5440": {
+      "description": "Toda vez que Jawhead causa dano a um herói inimigo ou a um Creep, ele inflige um acúmulo de Supressão Mecha neles por 3s (até 6 acúmulos). Cada acúmulo de Supressão Mecha aumenta todo o dano causado ao alvo em 2% (limitado a 50% para Creeps)."
+    },
+    "5410": {
+      "description": "Jawhead lança até 12 mísseis em inimigos próximos aleatórios em 5s, cada míssil causando 135 (+30% de Ataque Físico Total) de Dano Físico ao inimigo atingido."
+    },
+    "5420": {
+      "description": "Jawhead ganha 30% de Velocidade de Movimento e um escudo de 500 (+100% de Ataque Físico Total) por 5s.\n\nUsar Novamente: Jawhead arremessa a unidade mais próxima (prioriza heróis) para o local alvo, causando 300 (+80% de Ataque Físico Total) de Dano Físico aos inimigos na área e atordoando-os por 0,5s. Pode ser usado em heróis aliados e eles não sofrerão dano."
+    },
+    "5430": {
+      "description": "Jawhead investe contra o herói inimigo alvo, causando 350 (+150% de Ataque Físico Total) de Dano Físico e atordoando-o brevemente. Inimigos ao redor do alvo são empurrados para trás e sofrem a mesma quantidade de dano. Jawhead é imune a efeitos de controle durante a investida."
+    }
+  },
+  "counters": {
+    "assist": "Jawhead funciona melhor com heróis que se beneficiam de um ataque rápido, como Odette e Belerick, porque ele pode jogá-los contra o inimigo para um ataque surpresa.",
+    "strong": "Jawhead neutraliza heróis frágeis sem habilidades defensivas que ele pode derrotar após conectar sua Ultimate, como Saber e Eudora.",
+    "weak": "Jawhead é neutralizado por heróis com alto dano sustentado ou alta sobrevivência, como Edith e Thamuz, porque eles podem sobreviver ao dano de burst de Jawhead e derrotá-lo em uma batalha prolongada."
+  },
+  "lore": {
+    "short": "Robô inteligente usado para proteger a pequena Ailee."
+  }
+}

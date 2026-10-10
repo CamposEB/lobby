@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "9140": {
+      "description": "Cecilion ganha 10 de Mana máxima extra e recupera 10 de Mana cada vez que sua habilidade acerta um inimigo. Recarga: 1s.\n\nCecilion tem mais Mana máxima e Regeneração de Mana, e o dano de suas habilidades escala com sua Mana máxima."
+    },
+    "9110": {
+      "description": "Cecilion ordena que um morcego gigante mergulhe no local alvo, ganhando 30% de Velocidade de Movimento extra por 1s, causando 85 (+70% de Poder Mágico Total) (+7% de Mana Total) de Dano Mágico aos inimigos em seu caminho. O morcego também causa 170 (+140% de Poder Mágico Total) (+14% de Mana Total) de Dano Mágico extra aos inimigos próximos ao ponto de pouso e aplica o efeito Overflowing uma vez.\n\nCada lançamento subsequente em 6s aumenta o custo de Mana desta habilidade em 1.5 vezes (até 4 acúmulos)."
+    },
+    "9120": {
+      "description": "Cecilion invoca um par de garras opostas no local alvo que se fecham após um curto atraso, puxando os inimigos em seus caminhos para o centro, causando 200 (+45% de Poder Mágico Total) (+1.2% de Mana Total) de Dano Mágico e imobilizando-os por 1s."
+    },
+    "9130": {
+      "description": "Cecilion libera seu poder de Demônio de Sangue, ganhando 60% de Velocidade de Movimento (decai ao longo da duração) e Imunidade a Lentidão por 1.5s.\n\nEnquanto isso, ele dispara 36 projéteis de energia sanguínea contra os inimigos próximos, cada um causando 35 (+8% de Poder Mágico Total) (+0.3% de Mana Total) de Dano Mágico e reduzindo a velocidade dos inimigos atingidos em 3% por 1s (até 30% no total).\nCada projétil que acerta restaura HP igual a 10 mais 1% do  perdido por Cecilion."
+    },
+    "9160": {
+      "description": "Quando Carmilla está por perto, Cecilion pode invocá-la para se tornar uma Sombra Vermil ao seu redor, concedendo-lhe um escudo de 520-800 (escala com o nível de Carmilla).\nCarmilla pode optar por deixar Cecilion e atacar o local alvo, ganhando um escudo igual enquanto causa 520-800 de Dano Mágico (escala com o nível) aos inimigos próximos e reduzindo sua velocidade em 30% por 1s."
+    }
+  },
+  "counters": {
+    "assist": "Cecilion funciona bem com Tanques que possuem habilidades de controle contínuas, como Carmilla e Minotaur, pois seu controle pode ajudar Cecilion a acertar suas habilidades.",
+    "strong": "Cecilion neutraliza lutadores menos móveis, como Balmond e Terizla, porque esses heróis têm dificuldade em se aproximar de Cecilion, enquanto Cecilion pode acertá-los mais facilmente com suas habilidades.",
+    "weak": "Cecilion é neutralizado por Assassinos que podem fechar a distância rapidamente, como Ling e Fanny, porque Cecilion carece de ferramentas defensivas e suas habilidades normais não podem atingir inimigos em alcance corpo a corpo."
+  },
+  "lore": {
+    "short": "O amante demônio de sangue de Carmilla."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2340": {
+      "description": "Depois que Gord acerta um inimigo 4 vezes com habilidades em um curto período de tempo, o próximo dano causado por uma habilidade causará um dano adicional de 120 (+8*Nível do Herói) (+40% de Poder Mágico Total) em Dano Verdadeiro e reduzirá a velocidade deles em 20% por 1s (o efeito de lentidão acumula até 2 vezes)."
+    },
+    "2310": {
+      "description": "Gord invoca uma Orbe Mística que ricocheteia na direção do alvo e explode no primeiro inimigo atingido, causando 225 (+65% de Poder Mágico Total) de Dano Mágico aos inimigos na área, atordoando-os e revelando suas posições por 1s."
+    },
+    "2320": {
+      "description": "Gord cria um campo de energia na área alvo, causando 30 (+10% de Poder Mágico Total) de Dano Mágico a cada 0,25s aos inimigos dentro da área (até 16 vezes)."
+    },
+    "2330": {
+      "description": "Gord libera um feixe de energia na direção do alvo, causando 90 (+32% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos a cada 0,2s (até 16 vezes).\n\nA direção do feixe pode ser ajustada usando o Joystick."
+    }
+  },
+  "counters": {
+    "assist": "Gord funciona bem com heróis tanque que possuem controles confiáveis, como Hylos e Belerick.",
+    "strong": "Gord é forte contra heróis corpo a corpo com baixa mobilidade, como Barats e Fredrinn.",
+    "weak": "Gord é contrariado por heróis com habilidades de aproximação, como Fanny e Lancelot."
+  },
+  "lore": {
+    "short": "Reitor da Escola Ícaro da Academia de Magia."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "12440": {
+      "description": "Enquanto está fora de combate, Chip come um pedaço de batata frita a cada 2s. Após 4 mordidas, ele termina um pacote e recupera HP igual a 300 (+ 45% do seu HP perdido).\n\nDepois de terminar um pacote, Chip não pode comer novamente por 5s. (A contagem de mordidas é mantida se ele entrar em combate antes de terminar o pacote.)"
+    },
+    "12410": {
+      "description": "Chip colide com seu hovercraft no chão, causando Dano Mágico igual a 100 mais 4% do HP do alvo e aplicando a Marca de Chip nas unidades inimigas atingidas. Chip ganha um Escudo de 300 (+60% de Poder Mágico Total) ao acertar um herói inimigo, que aumenta em 40% para cada herói inimigo adicional atingido. O próximo Ataque Básico de Chip se tornará à distância e também atingirá todos os inimigos próximos com a Marca de Chip, detonando a marca para causar 150 (+30% de Poder Mágico Total) de Dano Mágico e atordoar cada alvo por 0,6s."
+    },
+    "12420": {
+      "description": "Chip corre por 2s, ganhando até 65% de Velocidade de Movimento extra, após o que mantém a velocidade máxima por 2s.\n\nO próximo Ataque Básico de Chip fará com que ele carregue contra o inimigo, causando 200 (+30% de Poder Mágico Total) de Dano Mágico e empurrando-os levemente para trás."
+    },
+    "12430": {
+      "description": "Chip lança o Portal Principal sobre um herói inimigo, causando 200 (+60% de Poder Mágico Total) de Dano Mágico e reduzindo brevemente sua velocidade em 25%. O Portal Principal causa o dobro do dano e imobiliza o alvo por 1s após um atraso. Enquanto isso, ele cria Portais de Conexão perto de heróis aliados a 10 unidades de distância e atrás da base aliada. O Portal Principal e os Portais de Conexão duram até 15s.\nPortal de Conexão: Heróis (de ambos os times) podem se teletransportar dos Portais de Conexão para o Portal Principal, e os heróis aliados ganham Velocidade de Movimento Burst por 1,5s e um escudo de 500.\nPortal Principal: O Portal Principal herda 70% dos atributos de Chip. Os heróis podem ficar no Portal Principal por 2s para voltar ao Portal de Conexão de onde vieram. Lançar habilidades ou realizar Ataques Básicos reiniciará o tempo de permanência."
+    },
+    "12485": {
+      "description": "Chip tem 4 faróis fixos no mapa quando a batalha começa. Use esta habilidade para se teletransportar para qualquer outro farol. (Esta habilidade não pode ser usada em combate.)"
+    }
+  },
+  "counters": {
+    "assist": "O Ultimate de Chip permite que sua equipe se reúna de qualquer lugar, então ele funciona bem com heróis que não conseguem atravessar o mapa rapidamente, mas são excelentes em lutas em equipe, como Alpha, Hanabi e Kadita.",
+    "strong": "Chip possui fortes habilidades de iniciação e controle, tornando-o um ótimo counter contra heróis com baixa mobilidade ou que são relativamente frágeis, como Vexana, Layla e Ixia.",
+    "weak": "Como os inimigos também podem usar os Portais de Conexão de Chip, certos heróis com fortes habilidades de luta em equipe, como Barats e Tigreal, podem usá-los em seu favor."
+  },
+  "lore": {
+    "short": "Uma raposa geneticamente aprimorada e despreocupada que domina a tecnologia avançada de portais."
+  }
+}

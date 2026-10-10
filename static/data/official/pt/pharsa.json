@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "5240": {
+      "description": "A cada 5 a 8 segundos (escala com o nível de Ataque Aéreo com Penas), Verri entra no estado de Caça. No próximo ataque de Pharsa contra um herói inimigo, Verri causa dano mágico extra equivalente a 8% do HP do alvo (+ 1% a cada 200 ) e o reduz sua velocidade em 60% por 1s."
+    },
+    "5210": {
+      "description": "Pharsa libera uma explosão de magia no local alvo, causando 300 (+120% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e os marcando por 4s.\n\nQuando Pharsa acerta um inimigo marcado com um Ataque Básico ou habilidade ativa, a marca é consumida, atordoando-o por 1s.\n\nA posição dos inimigos marcados será revelada."
+    },
+    "5220": {
+      "description": "Pharsa libera energia mágica na direção alvo, causando 475 (+145% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos."
+    },
+    "5230": {
+      "description": "Passiva: Cada level reduz o intervalo de Unidade Espiritual em 1s.\nAtiva: Pharsa voa por 8s e bombardeia a área alvo, causando 530 (+160% de Poder Mágico Total) de Dano Mágico aos inimigos dentro da área. Essa habilidade pode ser usada até 4 vezes durante o voo."
+    },
+    "5250": {
+      "description": "Pharsa se transforma em névoa e envolve Verri, ganhando 150% de Velocidade de Movimento extra (diminui com o tempo) e a capacidade de voar sobre o terreno por 5s.\n\nEsse estado termina imediatamente quando ela é controlada ou usa um Ataque Básico ou habilidade."
+    }
+  },
+  "counters": {
+    "assist": "Pharsa funciona melhor com heróis que podem aplicar controle no inimigo para que suas habilidades possam acertá-los. Atlas e Franco são bons exemplos disso.",
+    "strong": "Pharsa pode causar alto dano em rajada a longa distância. É uma ótima contra para heróis inimigos da linha de trás com baixa mobilidade, como Layla, Hanabi e Xavier.",
+    "weak": "Pharsa deve ter cuidado com qualquer habilidade de deslocamento. Heróis como Franco, Zilong e Minsitthar podem interromper facilmente o Ultimate de Pharsa."
+  },
+  "lore": {
+    "short": "Princesa Corvo da Floresta de Askati."
+  }
+}

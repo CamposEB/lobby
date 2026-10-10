@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8040": {
+      "description": "Guinevere causa 25% de dano extra a inimigos no ar. Seus Ataques Básicos também causam (+80% de Ataque Físico Total) (+60% de Poder Mágico Total) de Dano Mágico.\nGuinevere ganha acúmulos de Super Magia cada vez que causa dano. No máximo de acúmulos, seu próximo Ataque Básico se torna um ataque guiado, causando 80 (+100% de Ataque Físico Total) (+90% de Poder Mágico Total) de Dano Mágico e recuperando 80 (+8% da sua ).\nInimigos atingidos pelas habilidades de Guinevere ou por seu Ataque Básico aprimorado são marcados por 5s. Inimigos com 3 marcas são arremessados ao ar quando atingidos por Violet Requiem."
+    },
+    "8010": {
+      "description": "Guinevere libera uma orbe de energia na direção do alvo, causando 300 (+125% de Poder Mágico Total) de Dano Mágico e reduzindo a velocidade dos inimigos em 25% por 1,2s.\nAcertar um inimigo com sucesso reduz todos os tempos de recarga de suas habilidades em 1s."
+    },
+    "8020": {
+      "description": "Guinevere salta para o local alvo, causando 250 (+80% de Poder Mágico Total) de Dano Mágico. Heróis inimigos e Creeps atingidos serão arremessados ao ar por 1s e sofrerão 125 (+50% de Poder Mágico Total) de Dano Mágico adicional.\nUsar Novamente: Guinevere se teleporta na direção do alvo e deixa uma ilusão para trás. Se a ilusão sofrer dano causado por um herói, ela restaura Super Magia para Guinevere e explode após 1,5s, causando 100 (+30% de Poder Mágico Total) de Dano Mágico aos inimigos próximos."
+    },
+    "8030": {
+      "description": "Guinevere cria um campo de força ao seu redor, ganhando Imunidade a Controle enquanto ataca inimigos próximos 11 vezes em 2s, causando um total de 880 (+385% de Poder Mágico Total) de Dano Mágico.\nInimigos no ar que forem atingidos serão arremessados ao ar novamente, até 8 vezes adicionais."
+    }
+  },
+  "counters": {
+    "assist": "Guinevere funciona melhor com heróis que possuem bom controle de alvo único, o que proporciona a ela um ambiente melhor para farmar e causar dano, como Franco e Hylos.",
+    "strong": "Guinevere é forte contra heróis com baixa sustentabilidade ou que são simplesmente fracos no início do jogo. Isso ocorre porque Guinevere pode facilmente aplicar seu combo de poke e escapar. Heróis como Zilong e Silvanna são bons exemplos disso.",
+    "weak": "Mas Guinevere é contrariado por heróis com imunidades a controle ou habilidades de controle fortes. Como ela precisa encadear seus controles para liberar todo o seu potencial de dano, heróis como Badang e Chou são eficazes contra ela."
+  },
+  "lore": {
+    "short": "Uma garota aristocrata com um temperamento estranho, amada por seu irmão mais velho, Lancelot."
+  }
+}

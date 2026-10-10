@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12670": {
+      "description": "Ativar qualquer habilidade com um toque coloca Suyou na Forma Mortal, concedendo 40 de velocidade de movimento e reduzindo o intervalo entre seus ataques básicos.\nAtivar qualquer habilidade com um segurar coloca Suyou na Forma Imortal, aumentando o dano de seu ataque básico para 125% e concedendo 20% de redução de dano físico.\nNesta forma, Suyou ganha 1% de redução de dano físico para cada 20 de  extra que ele possui, até 40%."
+    },
+    "12610": {
+      "description": "Toque: Suyou arremessa sua arma na direção do alvo, causando 250 (+100% de Ataque Físico Extra) de dano físico aos inimigos em seu caminho. Suyou então pisca para a localização da arma, pega-a e realiza um corte na direção oposta, causando 375 (+150% de Ataque Físico Extra) de dano físico.\nSegurar: Suyou canaliza o poder do Imortal e avança na direção do alvo, causando 250 (+100% de Ataque Físico Extra) de dano físico aos inimigos ao longo do caminho. Ao atingir um herói inimigo, ele para e atordoa os inimigos em uma área retangular à frente por 0.6s. A distância do avanço aumenta com o tempo de segurar.\nSuyou pode ser controlado enquanto avança, mas a habilidade não pode ser interrompida."
+    },
+    "12630": {
+      "description": "Toque: Suyou realiza um ataque varrendo com sua arma, causando dano físico igual a 280 (+200% de Ataque Físico Extra) (+ 15% do HP perdido do alvo) aos inimigos em uma área em forma de leque.\n\nSegurar: Suyou canaliza o poder do Imortal para realizar 3 cortes em uma área em forma de leque. Os dois primeiros golpes causam 225 (+80% de Ataque Físico Extra) de dano físico cada, enquanto o golpe final causa 360 (+128% de Ataque Físico Extra) de dano físico e recupera 150 (+50% de Ataque Físico Extra) de HP para si mesmo."
+    },
+    "12650": {
+      "description": "Toque: Suyou desliza para trás e balança sua arma na direção do alvo, causando 420 (+120% de Ataque Físico Extra) de dano físico aos inimigos em uma área retangular e em seu caminho de volta, e reduzindo sua velocidade de movimento em 30% por 1.5s.\nSegurar: Suyou usa o poder do Imortal para atirar uma flecha mortal na direção do alvo, causando 580 (+165% de Ataque Físico Extra) de dano físico ao alvo atingido. O alcance aumenta com o tempo de segurar. \nSuyou pode ser controlado enquanto avança, mas a habilidade não pode ser interrompida."
+    }
+  },
+  "counters": {
+    "assist": "Heróis que fornecem controle (como Tigreal) facilitam que Suyou cause danos massivos; heróis que fornecem recuperação e velocidade de movimento extra (como Rafaela) ajudam Suyou a kitar melhor.",
+    "strong": "O poderoso burst de longo alcance e as habilidades de perseguição de Suyou tornam impossível para heróis sem Blink ou Charge, como Xavier e Ixia, escaparem.",
+    "weak": "Como Suyou requer habilidades de ativação por segurar, heróis com controle podem interromper facilmente seus ataques, como Badang e Melissa."
+  },
+  "lore": {
+    "short": "Um exorcista de Zhu'an que herdou o poder do Imortal Nuo."
+  }
+}

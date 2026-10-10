@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10240": {
+      "description": "Mathilda ganha Orientação Ancestral enquanto se move. Quando estiver totalmente carregada, sua próxima Ataque Básico será aprimorado, causando 200 (+100% de Ataque Físico Total) (+100% de Poder Mágico Total) de Dano Mágico ao alvo e concedendo a ela 80 de Velocidade de Movimento extra, que diminui ao longo de 2,5s."
+    },
+    "10210": {
+      "description": "Mathilda ressoa com o poder de seus ancestrais por 4s, atraindo vagens à medida que sua distância de movimento aumenta (até 6 vagens).\n\nNo final da duração da habilidade, ou quando Mathilda lança esta habilidade novamente, as vagens procurarão e atacarão inimigos próximos, cada uma causando 275 (+125% de Poder Mágico Total) de Dano Mágico e revelando brevemente a posição dos inimigos. O dano subsequente causado pelas vagens ao mesmo alvo diminui para 40%."
+    },
+    "10220": {
+      "description": "Mathilda avança na direção do alvo e cria um campo ao seu redor, ganhando um escudo de 350 (+180% de Poder Mágico Total) e 25% de Velocidade de Movimento extra por 3s. Heróis aliados que entrarem em contato com o campo receberão um escudo de 50% e Vento Guia. O primeiro herói aliado que ativar o Vento Guia será guiado até Mathilda, e ambos ganharão o mesmo aumento de Velocidade de Movimento.\n\nAo lançar esta habilidade durante Circling Eagle, Mathilda não mudará sua posição.\nO Vento Guia expira 2s após o herói sair do campo de Mathilda."
+    },
+    "10230": {
+      "description": "Mathilda aplica uma Marca de Alma ao herói inimigo alvo e circula ao seu redor por até 3,5s, durante os quais suas vagens voarão em direção a inimigos próximos, cada uma causando 40 (+15% de Poder Mágico Total) de Dano Mágico. A Marca de Alma também reduz a velocidade do alvo em 15% e a Flor de Alma priorizará o alvo com a Marca de Alma.\nDurante a duração, Mathilda pode selecionar uma área para onde se teletransportar. No final da duração, ela avançará em direção ao alvo com a Marca de Alma, causando 320 (+120% de Poder Mágico Total) de Dano Mágico, ao mesmo tempo que arremessa inimigos em seu caminho para o ar por 0,6s, transferindo a Marca de Alma para o primeiro herói inimigo que ela arremessar para o ar e reduzindo o tempo de recarga da habilidade em 40%.\nMathilda ganha Imunidade a Controle e um escudo de 400 (+180% de Poder Mágico Total) durante a duração da habilidade."
+    }
+  },
+  "counters": {
+    "assist": "Mathilda funciona bem com heróis que causam alto dano de burst e podem usar o Vento Guia e seguir sua Ultimate para garantir eliminações, como Saber e Eudora.",
+    "strong": "Mathilda se destaca no assédio e no controle de alvo único, tornando-a uma ótima contra-medida para heróis frágeis sem habilidades de fuga, como Gord e Vale.",
+    "weak": "Mathilda é contrariado por Tanques com várias habilidades de controle, como Franco e Minsitthar."
+  },
+  "lore": {
+    "short": "Uma garota corajosa que se levanta e não teme o poder."
+  }
+}

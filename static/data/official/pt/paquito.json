@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10340": {
+      "description": "Paquito ganha um acúmulo cada vez que lança uma habilidade. Ao atingir 3 acúmulos, ele entra na Postura de Campeão e aprimora sua próxima habilidade.\nAs habilidades aprimoradas de Paquito não têm tempo de recarga e causam (+2*Nível do Herói)% de dano extra a minions.\n\nApós lançar qualquer habilidade aprimorada, Paquito ganha 60% de velocidade de movimento e (+2*Nível do Herói)% de redução de dano por 1,2s."
+    },
+    "10310": {
+      "description": "Paquito dá um soco na direção alvo, causando 210 (+50% de Ataque Físico Total) de Dano Físico aos inimigos atingidos e ganhando um escudo de 150 (+135% de Ataque Físico Total).\n\nPostura de Campeão: O dano é aumentado para 350 (+100% de Ataque Físico Total) de Dano Físico, e o valor do escudo é aumentado para 140% por 2,5s (escudos normais e aprimorados podem se acumular)."
+    },
+    "10320": {
+      "description": "Paquito avança e dá um golpe, causando 200 (+165% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho e no destino.\n\nPostura de Campeão: O golpe de Paquito se torna mais feroz, causando 300 (+210% de Ataque Físico Total) de Dano Físico aos inimigos atingidos.\nO golpe para ao atingir um herói ou criatura."
+    },
+    "10330": {
+      "description": "Paquito lança um golpe de cotovelo nos inimigos na direção alvo, causando 250 (+50% de Ataque Físico Total) de Dano Físico e derrubando-os até o destino.\nEle então lança um soco poderoso, causando 300 (+90% de Ataque Físico Total) de Dano Físico e reduzindo a velocidade deles em 75% por 1s, antes de recuar rapidamente.\n\nPostura de Campeão: Após derrubar os inimigos até o destino, Paquito lança um uppercut em vez disso, causando 400 (+120% de Ataque Físico Total) de Dano Físico e arremessando-os para o ar por 0,5s."
+    }
+  },
+  "counters": {
+    "assist": "Paquito funciona melhor com heróis de suporte que possam fortalecê-lo, como Angela e Rafaela.",
+    "strong": "Paquito é um herói com dash e alto dano de burst, tornando-o forte contra heróis frágeis sem habilidades defensivas, como Gord e Layla.",
+    "weak": "Paquito é um herói ágil, mas também é um pouco frágil, o que o torna fraco contra heróis com habilidades de controle fortes, como Franco e Kaja."
+  },
+  "lore": {
+    "short": "Um herói mortal que luta contra demônios usando apenas seus punhos e a vontade de ferro de proteger sua tribo."
+  }
+}

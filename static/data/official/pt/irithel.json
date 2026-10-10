@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4340": {
+      "description": "O trabalho em equipe impecável de Irithel e Leo permite que ela atire enquanto se move. Cada Ataque Básico dispara 2 flecha(s) de besta (mas demora mais para recarregar) que causam (+55% de Ataque Físico Total) de Dano Físico por flecha (herdando uma parte dos Efeitos de Ataque).\nMover-se acumula o Coração da Selva, até um máximo de 10 unidades, e faz com que o próximo Ataque Básico libere 1 flecha(s) adicional(is)."
+    },
+    "4310": {
+      "description": "Irithel lança uma saraivada de flechas na área alvo, causando 330 (+60% de Ataque Físico Total) de Dano Físico aos inimigos dentro da área e reduzindo seu HP em 15 por 3s."
+    },
+    "4320": {
+      "description": "Leo solta um rugido penetrante, causando 200 (+60% de Ataque Físico Total) de Dano Físico aos inimigos próximos e desacelerando-os em 40% por 2s."
+    },
+    "4330": {
+      "description": "Irithel ordena que Leo salte na direção do alvo e fortalece sua besta por 10s. Durante esse período, ela ganha 30 de Velocidade de Movimento e seus Ataques Básicos disparam flechas de besta aprimoradas, causando 100 (+65% de Ataque Físico Total) de Dano Físico ao alvo e às unidades próximas. O Coração da Selva também se acumula mais rapidamente durante esse período."
+    }
+  },
+  "counters": {
+    "assist": "Irithel funciona melhor com heróis que podem desacelerar ou fornecer controle forte, como Valir e Hylos, porque eles lhe dão mais oportunidades de causar dano.",
+    "strong": "Irithel neutraliza heróis com um alcance de Ataque Básico menor que o dela ou que carecem de mobilidade e podem ser facilmente kiteados, como Miya e Alpha.",
+    "weak": "Irithel é neutralizada por heróis com fortes habilidades de controle ou que podem restringir o movimento, como Badang e Silvanna. Como Irithel não possui habilidades de Blink, sua vantagem desaparece assim que sua mobilidade é restringida."
+  },
+  "lore": {
+    "short": "Uma elfa ruiva que vive e luta ao lado de seu companheiro Leo."
+  }
+}

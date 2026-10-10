@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8440": {
+      "description": "A excelente Habilidade de Leveza de Ling permite que ele salte entre paredes. Ele ganha 4 pontos extras de Leveza por segundo quando está em uma parede e 5 pontos extras de Leveza cada vez que causa dano.\n\nLing ganha 1,6 vezes a Chance Crítica de todas as fontes, mas só tem 140% de Dano Crítico."
+    },
+    "8410": {
+      "description": "Passivo: A Chance Crítica de Ling é aumentada em 2,5%.\nAtivo: Ling salta para a parede designada e entra no estado de Semi-Invisibilidade, restaurando os Pontos de Leveza mais rapidamente e ganhando 30% de Velocidade de Movimento. Receber dano faz com que ele saia da Semi-Invisibilidade. Ser controlado faz com que ele caia no chão e fique 30% mais lento por 2s. Quando ele usa essa habilidade para pular de uma parede para outra, isso não aciona o tempo de recarga e renova a Semi-Invisibilidade."
+    },
+    "8420": {
+      "description": "Ling avança na direção do alvo e esfaqueia os inimigos próximos, causando 300 (+50% de Ataque Físico Total) de Dano Físico.\nSe Ling lançar essa habilidade quando estiver na parede (sem custo de energia), ele avançará para o local alvo no chão, causando 300 (+50% de Ataque Físico Total) de Dano Físico aos inimigos na área e os deixando 30% mais lentos por 1,5s.\nEspada Desafiante é considerada um Ataque Básico."
+    },
+    "8430": {
+      "description": "Ling salta para o ar, tornando-se invencível e ganhando 10% de Velocidade de Movimento extra por 1,5s. Ele ignora obstáculos quando está no ar. Em seguida, ele pousa no chão, causando 250 (+100% de Ataque Físico Total) de Dano Físico aos inimigos na área e os deixando 40% mais lentos por 1,5s, arremessando aqueles no centro para o ar por 1s e criando um Campo de Espadas por 8s.\n\nQuatro Tempestades de Lâminas também aparecerão na borda do Campo de Espadas. Ling pode tocá-las para reduzir o tempo de recarga de Finch Poise em 4s, reiniciar o tempo de recarga de Defiant Sword e ganhar 25 Pontos de Leveza."
+    }
+  },
+  "counters": {
+    "assist": "Ling funciona melhor com heróis de suporte com habilidades de controle, que o tornam mais flexível em diferentes situações. Como Angela e Khufra.",
+    "strong": "As excelentes habilidades de perseguição de Ling e seu alto dano de burst o tornam forte contra heróis frágeis, como Layla e Hanabi.",
+    "weak": "Ling é neutralizado por heróis com forte controle de alvo único e alto dano de burst, pois eles podem controlá-lo facilmente e derrotá-lo rapidamente. Como Eudora e Jawhead."
+  },
+  "lore": {
+    "short": "Um elegante e livre Finch que voa e o Lutador Oriental que herdou o poder do Pássaro Vermelhão."
+  }
+}

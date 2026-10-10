@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7040": {
+      "description": "Sempre que Belerick recebe 50 ou mais de dano, ele tem 25% de chance de atirar na unidade inimiga mais próxima, causando 55 (+5*Nível do Herói) (+ 1,8% do seu ) de dano mágico (escala com o nível). Este ataque pode ser acionado uma vez a cada 0,4 segundos.\n\nSeu HP obtido a partir de equipamentos e emblemas é aumentado em 30%."
+    },
+    "7010": {
+      "description": "Belerick libera vinhas em uma direção designada, causando 200 (+50% de Poder Mágico Total) de dano mágico aos inimigos ao longo do caminho e os desacelerando em 25%. As sementes antigas deixadas pelas vinhas se transformam em espinhos após 0,8 segundos, causando 200 (+50% de Poder Mágico Total) de dano mágico aos inimigos no caminho e os provocando por 1,2 segundos.\n\nCausa 80% de dano extra contra minions."
+    },
+    "7020": {
+      "description": "Belerick ganha 80% de velocidade de movimento (diminui ao longo de 2 segundos) e aprimora seu próximo ataque básico.\n\nO ataque básico aprimorado causa 300 (+60% de Poder Mágico Total) de dano mágico e desacelera o alvo em 60% por 1,4 segundos. Belerick também recupera HP igual a 240 + 10% do seu .\n\nCada vez que Espinhos Mortais é acionado, o tempo de recarga desta habilidade é reduzido em 1 segundo."
+    },
+    "7030": {
+      "description": "Belerick invoca vinhas que se espalham ao seu redor, causando 100 (+30% de Poder Mágico Total) de dano mágico aos inimigos na área 4 vezes, provocando-os e desacelerando-os por 1,5 segundos."
+    }
+  },
+  "counters": {
+    "assist": "Belerick funciona bem com heróis que podem causar muito dano a inimigos controlados por seu provocação, como Miya e Natan.",
+    "strong": "Belerick é excelente em controlar inimigos a curta distância, tornando-o um ótimo contra-ataque contra assassinos frágeis que precisam se aproximar para causar dano, como Lancelot e Ling.",
+    "weak": "Belerick é neutralizado por heróis com ataques de longo alcance, como Valir e Xavier."
+  },
+  "lore": {
+    "short": "Uma criatura elemental gentil e fraternal."
+  }
+}

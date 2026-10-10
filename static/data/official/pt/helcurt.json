@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5140": {
+      "description": "Helcurt permanece no estado de Prowler até ser detectado pela equipe inimiga, ganhando 15% de velocidade de movimento extra e regenerando continuamente (+30% de Ataque Físico Total) de HP se não tiver causado dano.\nEle ganha 50% de velocidade de ataque extra e 50% de velocidade de movimento extra (diminuindo com o tempo) por 4s ao ser detectado e sai do estado de Prowler 0,75s depois.\nQualquer herói morto após ser atingido por Helcurt deixa uma névoa escura que explode e se espalha com um tempo de recarga de 10s. Helcurt se oculta enquanto está dentro da névoa escura."
+    },
+    "5110": {
+      "description": "Passiva: Quando Helcurt está no estado de Prowler, Terrify também afeta os heróis inimigos atingidos e os revela brevemente. Seu tempo de recarga diminui 3 vezes mais rápido que o normal.\nAtiva: Helcurt pisca para o local alvo e causa 150 (+70% de Ataque Físico Total) de dano físico aos inimigos na área, reduzindo sua velocidade de movimento em 60% por 0,75s."
+    },
+    "5120": {
+      "description": "Passiva: Helcurt ganha 1 Deadly Stinger a cada 1,5s gasto no estado de Prowler ou a cada ataque básico. Até 5 Deadly Stingers podem ser armazenados.\n\nAtiva: Helcurt dispara todos os Deadly Stingers para frente, cada um causando 180 (+50% de Ataque Físico Extra) de dano físico aos inimigos (minions e creeps sofrem apenas 70% do dano).\nDeadly Stinger conta como um ataque básico, mas não pode causar dano crítico."
+    },
+    "5130": {
+      "description": "Helcurt invoca a Noite Escura, reduzindo o alcance de visão de todos os inimigos e bloqueando o compartilhamento de visão dos aliados por 3s. Durante a Noite Escura, Helcurt ganha 40% de velocidade de movimento extra.\n\nA Noite Escura torna mais fácil para Helcurt sair do alcance de visão dos inimigos."
+    }
+  },
+  "counters": {
+    "assist": "O Ultimate de Helcurt é uma ótima ferramenta para obscurecer a visão do inimigo e facilitar o engajamento dele e de sua equipe. Além disso, heróis com controle como Tigreal, Esmeralda e Terizla funcionam muito bem com Helcurt para garantir eliminações.",
+    "strong": "Helcurt pode se aproximar rapidamente dos inimigos com sua mobilidade e eliminar rapidamente heróis como Layla, Chang'e e Vale com seu dano burst.",
+    "weak": "Helcurt deve evitar heróis tanque que ele não consegue eliminar rapidamente, como Fredrinn, Belerick e Gatotkaca. Uma vez que Helcurt é pego por seu controle, eles podem derrotá-lo rapidamente com a ajuda de seus companheiros de equipe."
+  },
+  "lore": {
+    "short": "O pesadelo do Abismo que está disposto a trair qualquer um para sobreviver."
+  }
+}

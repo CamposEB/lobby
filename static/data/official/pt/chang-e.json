@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6140": {
+      "description": "Toda vez que Chang'e causa dano a um inimigo, ela deixa uma marca nele que reduz sua Velocidade de Movimento em 1% (até 20%)."
+    },
+    "6110": {
+      "description": "Chang'e envia uma esfera de energia na direção alvo, causando 350 (+130% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho e reduzindo sua velocidade em 10% por 1.5s.\n\nLua Crescente: A Lua Crescente envia 4 esferas de energia extras junto com a de Chang'e, cada uma causando 20% de dano e reduzindo a velocidade dos inimigos atingidos. O efeito de lentidão pode se acumular (até 20%)."
+    },
+    "6120": {
+      "description": "Chang'e invoca a Lua Crescente, ganhando um escudo permanente de 300 (+150% de Poder Mágico Total) e 10% de Velocidade de Movimento até que o escudo seja quebrado. Cada vez que ela lança uma habilidade, ela ganha 50% de Velocidade de Movimento extra que decai ao longo de 2.5s.\nLua Crescente: Melhora seus Ataques Básicos para causar 20 (+35% de Poder Mágico Total) de Dano Mágico extra 2 vezes.\n\nCada vez que Chang'e causa Dano Mágico com seus Ataques Básicos ou habilidades, o tempo de recarga desta habilidade é reduzido em 0.2s."
+    },
+    "6130": {
+      "description": "Chang'e ganha 10% de Velocidade de Movimento por 4s. Durante esse tempo, ela dispara 30 meteoros na direção alvo, cada um causando 60 (+21% de Poder Mágico Total) de Dano Mágico ao primeiro inimigo atingido. Esta habilidade causa 100% de dano extra a minions e creeps.\n\nLua Crescente: Dispara meteoros junto com Chang'e, cada um causando 33% de dano."
+    }
+  },
+  "counters": {
+    "assist": "Chang'e funciona bem com Tanques que podem puxar os inimigos juntos, como Gatotkaca e Tigreal, porque Chang'e pode segui-los nas lutas em equipe para causar muito dano.",
+    "strong": "Chang'e é forte contra heróis frágeis que têm baixa mobilidade e curto alcance de dano, como Eudora e Odette. Chang'e pode acertá-los facilmente com suas habilidades de longo alcance enquanto esquiva seus ataques.",
+    "weak": "Chang'e é neutralizada por Assassinos ágeis com alto burst, como Hanzo e Harley, pois eles podem evitar as habilidades de Chang'e e usar seu alto dano de burst para matá-la, já que ela carece de autoproteção."
+  },
+  "lore": {
+    "short": "Discípula travessa e fofa do Grande Dragão."
+  }
+}

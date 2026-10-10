@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "340": {
+      "description": "Toda vez que Saber causa dano, ele reduz a defesa do alvo em 3-8 por 5s (até 5 acúmulos)."
+    },
+    "310": {
+      "description": "Saber libera 5 espadas que orbitam ao seu redor e causam 75 (+25% de Ataque Físico Extra) de Dano Físico aos inimigos próximos ao atingir. As espadas retornam a ele após o tempo de duração.\n\nEnquanto estiver ativo, os ataques com espada causam 200 (+50% de Ataque Físico Extra) de Dano Físico ao alvo e 50% de dano aos inimigos ao longo do caminho (dano reduzido para 50% contra tropas). Cada ataque com espada reduz o tempo de recarga de Espadas Orbitais em 0,5s e de Investida em 1s."
+    },
+    "320": {
+      "description": "Saber avança na direção do alvo, causando 75 (+50% de Ataque Físico Extra) de Dano Físico aos inimigos ao longo do caminho.\n\nApós o avanço, ele ganha um Ataque Básico Aprimorado que permite que ele carregue contra o alvo, causando 75 (+120% de Ataque Físico Total) de Dano Físico e reduzindo sua velocidade em 60% por 1s."
+    },
+    "330": {
+      "description": "Saber carrega contra o herói inimigo alvo, derrubando-o no ar por 1,2s (não é afetado por Resistência). Ele o atinge 3 vezes durante o tempo de duração, causando 120 (+80% de Ataque Físico Extra) de Dano Físico com os dois primeiros golpes e 240 (+160% de Ataque Físico Extra) de Dano Físico com o terceiro."
+    }
+  },
+  "counters": {
+    "assist": "Saber funciona bem com heróis de alto dano que podem ajudá-lo a eliminar heróis inimigos em lutas em equipe, como Kadita e Cyclops.",
+    "strong": "A combinação mortal de Saber o torna forte contra heróis frágeis, como Layla e Eudora.",
+    "weak": "Saber é neutralizado por heróis de suporte com buffs de sobrevivência, como Estes e Faramis."
+  },
+  "lore": {
+    "short": "Um espadachim em busca da invencibilidade, usado pelo Laboratório 1718."
+  }
+}

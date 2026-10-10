@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "640": {
+      "description": "Tigreal ganha 1 acúmulo de Medo cada vez que é atingido por um ataque básico. Ao atingir 4 acúmulos, ele os consome para bloquear o próximo ataque básico recebido (incluindo ataques de Torres).\nEle também ganha 1 acúmulo de Medo cada vez que lança uma habilidade.\n\nO dano causado por minions não adiciona nem consome acúmulos de Medo."
+    },
+    "610": {
+      "description": "Tigreal esmaga o chão com seu martelo, criando uma onda de choque que erupciona 3 vezes em uma área em forma de leque. Cada erupção causa 270 (+70% de Ataque Físico Total) de Dano Físico aos inimigos atingidos e os reduz a velocidade em 20% / 40% / 60% por 1,5s."
+    },
+    "620": {
+      "description": "Tigreal avança na direção do alvo, causando  (+100% de Ataque Físico Total) de Dano Físico aos inimigos ao longo do caminho e os empurrando até o final da carga.\n\nUsar Novamente: Tigreal pode usar esta habilidade novamente em até 4s, causando 280 (+60% de Ataque Físico Total) de Dano Físico aos inimigos à sua frente e os arremessando para o ar por 0,6s."
+    },
+    "630": {
+      "description": "Tigreal libera o poder de seu martelo, puxando os inimigos próximos para ele, causando 600 (+130% de Ataque Físico Total) de Dano Físico e atordoando-os por 1,8s.\n\nA primeira metade da canalização pode ser interrompida por efeitos de controle, enquanto a segunda metade só pode ser interrompida por Supressão."
+    }
+  },
+  "counters": {
+    "assist": "Tigreal funciona bem com heróis que possuem habilidades de iniciação fortes, o que lhe dá uma melhor chance de atingir os inimigos com suas habilidades de controle, como Vexana e Odette.",
+    "strong": "A Passiva de Tigreal pode anular os ataques básicos inimigos, tornando-o forte contra heróis que causam dano com seus ataques básicos, como Zilong e Freya.",
+    "weak": "Mas, como um herói corpo a corpo, Tigreal é neutralizado por heróis magos de longo alcance, como Chang'e e Zhask."
+  },
+  "lore": {
+    "short": "Líder da Ordem da Luz, guardião do Império Moniyan."
+  }
+}

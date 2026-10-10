@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2940": {
+      "description": "As habilidades de Ruby têm uma taxa de Vampiro Mágico de 75% (seus Ataques Básicos não podem ativar Roubo de Vida). Para cada 1% de HP perdido, sua taxa de Vampiro Mágico aumenta em 1%, até 150%.\n\nApós cada lançamento de habilidade, Ruby pode se mover rapidamente para outro local e ganhar 8-25 de defesa (escala com o nível) por 4s (acumula até 3 vezes)."
+    },
+    "2910": {
+      "description": "Ruby balança sua foice, causando 280 (+110% de Ataque Físico Total) de Dano Físico aos inimigos atingidos. Em seguida, ela libera uma onda de choque na mesma direção, causando 140 (+55% de Ataque Físico Total) de Dano Físico aos inimigos atingidos e reduzindo sua velocidade em 40% por 1s."
+    },
+    "2920": {
+      "description": "Ruby balança sua foice ao seu redor duas vezes, cada balanço causa 60 (+55% de Ataque Físico Total) de Dano Físico aos inimigos próximos, atordoando-os por 0,5s e puxando-os lentamente em sua direção."
+    },
+    "2930": {
+      "description": "Ruby varre sua foice na direção do alvo, causando 600 (+200% de Ataque Físico Total) de Dano Físico aos inimigos atingidos, puxando-os em sua direção e atordoando-os por 0,5s."
+    }
+  },
+  "counters": {
+    "assist": "Ruby funciona melhor com heróis que podem causar muito dano em área em um curto período de tempo. Suas habilidades podem causar mais dano a inimigos que são atordoados e puxados por suas habilidades 2ª e Ultimate, como Pharsa e Kadita.",
+    "strong": "Ruby é forte contra heróis lutadores com alto dano em burst. Ela pode sobreviver facilmente ao burst deles com suas excelentes habilidades de regeneração e roubo de vida, como Aldous e Guinevere.",
+    "weak": "Ruby é neutralizada por heróis atiradores com boa mobilidade, pois eles podem facilmente desviar de suas habilidades 2ª e Ultimate, como Wanwan e Irithel."
+  },
+  "lore": {
+    "short": "Uma garota que cresceu com a ajuda de Roger."
+  }
+}

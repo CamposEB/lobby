@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4140": {
+      "description": "Gatotkaca ganha  igual a 2% do HP perdido (até 200). Ele ganha 5 de Raiva (até 100) para cada 300 de dano recebido (calculado antes da redução).\n\nAo atingir 25 de Raiva, o próximo Ataque Básico de Gatotkaca é aprimorado, consumindo toda a Raiva para causar (+100% Total Physical Attack) (+200% Total Magic Power) (+ 8.2-11 * Raiva Consumida) de Dano Mágico (escala com o nível do herói) e recuperar (8 * Raiva Consumida) de HP."
+    },
+    "4110": {
+      "description": "Gatotkaca golpeia o chão, criando uma zona destruída na direção do alvo enquanto causa 200 (+150% Total Magic Power) de Dano Mágico aos inimigos dentro da área. Inimigos na zona destruída receberão 100 (+20% Total Magic Power) de Dano Mágico por segundo e serão reduzidos em 30% de sua velocidade."
+    },
+    "4120": {
+      "description": "Gatotkaca começa a canalizar e depois corre na direção do alvo com um grito de guerra, provocando os inimigos no caminho para que o ataquem, causando 200 (+100% Total Magic Power) de Dano Mágico por 0.9 - 1.5s. A duração da provocação e a distância do sprint escalam com o tempo de canalização. Cancelar a habilidade reduz 50% do tempo de recarga restante."
+    },
+    "4130": {
+      "description": "Gatotkaca salta para o local alvo, causando 500 (+300% Total Magic Power) de Dano Mágico aos inimigos próximos e os atirando para o ar por 1s. Inimigos perto do centro da área serão atirados para o ar por mais tempo, enquanto inimigos nas bordas serão puxados para o centro.\n\nA câmera se moverá com o indicador da habilidade, mas não concederá visão extra."
+    }
+  },
+  "counters": {
+    "assist": "Gatotkaca funciona melhor com heróis que têm controle de grupo e dano fortes, como Kagura e Vale, que podem dar ainda mais valor ao seu Ultimate.",
+    "strong": "Devido ao seu ótimo controle de grupo e alta Defesa Física, Gatotkaca neutraliza atiradores sem habilidades de mobilidade, como Layla e Popol e Kupa.",
+    "weak": "Gatotkaca é neutralizado por heróis que podem remover controle de grupo, como Diggie e Wanwan, que reduzem muito sua eficácia."
+  },
+  "lore": {
+    "short": "Guerreiro do universo Arcadhem."
+  }
+}

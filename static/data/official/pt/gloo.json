@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10440": {
+      "description": "As habilidades de Gloo aplicam um acúmulo de Sticky aos inimigos atingidos, reduzindo sua Velocidade de Movimento em 4% por 6s (até 5 acúmulos).\nCada acúmulo de Sticky em um atacante reduz o dano causado a Gloo em 3%."
+    },
+    "10410": {
+      "description": "Gloo se estende e golpeia o chão, causando 80 (+80% Total Magic Power) de Dano Mágico aos inimigos atingidos.\nUm Goo é deixado no local final, que explode após 3s, causando 250 (+12% Extra Max HP) de Dano Mágico aos inimigos próximos e imobilizando-os por 0.8s.\nTocar no Goo detona-o imediatamente e reinicia o tempo de recarga desta habilidade. Gloo também recupera 2.5%  se a explosão atingir um inimigo (dobrado se atingir um herói inimigo)."
+    },
+    "10420": {
+      "description": "Gloo se divide em Goos, causando 100 (+80% Total Magic Power) de Dano Mágico aos inimigos em uma área em forma de leque e imobilizando-os por 0.5s. Pelos próximos 4s, Gloo ganha 10% de Velocidade de Movimento e causa 80 (+15% Total Magic Power) de Dano Mágico a cada 0.25s aos inimigos que toca.\nSe esta habilidade atingir um Goo, Gloo avança em direção a ele, arrastando os inimigos em seu caminho por uma distância."
+    },
+    "10430": {
+      "description": "Desbloqueado quando um herói inimigo atinge o máximo de acúmulos de Sticky. Gloo se prende ao alvo por até 9s, recuperando 20% .\n\nEnquanto estiver preso, os Ataques Básicos de Gloo causam 30 (+50% Total Magic Power) (+6% Extra Max HP) de Dano Mágico e transferem 80% do dano que ele recebe (excluindo o dano de Torres) para o hospedeiro. Se o hospedeiro morrer enquanto Gloo estiver preso, o tempo de recarga desta habilidade é reduzido para 5s."
+    }
+  },
+  "counters": {
+    "assist": "Gloo funciona melhor com heróis que causam muito dano em rajadas, pois eles podem derrotar rapidamente o herói inimigo que ele traz de volta com seu Ultimate. Como Eudora e Saber.",
+    "strong": "Gloo é forte contra heróis magos sem bom controle de grupo. Porque ele pode se prender facilmente a eles e levá-los para onde quiser. Como Cecilion e Chang'e.",
+    "weak": "Gloo é neutralizado por heróis atiradores com boa mobilidade. É difícil para Gloo se prender a eles, e ele pode ser facilmente morto se tentar. Como Karrie e Lesley."
+  },
+  "lore": {
+    "short": "Uma amálgama mágica de criaturas fofas e travessas que habitam as profundezas do Pântano das Sombras."
+  }
+}

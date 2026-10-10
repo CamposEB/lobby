@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3640": {
+      "description": "Ao receber dano fatal, Aurora se congela por 1,5s, tornando-se invencível durante esse tempo e recuperando gradualmente 30% . Este efeito tem um tempo de recarga de 150s.\n\nOs efeitos de congelamento de Aurora também podem afetar as Torres."
+    },
+    "3610": {
+      "description": "Aurora invoca um meteoro gelado para atingir o local alvo, causando 400 (+90% de Poder Mágico Total) de Dano Mágico e reduzindo em 40% a velocidade dos alvos atingidos por 1s. Em seguida, 5 pedras de granizo caem, cada uma causando 40 (+10% de Poder Mágico Total) de Dano Mágico."
+    },
+    "3620": {
+      "description": "Aurora sopra uma Brisa Gelada em uma área em forma de leque na direção alvo, causando 225 (+75% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e criando uma área congelada no extremo oposto.\n\nA área causa um total de 225 (+75% de Poder Mágico Total) de Dano Mágico aos inimigos dentro dela e os congela por 1s (aumenta em 0,06s para cada 100 )."
+    },
+    "3630": {
+      "description": "Aurora cria um caminho de gelo na direção alvo, causando 100 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos no caminho e reduzindo sua velocidade em 80% por 1,2s.\n\nO caminho de gelo se expande gradualmente até se tornar um glaciar que se quebra ao atingir o tamanho máximo, causando 600 (+150% de Poder Mágico Total) de Dano Mágico a todos os inimigos na área e congelando-os por 1s (aumenta em 0,2s para cada 100 )."
+    }
+  },
+  "counters": {
+    "assist": "Com suas habilidades de controle muito poderosas, Aurora funciona bem com heróis que causam alto dano contínuo, como Ixia, Freya e Karrie.",
+    "strong": "Aurora contraria heróis que gostam de avançar, como Leomord, Thamuz e Terizla, já que suas habilidades podem pará-los completamente.",
+    "weak": "Como a maioria das habilidades de Aurora tem efeitos retardados, ela é contrária a heróis com alta mobilidade que podem evitá-las com facilidade, como Ling, Kadita e Guinevere."
+  },
+  "lore": {
+    "short": "A Donzela do Glaciar que concede lembrança eterna nas lendas do Norte."
+  }
+}

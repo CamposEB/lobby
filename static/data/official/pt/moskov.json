@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3140": {
+      "description": "Os ataques básicos de Moskov podem penetrar o alvo e causar (+68% de Ataque Físico Total) a (+110% de Ataque Físico Total) de Dano Físico aos inimigos atrás deles (escala com o nível do herói). Cada acerto de Ataque Básico reduz o tempo de recarga de Abyss Walker em 0,8s e de Spear of Misery em 0,8s."
+    },
+    "3110": {
+      "description": "Moskov se teletransporta para o local alvo, aumentando sua Velocidade de Ataque para 1,15 vezes por 3s. Enquanto isso, seu Ataque Básico causa (+10% de Ataque Físico Total) de dano extra aos inimigos atrás do alvo principal."
+    },
+    "3120": {
+      "description": "Moskov lança um golpe poderoso contra o herói ou creep inimigo alvo, causando 300 (+60% de Ataque Físico Total) de Dano Físico, arremessando-os para trás e revelando sua posição por 2s.\n\nSe o alvo colidir com um herói inimigo ao ser arremessado para trás, ambos sofrerão 200 (+30% de Ataque Físico Total) de Dano Físico e serão atordoados por 1,2s. Se o inimigo for arremessado contra uma parede, também será atordoado pela mesma duração."
+    },
+    "3130": {
+      "description": "Após um curto atraso, Moskov lança a Lança da Destruição na direção alvo, causando 340 (+100% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho e ao primeiro herói inimigo atingido. Ao atingir um herói inimigo, a lança o perfura, causando 10% de Dano Físico extra aos inimigos atrás dele. O alvo e os inimigos atingidos pelo dano de perfuração serão lentificados em 50% por 1s (a duração do lentificar escala com o tempo de viagem da lança, até 3s).\n\nQuando a Lança da Destruição atinge o primeiro herói inimigo, ela cria uma sombra atrás dele e renova o tempo de recarga de Abyss Walker.\n\nUsar Novamente: Moskov lança Abyss Walker a partir da localização da sombra (compartilha o mesmo tempo de recarga da habilidade)."
+    }
+  },
+  "counters": {
+    "assist": "Moskov funciona bem com heróis como Atlas e Gatotkaca, que podem controlar grupos de inimigos, permitindo que ele se concentre em maximizar o dano de sua área de efeito perfurante.",
+    "strong": "A 1ª Habilidade de Moskov proporciona um efeito de teletransporte, tornando-o uma ameaça para lutadores com baixa mobilidade, como Thamuz e Balmond.",
+    "weak": "Moskov é contrariado por heróis com alta mobilidade, como Lancelot e Natalia, que podem fechar rapidamente a distância e eliminá-lo."
+  },
+  "lore": {
+    "short": "Um guerreiro do deserto que abraçou a escuridão para buscar sua vingança."
+  }
+}

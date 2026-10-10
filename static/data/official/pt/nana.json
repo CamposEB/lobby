@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "540": {
+      "description": "Ao receber dano fatal, o Dom de Molina remove todos os efeitos negativos de Nana e a transforma por 2s. Enquanto transformada, Nana é imune a todo o dano, ganha 30% de Velocidade de Movimento e recupera 10% por segundo, mas não pode usar habilidades.\nEsse efeito só pode ser ativado uma vez a cada 150s."
+    },
+    "510": {
+      "description": "Nana arremessa seu Bumerangue Mágico na direção alvo, causando 300 (+100% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos durante o trajeto de ida e volta.\n\nO primeiro inimigo atingido recebe o dano total. O dano é reduzido em 10% para cada inimigo adicional atingido, até um máximo de 70% de redução total."
+    },
+    "520": {
+      "description": "Nana arremessa Molina no local alvo, causando 250 (+50% de Poder Mágico Total) de Dano Mágico aos inimigos na área e transformando os heróis inimigos atingidos em pequenos animais.\n\nSe Molina não atingir um herói inimigo, ela permanecerá no chão e perseguirá o herói inimigo mais próximo que entrar na área, transformando o primeiro herói inimigo que tocar.\n\nTransformação: Reduz a Velocidade de Movimento do alvo em 50% e o Ataque em 30% por 1.5s. Heróis transformados não podem atacar ou usar habilidades."
+    },
+    "530": {
+      "description": "Nana invoca Molina para atacar a área alvo 3 vezes, causando 440 (+140% de Poder Mágico Total) de Dano Mágico em cada ataque e reduzindo a velocidade dos inimigos na área em 30% por 1s.\n\nAcertos consecutivos de Molina Blitz no mesmo inimigo o atordoam por 1s."
+    }
+  },
+  "counters": {
+    "assist": "Nana funciona melhor com heróis que têm habilidades de controle, o que a ajuda a conseguir abates, como Rafaela e Franco.",
+    "strong": "A passiva de Nana lhe confere grande capacidade de sobrevivência, tornando-a forte contra heróis com combos letais, como Eudora e Kadita.",
+    "weak": "Nana pode ser neutralizada por heróis com fortes habilidades de perseguição, como Zilong e Natalia, porque eles podem persegui-la durante a duração da sua passiva."
+  },
+  "lore": {
+    "short": "Uma pequena Leonin sem preocupações."
+  }
+}

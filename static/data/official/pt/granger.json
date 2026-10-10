@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7940": {
+      "description": "A arma única de Granger para caçar demônios, a Espingarda e o Canhão, são alimentados por Energia Demoníaca. Ambas as armas começam com 800 de Energia máxima. Sua Espingarda recupera 8% de Energia por segundo, enquanto seu Canhão recupera 2% de Energia por segundo. Matar um Minion / Creep aumenta permanentemente a Energia máxima deles em 6 / 6 e restaura instantaneamente sua Energia em 5% / 5%, respectivamente. Cada abate ou assistência em um herói inimigo aumenta permanentemente a Energia máxima de ambas as armas em 12 e restaura instantaneamente 10% de Energia.\n\nCada 1% de Redução de Recarga se converte em 2. Os custos de Energia Demoníaca não são afetados pela Redução de Custo de Energia."
+    },
+    "7910": {
+      "description": "Granger dispara rapidamente 6 tiros com sua Espingarda, cada tiro causando 60 (+45% de Ataque Físico Total) de Dano Físico e consumindo 70 de Energia da Espingarda. O último tiro é garantido como crítico. Enquanto atira, a Velocidade de Movimento de Granger aumenta em 10%.\n\nGranger para de atirar quando sua Energia acaba ou quando a habilidade é lançada novamente. Rhapsody não tem tempo de recarga e pode ser lançada assim que a Energia da Espingarda estiver acima de 420."
+    },
+    "7920": {
+      "description": "Granger usa sua agilidade de Caçador de Demônios para se mover na direção do alvo, restaurando instantaneamente 15% de Energia para sua Espingarda.\n\nRondo pode ser lançado enquanto Rhapsody está sendo canalizada. Cada vez que Rhapsody acerta um inimigo, o tempo de recarga de Rondo é reduzido em 0,5s."
+    },
+    "7930": {
+      "description": "Granger dispara seu Canhão na direção do alvo, causando 150 (+110% de Ataque Físico Total) de Dano Físico ao primeiro herói inimigo atingido e a outros alvos no raio da explosão. Os alvos atingidos serão brevemente lentificados. Granger pode rolar na direção do Joystick após cada tiro.\nDeath Sonata pode ser lançada enquanto Rhapsody está sendo disparada. Death Sonata tem um breve tempo de recarga e consome 250 de Energia do Canhão de Granger por tiro."
+    }
+  },
+  "counters": {
+    "assist": "Granger combina bem com heróis que possuem habilidades de controle fortes, como Franco e Kaja, que podem imobilizar os inimigos para que Granger use toda a sua primeira habilidade.",
+    "strong": "Granger é eficaz contra heróis frágeis que carecem de mobilidade, como Chang'e e Cecilion, que têm dificuldade em esquivar de sua primeira habilidade e são vulneráveis ao alto dano de seu Ultimate.",
+    "weak": "Granger é contrariado por heróis com alto poder de eliminação de alvos únicos. Apesar de ter boa mobilidade, Granger carece de outras medidas defensivas. Heróis como Saber e Hayabusa podem surpreender Granger rapidamente e derrotá-lo."
+  },
+  "lore": {
+    "short": "Um misterioso caçador de demônios que opera fora das convenções da Igreja da Luz. Sempre visto com um estojo de violino na mão, ele caça demônios com suas duas armas devoradoras de almas."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11340": {
+      "description": "Se não houver heróis aliados a 4 unidades de Yin, seu dano aumenta para 120% e ele ganha 8% de Vampiro Mágico."
+    },
+    "11310": {
+      "description": "Yin ganha 60% de velocidade de movimento extra (diminui ao longo de 3s).\nDurante esse tempo, seu próximo ataque básico será aprimorado, causando 25 (+100% de Ataque Físico Total) de dano físico. Se o ataque básico aprimorado acertar um inimigo, Yin lança um soco carregado para frente, causando 360 (+200% de Ataque Físico Extra) de dano físico aos inimigos em seu caminho.\nAcertar o soco carregado com sucesso reduz o tempo de recarga da habilidade em 35%."
+    },
+    "11320": {
+      "description": "Yin avança para frente, deixando um Anel Dourado para trás enquanto causa 75 (+35% de Ataque Físico Extra) de dano físico aos inimigos no caminho. Ele ganha 30% de redução de dano extra por 4s se um herói inimigo for atingido.\nApós 1s, o Anel Dourado alcançará Yin, causando 150 (+70% de Ataque Físico Extra) de dano físico aos inimigos que ele atravessar e atordoando-os por 1s."
+    },
+    "11330": {
+      "description": "Após um curto atraso, Yin se fixa em um herói inimigo (não pode se fixar em mascotes ou clones) e o puxa para um domínio por até 8s, transformando-se em Lieh. Dentro do domínio, os dois não podem ser afetados pelas habilidades de outros heróis.\n\nLieh tem habilidades mais fortes e 50 extras  e  que duram 8s.\nO domínio terminará mais cedo se um dos dois for morto. Se Lieh matar o inimigo com sucesso, ele recuperará 20% de sua Vida Máxima, sairá do domínio com os tempos de recarga de Frenzy Strike e Instant Blast reiniciados e continuará a lutar como Lieh por 8s.\nSe Yin não conseguir puxar seu alvo para o domínio, a habilidade entrará em um tempo de recarga de 3s."
+    }
+  },
+  "counters": {
+    "assist": "Yin funciona melhor com Suportes que podem aumentar sua mobilidade, como Mathilda e Rafaela, para ajudá-lo a chegar até o inimigo e eliminar alvos importantes.",
+    "strong": "Yin é eficaz contra heróis frágeis sem habilidades de Blink, como Layla e Cecilion, porque eles terão dificuldade em desviar de seus Anéis Dourados. Uma vez que são atordoados ou presos em seu Ultimate, Yin pode facilmente eliminá-los.",
+    "weak": "Yin é neutralizado por Lutadores que podem interromper habilidades, como Fredrinn e Badang, porque eles podem facilmente interromper seu Ultimate durante o atraso inicial. Esses heróis também conseguem se defender em um duelo, tornando-se alvos arriscados para o Ultimate de Yin."
+  },
+  "lore": {
+    "short": "Um jovem artista marcial em uma jornada para derrotar o Deus do Mal que habita dentro dele."
+  }
+}

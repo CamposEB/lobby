@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5640": {
+      "description": "Cada habilidade lançada adiciona uma runa à adaga de Gusion (acumula até 4 vezes). Cada acúmulo melhora o próximo Ataque Básico de Gusion, causando dano adicional igual a 3% da vida do alvo e recuperando 50 (+25% de Poder Mágico Total) de HP para si mesmo."
+    },
+    "5610": {
+      "description": "Gusion lança uma adaga na direção do alvo, causando 200 (+50% de Poder Mágico Total) de Dano Mágico ao primeiro inimigo atingido e marcando-o.\n\nUsar Novamente: Gusion se move para trás do inimigo marcado, causando 200 (+100% de Poder Mágico Total) de Dano Mágico a ele. Esta habilidade não pode ser interrompida enquanto Gusion se move para trás do inimigo marcado."
+    },
+    "5620": {
+      "description": "Gusion lança uma saraivada de adagas na direção do alvo, cada uma causando 100 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e reduzindo sua velocidade em 6% por 2s (quando atingidos por várias adagas, o efeito de lentidão pode acumular até 30%).\n\nUsar Novamente: Gusion recupera as adagas, cada uma causando 65 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho."
+    },
+    "5630": {
+      "description": "Gusion avança até o local alvo, reiniciando o tempo de recarga de Sword Spike e Shadowblade Slaughter. Se Shadowblade Slaughter foi lançada uma vez antes da reinicialização, Gusion pode lançar outras cinco adagas na próxima vez que usar Shadowblade Slaughter e recuperar um total de dez adagas depois.\n\nUsar Novamente: Gusion avança uma curta distância na direção do alvo."
+    }
+  },
+  "counters": {
+    "assist": "Gusion funciona bem com heróis que têm um forte controle inicial, o que lhe permite acertar o alvo mais facilmente com sua 1ª habilidade, como Vexana e Pharsa.",
+    "strong": "Gusion é forte contra heróis frágeis que carecem de habilidades de movimento, permitindo que ele os persiga facilmente. Como Layla e Hanabi.",
+    "weak": "Gusion é neutralizado por heróis tanque com bom controle de alvo único. Uma vez controlados por eles, Gusion terá dificuldade em escapar. Como Franco e Kaja."
+  },
+  "lore": {
+    "short": "Filho rebelde da Casa Paxley."
+  }
+}

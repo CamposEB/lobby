@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1140": {
+      "description": "Bane infunde sua arma com uma carga de Poder da Maré cada vez que usa uma habilidade (até 2 cargas). Cada um de seus ataques básicos subsequentes consome uma carga para causar  (+95% de Ataque Físico Total) (+ 4 (+0,4*Nível do Herói)% da ) Dano Físico aos inimigos próximos."
+    },
+    "1110": {
+      "description": "Bane dispara seu Canhão de Garra de Caranguejo na direção alvo, causando 150 (+160% de Ataque Físico Total) de Dano Físico ao primeiro inimigo atingido e depois 150% de dano a um inimigo aleatório atrás dele (prioriza heróis inimigos). Os inimigos atingidos são reduzidos em 10 (+10% de Poder Mágico Total)% por 1s.\nA cada 100  que Bane possui, o tempo de recarga desta habilidade é reduzido em mais 8%."
+    },
+    "1120": {
+      "description": "Bane engole uma xícara de tinta do mar, recuperando HP igual a 200 (+150% de Poder Mágico Total) + 5 (+1,5% de Poder Mágico Total)% do seu , e ganhando 50% de Velocidade de Movimento que diminui ao longo de 2,5s.\n\nUse Novamente: Bane cospe tinta corrosiva em uma área em forma de leque, causando 140 (+130% de Poder Mágico Total) de Dano Mágico (até 200% com tempo de carregamento).\nA cada 100  que Bane possui, o tempo de recarga desta habilidade é reduzido em mais 7%."
+    },
+    "1130": {
+      "description": "Bane invoca um grupo de tubarões para avançar na direção alvo, causando 700 (+80% de Ataque Físico Total) (+150% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos, arremessando-os para o ar por 0,6s e reduzindo sua velocidade em 75% (diminui ao longo de 3s).\nEsta habilidade causa 40% de dano às torres."
+    }
+  },
+  "counters": {
+    "assist": "Bane funciona melhor com heróis como Tigreal e Luo Yi, que podem puxar inimigos juntos para que ele cause ainda mais dano com seu AOE.",
+    "strong": "Bane contraria Tanques com alto HP, mas baixo dano, como Hylos e Belerick, porque ele pode superá-los em sustentação e causa dano baseado em porcentagem de HP.\n",
+    "weak": "Bane é contrariado por Magos que causam muito dano à distância, como Vale e Xavier, que podem causar danos significativos a ele antes que ele consiga se aproximar."
+  },
+  "lore": {
+    "short": "Líder pirata cruel, inimigo jurado de Franco."
+  }
+}

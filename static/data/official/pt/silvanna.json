@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9040": {
+      "description": "Os ataques básicos de Silvanna causam 25 (+45% de Ataque Físico Total) (+75% de Poder Mágico Total) de dano mágico.\nOs ataques de Silvanna aplicam uma marca em heróis inimigos por 5s ao acertar, cada marca reduzindo sua velocidade de movimento em 3-6 (até 5 acúmulos).\nAs habilidades e os ataques básicos de Silvanna causam 30% de dano extra a heróis inimigos com o número máximo de marcas."
+    },
+    "9010": {
+      "description": "Silvanna avança para frente. Ao atingir o alcance máximo ou acertar um inimigo que não seja um minion, ela balança sua lança, causando 250 (+100% de Poder Mágico Total) de dano mágico aos inimigos próximos e atordoando-os por 1s."
+    },
+    "9020": {
+      "description": "Silvanna empurra sua lança na direção do alvo e a gira 6 vezes, ganhando um escudo de 350 (+150% de Poder Mágico Total). Cada giro causa 165 (+45% de Poder Mágico Total) de dano mágico e puxa levemente os alvos em direção ao centro. Silvanna gira 1 vez adicional para cada 50% de velocidade de ataque extra que ela possui.\n\nA habilidade causa apenas 50% de dano contra minions.\n\nEstrangulamento em Espiral conta como um ataque básico, mas não pode causar dano crítico."
+    },
+    "9030": {
+      "description": "Silvanna salta para o local alvo e cria um Círculo de Luz ao pousar, causando 350 (+110% de Poder Mágico Total) de dano mágico aos inimigos na área, reduzindo sua velocidade em 40% por 1.5s e restringindo o herói inimigo mais próximo à área por 3.5s. (Esta habilidade não pode ser interrompida.)\n\nSilvanna ganha 100% de velocidade de ataque e 40% de roubo de vida enquanto está no Círculo."
+    }
+  },
+  "counters": {
+    "assist": "Combinar Silvanna com tanques dá a ela espaço suficiente para causar dano.\nPor exemplo, Atlas e Tigreal.",
+    "strong": "Silvanna tem um longo alcance de ataque e habilidades poderosas de controle de multidão, o que a torna mais forte contra magos e atiradores da linha de trás, como Layla e Valir.",
+    "weak": "Mas ela pode ser fraca contra lutadores com múltiplos controles,\ncomo Martis, porque eles podem interromper facilmente sua segunda habilidade."
+  },
+  "lore": {
+    "short": "Princesa do Império Moniyan e rainha regente."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6440": {
+      "description": "A cada 8s, Aldous ganha um escudo de 350 (+ 3 por acúmulo de Soul Steal) por 3s no seu próximo Ataque Básico. Ele também ganha 60% de Velocidade de Movimento por 1s."
+    },
+    "6410": {
+      "description": "Aldous fortalece seu próximo Ataque Básico para causar 200 (+100% Total Physical Attack) (+ 3 por acúmulo de Soul Steal) de Dano Físico.\n\nEliminar um minion de cerco com este ataque concede 12 acúmulos de Soul Steal; eliminar qualquer outra unidade que não seja herói concede 5 acúmulos. Acertar um herói inimigo concede 5 acúmulo(s) extra(s), enquanto eliminar um concede 12 (até 1000 acúmulos).\n\nEste ataque causa 300% de Dano Base extra a minions e creeps. Aldous também ganha 6 acúmulo(s) quando unidades aliadas eliminam um minion de cerco inimigo próximo, e 2 acúmulo(s) quando eliminam qualquer outra unidade próxima que não seja herói.\n\nAldous ganha 20% de Velocidade de Movimento ao se mover em direção a heróis inimigos durante esta skill."
+    },
+    "6420": {
+      "description": "Aldous assume uma postura defensiva, recebendo 30% de Redução de Dano por 2s ou até ser cancelada.\nEm seguida, ele causa 200 (+20% Total Physical Attack)-400 (+40% Total Physical Attack) de Dano Físico a inimigos próximos e os atordoa por 0.5-1s (escala com a duração da postura defensiva)."
+    },
+    "6430": {
+      "description": "Aldous ganha visão de todos os heróis inimigos por 5s.\nUsar Novamente: Durante esse tempo, ele avança em direção a um herói inimigo, causando 250 (+ 8% target's ) de Dano Físico e empurrando o alvo para trás por 1s.\nAldous pode interromper o Recall do alvo durante o avanço."
+    }
+  },
+  "counters": {
+    "assist": "Aldous funciona muito bem com heróis fortes no early game para que ele consiga farmar com tranquilidade, como Balmond e Bruno.",
+    "strong": "Aldous é forte contra heróis que não conseguem pressioná-lo no early game, permitindo que ele junte acúmulos facilmente para aumentar o dano da sua 1ª Skill, como Zilong e Leomord.",
+    "weak": "Aldous é counterado por heróis fortes no early game, que dificultam muito para ele conseguir os acúmulos de dano que precisa. Heróis como Martis e Dyrroth são ótimos exemplos."
+  },
+  "lore": {
+    "short": "O guardião do Labirinto Minoico."
+  }
+}

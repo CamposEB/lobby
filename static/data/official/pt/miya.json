@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "140": {
+      "description": "Toda vez que o Ataque Básico de Miya acerta um alvo, ela ganha 5% de Velocidade de Ataque por 4s (até 5 acúmulos).\n\nNo máximo de acúmulos, cada Ataque Básico também invoca uma Sombra da Lua para atacar o alvo, causando 25 (+20% de Ataque Físico Total) de Dano Físico e herdando 20% dos Efeitos de Ataque."
+    },
+    "110": {
+      "description": "Os Ataques Básicos de Miya disparam 2 Flechas Divididas extras, cada uma herdando 30% dos Efeitos de Ataque. Elas causam 10 (+100% de Ataque Físico Total) de Dano Físico ao alvo principal e 30% de dano aos outros alvos.\n\nEste efeito dura 4s."
+    },
+    "120": {
+      "description": "Miya invoca o poder do Eclipse Lunar na área alvo, causando 270 (+45% de Ataque Físico Total) de Dano Físico aos inimigos dentro dela e os imobilizando por 1,2s.\n\nO ataque então se divide em 6 flechas que se espalham em diferentes direções. Cada flecha causa 40 (+20% de Ataque Físico Total) de Dano Físico e lentifica os inimigos atingidos em 30% por 2s."
+    },
+    "130": {
+      "description": "Miya remove todos os debuffs e entra no estado de Ocultação, ganhando 65% de Velocidade de Movimento por até 2s (atacar encerra o estado prematuramente).\n\nAo sair do estado de Ocultação, Miya ganha o máximo de acúmulos da Bênção da Lua."
+    }
+  },
+  "counters": {
+    "assist": "Miya funciona bem com tanques que têm habilidades poderosas de controle, como Belerick e Tigreal, já que seus controles dão a ela mais oportunidades para causar dano.",
+    "strong": "Miya contraria heróis que dependem de efeitos de controle direcionados, como Saber e Eudora, porque ela pode escapar facilmente de seu controle e responder com um forte contra-ataque. As flechas divididas de sua 1ª Habilidade também são muito eficazes contra heróis que invocam unidades, como Sun.",
+    "weak": "Miya é contrariado por heróis com muito dano em área, como Pharsa e Yve, porque eles ainda podem atingi-la enquanto ela está oculta."
+  },
+  "lore": {
+    "short": "A Sacerdotisa da Lua e protetora da Floresta Iluminada pela Lua."
+  }
+}

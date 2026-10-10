@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7240": {
+      "description": "Os ataques básicos de Thamuz têm uma chance de 10% a 60% (aumentando com a Fúria da Lava) de conjurar Energia de Lava sob o alvo, que erupciona após um breve atraso, causando 55 (+60% de Ataque Físico Total)(+8*Nível do Herói) de Dano Verdadeiro. Ataques básicos que não ativam a Energia de Lava aumentam a Fúria da Lava de Thamuz.\n\nEnquanto Thamuz está sem suas Foices, ele ganha 25% de Velocidade de Movimento. Após recuperar suas Foices, seu próximo ataque básico reduz a velocidade do alvo em 30% e tem garantia de ativar a Energia de Lava."
+    },
+    "7210": {
+      "description": "Thamuz arremessa as Foices na direção do alvo. Após percorrer uma distância definida ou atingir o primeiro herói inimigo, elas causam 120 (+60% de Ataque Físico Total) de Dano Físico. As Foices então reduzem a velocidade dos inimigos próximos em 30% e causam 45 (+20% de Ataque Físico Extra) de Dano Físico a cada 0,5s.\n\nApós deixar Thamuz por um curto período ou atingir uma distância definida, as Foices retornam a ele, arrastando os inimigos ao longo do caminho em direção a Thamuz. Thamuz pode se mover em direção às Foices ou lançar a habilidade novamente para recuperá-las."
+    },
+    "7220": {
+      "description": "Thamuz salta para uma área designada para causar 230 (+60% de Ataque Físico Extra) de Dano Físico e reduzir a velocidade das unidades inimigas em 25% por 2s ao pousar.\nSe as Foices ainda estiverem em movimento, elas retornarão a Thamuz e a habilidade Foices Fundidas terá seu tempo de recarga reiniciado instantaneamente."
+    },
+    "7230": {
+      "description": "Thamuz libera a lava dentro dele, causando 300 (+80% de Ataque Físico Total) de Dano Físico aos inimigos próximos e criando uma Zona Cauterizante ao seu redor. A Zona Cauterizante dura 9s e causa 30 (+10% de Ataque Físico Extra) de Dano Físico a cada 0,5s aos inimigos na área.\n\nEnquanto isso, Thamuz ganha 800 (+50% de HP Máximo Extra) , se cura imediatamente pela mesma quantia e ganha 60% de Velocidade de Ataque. Cada vez que seus ataques básicos ou Foices causam dano, ele recupera 1,5% do HP máximo."
+    }
+  },
+  "counters": {
+    "assist": "Thamuz pode explorar sua força ao trabalhar com Suportes que fornecem Velocidade de Movimento ou controle, como Angela e Rafaela, pois eles permitem que ele permaneça sobre seus alvos.",
+    "strong": "Thamuz é bom contra outros lutadores que causam dano contínuo, como Zilong e Sun, porque ele tem um poder de lane excepcional.",
+    "weak": "Thamuz é neutralizado por atiradores ágeis, como Karrie e Irithel, pois ele carece de controle e depende de ataques básicos, tornando-se um alvo fácil para kiting."
+  },
+  "lore": {
+    "short": "O senhor dos Demônios de Fogo que busca reacender as chamas do Abismo através da guerra e da violência."
+  }
+}

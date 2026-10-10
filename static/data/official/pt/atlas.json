@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9340": {
+      "description": "Atlas gera Frigid Breath ao seu redor por 5s toda vez que conjura uma skill. Os inimigos afetados por Frigid Breath terão sua Velocidade de Movimento reduzida gradualmente ao longo de 2s e, depois disso, ficarão congelados por 0.5s.\n\nAtlas ganha 20 (+0.5% Extra Max HP) extra enquanto Frigid Breath estiver ativo."
+    },
+    "9310": {
+      "description": "Atlas golpeia o chão e causa 3 explosões, causando 400 (+100% Total Magic Power) de Dano Mágico aos inimigos.\n\nEjected State: Se Atlas estiver ejetado de sua Mecha Sentry, tanto ele quanto sua Mecha conjurarão Annihilate."
+    },
+    "9320": {
+      "description": "Atlas entra em Ejected State, ganhando 30% de Velocidade de Movimento e imunidade a efeitos de lentidão. Nesse estado, a Mecha Sentry seguirá o piloto com velocidade crescente (só pode ser interrompida por Supressão). Quando se encontrarem, Atlas retornará à Mecha, causando 320 (+80% Total Magic Power) de Dano Mágico aos inimigos próximos e atordoando-os por 0.8s.\nEjected State: Atlas e sua Mecha compartilham a mesma barra de HP e reduzem em 50% o dano recebido nesse estado."
+    },
+    "9330": {
+      "description": "Atlas lança correntes ao redor e começa a canalizar (só pode ser interrompido por Supressão), causando 225 (+75% Total Magic Power) de Dano Mágico aos heróis inimigos atingidos e reduzindo a velocidade deles em 40% por 3s.\nUsar a skill novamente durante a canalização: Atlas puxará os alvos em sua direção e os arremessará no local designado, causando 360 (+180% Total Magic Power) de Dano Mágico.\nUsar esta skill em Ejected State: A Mecha Sentry retornará imediatamente até Atlas, mas o atordoamento será substituído por 40% de lentidão."
+    }
+  },
+  "counters": {
+    "assist": "Atlas combe muito bem com heróis de alto dano em área, como Vale e Ixia, já que consegue agrupar os inimigos e mantê-los sob controle.",
+    "strong": "Atlas countera heróis frágeis e sem mobilidade, como Vexana e Eudora, pois eles não têm como escapar com segurança do seu controle.",
+    "weak": "Atlas é counterado por heróis que conseguem empurrá-lo para longe, como Valir e Moskov, já que eles param facilmente sua Skill 2, da qual ele depende para acertar o resto do combo."
+  },
+  "lore": {
+    "short": "Criatura do Mar Abissal que se libertou do selo."
+  }
+}

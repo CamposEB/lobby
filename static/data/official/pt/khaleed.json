@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9840": {
+      "description": "Khaleed acumula Poder do Deserto enquanto se move. Quando o Poder do Deserto está totalmente carregado, ele desliza sobre a areia, aumentando sua velocidade de movimento em 35%, fazendo com que seu próximo ataque básico cause 50 (+140% do Ataque Físico Total) de dano físico ao alvo (não pode ser crítico) e reduzindo a velocidade de movimento do alvo em 40% por 1,5s."
+    },
+    "9810": {
+      "description": "Khaleed gira sua cimitarra, causando 175 (+130% do Ataque Físico Total) de dano físico aos inimigos na área e puxando-os em sua direção. Esta habilidade pode ser usada até 3 vezes seguidas.\n\nEsta habilidade causa 60% de dano a tropas e monstros."
+    },
+    "9820": {
+      "description": "Khaleed se protege com areia movediça, recuperando HP equivalente a 60 + 5% do seu HP e 10 de Poder do Deserto a cada 0,5s. Ele também ganha 25% de redução de dano por até 4s.\n\nEnquanto canaliza, areia movediça aparece sob ele, reduzindo a velocidade do inimigo em 60%.\nEste é um lançamento focado. Outros efeitos de controle interromperão esta habilidade."
+    },
+    "9830": {
+      "description": "Khaleed cavalga a tempestade de areia e avança em direção a um local designado, causando 100 (+50% do Ataque Físico Total) de dano físico aos inimigos ao longo do caminho e derrubando-os em direção ao seu destino. Khaleed é imune a efeitos de controle durante este processo.\n\nAo chegar ao destino, Khaleed esmaga o chão, causando 450 (+160% do Ataque Físico Total) de dano físico aos inimigos na área e atordoando-os por 1s, e carregando totalmente seu Poder do Deserto."
+    }
+  },
+  "counters": {
+    "assist": "Como Khaleed pode causar muito dano em área, ele funciona bem com heróis como Roger e Karina, que são excelentes em eliminar vários alvos com HP baixo.",
+    "strong": "Khaleed é eficaz contra heróis com pouca mobilidade, como Cyclops e Xavier, pois eles terão dificuldade em evitar seu combo.",
+    "weak": "Khaleed é contrariado por heróis que têm a capacidade de derrubá-lo ou lançá-lo ao ar para interromper sua segunda habilidade, como X.Borg e Chou."
+  },
+  "lore": {
+    "short": "Um líder de clã intrépido que caminha sobre a areia."
+  }
+}

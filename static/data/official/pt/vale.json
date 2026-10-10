@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6640": {
+      "description": "Vale ganha 1 acúmulo de Windtalk sempre que obtém uma eliminação ou assistência, aumentando sua velocidade de movimento em 8. Esse efeito pode acumular até 10 vezes."
+    },
+    "6610": {
+      "description": "Vale solta duas lâminas de vento em direção à esquerda e à direita de uma área alvo, cada uma causando 250 (+80% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos."
+    },
+    "6620": {
+      "description": "Vale envia um redemoinho na direção alvo, causando 350 (+100% de Poder Mágico Total) de Dano Mágico aos inimigos atingidos e os arremessando para o ar por 0,8s (cada inimigo só pode ser arremessado para o ar 1 vez). Quando o redemoinho atinge seu destino, ele permanece por 1,6s enquanto causa continuamente um total de 150 (+30% de Poder Mágico Total) de Dano Mágico aos inimigos na área."
+    },
+    "6630": {
+      "description": "Vale invoca uma tempestade de vento no local alvo, causando um total de 150 (+30% de Poder Mágico Total) de Dano Mágico aos inimigos na área e os desacelerando em 20%, enquanto os puxa continuamente para o seu centro. Após 1s, a tempestade de vento explode, causando 900 (+240% de Poder Mágico Total) de Dano Mágico.\n\nOs redemoinhos restantes também serão puxados para o centro."
+    }
+  },
+  "counters": {
+    "assist": "Vale funciona bem com tanques de linha de frente como Lolita e Belerick, que podem protegê-lo enquanto ele ataca continuamente o inimigo.",
+    "strong": "Vale é eficaz contra lutadores lentos como Terizla e Hilda, pois pode reduzir gradualmente a vida deles com suas habilidades à distância, enquanto usa sua alta velocidade de movimento para desviar de suas habilidades.",
+    "weak": "Vale é contrariado por assassinos ágeis que podem se tornar intargetáveis, como Hayabusa e Ling, pois será difícil pegá-los com seu controle enquanto eles podem eliminar Vale facilmente com seu alto dano."
+  },
+  "lore": {
+    "short": "O herdeiro do Forte do Vento, um mago do vento."
+  }
+}

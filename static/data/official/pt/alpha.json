@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "2840": {
+      "description": "Quando Alpha usa uma skill, Beta é invocado para atacar. Inimigos atingidos por Beta 2 vez(es) ficam com o efeito Locked On.\n\nLocked On: Depois que Alpha causa dano ao alvo, Beta dispara um laser contra ele, causando 60 (+50% Total Physical Attack) (+8*Hero Level) de Dano Real e aplicando um efeito forte de lentidão por um breve momento.\nEsta skill causa apenas 75% de dano a Creeps."
+    },
+    "2810": {
+      "description": "Alpha lança uma onda de energia na direção alvo, causando 100 (+90% Extra Physical Attack) de Dano Físico aos inimigos no caminho e reduzindo a velocidade de movimento deles em 40% por 1s.\n\nEm seguida, Beta metralha os inimigos ao longo do mesmo trajeto, causando 60 (+30% Extra Physical Attack) de Dano Real."
+    },
+    "2820": {
+      "description": "Após um breve intervalo, Alpha desfere um golpe de lâmina na direção alvo, causando 180 (+100% Total Physical Attack) de Dano Físico aos inimigos em uma área em leque e recuperando 80 (+40% Extra Physical Attack) de HP pelo primeiro inimigo atingido (a cura diminui em 40% para cada inimigo adicional atingido).\n\nEm seguida, Beta metralha os inimigos na mesma área, causando 60 (+30% Total Physical Attack) de Dano Real."
+    },
+    "2830": {
+      "description": "Beta mergulha na direção do local alvo, causando 100 (+20% Extra Physical Attack) de Dano Físico aos inimigos atingidos e atordoando-os por 1s. Alpha então salta na mesma direção, arremessando os inimigos no caminho pelo ar e arrastando-os até o local de aterrissagem. Em seguida, Alpha atinge o chão com força, causando 250 (+100% Extra Physical Attack) de Dano Físico e aplicando 40% de lentidão aos inimigos por 1.5s.\n\nDepois disso, Beta ataca a mesma área 5 vezes, causando 15 (+30% Extra Physical Attack) de Dano Real a cada golpe."
+    }
+  },
+  "counters": {
+    "assist": "Alpha funciona muito bem com heróis que conseguem iniciar com controle de grupo, como Vexana e Selena. Com a ajuda delas, fica muito mais fácil acertar suas skills.",
+    "strong": "Alpha se destaca contra heróis sem mobilidade, como Layla e Ixia, já que eles têm muita dificuldade para desviar de suas skills.",
+    "weak": "Alpha sofre contra heróis com alta mobilidade, como Chou e Gusion, pois eles têm diversas formas de desviar das skills de Alpha."
+  },
+  "lore": {
+    "short": "Um ciborgue puro criado pelo Laboratory 1718."
+  }
+}

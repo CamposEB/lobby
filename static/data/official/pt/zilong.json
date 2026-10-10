@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1640": {
+      "description": "Após causar dano 3 vez(es) com Ataques Básicos ou habilidades, Zilong ativa Dragon Flurry no próximo Ataque Básico, atingindo o alvo 3 vez(es). Cada acerto causa 80 (+30% de Ataque Físico Total) de Dano de Ataque Básico e cura a si mesmo em 50 (+20% de Ataque Físico Total) de HP.\n\nO Ataque Básico de Zilong causa 100 (+80% de Ataque Físico Total) de Dano Físico.\n\nSe o HP do alvo estiver abaixo de 50%, todo o dano causado pelas habilidades e Ataques Básicos de Zilong é aumentado em 30."
+    },
+    "1610": {
+      "description": "Zilong arremessa o inimigo alvo sobre sua cabeça, causando 250 (+80% de Ataque Físico Total) de Dano Físico."
+    },
+    "1620": {
+      "description": "Zilong avança em direção ao inimigo alvo, causando 250 (+60% de Ataque Físico Total) de Dano Físico e reduzindo o(a) dele em 15 por 2s.\n\nO tempo de recarga de Spear Strike é reiniciado toda vez que Zilong mata um inimigo."
+    },
+    "1630": {
+      "description": "Zilong remove todos os efeitos de lentidão sobre si mesmo e ganha 40% de Velocidade de Movimento, 35% de Velocidade de Ataque e Imunidade à Lentidão por 7,5s.\n\nDurante esse tempo, Dragon Flurry é ativado a cada 2 ataques (em vez dos 3 anteriores)."
+    }
+  },
+  "counters": {
+    "assist": "Zilong funciona melhor com heróis que possuem habilidades defensivas fortes e podem segurar os ataques inimigos enquanto ele domina a lane sozinho, como Pharsa e Hanabi.",
+    "strong": "A imunidade aos efeitos de lentidão que Zilong obtém com sua Ultimate o torna forte contra heróis frágeis sem habilidades de controle, como Layla e Lylia.",
+    "weak": "Zilong ainda é vulnerável a habilidades de controle que não são de lentidão, tornando-o fraco contra heróis com habilidades de controle poderosas em um único alvo, como Franco e Nana."
+  },
+  "lore": {
+    "short": "Guardião do Altar do Dragão e o Lutador Oriental que herdou o poder do Dragão das Nuvens."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8940": {
+      "description": "Heróis inimigos atingidos pelos ataques de Wanwan têm suas fraquezas e posições expostas por 5s. Ao acertar uma fraqueza do inimigo, Wanwan causa 67 (+3*Nível do Herói) de dano verdadeiro extra e aumenta o dano que ele recebe de seus ataques subsequentes em 10% por 5s.\nWanwan pode dar um dash por uma curta distância após cada flecha disparada com seu ataque básico. A velocidade do dash aumenta conforme sua velocidade de ataque."
+    },
+    "8910": {
+      "description": "Wanwan lança um Andorinhão de Fogo na direção alvo, ativando o Passo do Tigre enquanto causa 120 (+40% de Ataque Físico Total) de dano físico aos inimigos em seu caminho. O Andorinhão de Fogo então se transforma em 3 Adagas Rotativas de Andorinha. Após um curto atraso, essas Adagas de Andorinha voam de volta para Wanwan uma após a outra, causando 120 (+40% de Ataque Físico Total) de dano físico aos inimigos em seu caminho de volta e reduzindo sua velocidade em 30% por 1.5s. Inimigos atingidos duas vezes pelas Adagas de Andorinha ficam imobilizados por 0.5s."
+    },
+    "8920": {
+      "description": "Wanwan remove todos os debuffs de si mesma e ativa o Passo do Tigre. Enquanto isso, ela atira Agulhas Mortais em todas as direções, causando 150 (+60% de Ataque Físico Total) de dano físico aos inimigos atingidos."
+    },
+    "8930": {
+      "description": "Wanwan salta para o ar e fica intargetável, disparando flechas contra o herói inimigo alvo por 2.5s em rápida sucessão, causando 60 (+35% de Ataque Físico Total) de dano físico por flecha. Se o alvo for morto durante este ataque, Wanwan mudará para outro herói inimigo em seu alcance de ataque, ganhará 30% de velocidade de ataque e estenderá a duração da habilidade em 1s (este efeito pode ser acionado até 3 vezes). Wanwan pode ativar o Passo do Tigre ao matar um inimigo e ao final da duração.\nA Besta de Tang só pode ser lançada em heróis inimigos que tiveram todas as suas fraquezas atingidas e Wanwan ganha 100% de velocidade de movimento durante a duração. Este dano é considerado dano de ataque básico, e a taxa de disparo aumenta conforme a velocidade de ataque de Wanwan."
+    }
+  },
+  "counters": {
+    "assist": "Ela funciona melhor com tanques de suporte que têm controle de grupo poderoso, como Franco e Belerick. Eles podem ajudar Wanwan a acertar mais fraquezas e desbloquear sua ultimate.",
+    "strong": "Wanwan é excepcional em dar dashes e é poderosa contra heróis com alcance curto ou peso elevado, como Fredrinn e Luo Yi.",
+    "weak": "No entanto, devido à sua falta de durabilidade e ao curto alcance de ataque, magos com alcance maior, como Gord, podem atacá-la facilmente. Ela também carece de habilidades de sobrevivência ao receber dano em burst e pode ser fraca contra assassinos em burst, como Lancelot."
+  },
+  "lore": {
+    "short": "O Tigre Ágil dos Lutadores Orientais e uma jovem animada que empunha a Besta de Tang."
+  }
+}

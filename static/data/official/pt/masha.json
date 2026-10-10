@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8840": {
+      "description": "Bênção do Urso: Masha tem 3 barras de vida, cada uma herdando 50% dos bônus de vida de seu equipamento. Quando uma barra de vida é esgotada, ela remove efeitos de controle e bloqueia dano uma vez. Ela ganha Ferocidade ao causar dano a heróis ou criaturas inimigas. A Ferocidade se converte em vida após sair do combate.\nPoder da Selvageria: Depois que as habilidades de Masha causam dano a um herói inimigo, ela deixa uma Ferida em uma direção aleatória. Seus Ataques Básicos podem quebrar a Ferida e fazer com que ela entre no estado de Ferocidade.\nFerocidade: Masha ganha 15 (+1*Nível do Herói)% de Resistência, Velocidade de Ataque e Velocidade de Movimento. Seus próximos 3 Ataques Básicos se tornam golpes de garra em forma de leque, causando 3 (+2% de Ataque Físico Extra) (+0,2*Nível do Herói)% de dano físico extra aos inimigos na área (o dano extra não se aplica a Torres) e recuperando 4 (+0,4*Nível do Herói)% de vida. Dura 3s.\n[C8Quebrar uma Ferida novamente durante o estado de Ferocidade renovará sua duração. Até 6 golpes de garra podem ser armazenados.]"
+    },
+    "8810": {
+      "description": "Masha libera energia para frente, causando 250 (+70% de Ataque Físico Total) de Dano Físico aos inimigos em seu caminho.\nSe um herói inimigo for atingido, ele será reduzido em 50% de velocidade por 1s."
+    },
+    "8820": {
+      "description": "Masha avança na direção do alvo, causando 120 (+80% de Ataque Físico Extra) de Dano Físico.\n[C8Sempre que uma barra de vida é esgotada, o tempo de recarga do Golpe de Garra é reiniciado.]"
+    },
+    "8830": {
+      "description": "Masha avança em direção a um herói inimigo, causando 300 (+50% de Vida Máxima Extra) de Dano Físico e atordoando-o por 1s, enquanto repele inimigos próximos."
+    }
+  },
+  "counters": {
+    "assist": "Masha também combina bem com heróis de controle, como Atlas e Minotauro. Quando eles reúnem os inimigos, ela pode despedaçá-los com suas garras selvagens!",
+    "strong": "Magos de burst como Eudora e Kadita são presas ideais para Masha. Com três barras de vida e remoção de controle, além de negação de dano ao perder uma barra, Masha tem uma defesa embutida contra eles.",
+    "weak": "Escolha heróis com alta mobilidade e vários dashes, como Fanny ou Claude. Frustre sua iniciação e então concentre-se nela antes que ela entre no estado de Ferocidade."
+  },
+  "lore": {
+    "short": "Guardião dos Ursos Ferozes."
+  }
+}

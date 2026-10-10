@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1540": {
+      "description": "As habilidades de Eudora infligam Supercondutor por 5s às unidades não-tropas atingidas e podem desencadear efeitos adicionais contra inimigos afetados por Supercondutor."
+    },
+    "1510": {
+      "description": "Eudora lança um Raio Bifurcado em uma área em forma de leque, causando 275 (+100% de Poder Mágico Total) de dano mágico (aumentado para 200% contra tropas) aos inimigos dentro dela.\n\nAo atingir alvos afetados por Supercondutor, Eudora forma uma corrente de raios com o alvo, ganhando 40% de Velocidade de Movimento durante a corrente por até 1s.\nA corrente de raios causa 10 (+4% de Poder Mágico Total) de dano mágico ao longo do tempo e um adicional de 275 (+100% de Poder Mágico Total) de dano mágico quando termina. Se este golpe acertar, ele reduz o tempo de recarga desta habilidade em 50%."
+    },
+    "1520": {
+      "description": "Eudora arremessa uma esfera de raios no inimigo alvo, reduzindo sua defesa em 10 por 1.8s, causando 300 (+50% de Poder Mágico Total) de dano mágico e atordoando-o por 1s.\n\nSe o alvo estiver afetado por Supercondutor, a esfera de raios reduz a defesa dos inimigos próximos, causa dano em área centrado no alvo e atordoa todos os inimigos próximos."
+    },
+    "1530": {
+      "description": "Eudora invoca uma explosão de raios na área alvo, causando 600 (+160% de Poder Mágico Total) de dano mágico aos alvos no centro. Em seguida, atinge os alvos fora do centro, causando 300 (+100% de Poder Mágico Total) de dano mágico.\n\nToda vez que a Ira do Trovão atinge um alvo afetado por Supercondutor, ela desencadeia uma Explosão de Trovão centrada no alvo Supercondutor após um curto atraso, causando 330 (+110% de Poder Mágico Total) de dano mágico."
+    }
+  },
+  "counters": {
+    "assist": "As habilidades de Eudora podem causar dano em área massivo, então combiná-la com heróis que podem agrupar inimigos, como Diggie e Tigreal, tornará mais fácil maximizar seu dano.",
+    "strong": "Eudora possui forte controle de grupo direcionado e capacidades de burst, permitindo que ela mantenha heróis frágeis como Moskov e Obsidia sob controle.",
+    "weak": "Eudora carece de autopreservação e tem dificuldades contra heróis que mergulham ou Assassinos que podem anular o controle de grupo direcionado, como Hayabusa e Kadita."
+  },
+  "lore": {
+    "short": "A maga élfica que comanda os raios com os dedos para perfurar o preconceito e iluminar o caminho adiante."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10040": {
+      "description": "Com seus ataques básicos ressonando com o poder do abismo dentro de seu corpo, Brody é capaz de se mover enquanto prepara seus ataques básicos (o que será interrompido ao lançar habilidades), em troca de ter uma animação de ataque básico mais longa e um bônus de velocidade de ataque menor. Cada ataque básico causa (+140% de Ataque Físico Total) (+45*Nível do Herói) de dano físico (dos quais o dano que escala com o nível não pode ser crítico), aumenta a velocidade de movimento em 30% (o que diminuirá rapidamente em 1,2 segundos) e aplica 1 acúmulo de Marca do Abismo no inimigo, limitado a 4 acúmulos.\nCada acúmulo de Marca do Abismo aumenta o dano de Brody contra o alvo em 5% e sua velocidade de movimento em 5%."
+    },
+    "10010": {
+      "description": "Brody lança uma onda de choque na direção do alvo, causando 200 (+170% de Ataque Físico Total) de dano físico e desacelerando os inimigos em 30% por 1,2 segundos, enquanto aplica um acúmulo de Marca do Abismo.\n\nPara cada inimigo atingido pela onda de choque, eles sofrem 5% a mais de desaceleração e um acúmulo extra de Marca do Abismo (limitado a 45% de desaceleração e 4 acúmulos)."
+    },
+    "10020": {
+      "description": "Brody avança em direção a um inimigo, causando 200 (+70% de Ataque Físico Total) de dano físico ao alvo, atordoando-o por 0,8 segundos e aplicando 1 acúmulo de Marca do Abismo no alvo.\nAo atingir o alvo, ele pode se mover mais uma vez na direção do movimento, ganhando 45% de velocidade de movimento que diminuirá rapidamente em 1,2 segundos."
+    },
+    "10030": {
+      "description": "Brody trava em todos os inimigos dentro de 8 unidades, causando 216 (+165% de Ataque Físico Extra) de dano físico a eles.\nPara cada alvo com acúmulos de Marca do Abismo, todos os acúmulos são consumidos, causando dano físico adicional igual a 94 (+72% de Ataque Físico Extra) (+ 4% do perdido pelo alvo) por acúmulo."
+    }
+  },
+  "counters": {
+    "assist": "Brody funciona melhor com heróis que podem realizar ataques de travamento ou heróis com habilidades de controle em área, pois eles podem dar a Brody mais espaço para causar dano e farmar melhor. Como Hylos e Minsitthar.",
+    "strong": "Brody é forte contra heróis com baixa sobrevivência no início do jogo e heróis sem dash, porque ele pode facilmente travá-los e atacar além de seu alcance. Como Aamon e Yin.",
+    "weak": "Brody é neutralizado por heróis com imunidade a controle e múltiplas habilidades de movimento, porque eles podem se aproximar rapidamente de Brody, sem lhe dar chance de acumular a Marca do Abismo. Como Martis e Wanwan."
+  },
+  "lore": {
+    "short": "Um ranger da fronteira com o braço direito mergulhado na escuridão, ele canaliza a dor em flechas para derrotar os invasores; ele é a \"Estrela Solitária\" que perfura as noites das Terras Áridas."
+  }
+}

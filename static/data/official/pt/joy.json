@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "11840": {
+      "description": "Joy fica com Raiva! toda vez que sua habilidade acerta um inimigo que não seja um Minion, causando 100 (+80% de Poder Mágico Total) de Dano Mágico e aumentando sua Velocidade de Movimento em 60%, o que diminui ao longo de 4s (acertar o Cristal Leonino também concede o efeito de Velocidade de Movimento). Este efeito tem um tempo de recarga de 4s para cada alvo.\n\nO Ataque Básico de Joy causará 65 (+65% de Ataque Físico Total) (+65% de Poder Mágico Total) de Dano Mágico."
+    },
+    "11810": {
+      "description": "Joy invoca um Cristal Leonino no local alvo, causando 200 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos próximos e reduzindo sua velocidade em 30% por 1s. O Cristal Leonino dura até 2s."
+    },
+    "11820": {
+      "description": "Joy avança na direção alvo, causando 120 (+40% de Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho. Acertar um inimigo ou o Cristal Leonino permite que Joy lance essa habilidade novamente em 0.8s e ganhe 1 Energia de Batida. Lançar essa habilidade no ritmo aumenta o dano da habilidade em 100% e concede um escudo de 80 (+60% de Poder Mágico Total) que dura 3s.\n\nEssa habilidade pode ser lançada até 4 vezes em sequência."
+    },
+    "11830": {
+      "description": "Joy ganha 15 (+10% de Poder Mágico Total) e 30% de Velocidade de Movimento. Nos próximos 3s, ela pulsa 8 vezes, causando 120 (+40% de Poder Mágico Total) de Dano Mágico cada vez aos inimigos próximos.\nCada Meow, Rhythm of Joy! lançado no ritmo aumenta o dano dessa habilidade em 40%. Se o ritmo perfeito for alcançado ao acertar cada batida com Meow, Rhythm of Joy!, Joy também ganha 40% de Spell Vamp enquanto essa habilidade estiver ativa.\n\nEssa habilidade é desbloqueada quando Joy adquire Energia de Batida. Lançar essa habilidade com 3 Energias de Batida removerá todos os debuffs e a tornará imune a efeitos de lentidão enquanto essa habilidade estiver ativa."
+    }
+  },
+  "counters": {
+    "assist": "Joy funciona melhor com heróis que podem fornecer suporte poderoso ou têm uma forte iniciação, como Angela e Hylos.",
+    "strong": "Joy é forte contra heróis que carecem de mobilidade ou dependem de controle, como Xavier e Vexana, porque ela tem mais facilidade em acertá-los com sua segunda habilidade, ao mesmo tempo que é imune aos controles deles.",
+    "weak": "Joy é neutralizada por heróis que podem restringir habilidades de mobilidade, como Minsitthar e Khufra, devido à forte dependência do seu kit na segunda habilidade."
+  },
+  "lore": {
+    "short": "A \"Criança do Milagre\" que retornou aos Leonins após anos de peregrinação."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "3940": {
+      "description": "Roger pode alternar livremente entre as formas humana e de lobo.\n\nNa forma humana, o Ataque Básico e as habilidades de Roger causam dano adicional igual a 4% da vida atual do alvo.\n\nNa forma de lobo, o Ataque Básico e as habilidades de Roger causam dano adicional igual a 4% da vida perdida do alvo.\n\nEsse efeito só pode causar até 60 de dano adicional contra tropas."
+    },
+    "3910": {
+      "description": "Roger dispara dois tiros rápidos na direção do alvo, causando um total de 250 (+125% de Ataque Físico Total) de Dano Físico ao inimigo atingido.\nO primeiro tiro é uma rede de caçador que reduz a velocidade do inimigo em 80% por 1,5s.\nO segundo é uma bala que reduz a defesa do inimigo em 10 por 5s."
+    },
+    "3920": {
+      "description": "Roger ganha 20% de Velocidade de Movimento e 20% de Velocidade de Ataque por 2,5s."
+    },
+    "3930": {
+      "description": "Roger avança na direção do alvo e se transforma em forma de lobo, causando 150 (+100% de Ataque Físico Extra) de Dano Físico aos inimigos atingidos e reduzindo sua velocidade em 90% por 0,8s.\n\nPassiva: Na forma de lobo, Roger ganha 20 de defesa e 25 de Velocidade de Movimento."
+    }
+  },
+  "counters": {
+    "assist": "Roger funciona melhor com heróis que causam muito dano em área e podem reduzir o HP do time inimigo para que ele possa finalizar, como Pharsa e Vexana.",
+    "strong": "Roger é eficaz contra heróis frágeis com pouca mobilidade, como Hanabi e Odette, porque eles não conseguem escapar facilmente dele.",
+    "weak": "Roger é neutralizado por heróis que podem restringir sua mobilidade e impedi-lo de entrar e sair usando suas duas formas, como Minsitthar e Khufra."
+  },
+  "lore": {
+    "short": "Um lobisomem que vaga pela floresta escura em busca de vingança."
+  }
+}

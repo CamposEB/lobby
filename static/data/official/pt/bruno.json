@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1240": {
+      "description": "Bruno ganha 2,5% de chance crítica extra toda vez que causa dano com suas habilidades (até 8 acúmulos).\n\nBruno tem mais Ataque Físico, mas só recebe 80% de Velocidade de Ataque extra de todas as fontes."
+    },
+    "1210": {
+      "description": "Bruno chuta uma Bola de Poder em seu próximo Ataque Básico, ganhando 48% de Velocidade de Movimento por 1s. Isso causa 100 (+100% de Ataque Físico Total) de Dano Físico ao alvo e o reduz sua velocidade em 30% por 0.5s.\n\nA Bola de Poder então volta em direção a Bruno e cai no chão. Ele ou heróis aliados podem recuperar a Bola de Poder para realizar outro ataque e reduzir o tempo de recarga do Slide em 1s."
+    },
+    "1220": {
+      "description": "Bruno desliza para frente, atordoando brevemente os inimigos no caminho, e ganha uma Bola de Poder ao final do impulso."
+    },
+    "1230": {
+      "description": "Bruno chuta uma Bola de Energia em um herói alvo, causando 200 (+80% de Ataque Físico Total) de Dano Físico. Isso empurra o alvo de volta até o limite do alcance de ataque de Bruno, atordoa-o por 0.5s e reduz sua velocidade em 80% por 2s.\n\nA Bola de Energia então ricocheteia entre as unidades inimigas (até 10 vezes), priorizando os heróis inimigos. Cada ricochete causa 100 (+40% de Ataque Físico Total) de Dano Físico."
+    }
+  },
+  "counters": {
+    "assist": "Bruno funciona melhor com Suportes que podem forçar os inimigos a se engajarem e permitir que ele use seu dano no início do jogo, como Franco e Khufra.",
+    "strong": "Bruno é forte contra Atiradores que são mais fracos no início do jogo, como Hanabi e Miya, contra quem Bruno pode se sair melhor graças ao seu alto dano.",
+    "weak": "Bruno é neutralizado por Tanques com alta Defesa Física, como Gatotkaca e Fredrinn, que sofrem muito menos dano com seus ataques."
+  },
+  "lore": {
+    "short": "O capitão dos Eruditio Rangers que voltou ao \"campo\" graças a próteses avançadas."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1040": {
+      "description": "Se Franco não sofrer dano por 5s, ele ganha 10% de Velocidade de Movimento, recupera 1% por segundo e começa a ganhar Força do Deserto (até 10 acúmulos).\nA próxima habilidade de Franco consome todos os acúmulos de Força do Deserto, aumentando seu dano em até 150%."
+    },
+    "1010": {
+      "description": "Franco lança um Gancho de Ferro na direção do alvo. O gancho agarra a primeira unidade inimiga atingida, causando 400 (+100% de Ataque Físico Total) de Dano Físico e arrastando-a até ele."
+    },
+    "1020": {
+      "description": "Franco ataca, causando 300 (+ 4% do seu ) de Dano Físico aos inimigos próximos, reduzindo sua velocidade em 70% por 1.5s."
+    },
+    "1030": {
+      "description": "Franco suprime o herói inimigo alvo por 1.8s e o ataca 6 vezes durante esse período, causando 50 (+70% de Ataque Físico Total) de Dano Físico em cada ataque."
+    }
+  },
+  "counters": {
+    "assist": "Heróis com alto dano burst, como Vale, Karina e Brody, para aproveitar seu controle.",
+    "strong": "Heróis com baixa mobilidade, como Vale, Estes e Layla.",
+    "weak": "Heróis com alta mobilidade ou imunidade a controle, como Wanwan, Fanny e Badang."
+  },
+  "lore": {
+    "short": "Valente guerreiro do permafrost, inimigo jurado de Bane."
+  }
+}

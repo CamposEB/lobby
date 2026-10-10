@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "1740": {
+      "description": "Durante o voo, Fanny causa 10%-20% de dano extra aos inimigos atingidos (escala com a velocidade do voo) e aplica uma marca de presa neles (até 2 acúmulos) em cada ataque. Seus ataques subsequentes em heróis inimigos marcados restauram 8 de energia por acúmulo para ela. A restauração de energia é reduzida se ela atingir vários heróis inimigos em um curto período de tempo."
+    },
+    "1710": {
+      "description": "Fanny gira suas lâminas, causando 275 (+85% de Ataque Físico Total) de Dano Físico aos inimigos próximos."
+    },
+    "1720": {
+      "description": "Fanny atira um cabo na direção do alvo que a puxa até o primeiro obstáculo atingido. Ela pode lançar essa habilidade novamente em 2s até que sua energia se esgote, e cada relançamento subsequente dentro desse período custa 2 de energia a menos.\n\nFanny lança automaticamente o Tornado Strike ao atingir um inimigo durante o voo, desde que tenha energia suficiente."
+    },
+    "1730": {
+      "description": "Fanny salta sobre o herói inimigo ou creep alvo com suas lâminas, causando 400 (+200% de Ataque Físico Extra) de Dano Físico. Cada acúmulo de Marca de Presa no alvo aumenta esse dano em 30%."
+    }
+  },
+  "counters": {
+    "assist": "Fanny funciona melhor com heróis que podem encadear controle de área para manter o inimigo preso, como Minotaur e Gatotkaca, para que ela possa causar dano sem interrupção.",
+    "strong": "Fanny é eficaz contra heróis frágeis que não possuem controle direcionado, como Karrie e Irithel, que não conseguem parar a mobilidade extrema de Fanny enquanto ela os derruba com burst.",
+    "weak": "Fanny é neutralizada por heróis que podem restringir a mobilidade, como Kaja e Khufra, pois eles podem facilmente anular sua principal vantagem."
+  },
+  "lore": {
+    "short": "Uma dançarina de lâminas no campo de batalha."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "6740": {
+      "description": "Os Ataques Básicos e habilidades de Leomord concedem a ele 25 de energia do Guardião do Juramento cada vez que causam dano a alvos. Quando a energia atinge 100, seu próximo Ataque Básico causa 200% de Dano Crítico e restaura 100 (+10*Nível do Herói) (+15% de HP Máximo Extra) de HP.\nOs Ataques Básicos de Leomord normalmente não podem ser críticos, e cada 1% de Chance Crítica é convertido em 1% de Dano Crítico.\nEstado Montado: Cada ganho de energia do Guardião do Juramento é aumentado em 200%."
+    },
+    "6710": {
+      "description": "Leomord começa a canalizar, lentificando inimigos na direção do alvo em 25%. Quando a canalização é concluída ou interrompida, ele empurra sua espada na mesma direção, causando até 500 (+180% de Ataque Físico Total) de Dano Físico aos inimigos atingidos (escala com o tempo de canalização; aumentado para 140% contra criaturas, exceto a Tartaruga e o Lord) e os lentificando em 40% por 1s.\n\nUsar Novamente: Lance a habilidade novamente para cancelar a canalização e realizar o golpe imediatamente."
+    },
+    "6720": {
+      "description": "Leomord avança em uma direção designada, causando 300 (+50% de Ataque Físico Total) de Dano Físico aos inimigos no caminho e os lentificando em 30% por 1s."
+    },
+    "6730": {
+      "description": "Leomord invoca Barbiel para correr até ele, derrubando e causando 100 (+40% de Ataque Físico Total) de Dano Físico a todos os inimigos em seu caminho.\nSe Barbiel entrar em contato com Leomord, eles entrarão no Estado Montado, ganhando 50% de Velocidade de Movimento que diminui ao longo de 2s.\nEstado Montado: Leomord ganha um novo conjunto de habilidades, e seu Ataque Básico pode ser usado enquanto se move e atinge uma área circular para causar dano de AOE. Leomord também ganha 70 de Velocidade de Movimento e 30 . Isso dura 10s."
+    }
+  },
+  "counters": {
+    "assist": "Heróis com AOE ou controle, como Pharsa e Vexana, que podem seguir após Leomord quebrar a formação inimiga.",
+    "strong": "Magos sem mobilidade, como Odette, Pharsa, Yve e Cecilion, serão derrotados pela alta velocidade de movimento e pelo dano de burst de Leomord.",
+    "weak": "Heróis com controle, como Phoveus, Franco, Akai e Nana."
+  },
+  "lore": {
+    "short": "Um cavaleiro jurado que prometeu guardar Necrokeep até seu último suspiro."
+  }
+}

@@ -98,7 +98,8 @@
         roles: Array.isArray(h.roles)
           ? h.roles.map(String).map(function (r) { return r.toLowerCase(); })
           : [],
-        slug:  h.slug || ''
+        slug:  h.slug || '',
+        wallpaper: h.wallpaper || h.head || ''
       };
     }).filter(function (h) { return h.name; });
   }

@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "240": {
+      "description": "Balmond recupera 5% de HP ao abater um minion ou creep, e 10% de HP ao abater um herói ou dar assistência."
+    },
+    "210": {
+      "description": "Balmond avança na direção indicada, causando 150 (+60% de Ataque Físico Total) de Dano Físico aos inimigos pelo caminho.\nEle para ao atingir um herói inimigo, empurrando-o e causando 40% de lentidão por 3s."
+    },
+    "220": {
+      "description": "Balmond ganha 15% de Velocidade de Movimento e gira com seu machado por 3s, causando 30 (+1.3% de HP Máximo) (+25% de Ataque Físico Total) de Dano Físico por acerto aos inimigos próximos até 14 vezes.\n\nCada golpe reduz a Defesa Física do alvo em 5% (até 40%)."
+    },
+    "230": {
+      "description": "Balmond desfere um golpe devastador na direção indicada, causando 150 (+70% de Ataque Físico Total) (+ 30% do HP perdido do alvo) como Dano Real. Esta skill só pode ser interrompida por Supressão.\n\nO dano causado a unidades que não sejam heróis é limitado a 1000 de Dano Real."
+    }
+  },
+  "counters": {
+    "assist": "Balmond funciona melhor com heróis de Suporte que aumentem sua Mobilidade e Sobrevivência, como Angela e Rafaela.",
+    "strong": "Balmond é forte contra heróis frágeis que não têm como escapar quando ele encurta a distância, como Layla e Eudora.",
+    "weak": "Balmond sofre contra heróis de longo alcance que conseguem causar dano fora da área de alcance dele, como Lesley e Irithel."
+  },
+  "lore": {
+    "short": "Um dia, os Orcs vão se libertar de suas correntes."
+  }
+}

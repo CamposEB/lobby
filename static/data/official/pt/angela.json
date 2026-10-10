@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5540": {
+      "description": "Angela ganha 5% de Velocidade de Movimento extra por 4s sempre que lança uma skill (acumulando até 20%). Quando está acoplada a um herói aliado, o bônus de Velocidade de Movimento é transferido para o aliado."
+    },
+    "5510": {
+      "description": "Angela lança Love Waves na direção do alvo, causando 170 (+80% Poder Mágico Total) de Dano Mágico aos inimigos atingidos, revelando sua posição brevemente e aplicando um acúmulo de Lover's Mark (até 5 acúmulos). Cada acúmulo de Lover's Mark aumenta o dano em 20% e reduz a velocidade de movimento dos inimigos atingidos em 8% por 3s.\nLove Waves também restaura 150 (+75% Poder Mágico Total) de HP para heróis aliados atingidos. Angela pode acumular até 5 cargas desta skill, e o tempo de recarga das cargas é afetado pela Redução de Recarga.\nQuando acoplada a aliados, a recarga desta skill é reduzida em 50%."
+    },
+    "5520": {
+      "description": "Angela lança Puppet String no inimigo alvo (exceto minions), causando 300 (+40% Poder Mágico Total) de Dano Mágico e aplicando lentidão gradual de até 80%. Se o inimigo continuar preso à corda após 3s, ele será imobilizado por 1.5s e sofrerá 450 (+60% Poder Mágico Total) de Dano Mágico.\n\nCada acúmulo de Lover's Mark aumenta o dano final em 20%."
+    },
+    "5530": {
+      "description": "Angela começa a canalizar, concedendo um escudo de 600 (+150% Poder Mágico Total) ao herói aliado alvo, independentemente da distância. Após se acoplar ao aliado, o escudo permanece até ela se desacoplar. Quando a canalização termina, ela se acopla ao herói aliado por 20s, período em que pode lançar skills sem custo de Mana.\nAngela pode usar esta skill novamente para cancelar a canalização ou se desacoplar do herói aliado. O estado acoplado é encerrado antes do tempo se o herói aliado for abatido."
+    }
+  },
+  "counters": {
+    "assist": "Angela funciona melhor com Assassinos de alta mobilidade, como Lancelot e Aamon, já que consegue fornecer controle e cura enquanto aumenta ainda mais a mobilidade deles.",
+    "strong": "Angela countera heróis de baixa mobilidade, como Uranus e Belerick, aplicando lentidão contínua neles e acelerando seus próprios aliados.",
+    "weak": "Angela sofre counter de Assassinos ágeis com alto dano de burst, como Ling e Harley."
+  },
+  "lore": {
+    "short": "Humana artificial criada no Laboratory 1718."
+  }
+}

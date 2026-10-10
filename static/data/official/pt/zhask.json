@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "5050": {
+      "description": "Ao morrer, Zhask invoca uma Criatura Pesadelo frenética no local, que gradualmente perde HP com o tempo até morrer."
+    },
+    "5010": {
+      "description": "Zhask invoca uma Criatura Pesadelo que herda 55% do seu , , e . Ela dispara automaticamente o Raio da Morte em inimigos próximos, causando 55 (+ 20%) (+ 20% de Ataque Extra) de Dano Mágico e reduzindo a velocidade deles em até 30%. Ela desaparece quando Zhask se afasta demais.\n\nO Raio da Morte é considerado um Ataque Básico, mas não pode causar dano crítico.\n\nMelhorado pela Fusão: A Criatura Pesadelo causa 180% de dano e pode ser reposicionada."
+    },
+    "5020": {
+      "description": "Zhask dispara um raio psíquico penetrante na direção do alvo, causando 300 (+100% de Poder Mágico Total) de Dano Mágico. Em seguida, a Criatura Pesadelo ataca os inimigos atingidos por Devorador de Mentes, causando 120 (+80% de Poder Mágico Total) de Dano Mágico e atordoando-os por 0,5s.\n\nMelhorado pela Fusão: O dano do Devorador de Mentes aumenta para 540 (+180% de Poder Mágico Total)."
+    },
+    "5030": {
+      "description": "Zhask libera um enxame de Clones do Ninho na direção do alvo. Os clones explodem ao atingir um inimigo, causando 55 (+18% de Poder Mágico Total) de Dano Mágico e reduzindo a Velocidade de Movimento deles em 80% por 1s.\nSe os Clones do Ninho não atingirem nenhum alvo, eles se enterram no chão para emboscar inimigos que passem por ali.\n\nMelhorado pela Fusão: Zhask libera vários enxames de Clones do Ninho.\nO dano subsequente ao mesmo alvo decai para 20%."
+    },
+    "5040": {
+      "description": "Zhask seleciona uma área alvo para invocar uma Criatura Pesadelo melhorada e se funde com ela. A Criatura Pesadelo pode herdar 100% dos seus atributos e obter atributos extras. Suas habilidades são aprimoradas durante o período de fusão.\n\nUsar Novamente: Zhask sai imediatamente da Criatura Pesadelo e perde o aprimoramento."
+    }
+  },
+  "counters": {
+    "assist": "Zhask funciona melhor com heróis que podem imobilizar inimigos para que ele tenha mais tempo para causar dano, como Belerick e Lolita.",
+    "strong": "Zhask é forte contra heróis que causam dano em rajada, como Aldous e Paquito, porque seu alto HP após se fundir com sua Criatura Pesadelo o torna difícil de ser eliminado rapidamente.",
+    "weak": "Zhask é neutralizado por heróis ágeis ou de longo alcance, como Pharsa e Cecilion, porque eles podem sair rapidamente do alcance de sua Criatura Pesadelo imóvel."
+  },
+  "lore": {
+    "short": "Rei do Enxame que desestabiliza o equilíbrio do universo."
+  }
+}

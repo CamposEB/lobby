@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "12890": {
+      "description": "Após lançar uma habilidade, Kalea cria uma Zona de Água no chão. Quando Kalea lança uma habilidade dentro dessa zona, ela a absorve para melhorar seus próximos 3 Ataques Básicos com diferentes efeitos:\nPrimeiro Ataque Básico: Kalea avança até o alvo, causando (+100% de Ataque Físico Total) de Dano Físico.\nSegundo Ataque Básico: Kalea lança uma série de ataques, causando 140 (+8*Nível do Herói) (+100% de Ataque Físico Total) de Dano Físico e recuperando (+12% do HP Máximo) (+80% de Poder Mágico Total) de HP para si mesma e para o aliado próximo com menos HP.\nTerceiro Ataque Básico: Kalea ataca ao redor do alvo com sua cauda, causando 70 (+4*Nível do Herói) (+100% de Ataque Físico Total) de Dano Físico e criando uma nova Zona de Água.\nAtaques Básicos melhorados não são afetados pela Velocidade de Ataque.\nEfeitos de controle podem afetar Kalea durante o terceiro Ataque Básico melhorado, mas não podem interrompê-lo."
+    },
+    "12810": {
+      "description": "Kalea bate o punho no chão, criando uma onda que causa 200 (+5% do HP Máximo) de Dano Físico aos inimigos próximos e reduz sua velocidade em 40% por 1,5s."
+    },
+    "12820": {
+      "description": "Kalea avança e ataca o primeiro herói inimigo que encontrar, derrubando-o por 0,6s (não afetado por Resistência) enquanto causa 150 (+60% de Ataque Físico Total) de Dano Físico.\nSe ela colidir com um obstáculo ou tocar a borda de uma Zona de Água durante sua carga, Kalea saltará para o ar. Lance a habilidade novamente para cair em um local alvo, causando 150 (+60% de Ataque Físico Total) de Dano Físico e derrubando inimigos por 0,6s (não afetado por Resistência)."
+    },
+    "12830": {
+      "description": "Kalea agarra um herói inimigo com sua cauda e o derruba na direção do Joystick (arraste o Joystick para mudar o local de pouso). Ela ganha imunidade a controle durante esse processo. Ao pousar, causa 300 (+8% do HP Máximo) de Dano Físico ao alvo e aos inimigos próximos."
+    }
+  },
+  "counters": {
+    "assist": "O forte controle de alvo único de Kalea a torna eficaz com heróis que possuem alto dano em rajada contra um único alvo, como Eudora, Harley e Clint.",
+    "strong": "Kalea neutraliza heróis que carecem de mobilidade, como Layla e Chang'e.",
+    "weak": "No entanto, Kalea não pode agarrar inimigos com imunidade a controle, então heróis como Diggie e Minotauro podem contra-atacá-la eficazmente."
+  },
+  "lore": {
+    "short": "Com sua cauda de serpente, esta orgulhosa descendente da Grande Serpente nada graciosamente pelo Mar Vonetis, aspirando um dia carregar todo o poder de sua herança."
+  }
+}

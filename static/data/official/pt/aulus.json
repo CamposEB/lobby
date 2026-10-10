@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10840": {
+      "description": "Sempre que Aulus causa dano de skill a uma unidade, ele ganha um Ataque Básico fortalecido por 2s (acumula até 4s).\nAtaque Básico Fortalecido: Aulus ergue seu machado e o bate no chão, causando 135 (+15*Nível do Herói) (+75% Total de Ataque Físico) de Dano Físico a inimigos em linha reta e recuperando 30 (+15% Total de Ataque Físico) de HP. Inimigos atingidos são desacelerados em 10% por 1s. Aulus também ganha 0.5 de Alcance de Ataque e 20 (+2*Nível do Herói)% de Velocidade de Ataque por 1s.\nO Ataque Básico Fortalecido causa 270 (+30*Nível do Herói) (+75% Total de Ataque Físico) de Dano Físico a creeps."
+    },
+    "10810": {
+      "description": "Aulus começa a acumular Fighting Spirit, remove todos os efeitos de lentidão e ganha 30% de Velocidade de Movimento extra por 5s.\n\nSe Aulus não sofrer efeitos de controle avançado em até 2s, ele entrará no estado Enraged e ganhará Imunidade a Controle."
+    },
+    "10820": {
+      "description": "Aulus gira seu machado, causando 240 (+100% Total de Ataque Físico) de Dano Físico a inimigos em uma área em leque e atordoando-os por 0.3s.\n\nUse Novamente: Aulus avança para frente e bate no chão, causando 240 (+100% Total de Ataque Físico) de Dano Físico a inimigos próximos."
+    },
+    "10830": {
+      "description": "Aulus desfere repetidos golpes de machado contra inimigos próximos, causando 110 (+60% Total de Ataque Físico) de Dano Físico por golpe. Após 4 golpes, Aulus carrega brevemente antes de desferir um corte mais amplo, causando 330 (+180% Total de Ataque Físico) de Dano Físico a inimigos em uma grande área.\n\nDurante esta skill, Aulus ganha 20% de Redução de Dano e um breve aumento na Velocidade de Movimento a cada golpe."
+    }
+  },
+  "counters": {
+    "assist": "Aulus é um Fighter de dive que brilha ao lado de Suportes de longo alcance consistentes, como Angela e Floryn.",
+    "strong": "O forte engage de Aulus, sua capacidade de luta prolongada e sua Imunidade a Controle fazem dele um ótimo counter contra heróis de papel e baixa mobilidade, como Hanabi, Miya e Gord.",
+    "weak": "Como o dano de Aulus depende de acertar seus Ataques Básicos fortalecidos, heróis que conseguem mantê-lo longe e evitar seus golpes são um confronto difícil, como Franco, Melissa e Karina."
+  },
+  "lore": {
+    "short": "Um guerreiro Leonin que herdou a determinação de seu antecessor, abrindo caminho com uma fúria ardente."
+  }
+}

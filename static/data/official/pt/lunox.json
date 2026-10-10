@@ -1,0 +1,27 @@
+{
+  "skills": {
+    "6850": {
+      "description": "Lunox é corrompida pelos poderes do Caos e da Ordem.\nQuando ela usa o Poder da Ordem, ela ganha 0,5% de Vampiro Mágico para cada 1% de Penetração Mágica.\nQuando ela usa o Poder do Caos, ela ganha 0,5% de Penetração Mágica para cada 1% de Vampiro Mágico."
+    },
+    "6810": {
+      "description": "Lunox invoca uma chuva de luz estelar sobre os inimigos próximos, causando 200 (+110% do Poder Mágico Total) de Dano Mágico. A luz estelar então retorna a Lunox, recuperando 75 (+30% do Poder Mágico Total) de HP para ela (dobrado ao acertar heróis inimigos).\n\nEsta habilidade compartilha o tempo de recarga com Chaos Assault. Ela concede o Poder da Ordem e encerra o estado do Poder do Caos."
+    },
+    "6820": {
+      "description": "Lunox libera energia caótica em um inimigo alvo, causando 250 (+120% do Poder Mágico Total) (+ 2,5% do HP do alvo) de Dano Mágico (+ 1,5% contra tropas).\n\nEsta habilidade compartilha seu tempo de recarga com Starlight Pulse. Usá-la concede o Poder do Caos e encerra o estado do Poder da Ordem."
+    },
+    "6830": {
+      "description": "Lunox canaliza o poder da Ordem e do Caos na direção alvo, causando 300 (+150% do Poder Mágico Total) de Dano Mágico aos inimigos em seu caminho e os reduzindo a velocidade em 40% por 2s."
+    },
+    "6840": {
+      "description": "Lunox é corrompida pelos poderes do Caos e da Ordem.\n\nQuando o Poder da Ordem é dominante, ela pode lançar Brilliance para se tornar invencível e causar dano contínuo aos inimigos próximos.\nQuando o Poder do Caos é dominante, ela pode lançar Darkening para se teletransportar em uma direção alvo e reduzir significativamente o tempo de recarga de Chaos Assault por um breve período."
+    }
+  },
+  "counters": {
+    "assist": "Lunox funciona melhor em conjunto com heróis que possuem habilidades de controle fortes, como Franco e Minotaur. Embora Lunox não tenha controle difícil, se ela puder usar suas habilidades repetidamente em um alvo parado, ela pode causar muito dano.",
+    "strong": "Lunox é eficaz contra heróis que não possuem dano de burst e cura, como Yve e Lylia, porque Lunox pode usar sua autocura para obter vantagem em uma troca.",
+    "weak": "Lunox é contra-atacada por heróis com alta mobilidade, já que sua segunda habilidade tem alcance limitado e ela não possui controle. Heróis ágeis como Nolan e Ling podem entrar e sair de seu alcance com muita facilidade."
+  },
+  "lore": {
+    "short": "Uma criatura milagrosa nascida na Twilight Orb."
+  }
+}

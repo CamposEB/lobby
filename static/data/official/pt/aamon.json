@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "10940": {
+      "description": "Sempre que Aamon atinge um inimigo com uma skill, ele entra em Camouflage, ficando inalvejável, recuperando 25 (+15% Poder Mágico Total) (+ 3% do seu ) de HP a cada 0.5s e ganhando 80% de Velocidade de Movimento que decai rapidamente ao longo de 3s.\n\nAo sair do estado de Camouflage, Aamon reseta imediatamente a recarga do seu Ataque Básico e fortalece seus Ataques Básicos por 3s. Cada Ataque Básico fortalecido causa 70 (+100% Ataque Físico Total) (+115% Poder Mágico Total) de Dano Mágico. O primeiro ataque após sair manualmente de Camouflage causa 84 (+120% Ataque Físico Total) (+138% Poder Mágico Total) de dano e reduz a recarga de todas as skills em 1s."
+    },
+    "10910": {
+      "description": "Passiva: Aamon carrega sua armadura através de Ataques Básicos fortalecidos ou enquanto estiver em Camouflage. Com 5 acúmulos, Aamon lança 6 fragmentos no alvo em seu próximo ataque, cada fragmento causando 50 (+15% Poder Mágico Total) de Dano Mágico. Os fragmentos então se espalham ao redor do alvo.\n\nAtiva: Aamon lança um fragmento em um inimigo próximo, causando 175 (+60% Poder Mágico Total) de Dano Mágico."
+    },
+    "10920": {
+      "description": "Aamon lança um fragmento para a frente, causando 120 (+50% Poder Mágico Total) de Dano Mágico e reduzindo a velocidade dos inimigos atingidos em 50% por 2s. O fragmento retorna para Aamon após um curto intervalo, concedendo a ele o estado de Camouflage.\n\nSe o fragmento atingir um inimigo que não seja minion, ele retorna imediatamente."
+    },
+    "10930": {
+      "description": "Aamon lança todos os fragmentos em um inimigo selecionado e causa 30% de lentidão por 1.5s. Após um curto intervalo, os fragmentos voam até a posição do inimigo novamente, cada um causando 35 (+10% Poder Mágico Total)-70 (+20% Poder Mágico Total) de Dano Mágico.\n\nO número de fragmentos aumenta com os acúmulos da armadura de Aamon e com os fragmentos no chão (8-25).\nO dano causado aumenta com base no HP perdido pelo alvo, atingindo o máximo quando o HP do alvo estiver abaixo de 30%."
+    }
+  },
+  "counters": {
+    "assist": "Heróis de Suporte que concedem buffs, como Rafaela e Floryn.",
+    "strong": "Heróis frágeis e de baixa mobilidade, como Layla e Hanabi.",
+    "weak": "Heróis tankers ou que causam dano contínuo, como Balmond e Fredrinn."
+  },
+  "lore": {
+    "short": "O reservado Duque do Castelo Aberleen."
+  }
+}

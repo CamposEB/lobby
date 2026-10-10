@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "7340": {
+      "description": "Harith obtém insights de sua Chave. Ele ganha 7% de Roubo de Vida Híbrido para cada herói inimigo próximo, acumulando até 35%."
+    },
+    "7310": {
+      "description": "Harith cria um fantasma de si mesmo em um local distante. Harith e seu fantasma então liberam Fissão Síncrona um em direção ao outro, causando 150 (+60% de Poder Mágico Total) de Dano Mágico a todas as unidades inimigas no caminho.\n\nQuando as 2 ondas de energia colidem, elas explodem, causando 450 (+180% de Poder Mágico Total) de Dano Mágico a todos os inimigos na área.\nEsta habilidade causa 60% de dano extra a creeps (até 1500 de dano)."
+    },
+    "7320": {
+      "description": "Harith avança na direção alvo, ganhando um escudo de 120 (+120% de Poder Mágico Total) que acumula até 3 vezes e melhora seu próximo Ataque Básico. Seu Ataque Básico melhorado causa 200 (+100% de Ataque Físico Total)(+60% de Poder Mágico Total) de Dano Mágico e reduz a velocidade dos inimigos em 40%. Acertar um inimigo reduz o tempo de recarga de Chrono Dash em 3s.\n\nO Ataque Básico melhorado causa apenas 50 (+100% de Ataque Físico Total)(+100% de Poder Mágico Total) de Dano Mágico às Torres."
+    },
+    "7330": {
+      "description": "Harith usa sua Chave para invocar a Força de Zaman, criando uma fenda multidimensional. Ao aparecer, ela reduz o tempo de recarga de Chrono Dash em 4s. A fenda reduz continuamente a velocidade dos heróis inimigos na área em 40%.\n\nQuando Harith entra em contato com a fenda usando Chrono Dash, ele absorve sua energia, reduzindo o tempo de recarga de Synchro Fission em 1s e de Chrono Dash em 3s. Harith ganha 15% de Resiliência enquanto está na fenda."
+    }
+  },
+  "counters": {
+    "assist": "Harith combina bem com heróis que têm controle de área e podem dificultar que os inimigos escapem do alcance de seu ultimate, como Minsitthar e Minotaur.",
+    "strong": "Harith é um herói muito ágil e seu ultimate reduz a duração dos efeitos de controle, então ele é excelente para neutralizar heróis que dependem de controle e têm animações de lançamento relativamente longas, como Belerick e Johnson.",
+    "weak": "Harith é neutralizado por heróis que podem escapar rapidamente de seu ultimate, como Novaria e Pharsa."
+  },
+  "lore": {
+    "short": "Garoto leonino que veio ao Império Moniyan de Azrya."
+  }
+}

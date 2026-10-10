@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4740": {
+      "description": "Toda vez que Lancelot avança, seu dano aumenta em 7,5% por 4s, até um máximo de 30%."
+    },
+    "4710": {
+      "description": "Lancelot avança na direção do alvo, causando 150 (+50% de Ataque Físico Total) de Dano Físico aos inimigos no caminho e aplicando uma Marca da Espada no primeiro inimigo não marcado atingido. A Marca da Espada dura 3s.\n\nSe Lancelot aplicar com sucesso uma Marca da Espada em um inimigo, o tempo de recarga da habilidade será reiniciado."
+    },
+    "4720": {
+      "description": "Lancelot ataca na direção do alvo 3 vezes, causando 220 (+120% de Ataque Físico Extra) de Dano Físico aos inimigos atingidos (o dano é reduzido quando múltiplos inimigos são atingidos). Ele fica intocável durante esse processo. Inimigos no centro da área recebem os 3 ataques e são lentificados em 20% por 0,5s. O efeito de lentificação pode ser acumulado."
+    },
+    "4730": {
+      "description": "Após um breve atraso, Lancelot realiza um golpe de executor na direção do alvo, causando 350 (+170% de Ataque Físico Total) de Dano Físico aos inimigos atingidos. Ele é invencível durante todo o processo."
+    }
+  },
+  "counters": {
+    "assist": "Lancelot funciona bem com heróis que podem puxar inimigos juntos, como Atlas e Tigreal, porque isso permite que ele atinja mais inimigos com suas habilidades de área.",
+    "strong": "Lancelot é eficaz contra magos de longo alcance, como Cecilion e Pharsa, porque há um atraso em suas habilidades e Lancelot pode usar sua primeira habilidade para desviar delas enquanto avança para o ataque.",
+    "weak": "Lancelot é fraco contra heróis que podem neutralizar sua mobilidade, como Minsitthar e Phoveus, pois sua primeira habilidade e sua ultimate serão fortemente restringidas."
+  },
+  "lore": {
+    "short": "Filho pródigo e gênio espadachim da Casa Baroque."
+  }
+}

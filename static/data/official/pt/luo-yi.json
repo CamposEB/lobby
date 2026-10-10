@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "9650": {
+      "description": "As habilidades de Luo Yi podem criar Símbolos de Yin/Yang no campo de batalha. Cada Símbolo dura até 6s.\nSímbolos de atributos opostos desencadeiam a Reação Yin-Yang quando estão dentro de uma certa distância, causando 300 (+25*Nível do Herói) (+190% do Poder Mágico Total) de Dano Mágico aos inimigos marcados, atordoando-os por 0,3s e puxando-os um em direção ao outro.\nCada vez que Luo Yi aplica um novo Símbolo a um inimigo marcado, ela ganha um escudo de 300 (+10*Nível do Herói) (+150% do Poder Mágico Total) (até 3 acúmulos) e 50% de Velocidade de Movimento extra que diminui ao longo de 2s."
+    },
+    "9620": {
+      "description": "Luo Yi lança a energia de Yin/Yang na direção alvo, causando 285 (+135% do Poder Mágico Total) de Dano Mágico ao primeiro inimigo atingido e aos que estão atrás dele em uma área em forma de leque. Heróis inimigos atingidos são marcados com um Símbolo de Yin/Yang.\nLuo Yi armazena até 4 cargas de Dispersão e ganha 1 carga a cada 8s. Ela também ganha imediatamente 1 carga cada vez que a Reação Yin-Yang é desencadeada.\nO estado desta habilidade muda a cada lançamento."
+    },
+    "9630": {
+      "description": "Luo Yi invoca o Fogo de Yang / Água de Yin no local alvo, causando 250 (+50% do Poder Mágico Total) de Dano Mágico aos inimigos atingidos e reduzindo sua velocidade em 60% por 0,5s.\nO Fogo de Yang / Água de Yin então permanece no local por 6s, causando 50 (+10% do Poder Mágico Total) de Dano Mágico a cada 0,7s aos inimigos próximos. Ele também pode desencadear a Reação Yin-Yang com Símbolos de atributos opostos.\nO estado desta habilidade muda a cada lançamento."
+    },
+    "9640": {
+      "description": "Passiva: A Redução de Recarga de Luo Yi é aumentada em 6%.\nAtiva: Luo Yi cria um Círculo de Teletransporte ao seu redor e marca o local alvo (dentro de 28 unidades) como seu destino. Após um atraso de 3s, heróis aliados dentro do Círculo serão teletransportados para o local."
+    }
+  },
+  "counters": {
+    "assist": "Luo Yi funciona melhor com Junglers que estão frequentemente procurando por lutas no mapa, como Aamon e Karina, porque ela pode usar sua Ultimate para reduzir o tempo de viagem deles.",
+    "strong": "Luo Yi é eficaz contra heróis com baixa mobilidade, como Eudora e Gord, porque eles são alvos fáceis para seus Símbolos e Reações Yin-Yang.",
+    "weak": "Luo Yi é contra-atacada por Lutadores ou Tanques com alta recuperação de HP, como Uranus e Fredrinn, porque ela não pode causar dano suficiente para finalizá-los rapidamente."
+  },
+  "lore": {
+    "short": "Em busca de reviver um passado antigo, ela é o único ser que dominou os segredos do Yin e do Yang."
+  }
+}

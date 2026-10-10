@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8740": {
+      "description": "Baxia ativa a \"Marca de Baxia\" permanentemente, reduzindo o dano final recebido em 15 (+1*Nível do Herói).\nAo mesmo tempo, Baxia reduzirá o Escudo e a Regeneração de HP dos inimigos atingidos por suas habilidades em 40% por 4s."
+    },
+    "8710": {
+      "description": "Baxia se retrai dentro de seu escudo e acelera para frente. Ao atingir uma unidade inimiga, ele causará 300 (+60% de Poder Mágico Total) de Dano Mágico a ela e aos inimigos próximos, atordoando o alvo por 0,8s e empurrando levemente os inimigos próximos para trás.\nDurante o processo de aceleração para frente, use esta habilidade novamente para lançar Baxia para cima, para que ele possa cruzar obstáculos e tropas inimigas. Ao saltar para cima, se houver um herói inimigo sob Baxia, ele atingirá esse herói, causando 375 (+75% de Poder Mágico Total) de Dano Mágico a esse herói e aos inimigos próximos, atordoando o alvo atingido por 1,5s e empurrando levemente outros alvos inimigos próximos para trás."
+    },
+    "8720": {
+      "description": "Baxia lança seu escudo, causando 120 (+100% de Poder Mágico Total) (+ 5% da ) Dano Mágico aos inimigos ao longo do caminho, marcando-os por 5s e reduzindo sua velocidade em 50% por 1s. O escudo desaparece ao atingir o primeiro herói inimigo ou creep.\nBaxia pode lançar a habilidade novamente em pouco tempo. Se um herói inimigo ou creep for atingido pela habilidade, o tempo de recarga da habilidade será reduzido para 15%."
+    },
+    "8730": {
+      "description": "Baxia segura seu escudo para a frente e começa a correr freneticamente, ganhando 30% de Velocidade de Movimento extra por 10s, enquanto deixa um caminho de lava para trás. Inimigos no caminho sofrerão 40 (+30% de Poder Mágico Total) de Dano Mágico e serão reduzidos em 15% por 0,5s a cada 0,5s.\nDurante a duração, o efeito de Redução de Dano da Marca de Baxia é aumentado para 200%."
+    }
+  },
+  "counters": {
+    "assist": "Baxia pode utilizar seu dano AOE e seu efeito de redução de velocidade para ajudar heróis de dano contínuo, como Thamuz e Alpha, a permanecerem em seus alvos.",
+    "strong": "Baxia contraria heróis com habilidades de múltiplos acertos ou que dependem de escudos ou regeneração de HP, como Chang'e e Silvanna, graças ao seu Passivo.",
+    "weak": "Baxia é contrariado por Atiradores ágeis que causam Dano Verdadeiro, como Karrie e Lesley, porque eles podem facilmente ficar fora do alcance de Baxia enquanto causam danos massivos a ele."
+  },
+  "lore": {
+    "short": "A Tartaruga Mística dos Lutadores Orientais, uma roda de chamas imparável que empunha um escudo."
+  }
+}

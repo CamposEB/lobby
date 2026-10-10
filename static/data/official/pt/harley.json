@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "4240": {
+      "description": "A maestria de Harley em magia permite que seus ataques básicos e habilidades reduzam a defesa do inimigo em 2 e aumentem sua velocidade de ataque em 5% - 10% (escala com o nível do herói) por 3s ao acertar. Este efeito acumula até 10 vezes.\nOs ataques básicos de Harley causam 60 (+50% de Ataque Físico Total)(+60% de Poder Mágico Total) de dano mágico."
+    },
+    "4210": {
+      "description": "Harley lança 3 ondas de cartas, 3 cartas por onda. Cada carta causa 120 (+25% de Poder Mágico Total) de dano mágico aos inimigos.\nDepois que o mesmo alvo é atingido 3 vez(es), o dano diminui para 50% nos acertos subsequentes."
+    },
+    "4220": {
+      "description": "Harley pisca na direção designada, deixando um chapéu mágico em seu local de partida. Sua velocidade de movimento aumenta em 60% por 2s, depois decai rapidamente para o normal em 4s.\n\nUsar Novamente: Voltar para a localização do chapéu."
+    },
+    "4230": {
+      "description": "Harley lança um anel mágico de fogo em um herói inimigo, causando 200 (+60% de Poder Mágico Total) de dano mágico e um efeito de lentidão de 40% que decai para 15% após 1,5s. O anel permanece ao redor do alvo, durante o qual Harley pode acertar o anel para danificar o alvo. O anel explode após 4s, causando dano mágico igual a 200 (+50% de Poder Mágico Total) mais 30% do dano sofrido pelo alvo enquanto o anel estava ativo."
+    }
+  },
+  "counters": {
+    "assist": "Harley funciona melhor com heróis que podem desestabilizar a formação inimiga, como Akai e Khufra. Ele pode segui-los na luta e eliminar rapidamente os alvos frágeis.",
+    "strong": "Harley é eficaz contra heróis frágeis com pouca mobilidade, como Cecilion e Ixia, pois pode causar dano burst enquanto se move.",
+    "weak": "Harley é neutralizado por heróis tanque como Lolita e Uranus, porque Harley não consegue causar dano significativo a eles e eles podem bloquear e absorver seu Ultimate para proteger seus companheiros de equipe."
+  },
+  "lore": {
+    "short": "O jovem mago cujos poderes despertaram ao ser colocado em perigo e que agora chega à Academia de Magia para estudar."
+  }
+}

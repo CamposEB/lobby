@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "8540": {
+      "description": "Quando a Raiva de Dyrroth atinge 50%, ele aprimora o Golpe Explosivo e o Passo Espectral.\n\nApós cada 2 Ataques Básicos, Dyrroth libera um Golpe Circular, causando (+150% de Ataque Físico Total) - (+180% de Ataque Físico Total) (escala com o nível) de Dano Físico aos inimigos no círculo (o dano aprimorado não se aplica a torres) e recuperando 7%-10% (escala com o nível, reduzido pela metade contra minions ou torres). Este golpe não ativa Efeito de Ataque.\nCada vez que ele causa dano a um inimigo, o tempo de recarga do Golpe Explosivo e do Passo Espectral é reduzido em 1s.\n\nDyrroth recupera 2% - 5% de Raiva por segundo (escala com o nível)."
+    },
+    "8510": {
+      "description": "Dyrroth libera um golpe explosivo em uma direção designada. Cada explosão causa 240 (+60% de Ataque Físico Total) de Dano Físico aos inimigos e os reduz a velocidade em 25% por 1,5s. (O dano diminui contra o mesmo alvo e é reduzido para apenas 75% em minions.)\n\nAprimorado pelo Abismo: O Golpe Explosivo tem um alcance maior, causa 140% do dano original e seu Efeito de Redução de Velocidade é dobrado."
+    },
+    "8520": {
+      "description": "Dyrroth avança na direção alvo. Ele para ao atingir a distância máxima ou ao acertar um herói ou creep inimigo, causando 230 (+60% de Ataque Físico Extra) de Dano Físico e os empurrando ligeiramente para trás.\n\nUsar Novamente: Dyrroth trava em um alvo e libera um Golpe Fatal, causando 345 (+120% de Ataque Físico Extra) de Dano Físico e reduzindo sua velocidade em 40% por 4s.\n\nAprimorado pelo Abismo: O Golpe Fatal atinge mais longe e causa 150% do dano original, reduz a velocidade do alvo em mais 90% e reduz sua velocidade em 60% por 4s."
+    },
+    "8530": {
+      "description": "Após um curto atraso, Dyrroth lança um golpe destrutivo na direção alvo, causando 650 (+250% de Ataque Físico Extra) (+ 25% da vida perdida do alvo) de Dano Físico aos inimigos em seu caminho e reduzindo sua velocidade em 55% por 0,8s.\nEsta habilidade só pode ser interrompida por Supressão.\nO dano causado a inimigos não-heróis é limitado a 1500."
+    }
+  },
+  "counters": {
+    "assist": "O alto dano em rajada de Dyrroth no corpo a corpo funciona melhor com heróis que possuem controle de alvo único, como Franco e Kaja.",
+    "strong": "Dyrroth possui boas habilidades de perseguição e bom dano em rajada no corpo a corpo, sendo forte contra heróis com baixa mobilidade, como Gord e Hanabi.",
+    "weak": "Por ser um herói de corpo a corpo, Dyrroth é vulnerável a heróis com habilidades de redução de velocidade e kiting, como Vexana e Belerick."
+  },
+  "lore": {
+    "short": "Antigamente um nobre príncipe do Império Moniyan, ele foi sequestrado por Alice, a Rainha dos Demônios de Sangue, e transformado no Príncipe do Abismo."
+  }
+}

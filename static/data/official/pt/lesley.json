@@ -1,0 +1,24 @@
+{
+  "skills": {
+    "5340": {
+      "description": "Se Lesley não receber dano por 5s, seu próximo Ataque Básico ganha alcance extra e 50% de Chance Crítica, causando 100 (+100% de Ataque Físico Total) de Dano Verdadeiro (20% de dano extra contra minions).\nCada ponto de penetração física fixa e cada 1% de penetração física que Lesley adquire são convertidos em 1% de Dano Crítico, mas seu dano crítico base é reduzido para 130%.\nO Ataque Básico de Lesley restaura 5 pontos de energia e seu Tiro Letal dobra a quantidade de energia restaurada. O efeito do Tiro Letal é ativado imediatamente após Lesley usar uma habilidade."
+    },
+    "5310": {
+      "description": "Lesley entra no estado de Camuflagem, ganhando o dobro de Regeneração de Energia, 40% de Velocidade de Movimento extra e 85 a mais.\nO estado dura 3s ou até que Lesley receba ou cause dano. Os inimigos podem detectar a posição de Lesley através de distorções no ambiente ao seu redor."
+    },
+    "5320": {
+      "description": "Lesley lança uma granada tática na direção do alvo enquanto recua ligeiramente, causando 150 (+50% de Ataque Físico Total) de Dano Físico aos inimigos em uma área em forma de leque e os empurrando para trás.\n\nLesley pode lançar essa habilidade durante o Ultimate Snipe para cancelar o estado e disparar imediatamente uma Bala Fatal no alvo. O ataque só é acionado quando ainda houver Balas Fatais não disparadas."
+    },
+    "5330": {
+      "description": "Passivo: A Chance Crítica de Lesley é aumentada em 10%.\nAtivo: Lesley trava em um herói inimigo e dispara 4 Balas Fatais em sucessão. Cada bala causa 250 (+80% de Ataque Físico Extra) (+ 5% do HP perdido do alvo) de Dano Físico e restaura 10 de Energia ao acertar. As balas podem ser bloqueadas por outros heróis inimigos.\n\nSe essa habilidade for interrompida, cada bala restante reduz o tempo de recarga dessa habilidade em 10%."
+    }
+  },
+  "counters": {
+    "assist": "Lesley funciona melhor com heróis tanque que podem proporcionar melhores condições de ataque para ela, como Minotaur e Baxia.",
+    "strong": "Lesley é forte contra heróis tanque que dependem muito de equipamentos. Porque seus ataques podem causar Dano Verdadeiro, que ignora a defesa que esses heróis obtêm dos equipamentos. Como Gatotkaca e Fredrinn.",
+    "weak": "Lesley é neutralizada por heróis Assassinos com várias habilidades de movimento, o que a faz perder sua vantagem de alcance. Como Ling e Lancelot."
+  },
+  "lore": {
+    "short": "Filha adotiva da Casa Vance, uma atiradora de elite clandestina."
+  }
+}
